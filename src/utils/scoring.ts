@@ -1,0 +1,168 @@
+import { type CognitiveDomain, QUESTION_ITEMS } from '../data/questions';
+
+export interface AssessmentResult {
+  rawScore: number; // 0 to 24
+  theta: number; // Estimated ability level (-3.0 to +3.0)
+  sem: number; // Standard error of measurement
+  iqEstimate: number; // Standardized IQ (Mean 100, SD 15)
+  confidenceInterval: [number, number]; // 95% CI bounds
+  percentile: number; // 0.1 to 99.9
+  domainBreakdown: Record<CognitiveDomain, { total: number; correct: number; percentage: number }>;
+}
+
+// Numerical approximation of error function (Abramowitz & Stegun 7.1.26)
+function erf(x: number): number {
+  const sign = x >= 0 ? 1 : -1;
+  const absX = Math.abs(x);
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
+  const t = 1.0 / (1.0 + p * absX);
+  const y = 1.0 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t) * Math.exp(-absX * absX);
+  return sign * y;
+}
+
+// Standard Normal Cumulative Distribution Function
+export function normalCdf(z: number): number {
+  return 0.5 * (1.0 + erf(z / Math.SQRT2));
+}
+
+// 2PL IRT Probability Function with D = 1.702 scaling constant
+export function itemProbability(theta: number, a: number, b: number): number {
+  const D = 1.702;
+  const exponent = -D * a * (theta - b);
+  // Guard against numerical overflow
+  if (exponent > 40) return 0;
+  if (exponent < -40) return 1;
+  return 1.0 / (1.0 + Math.exp(exponent));
+}
+
+/**
+ * Calculates psychometrically calibrated assessment results using 2PL IRT EAP estimation.
+ * 
+ * @param userAnswers Map of question ID (1-24) to selected option ID (1-6)
+ */
+export function calculateScore(userAnswers: Record<number, number>): AssessmentResult {
+  let rawScore = 0;
+
+  const domainBreakdown: Record<CognitiveDomain, { total: number; correct: number; percentage: number }> = {
+    matrix_reasoning: { total: 0, correct: 0, percentage: 0 },
+    cube_rotation: { total: 0, correct: 0, percentage: 0 },
+    cube_nets: { total: 0, correct: 0, percentage: 0 },
+    topological_series: { total: 0, correct: 0, percentage: 0 },
+  };
+
+  // Binary response vector for 24 items
+  const responseVector: { a: number; b: number; isCorrect: boolean }[] = [];
+
+  for (const item of QUESTION_ITEMS) {
+    domainBreakdown[item.domain].total += 1;
+    const selectedOptionId = userAnswers[item.id];
+    const selectedOption = item.options.find((opt) => opt.id === selectedOptionId);
+    const isCorrect = selectedOption ? selectedOption.isCorrect : false;
+
+    if (isCorrect) {
+      rawScore += 1;
+      domainBreakdown[item.domain].correct += 1;
+    }
+
+    responseVector.push({
+      a: item.a,
+      b: item.b,
+      isCorrect,
+    });
+  }
+
+  // Compute domain percentages
+  for (const domainKey of Object.keys(domainBreakdown) as CognitiveDomain[]) {
+    const d = domainBreakdown[domainKey];
+    d.percentage = d.total > 0 ? Math.round((d.correct / d.total) * 100) : 0;
+  }
+
+  // Bayesian Expected A Posteriori (EAP) Estimation with standard normal prior N(0, 1)
+  const numQuadPoints = 81;
+  const minTheta = -4.0;
+  const maxTheta = 4.0;
+  const step = (maxTheta - minTheta) / (numQuadPoints - 1);
+
+  const quadPoints: number[] = [];
+  const logPriors: number[] = [];
+
+  for (let i = 0; i < numQuadPoints; i++) {
+    const q = minTheta + i * step;
+    quadPoints.push(q);
+    logPriors.push(-0.5 * q * q);
+  }
+
+  // Calculate log-likelihood for each quadrature point
+  const logLikelihoods: number[] = [];
+  for (const q of quadPoints) {
+    let logLik = 0;
+    for (const item of responseVector) {
+      const p = itemProbability(q, item.a, item.b);
+      // Small epsilon to avoid log(0)
+      const clampedP = Math.max(1e-7, Math.min(1 - 1e-7, p));
+      logLik += item.isCorrect ? Math.log(clampedP) : Math.log(1 - clampedP);
+    }
+    logLikelihoods.push(logLik);
+  }
+
+  // Log-posterior to avoid underflow
+  const logPosteriors: number[] = [];
+  for (let i = 0; i < numQuadPoints; i++) {
+    logPosteriors.push(logLikelihoods[i] + logPriors[i]);
+  }
+
+  const maxLogPosterior = Math.max(...logPosteriors);
+  const unnormalizedWeights: number[] = [];
+  let sumWeights = 0;
+
+  for (const lp of logPosteriors) {
+    const w = Math.exp(lp - maxLogPosterior);
+    unnormalizedWeights.push(w);
+    sumWeights += w;
+  }
+
+  let estimatedTheta = 0;
+  let posteriorVariance = 1.0;
+
+  if (sumWeights > 0) {
+    const normalizedWeights = unnormalizedWeights.map((w) => w / sumWeights);
+    estimatedTheta = normalizedWeights.reduce((acc, w, idx) => acc + quadPoints[idx] * w, 0);
+    posteriorVariance = normalizedWeights.reduce(
+      (acc, w, idx) => acc + Math.pow(quadPoints[idx] - estimatedTheta, 2) * w,
+      0
+    );
+  }
+
+  // Clamp theta within plausible psychometric range [-3.0, +3.0]
+  const clampedTheta = Math.max(-3.0, Math.min(3.0, estimatedTheta));
+  const sem = Math.sqrt(posteriorVariance);
+
+  // Standardized IQ Scale (Mean = 100, SD = 15)
+  const rawIq = 100 + 15 * clampedTheta;
+  const iqEstimate = Math.max(60, Math.min(160, Math.round(rawIq)));
+
+  // SEM on 15-point IQ scale and 95% Confidence Interval
+  const semIq = 15 * sem;
+  const ciLower = Math.max(60, Math.round(iqEstimate - 1.96 * semIq));
+  const ciUpper = Math.min(160, Math.round(iqEstimate + 1.96 * semIq));
+
+  // Percentile rank derived from standard normal CDF
+  const zScore = (iqEstimate - 100) / 15;
+  const rawPercentile = normalCdf(zScore) * 100;
+  const percentile = Math.max(0.1, Math.min(99.9, Math.round(rawPercentile * 10) / 10));
+
+  return {
+    rawScore,
+    theta: Math.round(clampedTheta * 1000) / 1000,
+    sem: Math.round(sem * 1000) / 1000,
+    iqEstimate,
+    confidenceInterval: [ciLower, ciUpper],
+    percentile,
+    domainBreakdown,
+  };
+}

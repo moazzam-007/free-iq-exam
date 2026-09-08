@@ -1,0 +1,693 @@
+import os
+import re
+
+# Generator script for src/pages/results.astro
+
+code = '''---
+import Layout from '../layouts/Layout.astro';
+
+const title = "Your IQ Test Score Report | FreeIQExam";
+const description = "View your instant standardized IQ score estimate, standard error range, percentile ranking, and visual bell curve placement.";
+---
+
+<Layout title={title} description={description} noindex={true}>
+  <!-- Print-Only Official Document Header -->
+  <div class="hidden print:block mb-8 pb-4 border-b-2 border-zinc-900">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold font-heading text-zinc-950">FreeIQExam.com</h1>
+        <p class="text-xs text-zinc-500 font-mono">Standardized Non-Verbal Cognitive Assessment Report (SD 15)</p>
+      </div>
+      <div class="text-right text-xs font-mono text-zinc-500">
+        <p id="print-date">Generated: 2026</p>
+        <p>Model: 2PL Item Response Theory</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header (Screen Only) -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200 print:hidden">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+          </svg>
+        </div>
+        <span class="font-heading font-bold text-lg tracking-tight text-zinc-950 dark:text-white">
+          FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
+        </span>
+      </a>
+
+      <div class="flex items-center gap-3">
+        <a 
+          href="/test" 
+          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+        >
+          Retake Test
+        </a>
+        <button 
+          id="btn-print" 
+          type="button" 
+          class="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24-1.07-.37-2.18-.37-3.329A8.25 8.25 0 0114.6 2.25a8.25 8.25 0 018.25 8.25c0 1.15-.13 2.26-.37 3.329m-1.5 5.921A9.75 9.75 0 0112 21a9.75 9.75 0 01-8.98-6" />
+          </svg>
+          <span>Save PDF / Print</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Demo Notice Banner (Shown only when accessed without test answers) -->
+  <div id="demo-banner" class="hidden max-w-5xl mx-auto px-4 sm:px-6 pt-6 print:hidden">
+    <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-amber-200 dark:bg-amber-900 flex items-center justify-center text-amber-800 dark:text-amber-200 shrink-0">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <p class="text-xs sm:text-sm text-amber-900 dark:text-amber-200 font-medium">
+          <strong>Demo Report:</strong> You are viewing a sample score report. Complete the full assessment to obtain your personalized psychometric estimate.
+        </p>
+      </div>
+      <a href="/test" class="px-4 py-2 rounded-full text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 whitespace-nowrap shadow-xs">
+        Take Assessment Now
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-10">
+    
+    <!-- Hero Score Card (The Primary Payoff) -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs text-center relative overflow-hidden">
+      <!-- Ambient Glow Decorator -->
+      <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-tr from-blue-500/10 via-indigo-500/10 to-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col items-center">
+        <!-- Eyebrow Tag -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono text-zinc-600 dark:text-zinc-300 mb-6 shadow-2xs">
+          <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+          <span>STANDARDIZED REASONING ESTIMATE (SD 15)</span>
+        </div>
+
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-2 font-mono">
+          Estimated Cognitive Ability Score
+        </p>
+
+        <!-- Monumental Score Number -->
+        <div class="flex items-baseline justify-center gap-2 my-2">
+          <span id="score-display" class="font-heading font-extrabold text-6xl sm:text-7xl lg:text-8xl tracking-tight text-zinc-950 dark:text-white leading-none">
+            118
+          </span>
+          <span class="text-xl sm:text-2xl font-mono text-zinc-400 font-semibold">IQ</span>
+        </div>
+
+        <!-- Tier Classification Pill -->
+        <div class="mt-3 mb-6">
+          <span id="classification-badge" class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950/70 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+            High Average Ability
+          </span>
+        </div>
+
+        <!-- 95% Confidence Interval & SEM Banner -->
+        <div class="w-full max-w-lg p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 shadow-2xs">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span class="font-mono font-medium">
+              95% Confidence Range:
+              <strong id="ci-display" class="text-zinc-950 dark:text-white font-bold ml-1">107 - 129</strong>
+            </span>
+            <span class="text-zinc-400 font-mono text-xs">
+              SEM: &plusmn;<span id="sem-display">5.5</span> pts
+            </span>
+          </div>
+          <p class="text-[11px] text-zinc-400 text-left mt-2 border-t border-zinc-100 dark:border-zinc-800/80 pt-2 leading-relaxed">
+            Due to natural psychometric measurement variance, there is a 95% statistical probability that your true latent ability lies within this interval.
+          </p>
+        </div>
+
+        <!-- Percentile & Population Rarity Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl mt-6">
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-400 uppercase">Percentile Rank</span>
+            <span id="percentile-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">
+              88.5%
+            </span>
+            <span class="text-[11px] text-zinc-500 text-center mt-1">Exceeds 88.5% of population</span>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-400 uppercase">Population Rarity</span>
+            <span id="rarity-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">
+              1 in 9
+            </span>
+            <span class="text-[11px] text-zinc-500 text-center mt-1">General cohort frequency</span>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-400 uppercase">Latent Ability (&theta;)</span>
+            <span id="theta-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">
+              +1.20
+            </span>
+            <span class="text-[11px] text-zinc-500 text-center mt-1">Standard normal metric</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Interactive SVG Normal Distribution Bell Curve -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
+        <div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Population Bell Curve Placement
+          </h2>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">
+            Standard normal distribution (&mu; = 100, &sigma; = 15). The shaded area illustrates your cumulative percentile rank.
+          </p>
+        </div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-xs font-mono text-zinc-600 dark:text-zinc-400">
+          <span>Wechsler &amp; Stanford-Binet Metric</span>
+        </div>
+      </div>
+
+      <!-- Responsive SVG Container -->
+      <div class="w-full overflow-x-auto pb-2">
+        <div class="min-w-[580px] max-w-3xl mx-auto">
+          <svg id="bell-curve-svg" viewBox="0 0 600 240" class="w-full h-auto select-none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="percentileGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.1" />
+                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.4" />
+              </linearGradient>
+            </defs>
+
+            <!-- Base Grid & Baseline -->
+            <line x1="50" y1="190" x2="550" y2="190" stroke="#d4d4d8" class="dark:stroke-zinc-800" stroke-width="2" />
+
+            <!-- SD Grid Lines & Tick Labels -->
+            <!-- -3 SD (55) -->
+            <line x1="50" y1="185" x2="50" y2="195" stroke="#a1a1aa" stroke-width="1.5" />
+            <text x="50" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">55</text>
+            <text x="50" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-3 SD</text>
+
+            <!-- -2 SD (70) -->
+            <line x1="133.3" y1="185" x2="133.3" y2="195" stroke="#a1a1aa" stroke-width="1.5" />
+            <text x="133.3" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">70</text>
+            <text x="133.3" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-2 SD</text>
+
+            <!-- -1 SD (85) -->
+            <line x1="216.6" y1="185" x2="216.6" y2="195" stroke="#a1a1aa" stroke-width="1.5" />
+            <text x="216.6" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">85</text>
+            <text x="216.6" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-1 SD</text>
+
+            <!-- Mean (100) -->
+            <line x1="300" y1="35" x2="300" y2="195" stroke="#d4d4d8" class="dark:stroke-zinc-800" stroke-width="1" stroke-dasharray="3 3" />
+            <text x="300" y="210" font-family="monospace" font-size="12" font-weight="bold" fill="#2563eb" text-anchor="middle">100</text>
+            <text x="300" y="224" font-family="sans-serif" font-size="9" font-weight="bold" fill="#2563eb" text-anchor="middle">Mean</text>
+
+            <!-- +1 SD (115) -->
+            <line x1="383.3" y1="185" x2="383.3" y2="195" stroke="#a1a1aa" stroke-width="1.5" />
+            <text x="383.3" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">115</text>
+            <text x="383.3" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+1 SD</text>
+
+            <!-- +2 SD (130) -->
+            <line x1="466.6" y1="185" x2="466.6" y2="195" stroke="#a1a1aa" stroke-width="1.5" />
+            <text x="466.6" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">130</text>
+            <text x="466.6" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+2 SD</text>
+
+            <!-- +3 SD (145) -->
+            <line x1="550" y1="185" x2="550" y2="195" stroke="#a1a1aa" stroke-width="1.5" />
+            <text x="550" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">145</text>
+            <text x="550" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+3 SD</text>
+
+            <!-- Dynamic Shaded Percentile Area Path (injected by script) -->
+            <path id="curve-shaded-area" d="" fill="url(#percentileGradient)" />
+
+            <!-- Static Normal Bell Curve Outline Path -->
+            <path 
+              id="curve-outline" 
+              d="" 
+              stroke="#2563eb" 
+              stroke-width="2.5" 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+            />
+
+            <!-- Dynamic User Score Pin Indicator (injected by script) -->
+            <g id="curve-pin" transform="translate(300, 40)">
+              <line x1="0" y1="0" x2="0" y2="150" stroke="#18181b" class="dark:stroke-white" stroke-width="2" stroke-dasharray="2 2" />
+              <circle cx="0" cy="0" r="5" fill="#2563eb" stroke="#ffffff" stroke-width="2" />
+              <!-- Score label tag -->
+              <rect x="-32" y="-30" width="64" height="22" rx="11" fill="#18181b" class="dark:fill-white" />
+              <text id="curve-pin-text" x="0" y="-15" font-family="monospace" font-size="11" font-weight="bold" fill="#ffffff" class="dark:fill-black" text-anchor="middle">
+                You: 118
+              </text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cognitive Domain Mastery Breakdown (Gf and Gv) -->
+    <section>
+      <div class="mb-6">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Cognitive Domain Analysis
+        </h2>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">
+          Detailed performance breakdown across Fluid Reasoning (Gf) and Visual Processing (Gv) dimensions.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        
+        <!-- Domain 1: Matrix Reasoning -->
+        <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                Fluid Reasoning (Gf)
+              </span>
+              <span id="domain-matrix-score" class="font-mono text-sm font-bold text-zinc-900 dark:text-white">
+                9 / 12
+              </span>
+            </div>
+            <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+              Abstract Matrix Reasoning
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              Measures non-verbal inductive logic, Boolean transformation rules (XOR/AND), and progression recognition in novel visual arrays.
+            </p>
+          </div>
+          <!-- Progress Bar -->
+          <div>
+            <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+              <div id="domain-matrix-bar" class="h-full bg-blue-600 rounded-full transition-all duration-500" style="width: 75%;"></div>
+            </div>
+            <span id="domain-matrix-pct" class="text-[11px] font-mono text-zinc-400 mt-1 block text-right">75% Mastery</span>
+          </div>
+        </div>
+
+        <!-- Domain 2: 3D Cube Rotation -->
+        <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-mono font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                Visual Processing (Gv)
+              </span>
+              <span id="domain-rotation-score" class="font-mono text-sm font-bold text-zinc-900 dark:text-white">
+                4 / 6
+              </span>
+            </div>
+            <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+              3D Mental Cube Rotation
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              Assesses the mental manipulation of three-dimensional polyhedra across spatial axes, distinguishing authentic rigid rotation from mirror enantiomers.
+            </p>
+          </div>
+          <div>
+            <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+              <div id="domain-rotation-bar" class="h-full bg-indigo-600 rounded-full transition-all duration-500" style="width: 67%;"></div>
+            </div>
+            <span id="domain-rotation-pct" class="text-[11px] font-mono text-zinc-400 mt-1 block text-right">67% Mastery</span>
+          </div>
+        </div>
+
+        <!-- Domain 3: Cube Nets (Surface Folding) -->
+        <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-mono font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                Visual Processing (Gv)
+              </span>
+              <span id="domain-nets-score" class="font-mono text-sm font-bold text-zinc-900 dark:text-white">
+                2 / 3
+              </span>
+            </div>
+            <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+              Surface Folding (Cube Nets)
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              Evaluates planar-to-polyhedral conversion ability, tracking face orientation, opposite face exclusions, and vertex convergence.
+            </p>
+          </div>
+          <div>
+            <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+              <div id="domain-nets-bar" class="h-full bg-purple-600 rounded-full transition-all duration-500" style="width: 67%;"></div>
+            </div>
+            <span id="domain-nets-pct" class="text-[11px] font-mono text-zinc-400 mt-1 block text-right">67% Mastery</span>
+          </div>
+        </div>
+
+        <!-- Domain 4: Topological Pattern Series -->
+        <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                Fluid Reasoning (Gf)
+              </span>
+              <span id="domain-series-score" class="font-mono text-sm font-bold text-zinc-900 dark:text-white">
+                3 / 3
+              </span>
+            </div>
+            <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+              Topological Pattern Series
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              Evaluates sequential rule extraction, directional shift patterns, modular interval angles, and geometric symmetry invariance.
+            </p>
+          </div>
+          <div>
+            <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+              <div id="domain-series-bar" class="h-full bg-emerald-600 rounded-full transition-all duration-500" style="width: 100%;"></div>
+            </div>
+            <span id="domain-series-pct" class="text-[11px] font-mono text-zinc-400 mt-1 block text-right">100% Mastery</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Share & Action Hub (Screen Only) -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-100 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden">
+      <div>
+        <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white">
+          Share Your Assessment Summary
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Copy a verified Markdown snippet or print an archival copy of your cognitive profile.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <button
+          id="btn-copy-share"
+          type="button"
+          class="flex-1 sm:flex-initial px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-800 dark:text-zinc-200 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all flex items-center justify-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+          </svg>
+          <span id="btn-copy-text">Copy Summary</span>
+        </button>
+
+        <a
+          href="/test"
+          class="flex-1 sm:flex-initial px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 text-center transition-colors shadow-xs"
+        >
+          Retake Test
+        </a>
+      </div>
+    </section>
+
+    <!-- Ethical Psychometric Disclosure & Scientific Limitations -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+      <h4 class="font-heading font-bold text-sm text-zinc-900 dark:text-zinc-200 uppercase tracking-wider mb-2">
+        Psychometric Framework &amp; Scientific Limitations
+      </h4>
+      <p class="mb-3">
+        1. <strong>Screening Instrument:</strong> This online assessment measures specific components of Non-Verbal Fluid Reasoning (Gf) and Visual Processing (Gv) using a 2-Parameter Logistic Item Response Theory framework. It provides an unproctored statistical estimate and cannot substitute for comprehensive, proctored clinical neuropsychological batteries (such as the WAIS-IV or SB5) administered by licensed psychologists.
+      </p>
+      <p class="mb-3">
+        2. <strong>Provisional Item Seeding:</strong> Item parameters (discrimination a and difficulty b) are anchored to peer-reviewed psychometric literature as provisional development seeds. Live empirical calibration and item re-weighting are conducted continuously as normative sample sizes scale.
+      </p>
+      <p>
+        3. <strong>Zero Data Retention:</strong> All scoring computations execute client-side in your web browser. Your individual item responses and calculated scores are never stored on central databases or transmitted to commercial third parties.
+      </p>
+    </section>
+
+    <!-- Explore Supporting SEO Tools (Screen Only) -->
+    <section class="print:hidden">
+      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-4">
+        Explore Cognitive Reference Tools
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <a href="/iq-score-chart" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold block mb-1">Visual Reference</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-blue-600 transition-colors">
+            IQ Score Chart &rarr;
+          </h4>
+          <p class="text-xs text-zinc-500 mt-1">Normal distribution brackets, SD tiers, and population breakdowns.</p>
+        </a>
+
+        <a href="/iq-percentile-calculator" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-semibold block mb-1">Interactive Tool</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-indigo-600 transition-colors">
+            Percentile Calculator &rarr;
+          </h4>
+          <p class="text-xs text-zinc-500 mt-1">Instant 2-way conversion between standardized scores and exact percentiles.</p>
+        </a>
+
+        <a href="/mensa-iq-test-practice" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-purple-600 dark:text-purple-400 font-semibold block mb-1">High Ceiling</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-purple-600 transition-colors">
+            Mensa Practice Test &rarr;
+          </h4>
+          <p class="text-xs text-zinc-500 mt-1">High-difficulty visual reasoning calibrated to the top 2% (IQ 130+).</p>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Client-Side Evaluation and Hydration Script -->
+  <script>
+    import { calculateScore } from '../utils/scoring';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Stamp print date
+      const printDateEl = document.getElementById('print-date');
+      if (printDateEl) {
+        printDateEl.textContent = 'Generated: ' + new Date().toLocaleDateString();
+      }
+
+      // Check for user test answers in localStorage
+      let userAnswers: Record<number, number> = {};
+      const savedAnswers = localStorage.getItem('freeiq_test_answers');
+      const demoBanner = document.getElementById('demo-banner');
+
+      if (savedAnswers) {
+        try {
+          userAnswers = JSON.parse(savedAnswers);
+        } catch (e) {
+          console.warn('Could not parse user answers', e);
+        }
+      }
+
+      const isDemo = Object.keys(userAnswers).length === 0;
+      if (isDemo) {
+        if (demoBanner) demoBanner.classList.remove('hidden');
+        // Sample demonstration response vector (18 of 24 correct)
+        userAnswers = {
+          1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1,
+          11: 1, 12: 1, 13: 1, 14: 1, 15: 1, 16: 1, 17: 1, 18: 1,
+          19: 2, 20: 2, 21: 2, 22: 2, 23: 2, 24: 2
+        };
+      }
+
+      // Run 2PL IRT Psychometric Scoring Engine
+      const result = calculateScore(userAnswers);
+
+      // DOM Hydration
+      const scoreDisplay = document.getElementById('score-display');
+      const ciDisplay = document.getElementById('ci-display');
+      const semDisplay = document.getElementById('sem-display');
+      const percentileDisplay = document.getElementById('percentile-display');
+      const rarityDisplay = document.getElementById('rarity-display');
+      const thetaDisplay = document.getElementById('theta-display');
+      const classificationBadge = document.getElementById('classification-badge');
+
+      if (scoreDisplay) scoreDisplay.textContent = String(result.iqEstimate);
+      if (ciDisplay) ciDisplay.textContent = `${result.confidenceInterval[0]} - ${result.confidenceInterval[1]}`;
+      if (semDisplay) semDisplay.textContent = String((result.sem * 15).toFixed(1));
+      if (percentileDisplay) percentileDisplay.textContent = `${result.percentile.toFixed(1)}%`;
+      if (thetaDisplay) thetaDisplay.textContent = (result.theta >= 0 ? '+' : '') + result.theta.toFixed(2);
+
+      // Rarity
+      if (rarityDisplay) {
+        let rarityText = '1 in 2';
+        if (result.percentile >= 50) {
+          const rem = 100 - result.percentile;
+          const ratio = rem > 0.1 ? Math.round(100 / rem) : 1000;
+          rarityText = '1 in ' + (ratio >= 1000 ? '1,000+' : ratio);
+        } else {
+          const ratio = result.percentile > 0.1 ? Math.round(100 / result.percentile) : 1000;
+          rarityText = '1 in ' + ratio;
+        }
+        rarityDisplay.textContent = rarityText;
+      }
+
+      // Classification Tier Styling
+      if (classificationBadge) {
+        let label = 'Average Ability';
+        let cls = 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-700';
+
+        if (result.iqEstimate >= 145) {
+          label = 'Profoundly Superior (Top 0.1%)';
+          cls = 'bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border-purple-300 dark:border-purple-800';
+        } else if (result.iqEstimate >= 130) {
+          label = 'Very Superior (Mensa Threshold / Top 2%)';
+          cls = 'bg-indigo-100 text-indigo-900 dark:bg-indigo-950 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800';
+        } else if (result.iqEstimate >= 120) {
+          label = 'Superior Cognitive Ability';
+          cls = 'bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 border-blue-300 dark:border-blue-800';
+        } else if (result.iqEstimate >= 110) {
+          label = 'High Average Ability';
+          cls = 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-300 border-teal-300 dark:border-teal-800';
+        } else if (result.iqEstimate >= 90) {
+          label = 'Average Cognitive Ability';
+          cls = 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700';
+        } else if (result.iqEstimate >= 80) {
+          label = 'Low Average Ability';
+          cls = 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border-amber-300 dark:border-amber-800';
+        } else {
+          label = 'Borderline Range';
+          cls = 'bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-300 border-rose-300 dark:border-rose-800';
+        }
+
+        classificationBadge.textContent = label;
+        classificationBadge.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border ' + cls;
+      }
+
+      // Hydrate Domain Cards
+      const dMatrix = result.domainBreakdown.matrix_reasoning;
+      const dRotation = result.domainBreakdown.cube_rotation;
+      const dNets = result.domainBreakdown.cube_nets;
+      const dSeries = result.domainBreakdown.topological_series;
+
+      const matrixScore = document.getElementById('domain-matrix-score');
+      const matrixBar = document.getElementById('domain-matrix-bar');
+      const matrixPct = document.getElementById('domain-matrix-pct');
+      if (matrixScore) matrixScore.textContent = `${dMatrix.correct} / ${dMatrix.total}`;
+      if (matrixBar) matrixBar.style.width = `${dMatrix.percentage}%`;
+      if (matrixPct) matrixPct.textContent = `${dMatrix.percentage}% Mastery`;
+
+      const rotScore = document.getElementById('domain-rotation-score');
+      const rotBar = document.getElementById('domain-rotation-bar');
+      const rotPct = document.getElementById('domain-rotation-pct');
+      if (rotScore) rotScore.textContent = `${dRotation.correct} / ${dRotation.total}`;
+      if (rotBar) rotBar.style.width = `${dRotation.percentage}%`;
+      if (rotPct) rotPct.textContent = `${dRotation.percentage}% Mastery`;
+
+      const netsScore = document.getElementById('domain-nets-score');
+      const netsBar = document.getElementById('domain-nets-bar');
+      const netsPct = document.getElementById('domain-nets-pct');
+      if (netsScore) netsScore.textContent = `${dNets.correct} / ${dNets.total}`;
+      if (netsBar) netsBar.style.width = `${dNets.percentage}%`;
+      if (netsPct) netsPct.textContent = `${dNets.percentage}% Mastery`;
+
+      const seriesScore = document.getElementById('domain-series-score');
+      const seriesBar = document.getElementById('domain-series-bar');
+      const seriesPct = document.getElementById('domain-series-pct');
+      if (seriesScore) seriesScore.textContent = `${dSeries.correct} / ${dSeries.total}`;
+      if (seriesBar) seriesBar.style.width = `${dSeries.percentage}%`;
+      if (seriesPct) seriesPct.textContent = `${dSeries.percentage}% Mastery`;
+
+      // Render Dynamic Normal Bell Curve SVG
+      renderBellCurve(result.iqEstimate);
+
+      // Print Button Trigger
+      const btnPrint = document.getElementById('btn-print');
+      if (btnPrint) {
+        btnPrint.addEventListener('click', () => {
+          window.print();
+        });
+      }
+
+      // Copy Summary Trigger
+      const btnCopy = document.getElementById('btn-copy-share');
+      const btnCopyText = document.getElementById('btn-copy-text');
+      if (btnCopy && btnCopyText) {
+        btnCopy.addEventListener('click', () => {
+          const shareText = `FreeIQExam Assessment Summary\\nEstimated Score: ${result.iqEstimate} IQ (SD 15)\\n95% Confidence Range: ${result.confidenceInterval[0]} - ${result.confidenceInterval[1]}\\nPercentile: ${result.percentile.toFixed(1)}th\\nScored via 2PL Item Response Theory at https://freeiqexam.com`;
+          navigator.clipboard.writeText(shareText).then(() => {
+            btnCopyText.textContent = 'Copied to Clipboard!';
+            setTimeout(() => {
+              btnCopyText.textContent = 'Copy Summary';
+            }, 2500);
+          });
+        });
+      }
+    });
+
+    // Bell Curve Vector Math
+    function renderBellCurve(userIq: number) {
+      const minIq = 55;
+      const maxIq = 145;
+      const baselineY = 190;
+      const peakHeight = 155;
+      const mean = 100;
+      const sd = 15;
+
+      const xForIq = (iq: number) => 50 + ((iq - minIq) / (maxIq - minIq)) * 500;
+      const yForIq = (iq: number) => {
+        const z = (iq - mean) / sd;
+        const norm = Math.exp(-0.5 * z * z);
+        return baselineY - peakHeight * norm;
+      };
+
+      // Generate Full Curve Outline Path
+      let outlineD = `M 50 ${baselineY}`;
+      for (let iq = minIq; iq <= maxIq; iq += 1) {
+        const x = xForIq(iq);
+        const y = yForIq(iq);
+        outlineD += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+      }
+
+      const curveOutline = document.getElementById('curve-outline');
+      if (curveOutline) {
+        curveOutline.setAttribute('d', outlineD);
+      }
+
+      // Generate Shaded Percentile Area Path (from 55 up to userIq)
+      const clampedScore = Math.max(55, Math.min(145, userIq));
+      let shadedD = `M 50 ${baselineY}`;
+      for (let iq = minIq; iq <= clampedScore; iq += 1) {
+        const x = xForIq(iq);
+        const y = yForIq(iq);
+        shadedD += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+      }
+      const endX = xForIq(clampedScore);
+      shadedD += ` L ${endX.toFixed(1)} ${baselineY} Z`;
+
+      const curveShadedArea = document.getElementById('curve-shaded-area');
+      if (curveShadedArea) {
+        curveShadedArea.setAttribute('d', shadedD);
+      }
+
+      // Position User Score Pin
+      const curvePin = document.getElementById('curve-pin');
+      const curvePinText = document.getElementById('curve-pin-text');
+      if (curvePin) {
+        const pinX = xForIq(clampedScore);
+        const pinY = yForIq(clampedScore);
+        curvePin.setAttribute('transform', `translate(${pinX.toFixed(1)}, ${pinY.toFixed(1)})`);
+        if (curvePinText) {
+          curvePinText.textContent = `You: ${userIq}`;
+        }
+      }
+    }
+  </script>
+</Layout>
+'''
+
+# Check for em-dashes and en-dashes
+assert '\\u2014' not in code, 'Em-dash found in results.astro'
+assert '\\u2013' not in code, 'En-dash found in results.astro'
+
+with open('src/pages/results.astro', 'w', encoding='utf-8') as f:
+    f.write(code)
+
+print("src/pages/results.astro written successfully.")
+'''
+
+with open(r'C:\Users\munvv\.gemini\antigravity-ide\brain\6742e8fc-2137-458a-ab36-32e85bf4e532\scratch\generate_results_page.py', 'w') as f:
+    f.write(code)
+
+print("generate_results_page.py ready to execute")

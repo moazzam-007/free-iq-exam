@@ -1,0 +1,210 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = "Psychometric Methodology and Scoring Principles | FreeIQExam";
+const description = "Detailed documentation of our psychometric framework: 2-Parameter Logistic IRT model, construct definitions (Gf and Gv), provisional item calibration, and standard error of measurement.";
+---
+
+<Layout title={title} description={description}>
+  <Header currentPath="/methodology" />
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 text-xs font-mono font-medium text-blue-700 dark:text-blue-300 mb-4">
+        <span>SCIENTIFIC RIGOR &bull; 2PL IRT &bull; EAP ESTIMATION</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Psychometric Framework &amp; Technical Methodology
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Full mathematical documentation of the Item Response Theory (IRT) model, Cattell-Horn-Carroll construct boundaries, and provisional parameter calibration powering FreeIQExam.
+      </p>
+    </header>
+
+    <!-- Vector SVG: Item Characteristic Curves (ICC) & Test Information Function -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
+        <div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            2PL Item Characteristic Curves (ICC)
+          </h2>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+            Probability of a correct response as a function of latent cognitive ability (&theta;).
+          </p>
+        </div>
+        <div class="flex items-center gap-4 text-xs font-mono">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+            <span class="text-zinc-700 dark:text-zinc-300">Easy (b = -1.5)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
+            <span class="text-zinc-700 dark:text-zinc-300">Medium (b = 0.0)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-purple-600"></span>
+            <span class="text-zinc-700 dark:text-zinc-300">Hard (b = +1.5)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ICC Vector Graphic -->
+      <div class="w-full overflow-x-auto pb-4">
+        <div class="min-w-[580px] max-w-3xl mx-auto">
+          <svg viewBox="0 0 600 240" class="w-full h-auto select-none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid Lines -->
+            <line x1="60" y1="40" x2="560" y2="40" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" />
+            <line x1="60" y1="115" x2="560" y2="115" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="60" y1="190" x2="560" y2="190" stroke="#d4d4d8" class="dark:stroke-zinc-700" stroke-width="2" />
+            <line x1="60" y1="40" x2="60" y2="190" stroke="#d4d4d8" class="dark:stroke-zinc-700" stroke-width="2" />
+
+            <!-- Y-Axis Probabilities -->
+            <text x="50" y="44" font-family="monospace" font-size="10" fill="#71717a" text-anchor="end">1.0</text>
+            <text x="50" y="119" font-family="monospace" font-size="10" fill="#71717a" text-anchor="end">0.5</text>
+            <text x="50" y="194" font-family="monospace" font-size="10" fill="#71717a" text-anchor="end">0.0</text>
+
+            <!-- X-Axis Theta Ticks -->
+            <!-- Theta: -3 (x=90), -2 (x=160), -1 (x=230), 0 (x=310), +1 (x=390), +2 (x=460), +3 (x=530) -->
+            <text x="90" y="210" font-family="monospace" font-size="10" fill="#71717a" text-anchor="middle">-3 &sigma;</text>
+            <text x="160" y="210" font-family="monospace" font-size="10" fill="#71717a" text-anchor="middle">-2 &sigma;</text>
+            <text x="230" y="210" font-family="monospace" font-size="10" fill="#71717a" text-anchor="middle">-1 &sigma;</text>
+            <text x="310" y="210" font-family="monospace" font-size="11" font-weight="bold" fill="#2563eb" text-anchor="middle">0 (&mu;)</text>
+            <text x="390" y="210" font-family="monospace" font-size="10" fill="#71717a" text-anchor="middle">+1 &sigma;</text>
+            <text x="460" y="210" font-family="monospace" font-size="10" fill="#71717a" text-anchor="middle">+2 &sigma;</text>
+            <text x="530" y="210" font-family="monospace" font-size="10" fill="#71717a" text-anchor="middle">+3 &sigma;</text>
+
+            <!-- ICC Curve 1: Easy Item (b = -1.5, a = 1.2) centered at x=195 -->
+            <path d="M 60 188 C 120 188, 150 170, 195 115 C 240 60, 270 42, 560 41" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+            <!-- ICC Curve 2: Medium Item (b = 0.0, a = 1.4) centered at x=310 -->
+            <path d="M 60 190 C 210 190, 260 175, 310 115 C 360 55, 410 41, 560 40" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+            <!-- ICC Curve 3: Hard Item (b = +1.5, a = 1.7) centered at x=425 -->
+            <path d="M 60 190 C 320 190, 380 180, 425 115 C 470 50, 500 40, 560 40" stroke="#9333ea" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+            <!-- Center Intersection Markers -->
+            <circle cx="195" cy="115" r="4" fill="#2563eb" />
+            <circle cx="310" cy="115" r="4" fill="#4f46e5" />
+            <circle cx="425" cy="115" r="4" fill="#9333ea" />
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- The 2PL IRT Mathematical Formulation Section -->
+    <section id="2pl-irt" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Mathematical Formulation
+        </span>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-2">
+          The 2-Parameter Logistic (2PL) Model
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Unlike Classical Test Theory (CTT), which merely sums raw correct answers, Item Response Theory accounts for the distinct difficulty and discrimination of every question.
+        </p>
+      </div>
+
+      <!-- Formula Code Block -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 space-y-2">
+        <p class="font-bold text-blue-600 dark:text-blue-400">P_i(&theta;) = 1 / [1 + exp(-1.702 &times; a_i &times; (&theta; - b_i))]</p>
+        <p class="text-xs text-zinc-500">
+          Where:<br />
+          &bull; &theta; = Latent cognitive ability trait on standard normal scale N(0, 1)<br />
+          &bull; a_i = Item discrimination parameter (steepness of the ICC at inflection point)<br />
+          &bull; b_i = Item difficulty parameter (latent ability level where probability is 0.50)<br />
+          &bull; D = 1.702 (Standard scaling constant aligning logistic metric with the normal ogive)
+        </p>
+      </div>
+
+      <!-- Test Information Function -->
+      <div>
+        <h3 class="font-heading font-bold text-base sm:text-lg text-zinc-950 dark:text-white mb-2">
+          Test Information Function &amp; Conditional SEM
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+          Measurement precision in IRT varies conditionally across the ability continuum. Total test information I(&theta;) is the sum of item information functions:
+        </p>
+        <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 font-mono text-xs text-zinc-800 dark:text-zinc-200">
+          I(&theta;) = &Sigma; [ (1.702 &times; a_i)^2 &times; P_i(&theta;) &times; (1 - P_i(&theta;)) ]<br />
+          SEM(&theta;) = 1 / &radic;I(&theta;)<br />
+          SEM_IQ(&theta;) = 15 &times; SEM(&theta;)
+        </div>
+      </div>
+    </section>
+
+    <!-- CHC Framework Construct Section -->
+    <section id="chc-framework" class="p-6 sm:p-8 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block mb-2">
+          Psychometric Taxonomy
+        </span>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-2">
+          Cattell-Horn-Carroll (CHC) Cognitive Construct Mapping
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          The 24 items in FreeIQExam isolate Stratum II broad abilities that demonstrate the highest correlation with General Intelligence (g) while minimizing cultural loading:
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <div class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-900 dark:text-white mb-2">
+            Fluid Reasoning (Gf) &bull; 15 Items (62.5%)
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            The capacity to think logically, extract rules, and solve novel problems in unfamiliar situations independent of acquired schooling. Measured via 12 Abstract Matrix Reasoning items and 3 Topological Pattern Series.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-900 dark:text-white mb-2">
+            Visual Processing (Gv) &bull; 9 Items (37.5%)
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            The ability to mentally rotate, transform, and fold spatial configurations in 2D and 3D coordinate space. Measured via 6 Mental Cube Rotation items and 3 Surface Folding Net conversions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transparent Disclosure: Provisional Item Seeding -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-xs sm:text-sm text-amber-950 dark:text-amber-200 leading-relaxed space-y-3">
+      <h3 class="font-heading font-bold text-base uppercase tracking-wider text-amber-900 dark:text-amber-300">
+        Transparent Seeding &amp; Calibration Disclosure
+      </h3>
+      <p>
+        1. <strong>Provisional Development Seeds:</strong> The difficulty parameters (b_i &isin; [-2.20, +2.60]) and discrimination parameters (a_i &isin; [0.95, 2.00]) embedded in the scoring engine are development seeds derived from published psychometric benchmarks in ICAR (Condon &amp; Revelle, 2014) and Sandia Matrix item banks (Matzen et al., 2010).
+      </p>
+      <p>
+        2. <strong>Continuous Empirical Recalibration:</strong> In accordance with the Standards for Educational and Psychological Testing, item parameters will undergo full empirical re-estimation via marginalized maximum likelihood (MML) once our unproctored normative sample surpasses N &gt; 10,000 completed sessions.
+      </p>
+    </section>
+
+    <!-- Assessment CTA -->
+    <section class="p-8 sm:p-12 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-center shadow-lg relative overflow-hidden">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight">
+        Experience 2PL IRT Scoring in Action
+      </h2>
+      <p class="text-blue-100 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+        Complete the 20-minute assessment to generate your personalized latent ability estimate (&theta;), standard deviation IQ score, and standard error interval.
+      </p>
+      <a 
+        href="/test" 
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold text-zinc-950 bg-white hover:bg-zinc-100 transition-all shadow-md hover:scale-102 active:scale-98"
+      >
+        <span>Take Assessment (20 Mins)</span>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>

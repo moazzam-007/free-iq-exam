@@ -1,0 +1,316 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = "IQ Score Chart: Normal Distribution, Percentiles, and Classifications | FreeIQExam";
+const description = "Explore the comprehensive IQ score chart and normal distribution bell curve. Understand standard deviation brackets, percentile equivalents, and cognitive classifications from 70 to 145+.";
+---
+
+<Layout title={title} description={description}>
+  <Header currentPath="/iq-score-chart" />
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    
+    <!-- Hero Section -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 text-xs font-mono font-medium text-blue-700 dark:text-blue-300 mb-4">
+        <span>STATISTICAL NORMS &bull; SD 15 &amp; SD 16</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Standardized IQ Score Chart &amp; Bell Curve
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Understand where cognitive assessment scores fall across the general population. Explore standard deviation cutoffs, cumulative percentiles, and official psychometric classifications.
+      </p>
+    </header>
+
+    <!-- Interactive SVG Normal Distribution Bell Curve -->
+    <section id="bell-curve" class="p-6 sm:p-10 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
+        <div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            The Normal Distribution (Bell Curve)
+          </h2>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+            Standard deviation metric (&mu; = 100, &sigma; = 15). 68.2% of the population scores within 85 to 115.
+          </p>
+        </div>
+        <span class="text-xs font-mono px-3 py-1 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300">
+          Gaussian Distribution Model
+        </span>
+      </div>
+
+      <div class="w-full overflow-x-auto pb-4">
+        <div class="min-w-[600px] max-w-3xl mx-auto">
+          <svg viewBox="0 0 600 250" class="w-full h-auto select-none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="chartZone68" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35" />
+                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.05" />
+              </linearGradient>
+              <linearGradient id="chartZone95" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6366f1" stop-opacity="0.25" />
+                <stop offset="100%" stop-color="#6366f1" stop-opacity="0.03" />
+              </linearGradient>
+              <linearGradient id="chartZone99" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#a855f7" stop-opacity="0.15" />
+                <stop offset="100%" stop-color="#a855f7" stop-opacity="0.01" />
+              </linearGradient>
+            </defs>
+
+            <!-- Horizontal Baseline -->
+            <line x1="50" y1="190" x2="550" y2="190" stroke="#d4d4d8" class="dark:stroke-zinc-700" stroke-width="2" />
+
+            <!-- SD 15 Shaded Zones -->
+            <!-- 99.7% Zone (-3 SD to +3 SD: 55 to 145) -->
+            <path d="M 50 190 Q 200 185, 300 45 Q 400 185, 550 190 Z" fill="url(#chartZone99)" />
+
+            <!-- 95.4% Zone (-2 SD to +2 SD: 70 to 130) -->
+            <path d="M 133.3 190 Q 200 180, 300 45 Q 400 180, 466.6 190 Z" fill="url(#chartZone95)" />
+
+            <!-- 68.2% Zone (-1 SD to +1 SD: 85 to 115) -->
+            <path d="M 216.6 190 Q 250 120, 300 45 Q 350 120, 383.3 190 Z" fill="url(#chartZone68)" />
+
+            <!-- Smooth Bell Curve Line -->
+            <path d="M 50 190 C 130 190, 200 185, 250 120 C 275 80, 290 45, 300 45 C 310 45, 325 80, 350 120 C 400 185, 470 190, 550 190" stroke="#2563eb" stroke-width="3" stroke-linecap="round" />
+
+            <!-- Vertical SD Boundaries -->
+            <line x1="216.6" y1="120" x2="216.6" y2="190" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="383.3" y1="120" x2="383.3" y2="190" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="133.3" y1="165" x2="133.3" y2="190" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="466.6" y1="165" x2="466.6" y2="190" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="300" y1="45" x2="300" y2="190" stroke="#18181b" class="dark:stroke-zinc-400" stroke-width="2" />
+
+            <!-- SD Percentage Badges -->
+            <rect x="272" y="105" width="56" height="20" rx="10" fill="#2563eb" />
+            <text x="300" y="119" font-family="monospace" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">68.2%</text>
+
+            <rect x="400" y="145" width="50" height="18" rx="9" fill="#4f46e5" />
+            <text x="425" y="158" font-family="monospace" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">13.6%</text>
+
+            <rect x="150" y="145" width="50" height="18" rx="9" fill="#4f46e5" />
+            <text x="175" y="158" font-family="monospace" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">13.6%</text>
+
+            <!-- Ticks & Score Numbers -->
+            <text x="50" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">55</text>
+            <text x="50" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-3 SD</text>
+
+            <text x="133.3" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">70</text>
+            <text x="133.3" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-2 SD</text>
+
+            <text x="216.6" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">85</text>
+            <text x="216.6" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-1 SD</text>
+
+            <text x="300" y="210" font-family="monospace" font-size="12" font-weight="bold" fill="#2563eb" text-anchor="middle">100</text>
+            <text x="300" y="225" font-family="sans-serif" font-size="9" font-weight="bold" fill="#2563eb" text-anchor="middle">Mean</text>
+
+            <text x="383.3" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">115</text>
+            <text x="383.3" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+1 SD</text>
+
+            <text x="466.6" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">130</text>
+            <text x="466.6" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+2 SD</text>
+
+            <text x="550" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">145</text>
+            <text x="550" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+3 SD</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Classification Table -->
+    <section>
+      <div class="mb-4">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Standardized Deviation IQ Classification Table (SD 15)
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Theoretical population distribution based on the Wechsler intelligence measurement scale.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800">
+        <table class="w-full text-left text-xs sm:text-sm">
+          <thead class="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 font-mono uppercase text-zinc-600 dark:text-zinc-400 text-[11px]">
+            <tr>
+              <th class="py-3.5 px-4">Score Range</th>
+              <th class="py-3.5 px-4">Percentile Range</th>
+              <th class="py-3.5 px-4">Classification Label</th>
+              <th class="py-3.5 px-4">Population Share</th>
+              <th class="py-3.5 px-4">Rarity Ratio</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200/80 dark:divide-zinc-800 bg-white dark:bg-black font-mono">
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-purple-600 dark:text-purple-400">145+</td>
+              <td class="py-3.5 px-4">99.87% to 99.99%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Profoundly Superior</td>
+              <td class="py-3.5 px-4">0.13%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 in 740</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-indigo-600 dark:text-indigo-400">130 to 144</td>
+              <td class="py-3.5 px-4">97.72% to 99.86%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Very Superior (Mensa Cutoff)</td>
+              <td class="py-3.5 px-4">2.14%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 in 44</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-blue-600 dark:text-blue-400">120 to 129</td>
+              <td class="py-3.5 px-4">90.88% to 97.71%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Superior Ability</td>
+              <td class="py-3.5 px-4">6.72%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 in 15</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-teal-600 dark:text-teal-400">110 to 119</td>
+              <td class="py-3.5 px-4">75.00% to 90.87%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">High Average</td>
+              <td class="py-3.5 px-4">16.12%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 in 6</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40 bg-blue-50/20 dark:bg-blue-950/10">
+              <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">90 to 109</td>
+              <td class="py-3.5 px-4">25.00% to 74.99%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Average Range</td>
+              <td class="py-3.5 px-4 font-bold">50.00%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 in 2</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-amber-600 dark:text-amber-400">80 to 89</td>
+              <td class="py-3.5 px-4">9.12% to 24.99%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Low Average</td>
+              <td class="py-3.5 px-4">16.12%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 in 6</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-rose-600 dark:text-rose-400">70 to 79</td>
+              <td class="py-3.5 px-4">2.28% to 9.11%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Borderline Range</td>
+              <td class="py-3.5 px-4">6.72%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 in 15</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-400">&lt; 70</td>
+              <td class="py-3.5 px-4">&lt; 2.27%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Low Range</td>
+              <td class="py-3.5 px-4">2.27%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 in 44</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Comparison Table: SD 15 vs SD 16 vs SD 24 -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+      <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white mb-2">
+        Standard Deviation Comparison: SD 15 vs. SD 16
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mb-6">
+        Not all IQ scores are measured on the same scale. The standard deviation defines the spread of scores relative to the population mean of 100.
+      </p>
+
+      <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black">
+        <table class="w-full text-left text-xs sm:text-sm font-mono">
+          <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 text-[11px] uppercase">
+            <tr>
+              <th class="py-3 px-4">Percentile Rank</th>
+              <th class="py-3 px-4">Wechsler Scale (SD 15)</th>
+              <th class="py-3 px-4">Stanford-Binet (SD 16)</th>
+              <th class="py-3 px-4">Cattell Scale (SD 24)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tr>
+              <td class="py-3 px-4 font-bold text-purple-600 dark:text-purple-400">99.9th (Top 0.1%)</td>
+              <td class="py-3 px-4">146</td>
+              <td class="py-3 px-4">149</td>
+              <td class="py-3 px-4">174</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-indigo-600 dark:text-indigo-400">98.0th (Mensa Top 2%)</td>
+              <td class="py-3 px-4">130</td>
+              <td class="py-3 px-4">132</td>
+              <td class="py-3 px-4">148</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-blue-600 dark:text-blue-400">90.0th (Top 10%)</td>
+              <td class="py-3 px-4">119</td>
+              <td class="py-3 px-4">121</td>
+              <td class="py-3 px-4">131</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">50.0th (Median)</td>
+              <td class="py-3 px-4">100</td>
+              <td class="py-3 px-4">100</td>
+              <td class="py-3 px-4">100</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- High-Conversion Assessment CTA Banner -->
+    <section class="p-8 sm:p-12 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-center shadow-lg relative overflow-hidden">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight">
+        Discover Where You Stand on the Bell Curve
+      </h2>
+      <p class="text-blue-100 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+        Take our standardized 24-item non-verbal fluid intelligence assessment. Receive your estimated IQ score (SD 15) and percentile ranking instantly with no email or paywall traps.
+      </p>
+      <a 
+        href="/test" 
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold text-zinc-950 bg-white hover:bg-zinc-100 transition-all shadow-md hover:scale-102 active:scale-98"
+      >
+        <span>Take Free Assessment (20 Mins)</span>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="space-y-4">
+      <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white mb-6">
+        Frequently Asked Questions: IQ Scores &amp; Distributions
+      </h2>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>What is considered an average IQ score?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform">&darr;</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            On standardized intelligence tests using a standard deviation of 15, an average score is defined as 100. By statistical design, approximately 50% of the population scores between 90 and 109, and about 68.2% scores between 85 and 115 (within one standard deviation of the mean).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>What score is required to join Mensa?</span>
+            <summary-arrow />
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform">&darr;</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            Mensa membership requires scoring at or above the 98th percentile on an approved, proctored intelligence assessment. On tests with a standard deviation of 15 (such as the WAIS), this corresponds to a score of 130 or higher. On tests with an SD of 16 (Stanford-Binet), it corresponds to 132.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>What is the difference between SD 15 and SD 16?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform">&darr;</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            The standard deviation defines the mathematical spread of scores. Under SD 15, two standard deviations above the mean equals 130 (100 + 2 &times; 15). Under SD 16, two standard deviations equals 132 (100 + 2 &times; 16). Both scores reflect the exact same percentile rank (97.72nd percentile).
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>

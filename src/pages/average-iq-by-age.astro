@@ -1,0 +1,173 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = "Average IQ by Age: Cognitive Trajectories and the Flynn Effect | FreeIQExam";
+const description = "Scientific analysis of cognitive ability across lifespan stages. Discover how fluid and crystallized intelligence change with age, age-norming mechanics, and the Flynn effect.";
+---
+
+<Layout title={title} description={description}>
+  <Header currentPath="/average-iq-by-age" />
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-900 text-xs font-mono font-medium text-teal-700 dark:text-teal-300 mb-4">
+        <span>DEVELOPMENTAL PSYCHOMETRICS &bull; LIFESPAN NORMS</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Average IQ by Age &amp; Cognitive Lifespan Trajectories
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Why standardized IQ remains fixed at 100 for every age group, while underlying cognitive mechanisms evolve dramatically across human adulthood.
+      </p>
+    </header>
+
+    <!-- Lifespan Trajectory Vector Chart: Gf vs Gc -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
+        <div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Fluid Intelligence (Gf) vs. Crystallized Intelligence (Gc)
+          </h2>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+            Empirical lifespan trajectory synthesized from Horn &amp; Cattell (1967) and Kaufman (2001) normative datasets.
+          </p>
+        </div>
+        <div class="flex items-center gap-4 text-xs font-mono">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+            <span class="text-zinc-700 dark:text-zinc-300">Fluid Reasoning (Gf)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
+            <span class="text-zinc-700 dark:text-zinc-300">Crystallized (Gc)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vector Line Chart SVG -->
+      <div class="w-full overflow-x-auto pb-4">
+        <div class="min-w-[580px] max-w-3xl mx-auto">
+          <svg viewBox="0 0 600 240" class="w-full h-auto select-none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid Lines -->
+            <line x1="50" y1="40" x2="550" y2="40" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" />
+            <line x1="50" y1="90" x2="550" y2="90" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" />
+            <line x1="50" y1="140" x2="550" y2="140" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" />
+            <line x1="50" y1="190" x2="550" y2="190" stroke="#d4d4d8" class="dark:stroke-zinc-700" stroke-width="2" />
+
+            <!-- X-Axis Age Ticks -->
+            <!-- 20s (x=100), 30s (x=180), 40s (x=260), 50s (x=340), 60s (x=420), 70s+ (x=500) -->
+            <text x="100" y="212" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">Age 20</text>
+            <text x="180" y="212" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">Age 30</text>
+            <text x="260" y="212" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">Age 40</text>
+            <text x="340" y="212" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">Age 50</text>
+            <text x="420" y="212" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">Age 60</text>
+            <text x="500" y="212" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">Age 70+</text>
+
+            <!-- Gf Curve: Peaks at age 22, then steady gradual slope downward -->
+            <path d="M 60 110 C 90 45, 120 45, 180 65 C 260 90, 340 120, 420 145 C 460 160, 500 175, 540 185" stroke="#2563eb" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- Gc Curve: Climbs steadily through 30s and 40s, peaks in late 50s, remains high -->
+            <path d="M 60 140 C 120 115, 180 90, 260 70 C 340 55, 400 50, 440 55 C 480 65, 510 80, 540 95" stroke="#059669" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- Peak Callout Markers -->
+            <circle cx="110" cy="48" r="5" fill="#2563eb" stroke="#ffffff" stroke-width="2" />
+            <rect x="70" y="20" width="80" height="18" rx="6" fill="#2563eb" />
+            <text x="110" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">Gf Peak (~22)</text>
+
+            <circle cx="420" cy="53" r="5" fill="#059669" stroke="#ffffff" stroke-width="2" />
+            <rect x="380" y="25" width="80" height="18" rx="6" fill="#059669" />
+            <text x="420" y="37" font-family="monospace" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">Gc Peak (~58)</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Age-Norming Paradox Section -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+            The Fundamental Rule
+          </span>
+          <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-3">
+            Why is the Average IQ Always 100?
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+            A common misconception is that an older adult has a lower IQ than a 25-year-old. In professional psychometrics, IQ is an age-normed relative ranking, not an absolute raw count.
+          </p>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Standardization tables calibrate examinees exclusively against peers in their identical age bracket. Therefore, the average score for an 18-year-old, a 45-year-old, and a 70-year-old is statistically defined as exactly 100.
+          </p>
+        </div>
+      </div>
+
+      <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-2">
+            Cognitive Dynamics
+          </span>
+          <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-3">
+            What Actually Changes with Age?
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+            While standardized IQ remains constant, the underlying balance of cognitive faculties shifts:
+          </p>
+          <ul class="space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+            <li class="flex items-start gap-2">
+              <span class="text-blue-600 font-bold">&bull;</span>
+              <span><strong>Processing Speed &amp; Fluid Logic:</strong> Visual reaction speeds and novel matrix induction peak in early adulthood.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-600 font-bold">&bull;</span>
+              <span><strong>Verbal &amp; Crystallized Acumen:</strong> Vocabulary, verbal analogies, and domain expertise expand through the 5th and 6th decades.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Flynn Effect Section -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+      <div class="max-w-3xl">
+        <span class="text-xs font-mono font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider block mb-2">
+          Generational Shift
+        </span>
+        <h3 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-3">
+          The Flynn Effect: Are Subsequent Generations Scoring Higher?
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+          Named after psychometric researcher James Flynn, the Flynn effect describes the documented rise in raw cognitive test performance observed across industrialized nations throughout the 20th century (approximately 3 IQ points per decade).
+        </p>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Because raw performance shifted upward over time due to enhanced nutrition, ubiquitous formal schooling, and technological complexity, test publishers must periodically re-standardize tests every 10 to 15 years to reset the population mean back to 100.
+        </p>
+      </div>
+    </section>
+
+    <!-- Assessment CTA -->
+    <section class="p-8 sm:p-12 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-center shadow-lg relative overflow-hidden">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight">
+        Test Your Non-Verbal Fluid Reasoning
+      </h2>
+      <p class="text-blue-100 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+        Our 24-item assessment isolates pure fluid intelligence independent of age-biased cultural vocabulary. Complete the timed assessment to see your calibrated performance.
+      </p>
+      <a 
+        href="/test" 
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold text-zinc-950 bg-white hover:bg-zinc-100 transition-all shadow-md hover:scale-102 active:scale-98"
+      >
+        <span>Start Free Assessment</span>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>

@@ -52,19 +52,16 @@ const {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
-    <!-- Theme Initialization Script: Default is pristine Pure White -->
+    <!-- Theme Initialization Script: Strict default to Pure White -->
     <script is:inline>
-      const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
-        }
-        return 'light'; // Always default to crisp pure white
-      })();
-
-      if (theme === 'dark') {
+      const savedTheme = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
+      if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
+        if (typeof localStorage !== 'undefined' && !savedTheme) {
+          localStorage.setItem('theme', 'light');
+        }
       }
     </script>
   </head>

@@ -1,16 +1,11 @@
-import os
-import re
-
-# Generator script for src/pages/results.astro
-
-code = '''---
+---
 import Layout from '../layouts/Layout.astro';
 
 const title = "Your IQ Test Score Report | FreeIQExam";
 const description = "View your instant standardized IQ score estimate, standard error range, percentile ranking, and visual bell curve placement.";
 ---
 
-<Layout title={title} description={description} noindex={true}>
+<Layout title={title} description={description}>
   <!-- Print-Only Official Document Header -->
   <div class="hidden print:block mb-8 pb-4 border-b-2 border-zinc-900">
     <div class="flex items-center justify-between">
@@ -42,7 +37,8 @@ const description = "View your instant standardized IQ score estimate, standard 
       <div class="flex items-center gap-3">
         <a 
           href="/test" 
-          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+          id="btn-retake-top"
+          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black"
         >
           Retake Test
         </a>
@@ -124,7 +120,7 @@ const description = "View your instant standardized IQ score estimate, standard 
               SEM: &plusmn;<span id="sem-display">5.5</span> pts
             </span>
           </div>
-          <p class="text-[11px] text-zinc-400 text-left mt-2 border-t border-zinc-100 dark:border-zinc-800/80 pt-2 leading-relaxed">
+          <p class="text-xs text-zinc-400 text-left mt-2 border-t border-zinc-100 dark:border-zinc-800/80 pt-2 leading-relaxed">
             Due to natural psychometric measurement variance, there is a 95% statistical probability that your true latent ability lies within this interval.
           </p>
         </div>
@@ -136,7 +132,7 @@ const description = "View your instant standardized IQ score estimate, standard 
             <span id="percentile-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">
               88.5%
             </span>
-            <span class="text-[11px] text-zinc-500 text-center mt-1">Exceeds 88.5% of population</span>
+            <span class="text-xs text-zinc-500 text-center mt-1">Exceeds 88.5% of population</span>
           </div>
 
           <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
@@ -144,7 +140,7 @@ const description = "View your instant standardized IQ score estimate, standard 
             <span id="rarity-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">
               1 in 9
             </span>
-            <span class="text-[11px] text-zinc-500 text-center mt-1">General cohort frequency</span>
+            <span class="text-xs text-zinc-500 text-center mt-1">General cohort frequency</span>
           </div>
 
           <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
@@ -152,7 +148,7 @@ const description = "View your instant standardized IQ score estimate, standard 
             <span id="theta-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">
               +1.20
             </span>
-            <span class="text-[11px] text-zinc-500 text-center mt-1">Standard normal metric</span>
+            <span class="text-xs text-zinc-500 text-center mt-1">Standard normal metric</span>
           </div>
         </div>
 
@@ -289,7 +285,7 @@ const description = "View your instant standardized IQ score estimate, standard 
             <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
               <div id="domain-matrix-bar" class="h-full bg-blue-600 rounded-full transition-all duration-500" style="width: 75%;"></div>
             </div>
-            <span id="domain-matrix-pct" class="text-[11px] font-mono text-zinc-400 mt-1 block text-right">75% Mastery</span>
+            <span id="domain-matrix-pct" class="text-xs font-mono text-zinc-400 mt-1 block text-right">75% Mastery</span>
           </div>
         </div>
 
@@ -315,7 +311,7 @@ const description = "View your instant standardized IQ score estimate, standard 
             <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
               <div id="domain-rotation-bar" class="h-full bg-indigo-600 rounded-full transition-all duration-500" style="width: 67%;"></div>
             </div>
-            <span id="domain-rotation-pct" class="text-[11px] font-mono text-zinc-400 mt-1 block text-right">67% Mastery</span>
+            <span id="domain-rotation-pct" class="text-xs font-mono text-zinc-400 mt-1 block text-right">67% Mastery</span>
           </div>
         </div>
 
@@ -341,7 +337,7 @@ const description = "View your instant standardized IQ score estimate, standard 
             <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
               <div id="domain-nets-bar" class="h-full bg-purple-600 rounded-full transition-all duration-500" style="width: 67%;"></div>
             </div>
-            <span id="domain-nets-pct" class="text-[11px] font-mono text-zinc-400 mt-1 block text-right">67% Mastery</span>
+            <span id="domain-nets-pct" class="text-xs font-mono text-zinc-400 mt-1 block text-right">67% Mastery</span>
           </div>
         </div>
 
@@ -367,7 +363,7 @@ const description = "View your instant standardized IQ score estimate, standard 
             <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
               <div id="domain-series-bar" class="h-full bg-emerald-600 rounded-full transition-all duration-500" style="width: 100%;"></div>
             </div>
-            <span id="domain-series-pct" class="text-[11px] font-mono text-zinc-400 mt-1 block text-right">100% Mastery</span>
+            <span id="domain-series-pct" class="text-xs font-mono text-zinc-400 mt-1 block text-right">100% Mastery</span>
           </div>
         </div>
 
@@ -399,7 +395,8 @@ const description = "View your instant standardized IQ score estimate, standard 
 
         <a
           href="/test"
-          class="flex-1 sm:flex-initial px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 text-center transition-colors shadow-xs"
+          id="btn-retake-bottom"
+          class="flex-1 sm:flex-initial px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 text-center transition-colors shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black"
         >
           Retake Test
         </a>
@@ -606,14 +603,30 @@ const description = "View your instant standardized IQ score estimate, standard 
       if (btnCopy && btnCopyText) {
         btnCopy.addEventListener('click', () => {
           const shareText = `FreeIQExam Assessment Summary\\nEstimated Score: ${result.iqEstimate} IQ (SD 15)\\n95% Confidence Range: ${result.confidenceInterval[0]} - ${result.confidenceInterval[1]}\\nPercentile: ${result.percentile.toFixed(1)}th\\nScored via 2PL Item Response Theory at https://freeiqexam.com`;
-          navigator.clipboard.writeText(shareText).then(() => {
-            btnCopyText.textContent = 'Copied to Clipboard!';
-            setTimeout(() => {
-              btnCopyText.textContent = 'Copy Summary';
-            }, 2500);
-          });
+          // Fix 3.3: guard clipboard API with .catch() fallback
+          navigator.clipboard.writeText(shareText)
+            .then(() => {
+              btnCopyText.textContent = 'Copied to Clipboard!';
+              setTimeout(() => { btnCopyText.textContent = 'Copy Summary'; }, 2500);
+            })
+            .catch((err) => {
+              console.warn('Clipboard write failed:', err);
+              window.prompt('Copy your score summary:', shareText);
+            });
         });
       }
+
+      // Fix 2.6: Clear session state when user clicks Retake Test
+      function handleRetake(e) {
+        e.preventDefault();
+        localStorage.removeItem('freeiq_test_answers');
+        localStorage.removeItem('freeiq_active_session');
+        window.location.href = '/test';
+      }
+      const btnRetakeTop = document.getElementById('btn-retake-top');
+      const btnRetakeBottom = document.getElementById('btn-retake-bottom');
+      if (btnRetakeTop) btnRetakeTop.addEventListener('click', handleRetake);
+      if (btnRetakeBottom) btnRetakeBottom.addEventListener('click', handleRetake);
     });
 
     // Bell Curve Vector Math
@@ -675,19 +688,3 @@ const description = "View your instant standardized IQ score estimate, standard 
     }
   </script>
 </Layout>
-'''
-
-# Check for em-dashes and en-dashes
-assert '\\u2014' not in code, 'Em-dash found in results.astro'
-assert '\\u2013' not in code, 'En-dash found in results.astro'
-
-with open('src/pages/results.astro', 'w', encoding='utf-8') as f:
-    f.write(code)
-
-print("src/pages/results.astro written successfully.")
-'''
-
-with open(r'C:\Users\munvv\.gemini\antigravity-ide\brain\6742e8fc-2137-458a-ab36-32e85bf4e532\scratch\generate_results_page.py', 'w') as f:
-    f.write(code)
-
-print("generate_results_page.py ready to execute")

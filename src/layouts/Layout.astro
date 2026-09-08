@@ -7,6 +7,7 @@ interface Props {
   canonicalUrl?: string;
   ogImage?: string;
   noindex?: boolean;
+  schema?: Record<string, any> | Record<string, any>[];
 }
 
 const {
@@ -15,6 +16,7 @@ const {
   canonicalUrl = Astro.url.href,
   ogImage = "/og-image.png",
   noindex = false,
+  schema,
 } = Astro.props;
 ---
 
@@ -46,6 +48,9 @@ const {
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={ogImage} />
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
     <!-- Google Fonts: Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

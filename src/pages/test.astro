@@ -1,0 +1,680 @@
+import os
+import re
+
+# Generator script for src/pages/test.astro
+
+code = '''---
+import Layout from '../layouts/Layout.astro';
+import { QUESTION_ITEMS } from '../data/questions';
+
+const title = "Free IQ Test: 24 Questions, 20 Minutes | FreeIQExam";
+const description = "Active 24-item non-verbal fluid intelligence assessment. Timed 20-minute interface with instant evaluation upon completion.";
+
+// Serialize questions safely for client-side application
+const questionsJson = JSON.stringify(QUESTION_ITEMS);
+---
+
+<Layout title={title} description={description} noindex={true}>
+  <!-- Distraction-Free Top Navigation Bar -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand / Exit Trigger -->
+      <button
+        id="btn-exit"
+        type="button"
+        class="flex items-center gap-2.5 group text-left focus:outline-none rounded-xl p-1.5 -ml-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+        aria-label="Exit assessment"
+      >
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-base shadow-xs group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-heading font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
+            FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
+          </span>
+          <span class="text-[11px] font-mono text-zinc-400 uppercase tracking-wider">Exit Test</span>
+        </div>
+      </button>
+
+      <!-- Center: Live Countdown Timer & Item Counter -->
+      <div class="flex items-center gap-3 sm:gap-6">
+        <!-- Live Countdown Timer -->
+        <div 
+          id="timer-container" 
+          class="flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors duration-300"
+          role="timer"
+          aria-live="polite"
+        >
+          <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="timer-display" class="font-mono text-sm sm:text-base font-medium tracking-tight text-zinc-800 dark:text-zinc-200">
+            20:00
+          </span>
+        </div>
+
+        <!-- Question Counter Badge -->
+        <div class="hidden sm:flex items-center gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          <span>Question</span>
+          <span id="stat-current" class="font-bold text-zinc-900 dark:text-white">1</span>
+          <span>of</span>
+          <span class="font-semibold text-zinc-900 dark:text-white">24</span>
+        </div>
+      </div>
+
+      <!-- Right Action: Finish / Submit Test -->
+      <div class="flex items-center gap-3">
+        <button
+          id="btn-top-submit"
+          type="button"
+          class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 shadow-sm transition-all duration-150 flex items-center gap-2"
+        >
+          <span>Submit</span>
+          <svg class="w-4 h-4 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Active Linear Progress Bar -->
+    <div class="w-full h-1 bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
+      <div 
+        id="progress-bar" 
+        class="h-full bg-blue-600 transition-all duration-300 ease-out" 
+        style="width: 4.16%;"
+      ></div>
+    </div>
+  </header>
+
+  <!-- Main Active Assessment Area -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-between">
+    
+    <!-- Top Metadata Bar -->
+    <div class="flex items-center justify-between mb-4 sm:mb-6">
+      <div class="flex items-center gap-2.5">
+        <span 
+          id="domain-badge" 
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-medium tracking-wide bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900"
+        >
+          Matrix Reasoning
+        </span>
+        <span id="domain-category" class="text-xs sm:text-sm text-zinc-400 font-mono hidden md:inline">
+          Fluid Intelligence (Gf)
+        </span>
+      </div>
+
+      <div class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">
+        <span id="answered-count">0</span> of 24 answered
+      </div>
+    </div>
+
+    <!-- Stimulus Prompt Instruction -->
+    <div class="mb-4 sm:mb-6 text-center">
+      <h1 id="question-prompt-text" class="text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200">
+        Select the missing piece that logically completes the pattern:
+      </h1>
+    </div>
+
+    <!-- Question Stimulus Graphic Card -->
+    <div class="relative w-full max-w-md mx-auto p-4 sm:p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex items-center justify-center min-h-[260px] sm:min-h-[300px]">
+      <div id="stimulus-container" class="w-full flex items-center justify-center">
+        <!-- Prompt SVG injected here -->
+      </div>
+    </div>
+
+    <!-- 6-Option Interactive Response Grid -->
+    <div class="w-full max-w-xl mx-auto mt-6 sm:mt-8">
+      <div class="text-xs sm:text-sm font-mono text-zinc-500 uppercase tracking-wider mb-3 text-center sm:text-left">
+        Available Choices (Press keys 1 to 6)
+      </div>
+      
+      <div id="options-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        <!-- 6 Options injected here -->
+      </div>
+    </div>
+
+    <!-- Navigation Controls (Previous, Jump, Next) -->
+    <div class="w-full max-w-xl mx-auto mt-8 sm:mt-10 pt-6 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-4">
+      
+      <!-- Previous Button -->
+      <button
+        id="btn-prev"
+        type="button"
+        class="px-5 sm:px-6 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150 flex items-center gap-2"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+        <span>Previous</span>
+      </button>
+
+      <!-- Center Item Indicator on Mobile -->
+      <div class="text-sm font-mono font-medium text-zinc-500 sm:hidden">
+        <span id="mobile-q-num">1</span> / 24
+      </div>
+
+      <!-- Next / Finish Button -->
+      <button
+        id="btn-next"
+        type="button"
+        class="px-6 sm:px-8 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 shadow-sm transition-all duration-150 flex items-center gap-2"
+      >
+        <span id="btn-next-text">Next</span>
+        <svg id="btn-next-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+
+    </div>
+
+    <!-- 24-Question Quick Navigation Strip -->
+    <div class="w-full max-w-2xl mx-auto mt-8 sm:mt-10">
+      <div class="flex items-center justify-between mb-3 text-xs font-mono text-zinc-400">
+        <span>Question Navigator</span>
+        <span class="hidden sm:inline">Click any number to jump</span>
+      </div>
+
+      <div id="navigator-strip" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 sm:gap-2">
+        <!-- 24 Pills injected here -->
+      </div>
+    </div>
+
+    <!-- Desktop Keyboard Shortcuts Helper -->
+    <div class="w-full max-w-xl mx-auto mt-8 text-center hidden md:block">
+      <div class="inline-flex items-center gap-4 px-4 py-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">1-6</kbd> Select Option</span>
+        <span class="text-zinc-300 dark:text-zinc-700">|</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&larr;</kbd> <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&rarr;</kbd> Navigate</span>
+        <span class="text-zinc-300 dark:text-zinc-700">|</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">Enter</kbd> Finish</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Exit Confirmation Modal -->
+  <div id="modal-exit" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm transition-opacity">
+    <div class="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+      </div>
+      <h3 class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">
+        Exit Assessment?
+      </h3>
+      <p class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+        Your current progress and remaining time are saved in this browser. You can return at any time to resume your assessment without losing answers.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <button
+          id="btn-modal-resume"
+          type="button"
+          class="w-full sm:w-auto flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors"
+        >
+          Resume Test
+        </button>
+        <a
+          href="/"
+          class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-center transition-colors"
+        >
+          Exit to Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Confirmation Modal -->
+  <div id="modal-submit" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm transition-opacity">
+    <div class="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">
+        Submit Cognitive Assessment?
+      </h3>
+      <p id="submit-modal-summary" class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+        Calculating score summary...
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <button
+          id="btn-confirm-submit"
+          type="button"
+          class="w-full sm:w-auto flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-600/20 transition-all"
+        >
+          Calculate My Score
+        </button>
+        <button
+          id="btn-cancel-submit"
+          type="button"
+          class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+        >
+          Review Questions
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded Client Logic -->
+  <script is:inline define:vars={{ questionsJson }}>
+    (function () {
+      const questions = JSON.parse(questionsJson);
+      const TOTAL_QUESTIONS = questions.length;
+      const TOTAL_TIME_SECONDS = 20 * 60; // 1200 seconds
+
+      const STORAGE_KEY_SESSION = 'freeiq_active_session';
+      const STORAGE_KEY_ANSWERS = 'freeiq_test_answers';
+
+      // Domain display labels
+      const DOMAIN_LABELS = {
+        matrix_reasoning: { label: 'Matrix Reasoning', cat: 'Fluid Reasoning (Gf)' },
+        cube_rotation: { label: '3D Cube Rotation', cat: 'Visual Processing (Gv)' },
+        cube_nets: { label: 'Surface Folding (Cube Nets)', cat: 'Visual Processing (Gv)' },
+        topological_series: { label: 'Topological Pattern Series', cat: 'Fluid Reasoning (Gf)' }
+      };
+
+      const PROMPT_INSTRUCTIONS = {
+        matrix_reasoning: 'Select the missing piece that logically completes the 3x3 pattern:',
+        cube_rotation: 'Identify which comparison cube is a valid rigid 3D rotation of the target:',
+        cube_nets: 'Identify which 3D cube is formed by folding this 2D net:',
+        topological_series: 'Select the next logical step that completes this sequential pattern:'
+      };
+
+      // State
+      let currentIndex = 0;
+      let userAnswers = {}; // { [questionId]: optionId }
+      let timeRemaining = TOTAL_TIME_SECONDS;
+      let timerInterval = null;
+
+      // Restore session from localStorage if present
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_SESSION);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            if (parsed.answers && typeof parsed.answers === 'object') userAnswers = parsed.answers;
+            if (typeof parsed.timeRemaining === 'number' && parsed.timeRemaining > 0) timeRemaining = parsed.timeRemaining;
+            if (typeof parsed.currentQuestionIndex === 'number' && parsed.currentQuestionIndex >= 0 && parsed.currentQuestionIndex < TOTAL_QUESTIONS) {
+              currentIndex = parsed.currentQuestionIndex;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to restore test session:', err);
+      }
+
+      // DOM Elements
+      const timerDisplay = document.getElementById('timer-display');
+      const timerContainer = document.getElementById('timer-container');
+      const statCurrent = document.getElementById('stat-current');
+      const mobileQNum = document.getElementById('mobile-q-num');
+      const progressBar = document.getElementById('progress-bar');
+      const domainBadge = document.getElementById('domain-badge');
+      const domainCategory = document.getElementById('domain-category');
+      const promptText = document.getElementById('question-prompt-text');
+      const stimulusContainer = document.getElementById('stimulus-container');
+      const optionsGrid = document.getElementById('options-grid');
+      const answeredCountEl = document.getElementById('answered-count');
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      const btnNextText = document.getElementById('btn-next-text');
+      const btnNextIcon = document.getElementById('btn-next-icon');
+      const navigatorStrip = document.getElementById('navigator-strip');
+      const btnTopSubmit = document.getElementById('btn-top-submit');
+
+      // Modals
+      const modalExit = document.getElementById('modal-exit');
+      const btnExit = document.getElementById('btn-exit');
+      const btnModalResume = document.getElementById('btn-modal-resume');
+
+      const modalSubmit = document.getElementById('modal-submit');
+      const submitModalSummary = document.getElementById('submit-modal-summary');
+      const btnConfirmSubmit = document.getElementById('btn-confirm-submit');
+      const btnCancelSubmit = document.getElementById('btn-cancel-submit');
+
+      // Save state helper
+      function saveSession() {
+        try {
+          const payload = {
+            answers: userAnswers,
+            timeRemaining: timeRemaining,
+            currentQuestionIndex: currentIndex
+          };
+          localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(payload));
+        } catch (e) {
+          // ignore localStorage quotas
+        }
+      }
+
+      // Timer update
+      function updateTimerDisplay() {
+        const mins = Math.floor(timeRemaining / 60);
+        const secs = timeRemaining % 60;
+        const formatted = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        if (timerDisplay) timerDisplay.textContent = formatted;
+
+        // Visual alert styling
+        if (timeRemaining <= 60) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold animate-pulse';
+        } else if (timeRemaining <= 300) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 font-semibold';
+        } else {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium';
+        }
+      }
+
+      function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(function () {
+          if (timeRemaining > 0) {
+            timeRemaining -= 1;
+            updateTimerDisplay();
+            saveSession();
+          } else {
+            clearInterval(timerInterval);
+            // Auto submit on time expired
+            submitTestImmediately();
+          }
+        }, 1000);
+      }
+
+      // Submit test handler
+      function submitTestImmediately() {
+        try {
+          localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify(userAnswers));
+          localStorage.removeItem(STORAGE_KEY_SESSION);
+        } catch (e) {
+          console.error(e);
+        }
+        window.location.href = '/results';
+      }
+
+      function openSubmitModal() {
+        const answeredKeys = Object.keys(userAnswers);
+        const count = answeredKeys.length;
+        const unanswered = TOTAL_QUESTIONS - count;
+
+        if (count === TOTAL_QUESTIONS) {
+          submitModalSummary.textContent = 'All 24 questions completed! Your response pattern is ready for 2PL IRT scoring and normative standardization.';
+        } else {
+          submitModalSummary.textContent = 'You have answered ' + count + ' of 24 questions (' + unanswered + ' unanswered). Unanswered questions will be scored as incorrect. Are you sure you want to finish?';
+        }
+        modalSubmit.classList.remove('hidden');
+        modalSubmit.classList.add('flex');
+      }
+
+      function closeSubmitModal() {
+        modalSubmit.classList.add('hidden');
+        modalSubmit.classList.remove('flex');
+      }
+
+      function openExitModal() {
+        modalExit.classList.remove('hidden');
+        modalExit.classList.add('flex');
+      }
+
+      function closeExitModal() {
+        modalExit.classList.add('hidden');
+        modalExit.classList.remove('flex');
+      }
+
+      // Render Question
+      function renderCurrentQuestion() {
+        const q = questions[currentIndex];
+        if (!q) return;
+
+        // Progress stats
+        const qNum = currentIndex + 1;
+        if (statCurrent) statCurrent.textContent = String(qNum);
+        if (mobileQNum) mobileQNum.textContent = String(qNum);
+        if (progressBar) {
+          const pct = (qNum / TOTAL_QUESTIONS) * 100;
+          progressBar.style.width = pct + '%';
+        }
+
+        const answeredCount = Object.keys(userAnswers).length;
+        if (answeredCountEl) answeredCountEl.textContent = String(answeredCount);
+
+        // Domain badge
+        const domainInfo = DOMAIN_LABELS[q.domain] || { label: 'Reasoning Assessment', cat: 'Fluid Intelligence (Gf)' };
+        if (domainBadge) domainBadge.textContent = domainInfo.label;
+        if (domainCategory) domainCategory.textContent = domainInfo.cat;
+
+        // Prompt text
+        if (promptText) {
+          promptText.textContent = PROMPT_INSTRUCTIONS[q.domain] || 'Select the option that completes the pattern:';
+        }
+
+        // Stimulus SVG
+        if (stimulusContainer) {
+          stimulusContainer.innerHTML = q.promptSvg;
+        }
+
+        // Options Grid
+        if (optionsGrid) {
+          optionsGrid.innerHTML = '';
+          const selectedOptionId = userAnswers[q.id];
+
+          q.options.forEach(function (opt) {
+            const isSelected = selectedOptionId === opt.id;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('data-option-id', String(opt.id));
+            btn.setAttribute('aria-label', 'Choice ' + opt.id);
+
+            const baseClasses = 'relative p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-150 cursor-pointer text-left focus:outline-none min-h-[90px] sm:min-h-[110px] ';
+            const selectedClasses = isSelected
+              ? 'bg-blue-50/70 dark:bg-blue-950/40 border-2 border-blue-600 dark:border-blue-400 ring-2 ring-blue-600/20 shadow-md scale-[1.02]'
+              : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-xs';
+
+            btn.className = baseClasses + selectedClasses;
+
+            // Option keyboard badge (top-left)
+            const badge = document.createElement('span');
+            badge.className = isSelected
+              ? 'absolute top-2 left-2 w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-[11px] font-bold flex items-center justify-center'
+              : 'absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-[11px] font-semibold flex items-center justify-center border border-zinc-200 dark:border-zinc-700';
+            badge.textContent = String(opt.id);
+
+            // Inner SVG container
+            const svgWrapper = document.createElement('div');
+            svgWrapper.className = 'w-full flex items-center justify-center pointer-events-none mt-2';
+            svgWrapper.innerHTML = opt.svgContent;
+
+            btn.appendChild(badge);
+            btn.appendChild(svgWrapper);
+
+            btn.addEventListener('click', function () {
+              selectOption(q.id, opt.id);
+            });
+
+            optionsGrid.appendChild(btn);
+          });
+        }
+
+        // Nav buttons
+        if (btnPrev) {
+          btnPrev.disabled = currentIndex === 0;
+        }
+
+        if (btnNextText && btnNextIcon) {
+          if (currentIndex === TOTAL_QUESTIONS - 1) {
+            btnNextText.textContent = 'Finish Test';
+            btnNextIcon.innerHTML = '<path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\" />';
+          } else {
+            btnNextText.textContent = 'Next';
+            btnNextIcon.innerHTML = '<path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M8.25 4.5l7.5 7.5-7.5 7.5\" />';
+          }
+        }
+
+        // Update Navigator Strip
+        renderNavigatorStrip();
+        saveSession();
+      }
+
+      function renderNavigatorStrip() {
+        if (!navigatorStrip) return;
+        navigatorStrip.innerHTML = '';
+
+        for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+          const qId = questions[i].id;
+          const isCurrent = i === currentIndex;
+          const isAnswered = typeof userAnswers[qId] === 'number';
+
+          const pill = document.createElement('button');
+          pill.type = 'button';
+          pill.setAttribute('aria-label', 'Go to question ' + (i + 1));
+
+          let pillClass = 'h-8 sm:h-9 rounded-xl font-mono text-xs font-semibold flex items-center justify-center transition-all duration-150 ';
+
+          if (isCurrent) {
+            pillClass += 'bg-blue-600 text-white ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-black shadow-xs font-bold scale-105';
+          } else if (isAnswered) {
+            pillClass += 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-2xs hover:scale-102';
+          } else {
+            pillClass += 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800/80 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/60 hover:bg-zinc-200 dark:hover:bg-zinc-700';
+          }
+
+          pill.className = pillClass;
+          pill.textContent = String(i + 1);
+
+          pill.addEventListener('click', function () {
+            currentIndex = i;
+            renderCurrentQuestion();
+          });
+
+          navigatorStrip.appendChild(pill);
+        }
+      }
+
+      function selectOption(questionId, optionId) {
+        userAnswers[questionId] = optionId;
+        renderCurrentQuestion();
+
+        // Optional smooth auto-advance after selecting option if not on last item
+        setTimeout(function () {
+          if (currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          }
+        }, 220);
+      }
+
+      // Button Listeners
+      if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+          if (currentIndex > 0) {
+            currentIndex -= 1;
+            renderCurrentQuestion();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', function () {
+          if (currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          } else {
+            // Last question: trigger submit modal
+            openSubmitModal();
+          }
+        });
+      }
+
+      if (btnTopSubmit) {
+        btnTopSubmit.addEventListener('click', openSubmitModal);
+      }
+
+      if (btnExit) {
+        btnExit.addEventListener('click', openExitModal);
+      }
+
+      if (btnModalResume) {
+        btnModalResume.addEventListener('click', closeExitModal);
+      }
+
+      if (btnCancelSubmit) {
+        btnCancelSubmit.addEventListener('click', closeSubmitModal);
+      }
+
+      if (btnConfirmSubmit) {
+        btnConfirmSubmit.addEventListener('click', submitTestImmediately);
+      }
+
+      // Keyboard navigation
+      window.addEventListener('keydown', function (e) {
+        // Prevent shortcuts if modal is open
+        if (!modalExit.classList.contains('hidden') || !modalSubmit.classList.contains('hidden')) {
+          if (e.key === 'Escape') {
+            closeExitModal();
+            closeSubmitModal();
+          }
+          return;
+        }
+
+        // Keys 1 to 6
+        if (e.key >= '1' && e.key <= '6') {
+          const optId = parseInt(e.key, 10);
+          const currentQ = questions[currentIndex];
+          if (currentQ) {
+            selectOption(currentQ.id, optId);
+          }
+          return;
+        }
+
+        // ArrowLeft or p / P
+        if (e.key === 'ArrowLeft' || e.key === 'p' || e.key === 'P') {
+          if (currentIndex > 0) {
+            currentIndex -= 1;
+            renderCurrentQuestion();
+          }
+          return;
+        }
+
+        // ArrowRight or n / N
+        if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
+          if (currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          }
+          return;
+        }
+
+        // Enter key
+        if (e.key === 'Enter') {
+          if (currentIndex === TOTAL_QUESTIONS - 1) {
+            openSubmitModal();
+          }
+        }
+      });
+
+      // Initialize
+      startTimer();
+      renderCurrentQuestion();
+    })();
+  </script>
+</Layout>
+'''
+
+# Check for em-dashes and en-dashes
+assert '\\u2014' not in code, 'Em-dash found!'
+assert '\\u2013' not in code, 'En-dash found!'
+
+with open('src/pages/test.astro', 'w', encoding='utf-8') as f:
+    f.write(code)
+
+print("src/pages/test.astro created successfully.")
+'''
+
+with open(r'C:\Users\munvv\.gemini\antigravity-ide\brain\6742e8fc-2137-458a-ab36-32e85bf4e532\scratch\generate_test_page.py', 'w') as f:
+    f.write(code)
+
+print("generate_test_page.py written")

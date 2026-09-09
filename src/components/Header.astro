@@ -6,84 +6,249 @@ interface Props {
 const { currentPath = Astro.url.pathname } = Astro.props;
 
 const normalizePath = (p: string) => p.replace(/\/$/, '') || '/';
+const currentNorm = normalizePath(currentPath);
 
-const toolLinks = [
-  { href: '/practice', label: 'Practice Hub' },
-  { href: '/games', label: 'Cognitive Games' },
-  { href: '/profile', label: 'My Profile' },
-  { href: '/leaderboard', label: 'Leaderboard' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/iq-score-chart', label: 'Score Chart' },
-  { href: '/iq-percentile-calculator', label: 'Percentile Calc' },
-  { href: '/methodology', label: 'Methodology' },
-];
+const isAssessmentsActive = ['/test', '/quick-test', '/practice'].some(
+  (p) => currentNorm === p || (p !== '/' && currentNorm.startsWith(p))
+);
+
+const isGamesActive = currentNorm === '/games' || currentNorm.startsWith('/games/');
+const isLeaderboardActive = currentNorm === '/leaderboard';
+const isBlogActive = currentNorm === '/blog' || currentNorm.startsWith('/blog/');
+const isScienceActive = ['/iq-score-chart', '/iq-percentile-calculator', '/methodology'].some(
+  (p) => currentNorm === p
+);
 
 const allMobileLinks = [
-  { href: '/profile', label: 'My Cognitive Profile', group: 'Assessments' },
-  { href: '/test', label: 'Full IQ Test (20 min)', group: 'Assessments' },
-  { href: '/quick-test', label: 'Quick Screening (10 min)', group: 'Assessments' },
-  { href: '/practice', label: 'Practice Hub (Untimed Drills)', group: 'Assessments' },
-  { href: '/games', label: 'Cognitive Games (5 Drills)', group: 'Assessments' },
-  { href: '/leaderboard', label: 'Leaderboard (Hall of Fame)', group: 'Assessments' },
-  { href: '/fluid-reasoning-test', label: 'Fluid Reasoning (Gf)', group: 'Specialized Domains' },
-  { href: '/spatial-reasoning-test', label: 'Visual-Spatial (Gv)', group: 'Specialized Domains' },
-  { href: '/quantitative-reasoning-test', label: 'Quantitative Reasoning (Gq)', group: 'Specialized Domains' },
-  { href: '/verbal-reasoning-test', label: 'Verbal Comprehension (Gc)', group: 'Specialized Domains' },
-  { href: '/blog', label: 'Cognitive Blog & Research', group: 'Reference Tools' },
-  { href: '/iq-score-chart', label: 'IQ Score Chart', group: 'Reference Tools' },
-  { href: '/iq-classification-scale', label: 'IQ Classification Scale', group: 'Reference Tools' },
-  { href: '/high-iq-societies', label: 'High-IQ Societies Guide', group: 'Reference Tools' },
-  { href: '/iq-percentile-calculator', label: 'Percentile Calculator', group: 'Reference Tools' },
-  { href: '/matrix-reasoning-test', label: 'Matrix Guide', group: 'Reference Tools' },
-  { href: '/average-iq-by-age', label: 'IQ by Age', group: 'Reference Tools' },
-  { href: '/mensa-iq-test-practice', label: 'Mensa Practice', group: 'Reference Tools' },
-  { href: '/methodology', label: 'Methodology', group: 'Reference Tools' },
+  { href: '/test', label: 'Full IQ Test (20 min)', badge: 'Official', group: 'Assessments' },
+  { href: '/quick-test', label: 'Quick Screening (10 min)', badge: 'Fast', group: 'Assessments' },
+  { href: '/practice', label: 'Practice Hub (Untimed)', badge: '', group: 'Assessments' },
+  { href: '/games', label: 'Cognitive Games', badge: '10 Drills', group: 'Training & Rank' },
+  { href: '/leaderboard', label: 'Global Leaderboard', badge: '', group: 'Training & Rank' },
+  { href: '/profile', label: 'My Cognitive Profile', badge: '', group: 'Training & Rank' },
+  { href: '/iq-score-chart', label: 'Score Distribution Chart', badge: '', group: 'Science & Reference' },
+  { href: '/iq-percentile-calculator', label: 'Percentile Calculator', badge: '', group: 'Science & Reference' },
+  { href: '/methodology', label: 'Psychometric Methodology', badge: '2PL IRT', group: 'Science & Reference' },
+  { href: '/blog', label: 'Research Articles & Blog', badge: '', group: 'Science & Reference' },
 ];
 
-const groups = ['Assessments', 'Specialized Domains', 'Reference Tools'] as const;
+const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] as const;
 ---
 
-<header class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200/80 dark:border-zinc-800 transition-colors duration-200">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+<header class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-zinc-950/85 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
     
-    <!-- Brand Logo -->
+    <!-- 1. Brand Logo: Blue/Cyan Flask Squircle + Wordmark -->
     <a href="/" class="flex items-center gap-3 group shrink-0" aria-label="FreeIQExam Home">
-      <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-xs group-hover:scale-105 transition-transform duration-200">
-        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+      <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform duration-200">
+        <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 3h6M10 3v6L5 18a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3" />
         </svg>
       </div>
-      <div class="flex flex-col">
-        <span class="font-heading font-extrabold text-lg sm:text-xl tracking-tight text-zinc-950 dark:text-white leading-tight">
-          FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
-        </span>
-        <span class="text-xs font-mono font-medium tracking-widest text-zinc-500 dark:text-zinc-400 uppercase">Scientific Norms</span>
-      </div>
+      <span class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Free<span class="text-blue-600 dark:text-blue-500">IQExam</span>
+      </span>
     </a>
 
-    <!-- Desktop Navigation Links (Reference Tools only) -->
-    <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-300" aria-label="Primary">
-      {toolLinks.map((link) => {
-        const isActive = normalizePath(currentPath) === normalizePath(link.href);
-        return (
-          <a 
-            href={link.href}
-            class={`hover:text-zinc-950 dark:hover:text-white transition-colors py-2 ${isActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : ''}`}
-            aria-current={isActive ? 'page' : undefined}
-          >
-            {link.label}
-          </a>
-        );
-      })}
+    <!-- 2. Center Desktop Navigation Links -->
+    <nav class="hidden lg:flex items-center gap-6 xl:gap-7 text-[13.5px] font-medium" aria-label="Primary Navigation">
+      
+      <!-- Dropdown 1: Assessments ▾ -->
+      <div class="relative group" id="nav-dropdown-assessments">
+        <button
+          type="button"
+          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
+            isAssessmentsActive
+              ? 'text-blue-600 dark:text-blue-400 font-semibold'
+              : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+          }`}
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span>Assessments</span>
+          <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+        </button>
+
+        <!-- Assessments Flyout Menu -->
+        <div class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50">
+          <div class="w-72 p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40">
+            <a
+              href="/quick-test"
+              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+            >
+              <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+                ⚡
+              </div>
+              <div>
+                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                  Quick Test (10 min)
+                </div>
+                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                  12 adaptive questions for rapid screening
+                </div>
+              </div>
+            </a>
+
+            <a
+              href="/test"
+              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+            >
+              <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+                🎯
+              </div>
+              <div>
+                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                  Full Exam (20 min)
+                </div>
+                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                  24 items across 4 calibrated CHC domains
+                </div>
+              </div>
+            </a>
+
+            <a
+              href="/practice"
+              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item border-t border-zinc-100 dark:border-zinc-800/60 mt-1"
+            >
+              <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+                🧩
+              </div>
+              <div>
+                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                  Practice Hub
+                </div>
+                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                  Untimed domain drills & explanations
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cognitive Games (with 10 count pill) -->
+      <a
+        href="/games"
+        class={`flex items-center gap-1.5 py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
+          isGamesActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
+        }`}
+        aria-current={isGamesActive ? 'page' : undefined}
+      >
+        <span>Cognitive Games</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300">
+          10
+        </span>
+      </a>
+
+      <!-- Leaderboard -->
+      <a
+        href="/leaderboard"
+        class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
+          isLeaderboardActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
+        }`}
+        aria-current={isLeaderboardActive ? 'page' : undefined}
+      >
+        Leaderboard
+      </a>
+
+      <!-- Dropdown 2: Science & Tools ▾ -->
+      <div class="relative group" id="nav-dropdown-science">
+        <button
+          type="button"
+          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
+            isScienceActive
+              ? 'text-blue-600 dark:text-blue-400 font-semibold'
+              : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+          }`}
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span>Science & Tools</span>
+          <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+        </button>
+
+        <!-- Science Flyout Menu (without blog, as requested) -->
+        <div class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50">
+          <div class="w-72 p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40">
+            <a
+              href="/iq-score-chart"
+              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+            >
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+                📊
+              </div>
+              <div>
+                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                  Score Distribution Chart
+                </div>
+                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                  Gaussian bell curve & standard deviations
+                </div>
+              </div>
+            </a>
+
+            <a
+              href="/iq-percentile-calculator"
+              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+            >
+              <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 text-sm font-mono font-bold">
+                %
+              </div>
+              <div>
+                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                  Percentile Calculator
+                </div>
+                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                  Convert raw IQ score to population percentile
+                </div>
+              </div>
+            </a>
+
+            <a
+              href="/methodology"
+              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+            >
+              <div class="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+                🔬
+              </div>
+              <div>
+                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                  Scientific Methodology
+                </div>
+                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                  2PL IRT calibration & psychometric validity
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Standalone Blog (Placed right after Science & Tools, exactly as requested) -->
+      <a
+        href="/blog"
+        class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
+          isBlogActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
+        }`}
+        aria-current={isBlogActive ? 'page' : undefined}
+      >
+        Blog
+      </a>
+
     </nav>
 
-    <!-- Right Controls: Theme Toggle & Assessment CTAs -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Dark/Light Theme Toggle (44x44px target) -->
+    <!-- 3. Right Action Cluster: Theme Button + Profile Button + Segmented CTA Capsule -->
+    <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
+      
+      <!-- Theme Toggle (Rounded Square) -->
       <button
         id="theme-toggle-btn"
         type="button"
-        class="w-11 h-11 rounded-full flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 border border-zinc-200 dark:border-zinc-800"
+        class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
         aria-label="Toggle light and dark mode"
       >
         <svg class="w-4 h-4 hidden dark:block text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -94,41 +259,54 @@ const groups = ['Assessments', 'Specialized Domains', 'Reference Tools'] as cons
         </svg>
       </button>
 
-      <!-- Quick Test Secondary CTA -->
+      <!-- Profile Avatar Button (Rounded Square) -->
       <a
-        href="/quick-test"
-        class="hidden sm:inline-flex min-h-[44px] px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 transition-all items-center gap-1.5"
+        href="/profile"
+        class={`w-10 h-10 rounded-xl hidden sm:flex items-center justify-center bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
+          currentNorm === '/profile' ? 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800' : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+        }`}
+        title="My Cognitive Profile & History"
+        aria-label="My Cognitive Profile"
       >
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        <span>Quick (10 min)</span>
-      </a>
-
-      <!-- Primary CTA Button -->
-      <a 
-        href="/test" 
-        class="inline-flex min-h-[44px] px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all hover:scale-102 active:scale-98 items-center gap-1.5"
-      >
-        <span>Full Test</span>
-        <svg class="w-4 h-4 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
         </svg>
       </a>
 
-      <!-- Mobile Menu Toggle Button (44x44px target) -->
+      <!-- Connected Segmented CTA Capsule -->
+      <div class="hidden sm:inline-flex items-center bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 rounded-full p-[3px] shadow-xs">
+        <a
+          href="/quick-test"
+          class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors flex items-center gap-1.5 whitespace-nowrap"
+          title="12-question adaptive screening"
+        >
+          <span class="text-amber-500 font-bold">⚡</span>
+          <span>Quick 10m</span>
+        </a>
+        <a
+          href="/test"
+          class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-xs shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1 whitespace-nowrap"
+          title="24-item clinical assessment"
+        >
+          <span>Full Test</span>
+          <span class="font-mono">→</span>
+        </a>
+      </div>
+
+      <!-- Mobile Menu Button (Hamburger) -->
       <button
         id="mobile-menu-btn"
         type="button"
-        class="lg:hidden w-11 h-11 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        class="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
         aria-label="Toggle navigation menu"
         aria-controls="mobile-drawer"
         aria-expanded="false"
       >
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
         </svg>
       </button>
+
     </div>
 
   </div>
@@ -150,18 +328,22 @@ const groups = ['Assessments', 'Specialized Domains', 'Reference Tools'] as cons
   aria-label="Mobile Navigation"
   aria-hidden="true"
 >
-  <!-- Drawer Top Bar -->
+  <!-- Drawer Header -->
   <div class="h-16 px-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3h6M10 3v6L5 18a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3" />
+        </svg>
+      </div>
       <span class="font-heading font-extrabold text-base text-zinc-950 dark:text-white">
-        FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
+        Free<span class="text-blue-600 dark:text-blue-500">IQExam</span>
       </span>
-      <span class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Menu</span>
     </div>
     <button
       id="mobile-drawer-close"
       type="button"
-      class="w-11 h-11 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
+      class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
       aria-label="Close navigation menu"
     >
       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -170,29 +352,52 @@ const groups = ['Assessments', 'Specialized Domains', 'Reference Tools'] as cons
     </button>
   </div>
 
-  <!-- Drawer Grouped Link List -->
-  <div class="p-4 flex flex-col gap-6 overflow-y-auto flex-1">
-    {groups.map((grp) => (
+  <!-- Mobile Drawer Fast Action Capsule -->
+  <div class="p-4 border-b border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/50">
+    <div class="flex items-center gap-2">
+      <a
+        href="/quick-test"
+        class="flex-1 py-2.5 px-3 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-800 dark:text-zinc-200 text-center flex items-center justify-center gap-1.5 shadow-2xs"
+      >
+        <span>⚡ Quick 10m</span>
+      </a>
+      <a
+        href="/test"
+        class="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold text-center flex items-center justify-center gap-1 shadow-xs"
+      >
+        <span>Full Test →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Drawer Grouped Links -->
+  <div class="p-4 flex flex-col gap-5 overflow-y-auto flex-1">
+    {mobileGroups.map((grp) => (
       <div>
-        <p class="px-3 pb-2 text-xs font-mono font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+        <p class="px-2 pb-2 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
           {grp}
         </p>
         <div class="flex flex-col gap-1">
           {allMobileLinks
             .filter((l) => l.group === grp)
             .map((link) => {
-              const isActive = normalizePath(currentPath) === normalizePath(link.href);
+              const isActive = currentNorm === normalizePath(link.href);
               return (
                 <a
                   href={link.href}
-                  class={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center transition-colors ${
+                  class={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
                     isActive
                       ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold'
                       : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white'
                   }`}
                   aria-current={isActive ? 'page' : undefined}
                 >
-                  {link.label}
+                  <span>{link.label}</span>
+                  {link.badge && (
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                      {link.badge}
+                    </span>
+                  )}
                 </a>
               );
             })}
@@ -203,7 +408,7 @@ const groups = ['Assessments', 'Specialized Domains', 'Reference Tools'] as cons
 </aside>
 
 <script>
-  // Theme toggle script
+  // 1. Theme toggle script
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
@@ -214,7 +419,7 @@ const groups = ['Assessments', 'Specialized Domains', 'Reference Tools'] as cons
     });
   }
 
-  // Mobile Drawer Toggle logic
+  // 2. Mobile Drawer Toggle logic
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileDrawer = document.getElementById('mobile-drawer');
   const mobileDrawerClose = document.getElementById('mobile-drawer-close');
@@ -298,5 +503,28 @@ const groups = ['Assessments', 'Specialized Domains', 'Reference Tools'] as cons
         }
       }
     }
+  });
+
+  // 3. Desktop Dropdown hover/click toggle for touch screens
+  const dropdownAssessments = document.getElementById('nav-dropdown-assessments');
+  const dropdownScience = document.getElementById('nav-dropdown-science');
+
+  [dropdownAssessments, dropdownScience].forEach((dd) => {
+    if (!dd) return;
+    const btn = dd.querySelector('button');
+    if (!btn) return;
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isCurrentlyOpen = dd.classList.contains('active-click');
+      [dropdownAssessments, dropdownScience].forEach((d) => d?.classList.remove('active-click'));
+      if (!isCurrentlyOpen) {
+        dd.classList.add('active-click');
+      }
+    });
+  });
+
+  document.addEventListener('click', () => {
+    [dropdownAssessments, dropdownScience].forEach((d) => d?.classList.remove('active-click'));
   });
 </script>

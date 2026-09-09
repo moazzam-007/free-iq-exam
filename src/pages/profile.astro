@@ -1,0 +1,978 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = "Personal Cognitive Profile & Activity Log | FreeIQExam";
+const description = "Access your private, local-first cognitive profile. Review standardized psychometric IQ assessment history, cognitive domain agility, and export or restore records.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "name": "Personal Cognitive Profile",
+  "description": description,
+  "url": "https://freeiqexam.com/profile"
+};
+---
+
+<Layout title={title} description={description} schema={schema}>
+  <Header currentPath="/profile" />
+
+  <main class="flex-1 py-10 sm:py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+    <!-- Breadcrumb & Header Meta -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">My Profile</span>
+    </nav>
+
+    <!-- Page Title & Privacy Header -->
+    <div class="mb-10 sm:mb-12">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs font-mono font-semibold text-emerald-700 dark:text-emerald-300 mb-4">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
+        <span>Client-Side Only - 100% Private (No Account, Zero Telemetry)</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight mb-3">
+        Personal Cognitive Profile & Activity Log
+      </h1>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        All test sessions and game drills are stored locally in your browser storage. You have full ownership of your data with instant JSON backup export, offline restore, and complete zero-telemetry privacy.
+      </p>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div
+      id="toast-container"
+      class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <!-- EMPTY STATE HERO (Displayed when no assessments & no game records exist) -->
+    <div
+      id="profile-empty-state"
+      class="hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-8 sm:p-12 text-center shadow-sm"
+    >
+      <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 rounded-3xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
+        <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+        </svg>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+        Build Your Personal Cognitive Profile
+      </h2>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-8 leading-relaxed">
+        You have not completed any assessments or training games on this device yet. Complete an IQ assessment or train with a cognitive mini-game, and your personal benchmark history will appear here automatically.
+      </p>
+
+      <!-- Empty State Action CTAs -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-xl mx-auto">
+        <a
+          href="/test"
+          class="w-full sm:w-auto inline-flex items-center justify-center min-h-[44px] px-6 py-3 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all hover:scale-102 active:scale-98 gap-2"
+        >
+          <span>Take Official Full IQ Test (20 min)</span>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+        <a
+          href="/quick-test"
+          class="w-full sm:w-auto inline-flex items-center justify-center min-h-[44px] px-5 py-3 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-300 dark:border-zinc-700 transition-all gap-2"
+        >
+          <span>Quick 10-Minute Screening</span>
+        </a>
+        <a
+          href="/games"
+          class="w-full sm:w-auto inline-flex items-center justify-center min-h-[44px] px-5 py-3 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-300 dark:border-zinc-700 transition-all gap-2"
+        >
+          <span>Explore 10 Cognitive Games</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ACTIVE DASHBOARD STATE (Displayed when records exist) -->
+    <div id="profile-active-state" class="hidden space-y-12 sm:space-y-16">
+      
+      <!-- ========================================================= -->
+      <!-- SECTION 1: FORMAL ASSESSMENT HISTORY (PSYCHOMETRIC IRT)   -->
+      <!-- ========================================================= -->
+      <section aria-labelledby="heading-assessments">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 border-b border-zinc-200 dark:border-zinc-800 pb-4">
+          <div>
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
+              Section 1 - Psychometric IRT (2PL)
+            </div>
+            <h2 id="heading-assessments" class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white">
+              Formal Assessment History
+            </h2>
+            <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+              Calibrated Item Response Theory estimates, posterior credible intervals, and standardized population percentiles.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <a
+              href="/test"
+              class="inline-flex items-center min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-xs transition-colors gap-1.5"
+            >
+              <span>Retake Assessment</span>
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+            <a
+              href="/iq-score-chart"
+              class="inline-flex items-center min-h-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 transition-colors"
+            >
+              Score Chart
+            </a>
+          </div>
+        </div>
+
+        <!-- Latest Assessment Highlight Card -->
+        <div id="assessment-primary-card" class="mb-8">
+          <!-- Populated by client script -->
+        </div>
+
+        <!-- Past Assessments History Table / List -->
+        <div class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 overflow-hidden shadow-xs">
+          <div class="px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+            <h3 class="font-heading font-bold text-sm sm:text-base text-zinc-950 dark:text-white">
+              Assessment Session Logs
+            </h3>
+            <span id="assessment-count-badge" class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              0 sessions recorded
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm" aria-label="Assessment history table">
+              <thead class="bg-zinc-50 dark:bg-zinc-950 text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                <tr>
+                  <th scope="col" class="px-5 py-3">Completed Date</th>
+                  <th scope="col" class="px-5 py-3">Assessment Type</th>
+                  <th scope="col" class="px-5 py-3">Raw Score</th>
+                  <th scope="col" class="px-5 py-3">IQ Estimate</th>
+                  <th scope="col" class="px-5 py-3">95% Credible Interval</th>
+                  <th scope="col" class="px-5 py-3">Percentile</th>
+                  <th scope="col" class="px-5 py-3">Theta & SEM</th>
+                  <th scope="col" class="px-5 py-3">Duration</th>
+                </tr>
+              </thead>
+              <tbody id="assessment-history-table-body" class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                <!-- Populated by client script -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- SECTION 2: COGNITIVE TRAINING ACTIVITY PROFILES (5 DOMAINS) -->
+      <!-- ========================================================= -->
+      <section aria-labelledby="heading-domains">
+        <div class="border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6">
+          <div class="text-xs font-mono font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400 mb-1">
+            Section 2 - CHC Cognitive Task Groupings
+          </div>
+          <h2 id="heading-domains" class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white">
+            Cognitive Training Activity Profiles
+          </h2>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            Rolling performance medians across 5 core domains from task-specific mini-game drills.
+          </p>
+        </div>
+
+        <!-- 5 Domain Cards Responsive Grid -->
+        <div id="domain-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
+          <!-- Populated by client script -->
+        </div>
+
+        <!-- Practice Effects Disclaimer Notice Box -->
+        <div class="p-5 sm:p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed flex items-start gap-3.5">
+          <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+          </div>
+          <div>
+            <span class="font-heading font-bold text-zinc-900 dark:text-white">Practice Effects Notice:</span>
+            Repeated practice on cognitive games develops task-specific operational fluency and reflex pacing. These drills reflect task performance agility and do not indicate a permanent increase in general psychometric intelligence (g).
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- SECTION 3: RECENT ACTIVITY FEED                           -->
+      <!-- ========================================================= -->
+      <section aria-labelledby="heading-activity">
+        <div class="border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+              Section 3 - Chronological History
+            </div>
+            <h2 id="heading-activity" class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white">
+              Recent Activity Feed
+            </h2>
+          </div>
+          <a
+            href="/games"
+            class="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+          >
+            <span>Play Training Games</span>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </a>
+        </div>
+
+        <div id="activity-log-container" class="space-y-3">
+          <!-- Populated by client script -->
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- SECTION 4: DATA PORTABILITY, BACKUP & PRIVACY CONTROLS    -->
+      <!-- ========================================================= -->
+      <section id="data-controls-section" aria-labelledby="heading-controls" class="pt-4 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+          <div class="max-w-2xl mb-6">
+            <h2 id="heading-controls" class="text-xl sm:text-2xl font-heading font-extrabold text-zinc-950 dark:text-white mb-2">
+              Data Portability & Privacy Controls
+            </h2>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Export your profile to an offline JSON backup, restore existing records, generate a print-ready report, or clear your local browser storage.
+            </p>
+          </div>
+
+          <!-- Action Buttons Group -->
+          <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+            <!-- 1-Click Export JSON -->
+            <button
+              id="btn-export-json"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white shadow-xs transition-colors flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.5V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              <span>Export JSON Backup</span>
+            </button>
+
+            <!-- 1-Click Print / PDF Report -->
+            <button
+              id="btn-print-report"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-zinc-800 hover:text-zinc-950 bg-white hover:bg-zinc-100 dark:text-zinc-200 dark:hover:text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-zinc-300 dark:border-zinc-700 shadow-xs transition-colors flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24-1.04-.37-2.126-.37-3.243 0-6.075 4.925-11 11-11 6.075 0 11 4.925 11 11 0 1.117-.13 2.203-.37 3.243M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.5V16.5M6 16.5h12M9 13.5V9.75a3 3 0 016 0v3.75" />
+              </svg>
+              <span>Print / PDF Report</span>
+            </button>
+
+            <!-- Import JSON Backup Button & Hidden File Input -->
+            <button
+              id="btn-import-json"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-zinc-800 hover:text-zinc-950 bg-white hover:bg-zinc-100 dark:text-zinc-200 dark:hover:text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-zinc-300 dark:border-zinc-700 shadow-xs transition-colors flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.5V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>
+              <span>Import JSON Backup</span>
+            </button>
+            <input
+              id="file-import-input"
+              type="file"
+              accept=".json"
+              class="sr-only"
+              aria-label="Upload JSON profile backup"
+            />
+
+            <!-- Clear All Data (Danger) -->
+            <button
+              id="btn-clear-data"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900 shadow-xs transition-colors flex items-center gap-2 ml-auto"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+              <span>Clear All Data</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- CONFIRMATION MODAL: CLEAR ALL DATA -->
+  <div
+    id="modal-confirm-clear"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs opacity-0 pointer-events-none transition-opacity duration-200 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-clear-title"
+    aria-hidden="true"
+  >
+    <div
+      id="modal-dialog-box"
+      class="relative w-full max-w-md p-6 sm:p-7 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-2xl transform scale-95 transition-transform duration-200"
+    >
+      <!-- Top Right (X) Close Button (44x44px target) -->
+      <button
+        id="modal-close-btn"
+        type="button"
+        class="absolute top-4 right-4 w-11 h-11 rounded-xl flex items-center justify-center text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+        aria-label="Close dialog"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Modal Content Header -->
+      <div class="flex items-center gap-3.5 mb-4">
+        <div class="w-11 h-11 rounded-2xl bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div>
+          <h3 id="modal-clear-title" class="text-lg sm:text-xl font-heading font-extrabold text-zinc-950 dark:text-white">
+            Clear Local Profile?
+          </h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">Irreversible action</p>
+        </div>
+      </div>
+
+      <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
+        This action will permanently delete all stored IQ assessment estimates, domain scores, and cognitive mini-game records from this browser. Make sure you export a JSON backup first if you want to keep your records.
+      </p>
+
+      <!-- Modal Action Buttons -->
+      <div class="flex items-center justify-end gap-3">
+        <button
+          id="modal-cancel-btn"
+          type="button"
+          class="min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          id="modal-confirm-btn"
+          type="button"
+          class="min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-rose-600 hover:bg-rose-500 shadow-sm transition-colors"
+        >
+          Yes, Delete Everything
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
+
+<style>
+  @media print {
+    header,
+    footer,
+    #data-controls-section,
+    #toast-container,
+    .no-print,
+    #modal-confirm-clear,
+    button,
+    a[href^="/test"],
+    a[href^="/quick-test"],
+    a[href^="/games"] {
+      display: none !important;
+    }
+    body {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+    main {
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+    .rounded-3xl, .rounded-2xl {
+      border-radius: 8px !important;
+      border-color: #d4d4d8 !important;
+    }
+    .shadow-sm, .shadow-xs, .shadow-2xl {
+      box-shadow: none !important;
+    }
+  }
+</style>
+
+<script>
+  import {
+    getProfile,
+    getDomainActivitySummaries,
+    getPerformanceTier,
+    exportProfileJson,
+    importProfileJson,
+    clearProfile,
+  } from '../utils/profileStore';
+  import type { AssessmentRecord, GameSessionRecord, ActivityDomainKey } from '../utils/profileStore';
+
+  const ASSESSMENT_LABELS: Record<string, string> = {
+    'flagship-24': 'Flagship 24-Question Assessment',
+    'quick-12': 'Quick 12-Question Screening',
+    'category-fluid': 'Fluid Reasoning Domain Test',
+    'category-spatial': 'Visual-Spatial Domain Test',
+    'category-quantitative': 'Quantitative Domain Test',
+    'category-verbal': 'Verbal Reasoning Domain Test',
+  };
+
+  const GAME_LABELS: Record<string, { name: string; iconBg: string; route: string }> = {
+    'n-back': { name: 'Dual N-Back Memory', iconBg: 'bg-blue-600', route: '/games/n-back' },
+    'rotation': { name: '3D Rotation Challenge', iconBg: 'bg-indigo-600', route: '/games/rotation' },
+    'math-sprint': { name: 'Speed Math Sprint', iconBg: 'bg-emerald-600', route: '/games/math-sprint' },
+    'symbol-match': { name: 'Symbol Match Blitz', iconBg: 'bg-purple-600', route: '/games/symbol-match' },
+    'syllogism': { name: 'Syllogism Blitz', iconBg: 'bg-amber-600', route: '/games/syllogism' },
+    'stroop-clash': { name: 'Stroop Clash', iconBg: 'bg-rose-600', route: '/games/stroop-clash' },
+    'memory-matrix': { name: 'Memory Matrix', iconBg: 'bg-cyan-600', route: '/games/memory-matrix' },
+    'digit-span': { name: 'Digit Span', iconBg: 'bg-teal-600', route: '/games/digit-span' },
+    'flanker-test': { name: 'Flanker Test', iconBg: 'bg-violet-600', route: '/games/flanker-test' },
+    'sequence-rush': { name: 'Sequence Rush', iconBg: 'bg-orange-600', route: '/games/sequence-rush' },
+  };
+
+  function showToast(message: string, isError: boolean = false) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `pointer-events-auto flex items-center gap-2.5 p-4 rounded-2xl shadow-xl text-xs sm:text-sm font-medium transition-all duration-300 transform translate-y-2 opacity-0 ${
+      isError
+        ? 'bg-rose-600 text-white'
+        : 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+    }`;
+    toast.innerHTML = `
+      <span class="w-2 h-2 rounded-full ${isError ? 'bg-white' : 'bg-emerald-400'} shrink-0"></span>
+      <span class="flex-1">${message}</span>
+    `;
+
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.classList.remove('translate-y-2', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+    });
+
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('translate-y-2', 'opacity-0');
+      setTimeout(() => toast.remove(), 300);
+    }, 4500);
+  }
+
+  function formatDate(isoStr: string): string {
+    try {
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return 'Recently';
+      return d.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return 'Recently';
+    }
+  }
+
+  function formatDateTime(isoStr: string): string {
+    try {
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return 'Recently';
+      return d.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return 'Recently';
+    }
+  }
+
+  function formatDuration(seconds: number): string {
+    if (!seconds || seconds <= 0) return '< 1 min';
+    const m = Math.floor(seconds / 60);
+    const s = Math.round(seconds % 60);
+    if (m === 0) return `${s}s`;
+    return `${m}m ${s}s`;
+  }
+
+  function renderAssessmentSection(assessments: AssessmentRecord[]) {
+    const highlightCard = document.getElementById('assessment-primary-card');
+    const tableBody = document.getElementById('assessment-history-table-body');
+    const countBadge = document.getElementById('assessment-count-badge');
+
+    if (countBadge) {
+      countBadge.textContent = `${assessments.length} assessment${assessments.length === 1 ? '' : 's'} recorded`;
+    }
+
+    if (!highlightCard) return;
+
+    if (!assessments || assessments.length === 0) {
+      highlightCard.innerHTML = `
+        <div class="rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-800 p-6 sm:p-8 text-center bg-zinc-50/50 dark:bg-zinc-900/30">
+          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">No formal psychometric assessments completed yet.</p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-4">Take the official IRT-calibrated assessment to establish your standardized cognitive baseline.</p>
+          <a href="/test" class="inline-flex items-center min-h-[44px] px-5 py-2.5 rounded-full text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-xs transition-colors gap-1.5">
+            <span>Take 20-Min Assessment</span>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+          </a>
+        </div>
+      `;
+      if (tableBody) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="8" class="px-5 py-6 text-center text-xs text-zinc-500 dark:text-zinc-400">
+              No assessment session records found.
+            </td>
+          </tr>
+        `;
+      }
+      return;
+    }
+
+    const latest = assessments[0];
+    const testTitle = ASSESSMENT_LABELS[latest.assessmentType] || 'Standard Psychometric Assessment';
+    const ciLow = latest.confidenceInterval ? latest.confidenceInterval[0] : Math.max(50, latest.iqEstimate - 6);
+    const ciHigh = latest.confidenceInterval ? latest.confidenceInterval[1] : Math.min(170, latest.iqEstimate + 6);
+    const thetaStr = (latest.theta >= 0 ? '+' : '') + latest.theta.toFixed(2);
+    const semStr = latest.sem.toFixed(2);
+
+    highlightCard.innerHTML = `
+      <div class="rounded-3xl border border-blue-200/80 dark:border-blue-900/50 bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/40 dark:from-blue-950/40 dark:via-zinc-900 dark:to-indigo-950/20 p-6 sm:p-8 shadow-xs">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/70 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-mono font-semibold">
+            <span>${testTitle}</span>
+            <span class="text-zinc-400">&bull;</span>
+            <span>Latest Benchmark</span>
+          </div>
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+            Completed: ${formatDateTime(latest.completedAt)} &bull; Duration: ${formatDuration(latest.durationSeconds)}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+          <div class="sm:col-span-1">
+            <div class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">Standard Score (SD 15)</div>
+            <div class="text-5xl sm:text-6xl font-heading font-black tracking-tight ${iqBadgeClass}">
+              ${escapeHtml(latest.iqEstimate)}
+            </div>
+            <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+              95% CI: [${escapeHtml(ciStr)}]
+            </div>
+          </div>
+
+          <div class="space-y-1 sm:border-l sm:border-zinc-200 sm:dark:border-zinc-800 sm:pl-6">
+            <div class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Percentile Standing</div>
+            <div class="text-2xl sm:text-3xl font-heading font-bold text-zinc-900 dark:text-white">
+              ${escapeHtml(formatPercentile(latest.percentile))}
+            </div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              Exceeds ${escapeHtml(latest.percentile.toFixed(1))}% of standardized reference population.
+            </p>
+          </div>
+
+          <div class="space-y-1 sm:border-l sm:border-zinc-200 sm:dark:border-zinc-800 sm:pl-6">
+            <div class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Item Response Diagnostics</div>
+            <div class="text-sm font-mono text-zinc-800 dark:text-zinc-200 font-semibold">
+              Ability (&theta;): ${escapeHtml(thetaStr)}
+            </div>
+            <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              Std Error (SEM): ${escapeHtml(semStr)}
+            </div>
+            <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              Raw Accuracy: ${escapeHtml(latest.rawScore)} / ${escapeHtml(latest.totalQuestions)} items
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    if (tableBody) {
+      tableBody.innerHTML = assessments.map((asm) => {
+        const title = escapeHtml(ASSESSMENT_LABELS[asm.assessmentType] || asm.assessmentType);
+        const ci = escapeHtml(asm.confidenceInterval ? `${asm.confidenceInterval[0]} - ${asm.confidenceInterval[1]}` : '-');
+        const theta = escapeHtml((asm.theta >= 0 ? '+' : '') + asm.theta.toFixed(2));
+        const sem = escapeHtml(asm.sem.toFixed(2));
+        return `
+          <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/40 transition-colors">
+            <td class="px-5 py-3.5 font-mono text-xs text-zinc-600 dark:text-zinc-400 whitespace-nowrap">${escapeHtml(formatDateTime(asm.completedAt))}</td>
+            <td class="px-5 py-3.5 font-medium text-zinc-900 dark:text-white whitespace-nowrap">${title}</td>
+            <td class="px-5 py-3.5 font-mono text-xs text-zinc-600 dark:text-zinc-400 whitespace-nowrap">${escapeHtml(asm.rawScore)} / ${escapeHtml(asm.totalQuestions)}</td>
+            <td class="px-5 py-3.5 font-mono font-bold text-zinc-950 dark:text-white whitespace-nowrap">IQ ${escapeHtml(asm.iqEstimate)}</td>
+            <td class="px-5 py-3.5 font-mono text-xs text-zinc-600 dark:text-zinc-400 whitespace-nowrap">${ci}</td>
+            <td class="px-5 py-3.5 font-mono text-xs text-zinc-600 dark:text-zinc-400 whitespace-nowrap">${escapeHtml(formatPercentile(asm.percentile))}</td>
+            <td class="px-5 py-3.5 font-mono text-xs text-zinc-600 dark:text-zinc-400 whitespace-nowrap">&theta;: ${theta} | SEM: ${sem}</td>
+            <td class="px-5 py-3.5 font-mono text-xs text-zinc-600 dark:text-zinc-400 whitespace-nowrap">${escapeHtml(formatDuration(asm.durationSeconds))}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  function renderDomainSummaries() {
+    const grid = document.getElementById('domain-cards-grid');
+    if (!grid) return;
+
+    const summaries = getDomainActivitySummaries();
+    const domainKeys: ActivityDomainKey[] = [
+      'working-memory',
+      'visual-spatial',
+      'processing-speed',
+      'quantitative',
+      'fluid-reasoning',
+    ];
+
+    grid.innerHTML = domainKeys.map((key) => {
+      const summary = summaries[key];
+      const hasSessions = summary && summary.sessionsCount > 0;
+      const scoreDisplay = hasSessions ? summary.score : '--';
+      const tierInfo = hasSessions ? getPerformanceTier(summary.score) : null;
+      const tierBadge = tierInfo
+        ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${tierInfo.badgeClass}">${tierInfo.tier}</span>`
+        : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700">No Activity</span>`;
+
+      let trendBadge = '';
+      if (summary.trend === 'improving') {
+        trendBadge = '<span class="inline-flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-400">&uarr; Improving</span>';
+      } else if (summary.trend === 'fluctuating') {
+        trendBadge = '<span class="inline-flex items-center text-xs font-semibold text-amber-600 dark:text-amber-400">&darr; Fluctuating</span>';
+      } else if (summary.trend === 'steady') {
+        trendBadge = '<span class="inline-flex items-center text-xs font-semibold text-zinc-600 dark:text-zinc-400">&rarr; Steady</span>';
+      } else {
+        trendBadge = '<span class="inline-flex items-center text-xs text-zinc-400 dark:text-zinc-500">No Trend</span>';
+      }
+
+      const recentChips = (summary.recentScores && summary.recentScores.length > 0)
+        ? summary.recentScores.map((s) => `<span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 font-mono text-[11px] text-zinc-700 dark:text-zinc-300 font-semibold">${s}</span>`).join('')
+        : '<span class="text-xs text-zinc-400 dark:text-zinc-500">No recent sessions</span>';
+
+      return `
+        <div class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 flex flex-col justify-between shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+          <div>
+            <!-- Header: Title and CHC tag -->
+            <div class="mb-4">
+              <h3 class="font-heading font-extrabold text-base text-zinc-950 dark:text-white">
+                ${summary.displayTitle}
+              </h3>
+              <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-0.5">
+                ${summary.chcReference}
+              </p>
+            </div>
+
+            <!-- Central Score and Tier -->
+            <div class="flex items-baseline justify-between gap-2 mb-4 pb-4 border-b border-zinc-100 dark:border-zinc-800/80">
+              <div>
+                <div class="text-3xl sm:text-4xl font-heading font-black text-zinc-950 dark:text-white tracking-tight">
+                  ${scoreDisplay}
+                  ${hasSessions ? '<span class="text-xs font-mono text-zinc-400 font-normal">/ 100</span>' : ''}
+                </div>
+                <div class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 mt-0.5">
+                  Rolling Median Score
+                </div>
+              </div>
+              <div class="flex flex-col items-end gap-1">
+                ${tierBadge}
+                ${trendBadge}
+              </div>
+            </div>
+
+            <!-- Meta details: Personal Best & Confidence -->
+            <div class="space-y-1.5 mb-4 text-xs">
+              <div class="flex items-center justify-between text-zinc-600 dark:text-zinc-400">
+                <span>Personal Best</span>
+                <span class="font-mono font-bold text-zinc-900 dark:text-zinc-100">${hasSessions ? summary.personalBest + ' pts' : '--'}</span>
+              </div>
+              <div class="flex items-center justify-between text-zinc-600 dark:text-zinc-400">
+                <span>Confidence / Sample</span>
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">${summary.confidenceLabel}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Recent Score Pills -->
+          <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div class="text-[11px] font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1.5">
+              Recent Session Scores
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              ${recentChips}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderActivityLog(profile: any) {
+    const container = document.getElementById('activity-log-container');
+    if (!container) return;
+
+    // Combine recent games and assessments sorted by completedAt descending
+    const items: Array<{
+      type: 'assessment' | 'game';
+      completedAt: string;
+      title: string;
+      sub: string;
+      scorePill: string;
+      metricPill: string;
+      dateStr: string;
+    }> = [];
+
+    if (Array.isArray(profile.assessments)) {
+      profile.assessments.forEach((asm: AssessmentRecord) => {
+        const title = ASSESSMENT_LABELS[asm.assessmentType] || 'Formal Assessment';
+        items.push({
+          type: 'assessment',
+          completedAt: asm.completedAt,
+          title,
+          sub: `IRT 2PL &bull; ${asm.rawScore}/${asm.totalQuestions} items &bull; ${formatDuration(asm.durationSeconds)}`,
+          scorePill: `IQ ${asm.iqEstimate}`,
+          metricPill: `${asm.percentile.toFixed(1)}th %ile`,
+          dateStr: formatDateTime(asm.completedAt),
+        });
+      });
+    }
+
+    if (Array.isArray(profile.games)) {
+      profile.games.forEach((gm: GameSessionRecord) => {
+        const gameMeta = GAME_LABELS[gm.gameId] || { name: gm.gameId, iconBg: 'bg-zinc-600', route: '/games' };
+        const score = gm.metrics?.performanceScore ?? 0;
+        const accuracy = typeof gm.metrics?.accuracy === 'number' ? Math.round(gm.metrics.accuracy * 100) : null;
+        let metricInfo = accuracy !== null ? `${accuracy}% acc` : 'Drill';
+        if (gm.metrics?.medianRT) {
+          metricInfo += ` &bull; ${gm.metrics.medianRT}ms RT`;
+        } else if (gm.metrics?.maxSpan) {
+          metricInfo += ` &bull; Span ${gm.metrics.maxSpan}`;
+        }
+
+        items.push({
+          type: 'game',
+          completedAt: gm.completedAt,
+          title: gameMeta.name,
+          sub: `Mode: ${gm.mode} &bull; ${metricInfo} &bull; ${formatDuration(gm.durationSeconds)}`,
+          scorePill: `Score: ${score}`,
+          metricPill: accuracy !== null ? `${accuracy}% Acc` : 'Complete',
+          dateStr: formatDateTime(gm.completedAt),
+        });
+      });
+    }
+
+    items.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
+
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 text-center text-xs text-zinc-500 dark:text-zinc-400">
+          No activity logs recorded yet.
+        </div>
+      `;
+      return;
+    }
+
+    const displayItems = items.slice(0, 15);
+    container.innerHTML = displayItems.map((item) => {
+      const isAsm = item.type === 'assessment';
+      return `
+        <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+          <div class="flex items-center gap-3.5">
+            <div class="w-10 h-10 rounded-xl ${isAsm ? 'bg-blue-600 text-white' : 'bg-purple-600 text-white'} flex items-center justify-center font-bold text-xs shrink-0">
+              ${isAsm ? 'IQ' : 'DRL'}
+            </div>
+            <div>
+              <div class="font-heading font-bold text-sm text-zinc-950 dark:text-white">
+                ${item.title}
+              </div>
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                ${item.sub}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+            <span class="px-2.5 py-1 rounded-lg ${isAsm ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'} font-mono font-bold text-xs">
+              ${item.scorePill}
+            </span>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              ${item.dateStr}
+            </span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderProfileDashboard() {
+    const profile = getProfile();
+    const hasAssessments = profile.assessments && profile.assessments.length > 0;
+    const hasGames = profile.games && profile.games.length > 0;
+    const emptyContainer = document.getElementById('profile-empty-state');
+    const activeContainer = document.getElementById('profile-active-state');
+
+    if (!hasAssessments && !hasGames) {
+      if (emptyContainer) emptyContainer.classList.remove('hidden');
+      if (activeContainer) activeContainer.classList.add('hidden');
+      return;
+    }
+
+    if (emptyContainer) emptyContainer.classList.add('hidden');
+    if (activeContainer) activeContainer.classList.remove('hidden');
+
+    // 1. Populate Assessment Section
+    renderAssessmentSection(profile.assessments || []);
+
+    // 2. Populate Domain Activity Groupings
+    renderDomainSummaries();
+
+    // 3. Populate Recent Activity Feed
+    renderActivityLog(profile);
+  }
+
+  function initActionListeners() {
+    // 1. Export JSON Backup
+    const btnExport = document.getElementById('btn-export-json');
+    if (btnExport) {
+      btnExport.addEventListener('click', () => {
+        try {
+          const jsonStr = exportProfileJson();
+          const today = new Date().toISOString().split('T')[0];
+          const filename = `freeiqexam-profile-${today}.json`;
+          const blob = new Blob([jsonStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast('Profile successfully exported to ' + filename);
+        } catch (e: any) {
+          showToast('Failed to export profile: ' + (e?.message || 'Unknown error'), true);
+        }
+      });
+    }
+
+    // 2. Print / PDF Report
+    const btnPrint = document.getElementById('btn-print-report');
+    if (btnPrint) {
+      btnPrint.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    // 3. Import JSON Backup
+    const btnImport = document.getElementById('btn-import-json');
+    const fileInput = document.getElementById('file-import-input') as HTMLInputElement | null;
+
+    if (btnImport && fileInput) {
+      btnImport.addEventListener('click', () => {
+        fileInput.value = '';
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target?.result;
+          if (typeof content !== 'string') {
+            showToast('Unable to read backup file.', true);
+            return;
+          }
+
+          const result = importProfileJson(content);
+          if (result.success) {
+            showToast(`Successfully restored ${result.importedCount} record${result.importedCount === 1 ? '' : 's'} (${result.duplicateCount} duplicate${result.duplicateCount === 1 ? '' : 's'} skipped).`);
+            renderProfileDashboard();
+          } else {
+            showToast(`Import failed: ${result.error || 'Invalid file format.'}`, true);
+          }
+        };
+
+        reader.onerror = () => {
+          showToast('Failed reading local file.', true);
+        };
+
+        reader.readAsText(file);
+      });
+    }
+
+    // 4. Clear All Data Modal
+    const btnClear = document.getElementById('btn-clear-data');
+    const modal = document.getElementById('modal-confirm-clear');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+    const dialogBox = document.getElementById('modal-dialog-box');
+
+    function openModal() {
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100', 'pointer-events-auto');
+        if (dialogBox) {
+          dialogBox.classList.remove('scale-95');
+          dialogBox.classList.add('scale-100');
+        }
+        modal.setAttribute('aria-hidden', 'false');
+        if (modalCancelBtn) modalCancelBtn.focus();
+      });
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('opacity-100', 'pointer-events-auto');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      if (dialogBox) {
+        dialogBox.classList.remove('scale-100');
+        dialogBox.classList.add('scale-95');
+      }
+      modal.setAttribute('aria-hidden', 'true');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        if (btnClear) btnClear.focus();
+      }, 200);
+    }
+
+    if (btnClear) btnClear.addEventListener('click', openModal);
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+    if (modalCancelBtn) modalCancelBtn.addEventListener('click', closeModal);
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    if (modalConfirmBtn) {
+      modalConfirmBtn.addEventListener('click', () => {
+        clearProfile();
+        closeModal();
+        renderProfileDashboard();
+        showToast('All local cognitive profile data has been cleared.');
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderProfileDashboard();
+    initActionListeners();
+  });
+</script>

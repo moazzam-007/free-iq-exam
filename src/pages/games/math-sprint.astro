@@ -4,7 +4,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 
 const title = "Speed Math Sprint - Mental Arithmetic Drill | FreeIQExam";
-const description = "60-second rapid mental math sprint. Solve escalating equations under time pressure to train quantitative reasoning speed (Gq) and working memory.";
+const description = "Test quantitative fluency (Gq) and cognitive processing speed (Gs). Solve rapid arithmetic equations within 60 seconds across dynamic difficulty tiers.";
 ---
 
 <Layout title={title} description={description}>
@@ -31,23 +31,32 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
         </h1>
       </div>
 
-      <!-- Stat HUD -->
-      <div class="flex items-center gap-3 font-mono text-xs sm:text-sm">
-        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
-          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Level</div>
-          <div id="hud-level" class="font-bold text-emerald-600 dark:text-emerald-400 text-base">Tier 1</div>
+      <!-- Stat HUD + Help Button -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <button
+          id="btn-how-to-play"
+          type="button"
+          aria-label="How to play instructions"
+          class="min-h-[44px] px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800/90 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-sans font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <span class="font-bold font-mono text-emerald-600 dark:text-emerald-400">(?)</span>
+          <span>How to Play</span>
+        </button>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Level</div>
+          <div id="hud-level" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">Tier 1</div>
         </div>
-        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
-          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Streak</div>
-          <div id="hud-streak" class="font-bold text-amber-500 text-base">0</div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Streak</div>
+          <div id="hud-streak" class="font-bold text-amber-500 text-sm sm:text-base">0</div>
         </div>
-        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
-          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Score</div>
-          <div id="hud-score" class="font-bold text-zinc-800 dark:text-zinc-100 text-base">0</div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Score</div>
+          <div id="hud-score" class="font-bold text-zinc-800 dark:text-zinc-100 text-sm sm:text-base">0</div>
         </div>
-        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
-          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Best</div>
-          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-base">--</div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Best</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
         </div>
       </div>
     </section>
@@ -78,7 +87,7 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
         <button
           id="btn-start-game"
           type="button"
-          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
         >
           <span>Start Sprint (Space)</span>
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -100,76 +109,197 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
           </div>
         </div>
 
-        <!-- Equation Display Box -->
-        <div class="w-full max-w-lg min-h-[140px] p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 flex flex-col items-center justify-center mb-8 relative shadow-inner">
-          <!-- Streak Badge -->
-          <div id="streak-bonus-badge" class="hidden absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-300 dark:border-amber-700 text-xs font-mono font-bold animate-bounce">
-            5x Streak (+5 Bonus)
+        <!-- Problem Card -->
+        <div class="w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/80 shadow-inner flex flex-col items-center justify-center mb-8 relative">
+          <div id="streak-bonus-badge" class="hidden absolute top-3 right-4 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 animate-bounce">
+            5x Streak!
           </div>
-
-          <div id="equation-text" class="font-heading font-extrabold text-4xl sm:text-5xl text-zinc-950 dark:text-white tracking-wide">
-            Ready
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-2">Arithmetic Challenge</div>
+          <div id="equation-text" class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight text-center">
+            -- + -- = ?
           </div>
         </div>
 
-        <!-- 4 Multiple Choice Answer Options -->
+        <!-- 4 Option Response Buttons -->
         <div class="w-full max-w-lg grid grid-cols-2 gap-4">
-          {[0, 1, 2, 3].map((optIdx) => (
+          {[0, 1, 2, 3].map((idx) => (
             <button
-              id={`btn-opt-${optIdx}`}
+              id={`btn-opt-${idx}`}
               type="button"
-              class="min-h-[56px] py-4 px-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500 text-zinc-900 dark:text-zinc-100 font-heading font-bold text-xl sm:text-2xl transition-all duration-100 hover:scale-102 active:scale-95 flex items-center justify-between shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+              class="min-h-[56px] py-4 px-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500 text-zinc-900 dark:text-zinc-100 font-heading font-bold text-xl sm:text-2xl transition-all duration-100 hover:scale-102 active:scale-95 flex items-center justify-between shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
             >
-              <span id={`opt-text-${optIdx}`}>-</span>
-              <span class="text-xs font-mono font-medium text-zinc-400 dark:text-zinc-500 uppercase">[{optIdx + 1}]</span>
+              <span id={`opt-text-${idx}`}>-</span>
+              <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500 font-normal">[{idx + 1}]</span>
             </button>
           ))}
         </div>
 
         <!-- Feedback Toast -->
         <div id="feedback-toast" role="status" aria-live="polite" class="h-6 mt-4 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
-          Status
+          Result feedback
         </div>
       </div>
     </div>
 
+    <!-- How to Play Instructions Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4"
+    >
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-left relative max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          aria-label="Close how to play modal"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <div>
+            <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+              How to Play Math Sprint
+            </h2>
+            <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Quantitative & Processing Speed (Gq / Gs)</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Game Mechanics</h4>
+            <p>1. You have exactly <strong>60 seconds</strong> to solve as many arithmetic equations as possible.</p>
+            <p>2. Select the correct answer from 4 multiple-choice options by tapping or pressing keys <strong>[1], [2], [3], or [4]</strong>.</p>
+            <p>3. Correct answers award points and build your streak; consecutive streaks trigger bonus multipliers.</p>
+            <p>4. Complexity scales through 4 difficulty tiers from single-digit addition up to mental division and squares.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Keyboard Controls</h4>
+            <ul class="space-y-1 text-xs font-mono">
+              <li>• <span class="font-bold text-zinc-900 dark:text-white">[Space]</span> : Start 60s sprint / Restart</li>
+              <li>• <span class="font-bold text-emerald-600 dark:text-emerald-400">[1], [2], [3], [4]</span> : Select corresponding answer option</li>
+              <li>• <span class="font-bold text-zinc-900 dark:text-white">[Escape]</span> : Dismiss dialog</li>
+            </ul>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-xs">
+            <span class="font-bold text-emerald-950 dark:text-emerald-200">Scientific Foundation:</span>
+            <span class="text-emerald-900 dark:text-emerald-300 ml-1">Rapid Arithmetic Fluency & Numerical Working Memory paradigms. Exercises mathematical fact retrieval, quantitative fluency (Gq), and mental processing speed (Gs).</span>
+          </div>
+        </div>
+
+        <button
+          id="btn-close-how-got-it"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-bold text-sm shadow-md transition-all duration-150 hover:scale-101 active:scale-99 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <span>Got it, Let's Play</span>
+        </button>
+      </div>
+    </div>
+
     <!-- End of Round Modal -->
-    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
-      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center">
-        <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
+    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center relative max-h-[90vh] overflow-y-auto">
+        <!-- Top Right Dismiss Button -->
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          aria-label="Close summary modal"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3">
           <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.004 0V4.875A2.625 2.625 0 0011.625 2.25h-.75A2.625 2.625 0 008.25 4.875v7.5" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
 
-        <h3 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
-          Sprint Completed!
-        </h3>
-        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-6">
-          Quantitative Speed Breakdown
+        <h2 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Sprint Finished!
+        </h2>
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">
+          60-Second Quantitative Fluency Summary
         </p>
 
-        <!-- Stats Grid (4 items) -->
-        <div class="grid grid-cols-2 gap-3 mb-6 font-mono text-center">
-          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
-            <div class="text-zinc-400 text-[10px] uppercase">Final Score</div>
-            <div id="modal-score" class="font-bold text-xl text-emerald-600 dark:text-emerald-400">0</div>
+        <!-- Standardized 0-100 Task Performance Score -->
+        <div class="mb-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800">
+          <div class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Task Performance Score
           </div>
-          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+          <div class="flex items-baseline justify-center gap-1.5 my-1">
+            <span id="modal-perf-score" class="text-4xl sm:text-5xl font-extrabold font-heading text-zinc-950 dark:text-white">0</span>
+            <span class="text-sm font-mono text-zinc-400">/ 100</span>
+          </div>
+          <div id="modal-tier-badge" class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+            <span id="modal-tier-name">Solid Baseline</span>
+          </div>
+          <p id="modal-tier-desc" class="mt-2 text-xs text-zinc-600 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed"></p>
+        </div>
+
+        <!-- Paradigm-Specific Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Solved</div>
+            <div id="modal-attempted" class="font-bold text-base text-zinc-900 dark:text-white">0</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
             <div class="text-zinc-400 text-[10px] uppercase">Accuracy</div>
-            <div id="modal-acc" class="font-bold text-xl text-zinc-900 dark:text-white">0%</div>
+            <div id="modal-acc" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0%</div>
           </div>
-          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
-            <div class="text-zinc-400 text-[10px] uppercase">Attempted</div>
-            <div id="modal-attempted" class="font-bold text-xl text-indigo-600 dark:text-indigo-400">0</div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Median Pace</div>
+            <div id="modal-pace" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0.0s</div>
           </div>
-          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
             <div class="text-zinc-400 text-[10px] uppercase">Best Streak</div>
-            <div id="modal-streak" class="font-bold text-xl text-amber-500">0</div>
+            <div id="modal-streak" class="font-bold text-base text-amber-500">0</div>
           </div>
         </div>
 
-        <div id="modal-best-alert" class="hidden mb-6 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+        <!-- Transparent Scoring Formula Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Scoring Breakdown
+          </div>
+          <p class="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold mb-1">
+            Score = (Solved Items * 3.0, max 75) + Accuracy Bonus (up to 25 pts)
+          </p>
+          <p id="modal-formula-calc" class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400"></p>
+        </div>
+
+        <!-- Scientific Paradigm Attribution Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Scientific Foundation
+          </div>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400">
+            Rapid Arithmetic Fluency & Numerical Working Memory paradigms. Quantitative Activities (Gq) & Processing Speed (Gs).
+          </p>
+        </div>
+
+        <!-- Practice Effects Disclaimer -->
+        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic mb-5 leading-normal">
+          Performance scores reflect task-specific operational fluency and response speed under practice effects, not innate general intelligence (g). Repeated drills refine cognitive agility.
+        </p>
+
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
           New Personal Best Record!
         </div>
 
@@ -177,13 +307,13 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
           <button
             id="btn-modal-restart"
             type="button"
-            class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
           >
             Sprint Again
           </button>
           <a
             href="/games"
-            class="px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors"
+            class="min-h-[44px] px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
           >
             Hub
           </a>
@@ -195,10 +325,13 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
   <Footer />
 </Layout>
 
-<script is:inline>
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../utils/profileStore';
+
   (function() {
     var TOTAL_DURATION_MS = 60000;
     var STORAGE_KEY = 'fiq_game_math_best';
+    var STORAGE_KEY_V2 = 'fiq_game_mathsprint_best';
 
     var score = 0;
     var streak = 0;
@@ -207,22 +340,29 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
     var wrongCount = 0;
     var isRunning = false;
     var startTime = 0;
-    var timerAnimFrame = null;
-    var currentProblem = null;
+    var problemStartTime = 0;
+    var responseTimes: number[] = [];
+    var timerAnimFrame: any = null;
+    var currentProblem: any = null;
     var lastDisplayedTenth = -1;
 
     // DOM Elements
-    var hudLevel = document.getElementById('hud-level');
-    var hudStreak = document.getElementById('hud-streak');
-    var hudScore = document.getElementById('hud-score');
-    var hudBest = document.getElementById('hud-best');
-    var startOverlay = document.getElementById('start-overlay');
-    var btnStartGame = document.getElementById('btn-start-game');
-    var gameArenaContent = document.getElementById('game-arena-content');
-    var sprintTimerText = document.getElementById('sprint-timer-text');
-    var sprintProgressBar = document.getElementById('sprint-progress-bar');
-    var equationText = document.getElementById('equation-text');
-    var streakBonusBadge = document.getElementById('streak-bonus-badge');
+    var hudLevel = document.getElementById('hud-level')!;
+    var hudStreak = document.getElementById('hud-streak')!;
+    var hudScore = document.getElementById('hud-score')!;
+    var hudBest = document.getElementById('hud-best')!;
+    var btnHowToPlay = document.getElementById('btn-how-to-play')!;
+    var modalHowToPlay = document.getElementById('modal-how-to-play')!;
+    var btnCloseHowModal = document.getElementById('btn-close-how-modal')!;
+    var btnCloseHowGotIt = document.getElementById('btn-close-how-got-it')!;
+
+    var startOverlay = document.getElementById('start-overlay')!;
+    var btnStartGame = document.getElementById('btn-start-game')!;
+    var gameArenaContent = document.getElementById('game-arena-content')!;
+    var sprintTimerText = document.getElementById('sprint-timer-text')!;
+    var sprintProgressBar = document.getElementById('sprint-progress-bar')!;
+    var equationText = document.getElementById('equation-text')!;
+    var streakBonusBadge = document.getElementById('streak-bonus-badge')!;
     var feedbackToast = document.getElementById('feedback-toast');
 
     if (gameArenaContent) {
@@ -230,35 +370,46 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
     }
 
     var optButtons = [
-      document.getElementById('btn-opt-0'),
-      document.getElementById('btn-opt-1'),
-      document.getElementById('btn-opt-2'),
-      document.getElementById('btn-opt-3')
+      document.getElementById('btn-opt-0')!,
+      document.getElementById('btn-opt-1')!,
+      document.getElementById('btn-opt-2')!,
+      document.getElementById('btn-opt-3')!
     ];
     var optTexts = [
-      document.getElementById('opt-text-0'),
-      document.getElementById('opt-text-1'),
-      document.getElementById('opt-text-2'),
-      document.getElementById('opt-text-3')
+      document.getElementById('opt-text-0')!,
+      document.getElementById('opt-text-1')!,
+      document.getElementById('opt-text-2')!,
+      document.getElementById('opt-text-3')!
     ];
 
-    var modalEndRound = document.getElementById('modal-end-round');
-    var modalScore = document.getElementById('modal-score');
-    var modalAcc = document.getElementById('modal-acc');
-    var modalAttempted = document.getElementById('modal-attempted');
-    var modalStreak = document.getElementById('modal-streak');
-    var modalBestAlert = document.getElementById('modal-best-alert');
-    var btnModalRestart = document.getElementById('btn-modal-restart');
+    var modalEndRound = document.getElementById('modal-end-round')!;
+    var btnCloseEndModal = document.getElementById('btn-close-end-modal')!;
+    var modalPerfScore = document.getElementById('modal-perf-score')!;
+    var modalTierBadge = document.getElementById('modal-tier-badge')!;
+    var modalTierName = document.getElementById('modal-tier-name')!;
+    var modalTierDesc = document.getElementById('modal-tier-desc')!;
+    var modalAcc = document.getElementById('modal-acc')!;
+    var modalAttempted = document.getElementById('modal-attempted')!;
+    var modalPace = document.getElementById('modal-pace')!;
+    var modalStreak = document.getElementById('modal-streak')!;
+    var modalFormulaCalc = document.getElementById('modal-formula-calc')!;
+    var modalBestAlert = document.getElementById('modal-best-alert')!;
+    var btnModalRestart = document.getElementById('btn-modal-restart')!;
+
+    function calculateMedian(arr: number[]): number {
+      if (!arr || arr.length === 0) return 0;
+      var sorted = arr.slice().sort(function(a, b) { return a - b; });
+      var mid = Math.floor(sorted.length / 2);
+      return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
 
     function loadBestScore() {
       try {
-        var saved = localStorage.getItem(STORAGE_KEY);
+        var saved = localStorage.getItem(STORAGE_KEY_V2) || localStorage.getItem(STORAGE_KEY);
         if (saved) {
           hudBest.textContent = saved;
         }
-      } catch (e) {
-        // localStorage unavailable
-      }
+      } catch (e) {}
     }
     loadBestScore();
 
@@ -272,18 +423,18 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
     function updateHud() {
       var tier = getTier();
       hudLevel.textContent = 'Tier ' + tier;
-      hudStreak.textContent = streak;
-      hudScore.textContent = score;
+      hudStreak.textContent = streak.toString();
+      hudScore.textContent = score.toString();
     }
 
-    function showFeedback(text, isPositive) {
+    function showFeedback(text: string, isPositive: boolean) {
       if (!feedbackToast) return;
       feedbackToast.textContent = (isPositive ? '✓ ' : '✗ ') + text;
       feedbackToast.className = 'h-6 mt-4 text-xs font-mono font-semibold transition-opacity ' +
         (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
       feedbackToast.style.opacity = '1';
       setTimeout(function() {
-        feedbackToast.style.opacity = '0';
+        if (feedbackToast) feedbackToast.style.opacity = '0';
       }, 600);
     }
 
@@ -293,10 +444,9 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
       var ans = 0;
 
       if (tier === 1) {
-        // Level 1: Single-digit addition/subtraction
         var op = Math.random() < 0.5 ? '+' : '-';
         if (op === '+') {
-          var a = Math.floor(Math.random() * 8) + 2; // 2..9
+          var a = Math.floor(Math.random() * 8) + 2;
           var b = Math.floor(Math.random() * 8) + 2;
           expr = a + ' + ' + b;
           ans = a + b;
@@ -308,7 +458,6 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
           ans = res;
         }
       } else if (tier === 2) {
-        // Level 2: Two-digit +/- single-digit, or single-digit product
         var roll = Math.random();
         if (roll < 0.4) {
           var a = Math.floor(Math.random() * 70) + 15;
@@ -321,17 +470,16 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
           expr = a + ' - ' + b;
           ans = a - b;
         } else {
-          var a = Math.floor(Math.random() * 7) + 3; // 3..9
+          var a = Math.floor(Math.random() * 7) + 3;
           var b = Math.floor(Math.random() * 8) + 2;
           expr = a + ' × ' + b;
           ans = a * b;
         }
       } else if (tier === 3) {
-        // Level 3: Two-digit * single-digit, 2-digit +/- 2-digit, mixed
         var roll = Math.random();
         if (roll < 0.4) {
-          var a = Math.floor(Math.random() * 15) + 11; // 11..25
-          var b = Math.floor(Math.random() * 6) + 3; // 3..8
+          var a = Math.floor(Math.random() * 15) + 11;
+          var b = Math.floor(Math.random() * 6) + 3;
           expr = a + ' × ' + b;
           ans = a * b;
         } else if (roll < 0.7) {
@@ -347,17 +495,16 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
           ans = a - b;
         }
       } else {
-        // Level 4: Mental division, squares, combined
         var roll = Math.random();
         if (roll < 0.35) {
-          var b = Math.floor(Math.random() * 7) + 3; // 3..9
-          var res = Math.floor(Math.random() * 12) + 6; // 6..17
+          var b = Math.floor(Math.random() * 7) + 3;
+          var res = Math.floor(Math.random() * 12) + 6;
           var a = b * res;
           var c = Math.floor(Math.random() * 12) + 3;
           expr = a + ' ÷ ' + b + ' + ' + c;
           ans = res + c;
         } else if (roll < 0.7) {
-          var a = Math.floor(Math.random() * 8) + 11; // 11..18
+          var a = Math.floor(Math.random() * 8) + 11;
           expr = a + '²';
           ans = a * a;
         } else {
@@ -369,7 +516,6 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
         }
       }
 
-      // Generate 3 unique plausible distractors
       var options = [ans];
       var offsets = [-1, 1, -2, 2, -3, 3, -10, 10, -5, 5, -4, 4];
       offsets.sort(function() { return 0.5 - Math.random(); });
@@ -382,7 +528,6 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
         if (options.length === 4) break;
       }
 
-      // If still less than 4, fill
       var extra = 1;
       while (options.length < 4) {
         var cand = ans + extra;
@@ -390,7 +535,6 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
         extra += 2;
       }
 
-      // Shuffle options
       options.sort(function() { return 0.5 - Math.random(); });
 
       return {
@@ -403,15 +547,19 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
     function renderProblem() {
       currentProblem = generateProblem();
       equationText.textContent = currentProblem.expr + ' = ?';
+      problemStartTime = performance.now();
 
       for (var i = 0; i < 4; i++) {
         optTexts[i].textContent = currentProblem.options[i];
-        optButtons[i].className = 'min-h-[56px] py-4 px-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500 text-zinc-900 dark:text-zinc-100 font-heading font-bold text-xl sm:text-2xl transition-all duration-100 hover:scale-102 active:scale-95 flex items-center justify-between shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600';
+        optButtons[i].className = 'min-h-[56px] py-4 px-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500 text-zinc-900 dark:text-zinc-100 font-heading font-bold text-xl sm:text-2xl transition-all duration-100 hover:scale-102 active:scale-95 flex items-center justify-between shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer';
       }
     }
 
-    function handleChoice(optIdx) {
+    function handleChoice(optIdx: number) {
       if (!isRunning || !currentProblem) return;
+      var rt = performance.now() - problemStartTime;
+      responseTimes.push(rt);
+
       var chosenVal = currentProblem.options[optIdx];
       var btn = optButtons[optIdx];
 
@@ -421,7 +569,6 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
         streak++;
         if (streak > longestStreak) longestStreak = streak;
 
-        // Check for 5-streak bonus
         if (streak % 5 === 0) {
           score += 5;
           streakBonusBadge.textContent = streak + 'x Streak (+5 Bonus)';
@@ -486,6 +633,7 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
       longestStreak = 0;
       correctCount = 0;
       wrongCount = 0;
+      responseTimes = [];
       lastDisplayedTenth = -1;
       startTime = performance.now();
 
@@ -493,6 +641,10 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
       startOverlay.classList.add('hidden');
       modalEndRound.classList.add('hidden');
       modalEndRound.classList.remove('flex');
+      if (modalHowToPlay) {
+        modalHowToPlay.classList.add('hidden');
+        modalHowToPlay.classList.remove('flex');
+      }
 
       updateHud();
       renderProblem();
@@ -505,27 +657,71 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
       if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
 
       var totalAttempted = correctCount + wrongCount;
-      var accuracy = totalAttempted > 0 ? Math.round((correctCount / totalAttempted) * 100) : 0;
+      var accuracy = totalAttempted > 0 ? (correctCount / totalAttempted) : 0;
+      var accuracyPct = Math.round(accuracy * 100);
+      var medianRT = calculateMedian(responseTimes);
 
+      // Scoring formula:
+      // throughput = correctCount (in 60 seconds)
+      // accuracy = correctCount / Math.max(1, correctCount + wrongCount)
+      // baseScore = Math.min(75, Math.round(throughput * 3.0))
+      // accuracyBonus = accuracy >= 0.90 ? 25 : Math.round(accuracy * 20)
+      // performanceScore = Math.min(100, Math.max(0, baseScore + accuracyBonus))
+      var baseScore = Math.min(75, Math.round(correctCount * 3.0));
+      var accuracyBonus = accuracy >= 0.90 ? 25 : Math.round(accuracy * 20);
+      var performanceScore = Math.min(100, Math.max(0, baseScore + accuracyBonus));
+
+      // Save to client profile storage
+      try {
+        saveGameRecord({
+          gameId: 'math-sprint',
+          durationSeconds: 60,
+          mode: 'standard',
+          metrics: {
+            performanceScore: performanceScore,
+            accuracy: parseFloat(accuracy.toFixed(4)),
+            trialsCompleted: totalAttempted,
+            correctCount: correctCount,
+            errorCount: wrongCount,
+            medianRT: Math.round(medianRT),
+            bestStreak: longestStreak,
+          },
+        });
+      } catch (err) {
+        console.error('Failed to save game record:', err);
+      }
+
+      // Check legacy and HUD best score
       var savedBest = 0;
       try {
-        savedBest = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+        savedBest = parseInt(localStorage.getItem(STORAGE_KEY_V2) || localStorage.getItem(STORAGE_KEY) || '0', 10);
       } catch (e) {}
 
-      var isNewBest = score > savedBest;
+      var isNewBest = performanceScore > savedBest;
       if (isNewBest) {
         try {
-          localStorage.setItem(STORAGE_KEY, score.toString());
+          localStorage.setItem(STORAGE_KEY, performanceScore.toString());
+          localStorage.setItem(STORAGE_KEY_V2, performanceScore.toString());
           loadBestScore();
         } catch (e) {}
       }
 
-      modalScore.textContent = score;
-      modalAcc.textContent = accuracy + '%';
-      modalAttempted.textContent = totalAttempted;
-      modalStreak.textContent = longestStreak;
+      // Render Modal Elements
+      modalPerfScore.textContent = performanceScore.toString();
 
-      if (isNewBest && score > 0) {
+      var tier = getPerformanceTier(performanceScore);
+      modalTierBadge.className = 'mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ' + tier.badgeClass;
+      modalTierName.textContent = tier.tier;
+      modalTierDesc.textContent = tier.description;
+
+      modalAttempted.textContent = correctCount + ' solved';
+      modalAcc.textContent = accuracyPct + '%';
+      modalPace.textContent = (medianRT / 1000).toFixed(1) + 's / item';
+      modalStreak.textContent = longestStreak.toString();
+
+      modalFormulaCalc.textContent = '(' + correctCount + ' Solved * 3.0 = ' + baseScore + ' pts) + (Accuracy Bonus = ' + accuracyBonus + ' pts) = ' + performanceScore + ' pts';
+
+      if (isNewBest && performanceScore > 0) {
         modalBestAlert.classList.remove('hidden');
       } else {
         modalBestAlert.classList.add('hidden');
@@ -537,6 +733,46 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
         modalEndRound.focus();
       } catch (e) {}
     }
+
+    function openHowModal() {
+      modalHowToPlay.classList.remove('hidden');
+      modalHowToPlay.classList.add('flex');
+      modalHowToPlay.focus();
+    }
+
+    function closeHowModal() {
+      modalHowToPlay.classList.add('hidden');
+      modalHowToPlay.classList.remove('flex');
+    }
+
+    function closeEndModal() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startOverlay.classList.remove('hidden');
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+      if (btnStartGame) btnStartGame.focus();
+    }
+
+    // Modal event listeners
+    btnHowToPlay.addEventListener('click', openHowModal);
+    btnCloseHowModal.addEventListener('click', closeHowModal);
+    btnCloseHowGotIt.addEventListener('click', function() {
+      closeHowModal();
+      if (btnStartGame) btnStartGame.focus();
+    });
+
+    modalHowToPlay.addEventListener('click', function(e) {
+      if (e.target === modalHowToPlay) {
+        closeHowModal();
+      }
+    });
+
+    btnCloseEndModal.addEventListener('click', closeEndModal);
+    modalEndRound.addEventListener('click', function(e) {
+      if (e.target === modalEndRound) {
+        closeEndModal();
+      }
+    });
 
     // Bind option buttons
     optButtons.forEach(function(btn, idx) {
@@ -554,14 +790,27 @@ const description = "60-second rapid mental math sprint. Solve escalating equati
     window.addEventListener('keydown', function(e) {
       if (e.repeat) return;
       var key = e.key;
-      if (key === 'Escape' && !modalEndRound.classList.contains('hidden')) {
-        modalEndRound.classList.add('hidden');
-        modalEndRound.classList.remove('flex');
-        if (startOverlay) {
-          startOverlay.classList.remove('hidden');
-          if (btnStartGame) btnStartGame.focus();
+
+      var isHowOpen = !modalHowToPlay.classList.contains('hidden');
+      var isEndOpen = !modalEndRound.classList.contains('hidden');
+
+      if (key === 'Escape') {
+        if (isHowOpen) {
+          closeHowModal();
+          return;
         }
-      } else if (key === ' ' && !isRunning && modalEndRound.classList.contains('hidden')) {
+        if (isEndOpen) {
+          closeEndModal();
+          return;
+        }
+      }
+
+      // Suppress game hotkeys while any modal is open
+      if (isHowOpen || isEndOpen) {
+        return;
+      }
+
+      if (key === ' ' && !isRunning) {
         e.preventDefault();
         startSprint();
       } else if (key === '1') {

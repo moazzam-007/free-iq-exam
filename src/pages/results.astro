@@ -35,25 +35,26 @@ const description = "View your estimated IQ score, 95% posterior credible interv
         </span>
       </a>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-3">
         <a
           href="/quick-test"
           id="btn-quick-test-top"
-          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+          class="hidden sm:inline-flex px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
         >
           Quick Test (10 min)
         </a>
         <a
           href="/test"
           id="btn-retake-top"
-          class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+          class="px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
         >
-          Retake Full Test
+          <span class="hidden sm:inline">Retake Full Test</span>
+          <span class="sm:hidden">Retake</span>
         </a>
         <button
           id="btn-print"
           type="button"
-          class="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center gap-1.5"
+          class="px-3 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center gap-1.5"
         >
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -716,10 +717,44 @@ const description = "View your estimated IQ score, 95% posterior credible interv
       const thetaDisplay        = document.getElementById('theta-display');
       const classificationBadge = document.getElementById('classification-badge');
 
-      if (scoreDisplay) scoreDisplay.textContent = String(result.iqEstimate);
+      // Animate score and percentile reveal
+      const targetIq = result.iqEstimate;
+      const targetPercentile = result.percentile;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!prefersReducedMotion && scoreDisplay) {
+        const duration = 1200;
+        const startTime = performance.now();
+        const startIq = Math.max(60, targetIq - 25);
+
+        function animateScore(now: number) {
+          const elapsed = now - startTime;
+          const progress = Math.min(1, elapsed / duration);
+          // easeOutCubic
+          const ease = 1 - Math.pow(1 - progress, 3);
+          const currentIq = Math.round(startIq + (targetIq - startIq) * ease);
+          if (scoreDisplay) scoreDisplay.textContent = String(currentIq);
+
+          if (percentileDisplay) {
+            const currentPct = (targetPercentile * ease).toFixed(1);
+            percentileDisplay.textContent = `${currentPct}%`;
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(animateScore);
+          } else {
+            if (scoreDisplay) scoreDisplay.textContent = String(targetIq);
+            if (percentileDisplay) percentileDisplay.textContent = `${targetPercentile.toFixed(1)}%`;
+          }
+        }
+        requestAnimationFrame(animateScore);
+      } else {
+        if (scoreDisplay) scoreDisplay.textContent = String(targetIq);
+        if (percentileDisplay) percentileDisplay.textContent = `${targetPercentile.toFixed(1)}%`;
+      }
+
       if (ciDisplay) ciDisplay.textContent = `${result.confidenceInterval[0]} - ${result.confidenceInterval[1]}`;
       if (semDisplay) semDisplay.textContent = String((result.sem * 15).toFixed(1));
-      if (percentileDisplay) percentileDisplay.textContent = `${result.percentile.toFixed(1)}%`;
       const percentileSubtext = document.getElementById('percentile-subtext');
       if (percentileSubtext) percentileSubtext.textContent = 'Exceeds ' + result.percentile.toFixed(1) + '% of population';
       if (thetaDisplay) thetaDisplay.textContent = (result.theta >= 0 ? '+' : '') + result.theta.toFixed(2);

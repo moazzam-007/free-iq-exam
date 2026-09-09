@@ -1,0 +1,715 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Flanker Direction Blitz - Processing Speed & Selective Attention | FreeIQExam";
+const description = "Test visual processing speed, executive conflict resolution, and distractor suppression with the Eriksen Flanker Task paradigm (Gs).";
+---
+
+<Layout title={title} description={description}>
+  <Header />
+
+  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <a href="/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Cognitive Games</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Flanker Direction Blitz</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800 mb-1.5">
+          Gs - Processing Speed
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            Flanker Direction Blitz
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 text-xs font-mono font-medium gap-1.5 cursor-pointer"
+            aria-label="How to play instructions"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+            <span>How to Play</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat HUD (4 rounded cards) -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[64px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Trial</div>
+          <div id="hud-trial" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 30</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Score</div>
+          <div id="hud-score" class="font-bold text-amber-600 dark:text-amber-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[64px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Median RT</div>
+          <div id="hud-rt" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">-- ms</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Best</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center min-h-[440px] justify-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-amber-600 dark:bg-amber-500 text-white flex items-center justify-center mb-5 shadow-lg shadow-amber-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Flanker Direction Blitz
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            A row of 5 symbols will appear. Identify the direction of the <strong>CENTER ARROW</strong> as rapidly as possible.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Ignore flanking arrows pointing in the opposite direction. 30 high-speed trials.
+          </p>
+        </div>
+
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+        >
+          <span>Start Session (Space)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content (inert while overlay active) -->
+      <div id="game-arena-content" inert class="w-full flex flex-col items-center">
+        <!-- Progress bar -->
+        <div class="w-full max-w-md h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full mb-6 overflow-hidden">
+          <div id="trial-progress" class="h-full bg-amber-500 transition-all duration-150 w-0"></div>
+        </div>
+
+        <!-- Stimulus Display Box -->
+        <div class="w-full max-w-md h-40 sm:h-48 rounded-3xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 flex flex-col items-center justify-center p-6 mb-8 shadow-inner relative">
+          <!-- Stimulus Row -->
+          <div id="stimulus-row" class="flex items-center justify-center gap-2 sm:gap-4 select-none">
+            <span class="text-4xl sm:text-5xl font-mono text-zinc-400 dark:text-zinc-500">+</span>
+          </div>
+          <!-- Fixation cross / feedback toast -->
+          <div id="feedback-cue" class="absolute bottom-3 text-xs font-mono font-medium text-zinc-400">
+            Focus on center arrow
+          </div>
+        </div>
+
+        <!-- Response Action Controls -->
+        <div class="w-full max-w-md grid grid-cols-2 gap-4">
+          <button
+            id="btn-action-left"
+            type="button"
+            class="min-h-[56px] py-4 px-6 rounded-2xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-950 dark:text-white font-heading font-bold text-lg flex items-center justify-center gap-3 transition-all duration-150 active:scale-95 shadow-sm border border-zinc-200 dark:border-zinc-700 cursor-pointer"
+          >
+            <span class="text-2xl font-mono font-black">&larr;</span>
+            <div class="text-left leading-tight">
+              <div>LEFT</div>
+              <div class="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 font-normal">Key: &larr; or A</div>
+            </div>
+          </button>
+
+          <button
+            id="btn-action-right"
+            type="button"
+            class="min-h-[56px] py-4 px-6 rounded-2xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-950 dark:text-white font-heading font-bold text-lg flex items-center justify-center gap-3 transition-all duration-150 active:scale-95 shadow-sm border border-zinc-200 dark:border-zinc-700 cursor-pointer"
+          >
+            <div class="text-right leading-tight">
+              <div>RIGHT</div>
+              <div class="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 font-normal">Key: &rarr; or D</div>
+            </div>
+            <span class="text-2xl font-mono font-black">&rarr;</span>
+          </button>
+        </div>
+
+        <p class="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 mt-4 text-center">
+          Respond as quickly and accurately as possible. Ignore flanking symbols.
+        </p>
+      </div>
+    </div>
+
+    <!-- Accessible "How to Play" Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm hidden"
+    >
+      <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
+          aria-label="Close instructions"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+            How to Play: Flanker Direction Blitz
+          </h2>
+        </div>
+
+        <div class="space-y-3 text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+          <p>
+            <strong>1. Target Identification:</strong> On each trial, a row of 5 symbols appears. Focus strictly on the <strong>CENTER</strong> arrow.
+          </p>
+          <p>
+            <strong>2. Trial Conditions:</strong>
+            <br />- <em>Congruent:</em> Flankers point same way (<code class="font-mono">&larr; &larr; &larr; &larr; &larr;</code> or <code class="font-mono">&rarr; &rarr; &rarr; &rarr; &rarr;</code>).
+            <br />- <em>Incongruent:</em> Flankers point opposite (<code class="font-mono">&rarr; &rarr; &larr; &rarr; &rarr;</code> or <code class="font-mono">&larr; &larr; &rarr; &larr; &larr;</code>).
+            <br />- <em>Neutral:</em> Flankers are neutral dashes (<code class="font-mono">- - &larr; - -</code> or <code class="font-mono">- - &rarr; - -</code>).
+          </p>
+          <p>
+            <strong>3. Controls:</strong> Press <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">ArrowLeft</kbd> or <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">A</kbd> for Left, and <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">ArrowRight</kbd> or <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">D</kbd> for Right.
+          </p>
+          <p>
+            <strong>4. Scoring:</strong> High accuracy, sub-400ms reaction times, and minimal incongruent conflict delay yield the highest performance score.
+          </p>
+        </div>
+
+        <button
+          id="btn-confirm-how"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 cursor-pointer"
+        >
+          Got it, Let's Play
+        </button>
+      </div>
+    </div>
+
+    <!-- Accessible End of Round Modal -->
+    <div
+      id="modal-end-round"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-end-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm hidden"
+    >
+      <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+        <!-- Close Button (X) -->
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
+          aria-label="Close summary modal"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="modal-end-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Session Complete!
+        </h2>
+        <p class="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-5">
+          Selective Attention & Processing Speed Summary
+        </p>
+
+        <!-- Performance Score (0 - 100) -->
+        <div class="mb-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+            Task Performance Score
+          </div>
+          <div id="modal-score" class="text-4xl sm:text-5xl font-extrabold text-amber-600 dark:text-amber-400 font-heading">
+            0
+          </div>
+          <div class="mt-2.5 flex items-center justify-center gap-2">
+            <span id="modal-tier-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">
+              Developing
+            </span>
+          </div>
+          <p id="modal-tier-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm mx-auto">
+            Performance reflects visual conflict resolution and processing speed.
+          </p>
+        </div>
+
+        <!-- Paradigm Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Accuracy</div>
+            <div id="modal-acc" class="font-bold text-base text-zinc-900 dark:text-white">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Median RT</div>
+            <div id="modal-rt" class="font-bold text-base text-amber-600 dark:text-amber-400">0 ms</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Conflict Cost</div>
+            <div id="modal-conflict" class="font-bold text-base text-zinc-900 dark:text-white">0 ms</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Best Streak</div>
+            <div id="modal-streak" class="font-bold text-base text-zinc-900 dark:text-white">0</div>
+          </div>
+        </div>
+
+        <!-- RT Breakdown -->
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-5 flex items-center justify-between text-xs font-mono px-4">
+          <div>
+            <span class="text-zinc-500 dark:text-zinc-400 text-[10px] block">CONGRUENT RT</span>
+            <span id="modal-congruent-rt" class="font-bold text-zinc-900 dark:text-white">0 ms</span>
+          </div>
+          <div>
+            <span class="text-zinc-500 dark:text-zinc-400 text-[10px] block">INCONGRUENT RT</span>
+            <span id="modal-incongruent-rt" class="font-bold text-zinc-900 dark:text-white">0 ms</span>
+          </div>
+        </div>
+
+        <!-- Personal Best Alert -->
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          New Personal Best Record!
+        </div>
+
+        <!-- Scientific Attribution Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-heading">Scientific Paradigm:</span>
+          Based on the Eriksen Flanker Task (Eriksen & Eriksen, 1974). Measures visuospatial selective attention, executive conflict resolution, and peripheral noise suppression.
+        </div>
+
+        <!-- Scoring Formula Breakdown Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-mono">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-sans">Scoring Formula:</span>
+          Score = (Accuracy * 50) + Speed Component (up to 40 pts for RT &lt; 400ms) + Flanker Resistance Bonus (up to 10 pts for low conflict latency)
+        </div>
+
+        <!-- Practice Effects Disclaimer -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-5 text-[11px] text-zinc-500 dark:text-zinc-400 italic leading-relaxed">
+          Performance scores reflect task-specific operational fluency and response speed under practice effects, not innate general intelligence (g). Repeated drills refine cognitive agility.
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          >
+            Play Again
+          </button>
+          <a
+            href="/games"
+            class="px-5 min-h-[44px] flex items-center justify-center rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors"
+          >
+            Hub
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../utils/profileStore';
+
+  const STORAGE_KEY = 'fiq_game_flankertest_best';
+  const TOTAL_TRIALS = 30;
+
+  type FlankerCondition = 'congruent' | 'incongruent' | 'neutral';
+  type TargetDirection = 'left' | 'right';
+
+  interface TrialSpec {
+    condition: FlankerCondition;
+    target: TargetDirection;
+    symbols: string[];
+  }
+
+  // Pre-generate 30 trials: 12 congruent (40%), 12 incongruent (40%), 6 neutral (20%)
+  function generateTrialList(): TrialSpec[] {
+    const list: TrialSpec[] = [];
+
+    // 12 congruent
+    for (let i = 0; i < 12; i++) {
+      const target: TargetDirection = i % 2 === 0 ? 'left' : 'right';
+      const arrow = target === 'left' ? '←' : '→';
+      list.push({
+        condition: 'congruent',
+        target,
+        symbols: [arrow, arrow, arrow, arrow, arrow],
+      });
+    }
+
+    // 12 incongruent
+    for (let i = 0; i < 12; i++) {
+      const target: TargetDirection = i % 2 === 0 ? 'left' : 'right';
+      const targetArrow = target === 'left' ? '←' : '→';
+      const flankerArrow = target === 'left' ? '→' : '←';
+      list.push({
+        condition: 'incongruent',
+        target,
+        symbols: [flankerArrow, flankerArrow, targetArrow, flankerArrow, flankerArrow],
+      });
+    }
+
+    // 6 neutral
+    for (let i = 0; i < 6; i++) {
+      const target: TargetDirection = i % 2 === 0 ? 'left' : 'right';
+      const targetArrow = target === 'left' ? '←' : '→';
+      list.push({
+        condition: 'neutral',
+        target,
+        symbols: ['-', '-', targetArrow, '-', '-'],
+      });
+    }
+
+    // Fisher-Yates shuffle
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+
+    return list;
+  }
+
+  let trials: TrialSpec[] = [];
+  let currentTrialIndex = 0;
+  let trialStartTime = 0;
+  let sessionStartTime = 0;
+  let isAwaitingResponse = false;
+  let isGameActive = false;
+
+  let correctCount = 0;
+  let errorCount = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
+
+  const latencies: number[] = [];
+  const congruentRTs: number[] = [];
+  const incongruentRTs: number[] = [];
+
+  // Audio Context (pure Web Audio)
+  let audioCtx: AudioContext | null = null;
+  function playTone(freq: number, duration: number) {
+    try {
+      if (!audioCtx) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      if (audioCtx) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      }
+    } catch {}
+  }
+
+  function calculateMedian(arr: number[]): number {
+    if (arr.length === 0) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 !== 0
+      ? sorted[mid]
+      : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+  }
+
+  // DOM Elements
+  const hudTrial = document.getElementById('hud-trial') as HTMLElement;
+  const hudScore = document.getElementById('hud-score') as HTMLElement;
+  const hudRT = document.getElementById('hud-rt') as HTMLElement;
+  const hudBest = document.getElementById('hud-best') as HTMLElement;
+
+  const startOverlay = document.getElementById('start-overlay') as HTMLElement;
+  const btnStartGame = document.getElementById('btn-start-game') as HTMLButtonElement;
+  const gameArenaContent = document.getElementById('game-arena-content') as HTMLElement;
+
+  const trialProgress = document.getElementById('trial-progress') as HTMLElement;
+  const stimulusRow = document.getElementById('stimulus-row') as HTMLElement;
+  const feedbackCue = document.getElementById('feedback-cue') as HTMLElement;
+
+  const btnActionLeft = document.getElementById('btn-action-left') as HTMLButtonElement;
+  const btnActionRight = document.getElementById('btn-action-right') as HTMLButtonElement;
+
+  // Modal elements
+  const btnHowToPlay = document.getElementById('btn-how-to-play') as HTMLButtonElement;
+  const modalHowToPlay = document.getElementById('modal-how-to-play') as HTMLElement;
+  const btnCloseHowModal = document.getElementById('btn-close-how-modal') as HTMLButtonElement;
+  const btnConfirmHow = document.getElementById('btn-confirm-how') as HTMLButtonElement;
+
+  const modalEndRound = document.getElementById('modal-end-round') as HTMLElement;
+  const btnCloseEndModal = document.getElementById('btn-close-end-modal') as HTMLButtonElement;
+  const modalScore = document.getElementById('modal-score') as HTMLElement;
+  const modalTierBadge = document.getElementById('modal-tier-badge') as HTMLElement;
+  const modalTierDesc = document.getElementById('modal-tier-desc') as HTMLElement;
+  const modalAcc = document.getElementById('modal-acc') as HTMLElement;
+  const modalRT = document.getElementById('modal-rt') as HTMLElement;
+  const modalConflict = document.getElementById('modal-conflict') as HTMLElement;
+  const modalStreak = document.getElementById('modal-streak') as HTMLElement;
+  const modalCongruentRT = document.getElementById('modal-congruent-rt') as HTMLElement;
+  const modalIncongruentRT = document.getElementById('modal-incongruent-rt') as HTMLElement;
+  const modalBestAlert = document.getElementById('modal-best-alert') as HTMLElement;
+  const btnModalRestart = document.getElementById('btn-modal-restart') as HTMLButtonElement;
+
+  function loadBestScore() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && hudBest) {
+        hudBest.textContent = saved;
+      }
+    } catch {}
+  }
+  loadBestScore();
+
+  function updateHUD() {
+    hudTrial.textContent = `${currentTrialIndex} / ${TOTAL_TRIALS}`;
+    trialProgress.style.width = `${Math.round((currentTrialIndex / TOTAL_TRIALS) * 100)}%`;
+
+    const medianRT = calculateMedian(latencies);
+    hudRT.textContent = medianRT > 0 ? `${medianRT} ms` : '-- ms';
+
+    const accuracyScore = Math.round((correctCount / TOTAL_TRIALS) * 50);
+    const speedScore = medianRT > 0 ? Math.max(0, Math.min(40, Math.round((900 - medianRT) / 12.5))) : 0;
+    hudScore.textContent = String(accuracyScore + speedScore);
+  }
+
+  async function presentNextTrial() {
+    if (currentTrialIndex >= TOTAL_TRIALS) {
+      endGame();
+      return;
+    }
+
+    isAwaitingResponse = false;
+    updateHUD();
+
+    // Fixation interval: 350-450ms randomized jitter
+    stimulusRow.innerHTML = '<span class="text-4xl sm:text-5xl font-mono text-zinc-400 dark:text-zinc-500 font-bold animate-pulse">+</span>';
+    feedbackCue.textContent = 'Focus on center';
+
+    const jitter = 350 + Math.floor(Math.random() * 150);
+    await new Promise((resolve) => setTimeout(resolve, jitter));
+    if (!isGameActive) return;
+
+    const trial = trials[currentTrialIndex];
+
+    // Render 5 symbols
+    stimulusRow.innerHTML = '';
+    trial.symbols.forEach((sym, idx) => {
+      const span = document.createElement('span');
+      if (idx === 2) {
+        // Target symbol (center)
+        span.className = 'text-5xl sm:text-6xl font-mono font-black text-zinc-950 dark:text-white px-2 py-1 rounded-xl bg-amber-100/70 dark:bg-amber-950/60 border-2 border-amber-500 shadow-sm transition-transform scale-110';
+      } else {
+        // Flanker symbols
+        span.className = 'text-4xl sm:text-5xl font-mono font-bold text-zinc-500 dark:text-zinc-400 px-1';
+      }
+      span.textContent = sym;
+      stimulusRow.appendChild(span);
+    });
+
+    feedbackCue.textContent = 'Indicate center direction';
+    trialStartTime = performance.now();
+    isAwaitingResponse = true;
+  }
+
+  function handleResponse(choice: TargetDirection) {
+    if (!isAwaitingResponse || !isGameActive) return;
+    isAwaitingResponse = false;
+
+    const latency = Math.round(performance.now() - trialStartTime);
+    const trial = trials[currentTrialIndex];
+    const isCorrect = choice === trial.target;
+
+    latencies.push(latency);
+    if (isCorrect) {
+      correctCount++;
+      currentStreak++;
+      longestStreak = Math.max(longestStreak, currentStreak);
+      playTone(660, 0.08);
+
+      if (trial.condition === 'congruent') {
+        congruentRTs.push(latency);
+      } else if (trial.condition === 'incongruent') {
+        incongruentRTs.push(latency);
+      }
+    } else {
+      errorCount++;
+      currentStreak = 0;
+      playTone(260, 0.12);
+    }
+
+    currentTrialIndex++;
+    presentNextTrial();
+  }
+
+  function endGame() {
+    isGameActive = false;
+    const sessionDurationSec = Math.max(1, Math.round((Date.now() - sessionStartTime) / 1000));
+
+    const medianRT = calculateMedian(latencies);
+    const congruentMedianRT = calculateMedian(congruentRTs);
+    const incongruentMedianRT = calculateMedian(incongruentRTs);
+
+    const interferenceCostMs = incongruentMedianRT > 0 && congruentMedianRT > 0
+      ? Math.max(0, Math.round(incongruentMedianRT - congruentMedianRT))
+      : 0;
+
+    // Formula:
+    // Accuracy baseline (50 pts max)
+    const accuracyScore = Math.round((correctCount / TOTAL_TRIALS) * 50);
+    // Speed throughput factor (up to 40 pts for RT < 400ms, scaling to 0 at 900ms)
+    const speedScore = Math.max(0, Math.min(40, Math.round((900 - medianRT) / 12.5)));
+    // Flanker resistance bonus (up to 10 pts for keeping conflict latency < 75ms)
+    const conflictBonus = Math.max(0, Math.min(10, Math.round((150 - interferenceCostMs) / 15)));
+    const performanceScore = Math.min(100, Math.max(0, accuracyScore + speedScore + conflictBonus));
+
+    // Save record to profileStore
+    saveGameRecord({
+      gameId: 'flanker-test',
+      durationSeconds: sessionDurationSec,
+      mode: 'standard',
+      metrics: {
+        performanceScore,
+        accuracy: Number((correctCount / TOTAL_TRIALS).toFixed(2)),
+        trialsCompleted: TOTAL_TRIALS,
+        correctCount,
+        errorCount,
+        medianRT: Math.round(medianRT),
+        interferenceCostMs: Math.round(interferenceCostMs),
+        bestStreak: longestStreak,
+      },
+    });
+
+    // Check personal best
+    let isNewBest = false;
+    try {
+      const saved = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      if (performanceScore > saved) {
+        localStorage.setItem(STORAGE_KEY, String(performanceScore));
+        isNewBest = true;
+      }
+    } catch {}
+    loadBestScore();
+
+    // Populate End Modal
+    modalScore.textContent = String(performanceScore);
+    const tierInfo = getPerformanceTier(performanceScore);
+    modalTierBadge.textContent = tierInfo.tier;
+    modalTierBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${tierInfo.badgeClass}`;
+    modalTierDesc.textContent = tierInfo.description;
+
+    modalAcc.textContent = `${Math.round((correctCount / TOTAL_TRIALS) * 100)}%`;
+    modalRT.textContent = `${medianRT} ms`;
+    modalConflict.textContent = `${interferenceCostMs} ms`;
+    modalStreak.textContent = String(longestStreak);
+
+    modalCongruentRT.textContent = congruentMedianRT > 0 ? `${congruentMedianRT} ms` : '-- ms';
+    modalIncongruentRT.textContent = incongruentMedianRT > 0 ? `${incongruentMedianRT} ms` : '-- ms';
+
+    if (isNewBest) {
+      modalBestAlert.classList.remove('hidden');
+    } else {
+      modalBestAlert.classList.add('hidden');
+    }
+
+    modalEndRound.classList.remove('hidden');
+  }
+
+  function startGame() {
+    isGameActive = true;
+    sessionStartTime = Date.now();
+    currentTrialIndex = 0;
+    correctCount = 0;
+    errorCount = 0;
+    currentStreak = 0;
+    longestStreak = 0;
+    latencies.length = 0;
+    congruentRTs.length = 0;
+    incongruentRTs.length = 0;
+
+    trials = generateTrialList();
+
+    startOverlay.classList.add('hidden');
+    gameArenaContent.removeAttribute('inert');
+    modalEndRound.classList.add('hidden');
+
+    presentNextTrial();
+  }
+
+  btnStartGame.addEventListener('click', startGame);
+
+  btnActionLeft.addEventListener('click', () => handleResponse('left'));
+  btnActionRight.addEventListener('click', () => handleResponse('right'));
+
+  // Physical Keyboard Listeners
+  window.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && !isGameActive && modalHowToPlay.classList.contains('hidden') && modalEndRound.classList.contains('hidden')) {
+      e.preventDefault();
+      startGame();
+      return;
+    }
+
+    if (isGameActive && isAwaitingResponse) {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        handleResponse('left');
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        handleResponse('right');
+      }
+    }
+
+    if (e.key === 'Escape') {
+      if (!modalHowToPlay.classList.contains('hidden')) {
+        modalHowToPlay.classList.add('hidden');
+      }
+      if (!modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+      }
+    }
+  });
+
+  // How to Play Modal Listeners
+  btnHowToPlay.addEventListener('click', () => modalHowToPlay.classList.remove('hidden'));
+  btnCloseHowModal.addEventListener('click', () => modalHowToPlay.classList.add('hidden'));
+  btnConfirmHow.addEventListener('click', () => modalHowToPlay.classList.add('hidden'));
+
+  // End Modal Listeners
+  btnCloseEndModal.addEventListener('click', () => modalEndRound.classList.add('hidden'));
+  btnModalRestart.addEventListener('click', () => {
+    modalEndRound.classList.add('hidden');
+    startGame();
+  });
+</script>

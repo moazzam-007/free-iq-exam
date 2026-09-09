@@ -1,0 +1,878 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Memory Matrix Span - Visuospatial Working Memory Drill | FreeIQExam";
+const description = "Train visuospatial working memory and active pattern retention (Gwm & Gv). Memorize and reproduce escalating spatial tile coordinates in the matrix grid.";
+---
+
+<Layout title={title} description={description}>
+  <Header />
+
+  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <a href="/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Cognitive Games</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Memory Matrix</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 mb-1.5">
+          Gwm / Gv - Visuospatial Span
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            Memory Matrix Span
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 text-xs font-mono font-medium gap-1.5 cursor-pointer"
+            aria-label="How to play instructions"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+            <span>How to Play</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat HUD (4 rounded cards) -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[62px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Level</div>
+          <div id="hud-level" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">Level 1</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[62px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Score</div>
+          <div id="hud-score" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[62px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Peak Span</div>
+          <div id="hud-span" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 Tiles</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[62px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Best</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center min-h-[440px] justify-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Memory Matrix Span
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Observe the illuminated emerald target tiles during the <strong>1.2-second encoding phase</strong>.
+          </p>
+          <p>
+            When tiles turn neutral, recall the spatial configuration and tap all target coordinates.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Grid scales from 3x3 to 4x4 and 5x5 as your recall capacity escalates. You have 3 lives.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <span>Start Session (Space)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content (inert while overlay active) -->
+      <div id="game-arena-content" inert class="w-full flex flex-col items-center">
+        <!-- Top Status: Lives and Phase Indicator -->
+        <div class="w-full max-w-md flex items-center justify-between gap-4 mb-4">
+          <!-- Lives remaining -->
+          <div class="flex items-center gap-1.5" aria-label="Lives remaining">
+            <span class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase mr-1">Lives:</span>
+            <div id="lives-indicator" class="flex items-center gap-1 text-rose-500">
+              <svg class="w-4 h-4 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <svg class="w-4 h-4 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <svg class="w-4 h-4 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+          </div>
+
+          <!-- Phase text -->
+          <div id="phase-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+            Phase: Ready
+          </div>
+        </div>
+
+        <!-- Encoding Countdown Bar -->
+        <div class="w-full max-w-md mb-6">
+          <div class="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700/60">
+            <div id="encoding-progress-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-75 ease-linear" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Matrix Grid Container -->
+        <div class="w-full max-w-[360px] sm:max-w-[400px] aspect-square flex items-center justify-center mb-4">
+          <div
+            id="matrix-grid"
+            class="grid grid-cols-3 gap-2.5 sm:gap-3.5 w-full h-full p-3.5 bg-zinc-50 dark:bg-zinc-800/40 rounded-3xl border-2 border-zinc-200 dark:border-zinc-700/80 shadow-inner transition-all duration-200"
+          >
+            <!-- Programmatic tiles rendered -->
+          </div>
+        </div>
+
+        <!-- Remaining Targets Info & Toast -->
+        <div class="flex flex-col items-center gap-1 min-h-[48px]">
+          <div id="target-remainder-text" class="text-xs font-mono font-bold text-zinc-500 dark:text-zinc-400">
+            Targets to recall: -
+          </div>
+          <div id="feedback-toast" role="status" aria-live="polite" class="h-5 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+            Status
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessible How to Play Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4"
+    >
+      <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl">
+        <!-- Close Button (X) -->
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
+          aria-label="Close instructions"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="modal-how-title" class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1.5">
+          How to Play Memory Matrix Span
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mb-5">
+          Visuospatial Working Memory & Pattern Retention Drill
+        </p>
+
+        <div class="space-y-3.5 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <h4 class="font-bold text-zinc-950 dark:text-white mb-1">1. Phase 1: Encoding (1.2s)</h4>
+            <p>
+              A cluster of target tiles lights up in emerald. Memorize their spatial coordinates and geometric relationships.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <h4 class="font-bold text-zinc-950 dark:text-white mb-1">2. Phase 2: Retention (400ms)</h4>
+            <p>
+              All tiles flip face down to neutral. Hold the mental image steady in your working memory buffer.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <h4 class="font-bold text-zinc-950 dark:text-white mb-1">3. Phase 3: Recall Phase</h4>
+            <p>
+              Tap the tiles you remember. Finding all target tiles advances you to the next span. A wrong tile costs 1 life. You have 3 lives total.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 text-emerald-900 dark:text-emerald-200">
+            <h4 class="font-bold mb-1">4. Scientific Foundation</h4>
+            <p>
+              Based on the Corsi Block-Tapping Test (Corsi, 1972) and Visual Patterns Test (Della Sala et al., 1999). Assesses active visuospatial working memory capacity (Gwm/Gv).
+            </p>
+          </div>
+        </div>
+
+        <button
+          id="btn-confirm-how"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+        >
+          Got it, Let's Play
+        </button>
+      </div>
+    </div>
+
+    <!-- Accessible End of Round Modal -->
+    <div
+      id="modal-end-round"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-end-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto"
+    >
+      <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl my-8 text-center">
+        <!-- Close Button (X) -->
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
+          aria-label="Close summary modal"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+          </svg>
+        </div>
+
+        <h2 id="modal-end-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Session Complete!
+        </h2>
+        <p class="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-5">
+          Visuospatial Working Memory Span Summary
+        </p>
+
+        <!-- Performance Score (0 - 100) -->
+        <div class="mb-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+            Task Performance Score
+          </div>
+          <div id="modal-score" class="text-4xl sm:text-5xl font-extrabold text-emerald-600 dark:text-emerald-400 font-heading">
+            0
+          </div>
+          <div class="mt-2.5 flex items-center justify-center gap-2">
+            <span id="modal-tier-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">
+              Developing
+            </span>
+          </div>
+          <p id="modal-tier-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm mx-auto">
+            Performance reflects task fluency and spatial retention.
+          </p>
+        </div>
+
+        <!-- Paradigm Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Peak Span</div>
+            <div id="modal-max-span" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0 Tiles</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Accuracy</div>
+            <div id="modal-acc" class="font-bold text-base text-zinc-900 dark:text-white">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Completed</div>
+            <div id="modal-patterns-completed" class="font-bold text-base text-zinc-900 dark:text-white">0 / 0</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Best Streak</div>
+            <div id="modal-streak" class="font-bold text-base text-zinc-900 dark:text-white">0</div>
+          </div>
+        </div>
+
+        <!-- Peak Complexity Badge -->
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-5 flex items-center justify-between text-xs font-mono px-4">
+          <span class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px]">Peak Grid Reached:</span>
+          <span id="modal-peak-grid" class="font-bold text-zinc-900 dark:text-white">3x3 Grid</span>
+        </div>
+
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          New Personal Best Record!
+        </div>
+
+        <!-- Scientific Attribution Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-heading">Scientific Paradigm:</span>
+          Based on the Corsi Block and Visual Patterns paradigms (Corsi, 1972; Della Sala et al., 1999). Evaluates visuospatial working memory capacity and active spatial coordinate retention.
+        </div>
+
+        <!-- Scoring Formula Breakdown Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-mono">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-sans">Scoring Formula:</span>
+          Score = (Peak Spatial Span / 9 * 70) + (Recall Accuracy * 30)
+        </div>
+
+        <!-- Practice Effects Disclaimer -->
+        <div class="text-left p-3 rounded-2xl bg-zinc-100/70 dark:bg-zinc-800/30 border border-zinc-200/80 dark:border-zinc-800 mb-6 text-[11px] text-zinc-500 dark:text-zinc-400 leading-normal italic">
+          Performance scores reflect task-specific operational fluency and response speed under practice effects, not innate general intelligence (g). Repeated drills refine cognitive agility.
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          >
+            Play Again
+          </button>
+          <a
+            href="/games"
+            class="px-5 min-h-[44px] flex items-center justify-center rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors"
+          >
+            Hub
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../utils/profileStore';
+
+  interface LevelConfig {
+    level: number;
+    gridSize: number;
+    span: number;
+  }
+
+  const LEVEL_CONFIGS: LevelConfig[] = [
+    { level: 1, gridSize: 3, span: 3 },
+    { level: 2, gridSize: 3, span: 4 },
+    { level: 3, gridSize: 4, span: 4 },
+    { level: 4, gridSize: 4, span: 5 },
+    { level: 5, gridSize: 4, span: 6 },
+    { level: 6, gridSize: 5, span: 6 },
+    { level: 7, gridSize: 5, span: 7 },
+    { level: 8, gridSize: 5, span: 8 },
+    { level: 9, gridSize: 5, span: 9 },
+    { level: 10, gridSize: 5, span: 10 },
+  ];
+
+  const ENCODING_DURATION_MS = 1200;
+  const RETENTION_DURATION_MS = 400;
+  const STORAGE_KEY = 'fiq_game_memorymatrix_best';
+
+  let currentLevelIndex = 0;
+  let lives = 3;
+  let maxSpan = 0;
+  let trialsCompleted = 0;
+  let correctCount = 0;
+  let errorCount = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
+  let peakGridComplexity = 3;
+
+  let isRunning = false;
+  let currentPhase: 'idle' | 'encoding' | 'retention' | 'recall' = 'idle';
+  let targetTileIndices: Set<number> = new Set();
+  let userSelectedIndices: Set<number> = new Set();
+  let sessionStartTime = 0;
+  let encodingAnimFrame = 0;
+
+  // Audio Context (pure Web Audio)
+  let audioCtx: AudioContext | null = null;
+  function playTone(freq: number, duration: number) {
+    try {
+      if (!audioCtx) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      if (audioCtx) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
+  // DOM Elements
+  const hudLevel = document.getElementById('hud-level') as HTMLElement;
+  const hudScore = document.getElementById('hud-score') as HTMLElement;
+  const hudSpan = document.getElementById('hud-span') as HTMLElement;
+  const hudBest = document.getElementById('hud-best') as HTMLElement;
+  const livesIndicator = document.getElementById('lives-indicator') as HTMLElement;
+
+  const startOverlay = document.getElementById('start-overlay') as HTMLElement;
+  const btnStartGame = document.getElementById('btn-start-game') as HTMLButtonElement;
+  const gameArenaContent = document.getElementById('game-arena-content') as HTMLElement;
+
+  const phaseBadge = document.getElementById('phase-badge') as HTMLElement;
+  const encodingProgressBar = document.getElementById('encoding-progress-bar') as HTMLElement;
+  const matrixGrid = document.getElementById('matrix-grid') as HTMLElement;
+  const targetRemainderText = document.getElementById('target-remainder-text') as HTMLElement;
+  const feedbackToast = document.getElementById('feedback-toast') as HTMLElement;
+
+  const btnHowToPlay = document.getElementById('btn-how-to-play') as HTMLButtonElement;
+  const modalHowToPlay = document.getElementById('modal-how-to-play') as HTMLElement;
+  const btnCloseHowModal = document.getElementById('btn-close-how-modal') as HTMLButtonElement;
+  const btnConfirmHow = document.getElementById('btn-confirm-how') as HTMLButtonElement;
+
+  const modalEndRound = document.getElementById('modal-end-round') as HTMLElement;
+  const btnCloseEndModal = document.getElementById('btn-close-end-modal') as HTMLButtonElement;
+  const modalScore = document.getElementById('modal-score') as HTMLElement;
+  const modalTierBadge = document.getElementById('modal-tier-badge') as HTMLElement;
+  const modalTierDesc = document.getElementById('modal-tier-desc') as HTMLElement;
+  const modalMaxSpan = document.getElementById('modal-max-span') as HTMLElement;
+  const modalAcc = document.getElementById('modal-acc') as HTMLElement;
+  const modalPatternsCompleted = document.getElementById('modal-patterns-completed') as HTMLElement;
+  const modalStreak = document.getElementById('modal-streak') as HTMLElement;
+  const modalPeakGrid = document.getElementById('modal-peak-grid') as HTMLElement;
+  const modalBestAlert = document.getElementById('modal-best-alert') as HTMLElement;
+  const btnModalRestart = document.getElementById('btn-modal-restart') as HTMLButtonElement;
+
+  function loadBestScore() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && hudBest) {
+        hudBest.textContent = saved;
+      }
+    } catch {
+      // Storage fallback
+    }
+  }
+  loadBestScore();
+
+  function updateLivesUI() {
+    if (!livesIndicator) return;
+    let hearts = '';
+    for (let i = 0; i < 3; i++) {
+      if (i < lives) {
+        hearts += '<svg class="w-4 h-4 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+      } else {
+        hearts += '<svg class="w-4 h-4 fill-zinc-300 dark:fill-zinc-700" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+      }
+    }
+    livesIndicator.innerHTML = hearts;
+  }
+
+  function updateHud() {
+    const config = LEVEL_CONFIGS[Math.min(currentLevelIndex, LEVEL_CONFIGS.length - 1)];
+    hudLevel.textContent = `Level ${config.level} (${config.gridSize}x${config.gridSize})`;
+    hudSpan.textContent = `${maxSpan} Tiles`;
+
+    const spanScore = Math.min(70, Math.round((maxSpan / 9) * 70));
+    const accuracy = trialsCompleted > 0 ? correctCount / trialsCompleted : 0;
+    const accuracyScore = Math.round(accuracy * 30);
+    const performanceScore = Math.min(100, Math.max(0, spanScore + accuracyScore));
+    hudScore.textContent = String(performanceScore);
+  }
+
+  function showToast(text: string, isSuccess: boolean) {
+    if (!feedbackToast) return;
+    feedbackToast.textContent = text;
+    feedbackToast.className = `h-5 text-xs font-mono font-semibold transition-opacity opacity-100 ${
+      isSuccess ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+    }`;
+    setTimeout(() => {
+      if (feedbackToast) feedbackToast.classList.add('opacity-0');
+    }, 550);
+  }
+
+  function getCurrentConfig(): LevelConfig {
+    if (currentLevelIndex < LEVEL_CONFIGS.length) {
+      return LEVEL_CONFIGS[currentLevelIndex];
+    }
+    // Level 8+ scales up to 10
+    const extra = currentLevelIndex - (LEVEL_CONFIGS.length - 1);
+    return {
+      level: currentLevelIndex + 1,
+      gridSize: 5,
+      span: Math.min(10, 8 + extra),
+    };
+  }
+
+  function generateTargetTiles(totalTiles: number, spanCount: number): Set<number> {
+    const indices = new Set<number>();
+    while (indices.size < spanCount) {
+      const idx = Math.floor(Math.random() * totalTiles);
+      indices.add(idx);
+    }
+    return indices;
+  }
+
+  function renderGrid(gridSize: number) {
+    matrixGrid.innerHTML = '';
+    const totalTiles = gridSize * gridSize;
+
+    // Direct grid template dimensions ensure reliable rendering across 3x3, 4x4, and 5x5
+    matrixGrid.style.display = 'grid';
+    matrixGrid.style.gridTemplateColumns = `repeat(${gridSize}, minmax(0, 1fr))`;
+    matrixGrid.style.gridTemplateRows = `repeat(${gridSize}, minmax(0, 1fr))`;
+    matrixGrid.className = 'grid gap-2 sm:gap-3 w-full h-full p-2.5 sm:p-3.5 bg-zinc-50 dark:bg-zinc-800/40 rounded-3xl border-2 border-zinc-200 dark:border-zinc-700/80 shadow-inner transition-all duration-200';
+
+    for (let i = 0; i < totalTiles; i++) {
+      const tile = document.createElement('button');
+      tile.type = 'button';
+      tile.setAttribute('data-index', String(i));
+      tile.setAttribute('aria-label', `Tile ${i + 1}`);
+      tile.className = 'w-full h-full aspect-square rounded-xl sm:rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 border-2 border-zinc-200 dark:border-zinc-700 transition-all duration-150 flex items-center justify-center cursor-default shadow-sm select-none focus:outline-none';
+      
+      tile.addEventListener('click', () => {
+        if (currentPhase === 'recall') {
+          handleTileClick(i, tile);
+        }
+      });
+
+      matrixGrid.appendChild(tile);
+    }
+  }
+
+  function runEncodingPhase(config: LevelConfig) {
+    currentPhase = 'encoding';
+    phaseBadge.textContent = 'Phase: Encoding (1.2s)';
+    phaseBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800';
+    targetRemainderText.textContent = `Memorize ${config.span} highlighted tiles`;
+
+    // Highlight target tiles
+    const tiles = matrixGrid.children;
+    for (let i = 0; i < tiles.length; i++) {
+      const tile = tiles[i] as HTMLElement;
+      if (targetTileIndices.has(i)) {
+        tile.className = 'w-full h-full aspect-square rounded-xl sm:rounded-2xl bg-emerald-500 dark:bg-emerald-400 border-2 border-emerald-600 shadow-md shadow-emerald-500/30 scale-[0.98] transition-all duration-150 flex items-center justify-center cursor-default select-none';
+      } else {
+        tile.className = 'w-full h-full aspect-square rounded-xl sm:rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 border-2 border-zinc-200 dark:border-zinc-700 transition-all duration-150 flex items-center justify-center cursor-default select-none';
+      }
+    }
+
+    // Encoding progress bar countdown
+    const startTime = performance.now();
+    cancelAnimationFrame(encodingAnimFrame);
+
+    function stepEncoding(now: number) {
+      if (!isRunning || currentPhase !== 'encoding') return;
+      const elapsed = now - startTime;
+      const remaining = Math.max(0, ENCODING_DURATION_MS - elapsed);
+      const fraction = remaining / ENCODING_DURATION_MS;
+      encodingProgressBar.style.width = `${fraction * 100}%`;
+
+      if (elapsed < ENCODING_DURATION_MS) {
+        encodingAnimFrame = requestAnimationFrame(stepEncoding);
+      } else {
+        encodingProgressBar.style.width = '0%';
+        runRetentionPhase(config);
+      }
+    }
+
+    encodingAnimFrame = requestAnimationFrame(stepEncoding);
+  }
+
+  function runRetentionPhase(config: LevelConfig) {
+    currentPhase = 'retention';
+    phaseBadge.textContent = 'Phase: Retain Pattern';
+    phaseBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
+    targetRemainderText.textContent = 'Holding coordinates in active memory...';
+
+    // Flip all tiles to neutral state
+    const tiles = matrixGrid.children;
+    for (let i = 0; i < tiles.length; i++) {
+      const tile = tiles[i] as HTMLElement;
+      tile.className = 'w-full h-full aspect-square rounded-xl sm:rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 border-2 border-zinc-200 dark:border-zinc-700 transition-all duration-150 flex items-center justify-center cursor-default select-none';
+    }
+
+    setTimeout(() => {
+      if (!isRunning || currentPhase !== 'retention') return;
+      runRecallPhase(config);
+    }, RETENTION_DURATION_MS);
+  }
+
+  function runRecallPhase(config: LevelConfig) {
+    currentPhase = 'recall';
+    phaseBadge.textContent = 'Phase: Recall';
+    phaseBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800';
+    
+    userSelectedIndices = new Set();
+    const remainingCount = targetTileIndices.size - userSelectedIndices.size;
+    targetRemainderText.textContent = `Targets left: ${remainingCount} / ${targetTileIndices.size}`;
+
+    // Make tiles interactable
+    const tiles = matrixGrid.children;
+    for (let i = 0; i < tiles.length; i++) {
+      const tile = tiles[i] as HTMLElement;
+      tile.className = 'w-full h-full aspect-square rounded-xl sm:rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 flex items-center justify-center cursor-pointer select-none';
+    }
+  }
+
+  function handleTileClick(index: number, tile: HTMLElement) {
+    if (currentPhase !== 'recall' || userSelectedIndices.has(index)) return;
+    userSelectedIndices.add(index);
+
+    const config = getCurrentConfig();
+    const isTarget = targetTileIndices.has(index);
+
+    if (isTarget) {
+      // Correct tile clicked
+      playTone(880, 0.08);
+      tile.className = 'w-full h-full aspect-square rounded-xl sm:rounded-2xl bg-emerald-500 dark:bg-emerald-400 border-2 border-emerald-600 shadow-md shadow-emerald-500/30 text-white flex items-center justify-center select-none';
+      tile.innerHTML = '<svg class="w-5 h-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>';
+
+      const remainingCount = targetTileIndices.size - userSelectedIndices.size;
+      targetRemainderText.textContent = `Targets left: ${remainingCount} / ${targetTileIndices.size}`;
+
+      // Check if pattern completed
+      if (remainingCount === 0) {
+        currentPhase = 'idle';
+        trialsCompleted++;
+        correctCount++;
+        currentStreak++;
+        if (currentStreak > longestStreak) longestStreak = currentStreak;
+
+        maxSpan = Math.max(maxSpan, config.span);
+        peakGridComplexity = Math.max(peakGridComplexity, config.gridSize);
+
+        showToast('Pattern Recall Success! Level Up', true);
+        updateHud();
+
+        setTimeout(() => {
+          if (!isRunning) return;
+          currentLevelIndex++;
+          startTrial();
+        }, 600);
+      }
+    } else {
+      // Wrong tile clicked
+      currentPhase = 'idle';
+      playTone(220, 0.15);
+      trialsCompleted++;
+      errorCount++;
+      currentStreak = 0;
+      lives--;
+      updateLivesUI();
+
+      tile.className = 'w-full h-full aspect-square rounded-xl sm:rounded-2xl bg-rose-500 dark:bg-rose-600 border-2 border-rose-700 shadow-md shadow-rose-500/30 text-white flex items-center justify-center animate-shake select-none';
+      tile.innerHTML = '<svg class="w-5 h-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>';
+
+      // Reveal missed targets in amber outline
+      const tiles = matrixGrid.children;
+      for (let i = 0; i < tiles.length; i++) {
+        if (targetTileIndices.has(i) && !userSelectedIndices.has(i)) {
+          const missed = tiles[i] as HTMLElement;
+          missed.className = 'w-full h-full aspect-square rounded-xl sm:rounded-2xl border-2 border-dashed border-amber-500 bg-amber-50/60 dark:bg-amber-950/40 flex items-center justify-center select-none';
+        }
+      }
+
+      showToast('Incorrect coordinate (-1 Life)', false);
+      updateHud();
+
+      setTimeout(() => {
+        if (!isRunning) return;
+        if (lives <= 0) {
+          finishSession();
+        } else {
+          // Retry current level with fresh pattern
+          startTrial();
+        }
+      }, 1200);
+    }
+  }
+
+  function startTrial() {
+    const config = getCurrentConfig();
+    const totalTiles = config.gridSize * config.gridSize;
+    targetTileIndices = generateTargetTiles(totalTiles, config.span);
+
+    updateHud();
+    renderGrid(config.gridSize);
+    runEncodingPhase(config);
+  }
+
+  function startSession() {
+    isRunning = true;
+    currentLevelIndex = 0;
+    lives = 3;
+    maxSpan = 0;
+    trialsCompleted = 0;
+    correctCount = 0;
+    errorCount = 0;
+    currentStreak = 0;
+    longestStreak = 0;
+    peakGridComplexity = 3;
+
+    updateLivesUI();
+    if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+    startOverlay.classList.add('hidden');
+    modalEndRound.classList.add('hidden');
+    modalEndRound.classList.remove('flex');
+
+    sessionStartTime = performance.now();
+    startTrial();
+  }
+
+  function finishSession() {
+    isRunning = false;
+    currentPhase = 'idle';
+    cancelAnimationFrame(encodingAnimFrame);
+    if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+    const sessionDurationSec = Math.max(1, Math.round((performance.now() - sessionStartTime) / 1000));
+    const accuracy = trialsCompleted > 0 ? correctCount / trialsCompleted : 0;
+
+    // 0 - 100 Performance Score Formula (from specification)
+    const spanScore = Math.min(70, Math.round((maxSpan / 9) * 70));
+    const accuracyScore = Math.round(accuracy * 30);
+    const performanceScore = Math.min(100, Math.max(0, spanScore + accuracyScore));
+
+    // Save record to profile store
+    saveGameRecord({
+      gameId: 'memory-matrix',
+      durationSeconds: sessionDurationSec,
+      mode: 'standard',
+      metrics: {
+        performanceScore: performanceScore,
+        accuracy: Number(accuracy.toFixed(2)),
+        trialsCompleted: trialsCompleted,
+        correctCount: correctCount,
+        errorCount: errorCount,
+        maxSpan: maxSpan,
+        bestStreak: longestStreak,
+      },
+    });
+
+    // Check personal best
+    let savedBest = 0;
+    try {
+      savedBest = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+    } catch {
+      // Storage fallback
+    }
+
+    const isNewBest = performanceScore > savedBest;
+    if (isNewBest) {
+      try {
+        localStorage.setItem(STORAGE_KEY, performanceScore.toString());
+        loadBestScore();
+      } catch {
+        // Storage fallback
+      }
+      modalBestAlert.classList.remove('hidden');
+    } else {
+      modalBestAlert.classList.add('hidden');
+    }
+
+    // Populate modal
+    modalScore.textContent = String(performanceScore);
+    modalMaxSpan.textContent = `${maxSpan} Tiles`;
+    modalAcc.textContent = `${Math.round(accuracy * 100)}%`;
+    modalPatternsCompleted.textContent = `${correctCount} / ${trialsCompleted}`;
+    modalStreak.textContent = String(longestStreak);
+    modalPeakGrid.textContent = `${peakGridComplexity}x${peakGridComplexity} Grid`;
+
+    // Tier badge & styling
+    const tier = getPerformanceTier(performanceScore);
+    modalTierBadge.textContent = tier.tier;
+    modalTierBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${tier.badgeClass}`;
+    modalTierDesc.textContent = tier.description;
+
+    // Show modal & focus
+    modalEndRound.classList.remove('hidden');
+    modalEndRound.classList.add('flex');
+    if (btnCloseEndModal) {
+      try {
+        btnCloseEndModal.focus();
+      } catch {
+        // Focus fallback
+      }
+    }
+  }
+
+  // Start Session
+  btnStartGame.addEventListener('click', startSession);
+  btnModalRestart.addEventListener('click', () => {
+    modalEndRound.classList.add('hidden');
+    modalEndRound.classList.remove('flex');
+    startSession();
+  });
+
+  // How to Play Modal Triggers & Focus Traps
+  btnHowToPlay.addEventListener('click', () => {
+    modalHowToPlay.classList.remove('hidden');
+    modalHowToPlay.classList.add('flex');
+    btnCloseHowModal.focus();
+  });
+
+  function closeHowModal() {
+    modalHowToPlay.classList.add('hidden');
+    modalHowToPlay.classList.remove('flex');
+    btnHowToPlay.focus();
+  }
+
+  btnCloseHowModal.addEventListener('click', closeHowModal);
+  btnConfirmHow.addEventListener('click', closeHowModal);
+
+  // Close End Modal
+  function closeEndModal() {
+    modalEndRound.classList.add('hidden');
+    modalEndRound.classList.remove('flex');
+    if (startOverlay) {
+      startOverlay.classList.remove('hidden');
+      btnStartGame.focus();
+    }
+  }
+  btnCloseEndModal.addEventListener('click', closeEndModal);
+
+  // Modal Backdrop Dismiss
+  modalHowToPlay.addEventListener('click', (e) => {
+    if (e.target === modalHowToPlay) closeHowModal();
+  });
+
+  modalEndRound.addEventListener('click', (e) => {
+    if (e.target === modalEndRound) closeEndModal();
+  });
+
+  // Keyboard Shortcuts (Space, Escape)
+  window.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    const key = e.key.toLowerCase();
+
+    // Escape closes modals
+    if (e.key === 'Escape') {
+      if (!modalHowToPlay.classList.contains('hidden')) {
+        closeHowModal();
+        return;
+      }
+      if (!modalEndRound.classList.contains('hidden')) {
+        closeEndModal();
+        return;
+      }
+    }
+
+    // If any modal is active, do not trigger game actions
+    const isModalActive =
+      !modalHowToPlay.classList.contains('hidden') ||
+      !modalEndRound.classList.contains('hidden');
+
+    if (isModalActive) return;
+
+    // Space starts game if on overlay
+    if (key === ' ' && !isRunning && !startOverlay.classList.contains('hidden')) {
+      e.preventDefault();
+      startSession();
+    }
+  });
+</script>

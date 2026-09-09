@@ -4,10 +4,82 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
 const title = "IQ to Percentile Calculator (Instant 2-Way Conversion) | FreeIQExam";
-const description = "Calculate exact population percentiles from any IQ score or convert your percentile into an estimated IQ score using standard deviation 15 normal distribution models.";
+const description = "Calculate theoretical normal distribution percentiles from any IQ score or convert your percentile into an estimated IQ score using standard deviation 15 models.";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "IQ to Percentile Calculator",
+    "url": "https://freeiqexam.com/iq-percentile-calculator",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "description": "Instant 2-way conversion utility between standard IQ scores (SD 15) and normal distribution percentile rankings.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "IQ to Percentile Calculator",
+        "item": "https://freeiqexam.com/iq-percentile-calculator"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is an IQ percentile?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An IQ percentile indicates the percentage of the general population that scores at or below a given IQ score on a standardized normal distribution (Mean 100, SD 15)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What percentile is an IQ of 100?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An IQ of 100 is the exact median of the population, corresponding to the 50th percentile."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What IQ score is needed to qualify for Mensa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mensa requires a score at or above the 98th percentile, which corresponds to an IQ of 130 or higher on the Wechsler scale (SD 15) or 132 on the Stanford-Binet scale (SD 16)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is the IQ percentile calculated mathematically?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "IQ percentiles are derived using the standard normal cumulative distribution function (CDF). First, the Z-score is calculated as z = (IQ - 100) / 15, then integrated through the Gaussian error function."
+        }
+      }
+    ]
+  }
+];
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} schema={schema}>
   <Header currentPath="/iq-percentile-calculator" />
 
   <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
@@ -21,7 +93,7 @@ const description = "Calculate exact population percentiles from any IQ score or
         IQ to Percentile Calculator
       </h1>
       <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
-        Convert any IQ score into its exact population percentile rank, or calculate the estimated IQ score required to reach a specific percentile tier.
+        Convert any IQ score into its theoretical normal distribution percentile rank, or calculate the estimated IQ score required to reach a specific percentile tier.
       </p>
     </header>
 
@@ -53,7 +125,7 @@ const description = "Calculate exact population percentiles from any IQ score or
             <label for="iq-input" class="text-sm font-semibold text-zinc-900 dark:text-white">
               Enter IQ Score (SD 15)
             </label>
-            <span class="text-xs font-mono text-zinc-400">Range: 55 to 160</span>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Range: 55 to 160</span>
           </div>
           <div class="relative">
             <input
@@ -64,7 +136,7 @@ const description = "Calculate exact population percentiles from any IQ score or
               value="120"
               class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-2xl font-bold font-mono text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
-            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-400 font-semibold">IQ</span>
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-500 dark:text-zinc-400 font-semibold">IQ</span>
           </div>
           <!-- Range Slider -->
           <input
@@ -73,35 +145,36 @@ const description = "Calculate exact population percentiles from any IQ score or
             min="55"
             max="160"
             value="120"
-            class="w-full mt-4 accent-blue-600 cursor-pointer"
+            aria-label="IQ Score Range Slider"
+            class="w-full mt-4 accent-blue-600 cursor-pointer min-h-[44px]"
           />
         </div>
 
         <!-- Calculated Metrics Output Card -->
-        <div class="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+        <div class="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4" role="status" aria-live="polite">
           <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            <span class="text-xs font-mono uppercase text-zinc-400">Percentile Rank</span>
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Percentile Rank</span>
             <span id="output-percentile" class="text-2xl font-heading font-extrabold text-blue-600 dark:text-blue-400">
               90.9%
             </span>
           </div>
 
           <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            <span class="text-xs font-mono uppercase text-zinc-400">Population Rarity</span>
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Population Rarity</span>
             <span id="output-rarity" class="text-base font-mono font-bold text-zinc-900 dark:text-white">
               Top 9.1% (1 in 11 people)
             </span>
           </div>
 
           <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            <span class="text-xs font-mono uppercase text-zinc-400">Z-Score Deviation</span>
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Z-Score Deviation</span>
             <span id="output-zscore" class="text-base font-mono font-semibold text-zinc-900 dark:text-white">
               +1.33 &sigma;
             </span>
           </div>
 
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono uppercase text-zinc-400">Classification</span>
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Classification</span>
             <span id="output-classification" class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">
               Superior Cognitive Ability
             </span>
@@ -116,7 +189,7 @@ const description = "Calculate exact population percentiles from any IQ score or
             <label for="pct-input" class="text-sm font-semibold text-zinc-900 dark:text-white">
               Enter Desired Percentile Rank
             </label>
-            <span class="text-xs font-mono text-zinc-400">Range: 0.1% to 99.9%</span>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Range: 0.1% to 99.9%</span>
           </div>
           <div class="relative">
             <input
@@ -128,7 +201,7 @@ const description = "Calculate exact population percentiles from any IQ score or
               value="98.0"
               class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-2xl font-bold font-mono text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-600"
             />
-            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-400 font-semibold">%</span>
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-500 dark:text-zinc-400 font-semibold">%</span>
           </div>
           <input
             id="pct-slider"
@@ -137,27 +210,28 @@ const description = "Calculate exact population percentiles from any IQ score or
             max="99.9"
             step="0.1"
             value="98.0"
-            class="w-full mt-4 accent-indigo-600 cursor-pointer"
+            aria-label="Percentile Rank Range Slider"
+            class="w-full mt-4 accent-indigo-600 cursor-pointer min-h-[44px]"
           />
         </div>
 
-        <div class="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+        <div class="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4" role="status" aria-live="polite">
           <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            <span class="text-xs font-mono uppercase text-zinc-400">Equivalent IQ Score</span>
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Equivalent IQ Score</span>
             <span id="output-iq-from-pct" class="text-2xl font-heading font-extrabold text-indigo-600 dark:text-indigo-400">
               131 IQ
             </span>
           </div>
 
           <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            <span class="text-xs font-mono uppercase text-zinc-400">Standard Deviation Tier</span>
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Standard Deviation Tier</span>
             <span id="output-sd-from-pct" class="text-base font-mono font-semibold text-zinc-900 dark:text-white">
               +2.05 &sigma; (Wechsler SD 15)
             </span>
           </div>
 
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono uppercase text-zinc-400">Mensa Status</span>
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Mensa Status</span>
             <span id="output-mensa-status" class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
               Qualifies for Mensa (Top 2%)
             </span>
@@ -174,13 +248,13 @@ const description = "Calculate exact population percentiles from any IQ score or
           Benchmark Score &amp; Percentile Lookup Table
         </h2>
         <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
-          Standard deviation 15 reference values and exact cumulative normal distribution percentiles.
+          Standard deviation 15 reference values and cumulative normal distribution percentiles.
         </p>
       </div>
 
-      <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800">
-        <table class="w-full text-left text-xs sm:text-sm font-mono">
-          <thead class="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 uppercase text-[11px] text-zinc-500">
+      <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table class="w-full min-w-[560px] text-left text-xs sm:text-sm font-mono">
+          <thead class="sticky top-0 bg-zinc-100/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10 border-b border-zinc-200 dark:border-zinc-800 uppercase text-[11px] text-zinc-600 dark:text-zinc-400">
             <tr>
               <th class="py-3 px-4">IQ Score (SD 15)</th>
               <th class="py-3 px-4">Percentile Rank</th>
@@ -261,13 +335,75 @@ const description = "Calculate exact population percentiles from any IQ score or
       </p>
     </section>
 
+    <!-- Frequently Asked Questions Section -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-2">
+          Frequently Asked Questions: Percentiles &amp; Normal Distribution
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Essential concepts on Gaussian distributions, z-scores, and percentile interpretation.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What is an IQ percentile?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            An IQ percentile indicates the percentage of the general population that scores at or below a given IQ score on a standardized normal distribution (Mean 100, SD 15).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What percentile is an IQ of 100?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            An IQ of 100 is the exact median of the population, corresponding to the 50th percentile.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What IQ score is needed to qualify for Mensa?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Mensa requires a score at or above the 98th percentile, which corresponds to an IQ of 130 or higher on the Wechsler scale (SD 15) or 132 on the Stanford-Binet scale (SD 16).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>How is the IQ percentile calculated mathematically?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            IQ percentiles are derived using the standard normal cumulative distribution function (CDF). First, the Z-score is calculated as z = (IQ - 100) / 15, then integrated through the Gaussian error function.
+          </p>
+        </details>
+      </div>
+    </section>
+
     <!-- High-Conversion Assessment CTA Banner -->
     <section class="p-8 sm:p-12 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-center shadow-lg relative overflow-hidden">
       <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight">
-        Calculate Your Verified Percentile Now
+        Calculate Your Percentile Now
       </h2>
       <p class="text-blue-100 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
-        Do not rely on estimates. Take our 24-item non-verbal fluid intelligence assessment and receive your calculated standard score and percentile rank in 20 minutes.
+        Take our 24-item non-verbal fluid intelligence assessment and receive your estimated standard score and percentile rank in 20 minutes.
       </p>
       <a 
         href="/test" 

@@ -1,0 +1,788 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { QUESTION_BANK } from '../data/questions';
+
+const title = "Quick IQ Screening Test (10 Min) - Instant Results Free | FreeIQExam";
+const description = "Fast, scientific 12-question cognitive screening test. Get your provisional IQ score range and percentile estimate in under 10 minutes. No email or registration required.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    "name": "Quick IQ Screening Test - 12 Questions",
+    "description": "Fast 12-item cognitive screening using 2PL IRT across Fluid Reasoning (Gf), Visual-Spatial (Gv), Quantitative (Gq), and Verbal Comprehension (Gc) domains.",
+    "url": "https://freeiqexam.com/quick-test",
+    "educationalLevel": "General Population",
+    "typicalAgeRange": "16-",
+    "timeRequired": "PT10M",
+    "numberOfQuestions": 12
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Quick IQ Screening Test",
+    "url": "https://freeiqexam.com/quick-test",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Quick Screening Test",
+        "item": "https://freeiqexam.com/quick-test"
+      }
+    ]
+  }
+];
+
+// Expose full sanitized pool to client - sampling happens client-side each session.
+// We pass the full bank; the client session manager selects 3 items per domain dynamically.
+const sanitizedBank = QUESTION_BANK.map((q) => ({
+  id: q.id,
+  domain: q.domain,
+  subType: q.subType,
+  domainLabel: q.domainLabel,
+  promptType: q.promptType,
+  promptText: q.promptText,
+  promptSvg: q.promptSvg ?? null,
+  a: q.a,
+  b: q.b,
+  options: q.options.map((opt) => ({
+    id: opt.id,
+    text: opt.text ?? '',
+    svgContent: opt.svgContent ?? null,
+  })),
+}));
+
+const bankJson = JSON.stringify(sanitizedBank);
+---
+
+<Layout title={title} description={description} schema={schema}>
+  <!-- Distraction-Free Top Navigation Bar -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+
+      <!-- Brand / Exit Trigger -->
+      <button
+        id="btn-exit"
+        type="button"
+        class="flex items-center gap-2.5 group text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black rounded-xl p-1.5 -ml-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+        aria-label="Exit assessment"
+      >
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-base shadow-xs group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-heading font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
+            FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
+          </span>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Quick Screening</span>
+        </div>
+      </button>
+
+      <!-- Center: Live Countdown Timer and Item Counter -->
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div
+          id="timer-container"
+          class="flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors duration-300"
+          role="timer"
+          aria-live="polite"
+        >
+          <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="timer-display" class="font-mono text-sm sm:text-base font-medium tracking-tight text-zinc-800 dark:text-zinc-200">
+            10:00
+          </span>
+        </div>
+
+        <!-- Question Counter Badge -->
+        <div class="hidden sm:flex items-center gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          <span>Question</span>
+          <span id="stat-current" class="font-bold text-zinc-900 dark:text-white">1</span>
+          <span>of</span>
+          <span class="font-semibold text-zinc-900 dark:text-white">12</span>
+        </div>
+      </div>
+
+      <!-- Right Action: Submit -->
+      <div class="flex items-center gap-3">
+        <button
+          id="btn-top-submit"
+          type="button"
+          class="min-h-[44px] px-4 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 shadow-sm transition-all duration-150 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        >
+          <span>Submit</span>
+          <svg class="w-4 h-4 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Active Linear Progress Bar -->
+    <div class="w-full h-1 bg-zinc-100 dark:bg-zinc-900 overflow-hidden" role="progressbar" aria-valuenow="8" aria-valuemin="0" aria-valuemax="100">
+      <div
+        id="progress-bar"
+        class="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-300 ease-out"
+        style="width: 8.33%;"
+      ></div>
+    </div>
+  </header>
+
+  <!-- Screen Reader Live Region for Question Transitions -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Main Active Assessment Area -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-between">
+
+    <!-- Top Metadata Bar -->
+    <div class="flex items-center justify-between mb-4 sm:mb-6">
+      <div class="flex items-center gap-2.5">
+        <span
+          id="domain-badge"
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-medium tracking-wide bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900"
+        >
+          Loading...
+        </span>
+        <span id="domain-sublabel" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-mono hidden md:inline">
+          Fluid Reasoning
+        </span>
+      </div>
+
+      <div class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">
+        <span id="answered-count">0</span> of 12 answered
+      </div>
+    </div>
+
+    <!-- Stimulus Prompt Instruction -->
+    <div class="mb-4 sm:mb-6">
+      <p id="question-prompt-text" class="text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+        Loading question...
+      </p>
+    </div>
+
+    <!-- Question Stimulus Card (hidden for text-only questions) -->
+    <div id="stimulus-card" class="relative w-full max-w-lg mx-auto p-5 sm:p-7 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 backdrop-blur-md shadow-xs flex items-center justify-center min-h-[200px] sm:min-h-[260px] mb-2 overflow-hidden">
+      <div id="stimulus-container" class="w-full flex items-center justify-center">
+        <!-- Prompt SVG or text injected here -->
+      </div>
+    </div>
+
+    <!-- Response Options Grid -->
+    <div class="w-full max-w-xl mx-auto mt-6 sm:mt-8">
+      <div class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3 text-center sm:text-left">
+        Available Choices (<span id="key-hint">Keys 1 to N</span>)
+      </div>
+      <div id="options-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        <!-- Options injected here -->
+      </div>
+    </div>
+
+    <!-- Sticky Navigation Controls (Prev / Next Bar) -->
+    <div class="sticky bottom-0 z-20 w-full py-3 sm:py-4 bg-white/95 dark:bg-black/90 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800 mt-8 sm:mt-10 transition-colors">
+      <div class="w-full max-w-xl mx-auto flex items-center justify-between gap-4">
+        <button
+          id="btn-prev"
+          type="button"
+          class="min-h-[44px] px-5 sm:px-6 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+          <span>Previous</span>
+        </button>
+
+        <div class="text-sm font-mono font-medium text-zinc-500 sm:hidden">
+          <span id="mobile-q-num">1</span> / 12
+        </div>
+
+        <button
+          id="btn-next"
+          type="button"
+          class="min-h-[44px] px-6 sm:px-8 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 shadow-sm transition-all duration-150 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        >
+          <span id="btn-next-text">Next</span>
+          <svg id="btn-next-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 12-Question Navigator Strip -->
+    <div class="w-full max-w-2xl mx-auto mt-8 sm:mt-10">
+      <div class="flex items-center justify-between mb-3 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+        <span>Question Navigator</span>
+        <span class="hidden sm:inline">Click any number to jump</span>
+      </div>
+      <div id="navigator-strip" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 sm:gap-2">
+        <!-- 12 Pills injected here -->
+      </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Helper -->
+    <div class="w-full max-w-xl mx-auto mt-8 text-center hidden md:block">
+      <div class="inline-flex items-center gap-4 px-4 py-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">1-N</kbd> Select Option</span>
+        <span class="text-zinc-300 dark:text-zinc-700">|</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&larr;</kbd> <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&rarr;</kbd> Navigate</span>
+        <span class="text-zinc-300 dark:text-zinc-700">|</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">Enter</kbd> Finish</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Exit Confirmation Modal -->
+  <div id="modal-exit" role="dialog" aria-modal="true" aria-labelledby="modal-exit-title" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm">
+    <div class="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+      </div>
+      <h3 id="modal-exit-title" class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">Exit Screening?</h3>
+      <p class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+        Your current progress is saved in this browser. You can return to resume your quick screening session.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <button id="btn-modal-resume" type="button" class="w-full sm:w-auto flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+          Resume Test
+        </button>
+        <a href="/" class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-center transition-colors">
+          Exit to Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Confirmation Modal -->
+  <div id="modal-submit" role="dialog" aria-modal="true" aria-labelledby="modal-submit-title" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm">
+    <div class="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 id="modal-submit-title" class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">Submit Quick Screening?</h3>
+      <p id="submit-modal-summary" class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+        Calculating summary...
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <button id="btn-confirm-submit" type="button" class="w-full sm:w-auto flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-600/20 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+          Calculate My Score
+        </button>
+        <button id="btn-cancel-submit" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+          Review Questions
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded Client Logic -->
+  <script is:inline define:vars={{ bankJson }}>
+    (function () {
+      var FULL_BANK = JSON.parse(bankJson);
+      var TOTAL_QUESTIONS = 12;
+      var TOTAL_TIME_SECONDS = 10 * 60; // 600 seconds
+
+      var STORAGE_KEY_SESSION  = 'freeiq_quick_session';
+      var STORAGE_KEY_ANSWERS  = 'iq_assessment_answers';
+      var STORAGE_KEY_QUESTIONS = 'iq_active_questions';
+      var STORAGE_KEY_TYPE     = 'iq_test_type';
+
+      // --- Domain display labels ---
+      var DOMAIN_LABELS = {
+        fluid:        { label: 'Fluid Reasoning', sub: 'Abstract Rule Induction (Gf)' },
+        spatial:      { label: 'Visual-Spatial',  sub: 'Mental Rotation / Folding (Gv)' },
+        quantitative: { label: 'Quantitative',    sub: 'Numerical Reasoning (Gq)' },
+        verbal:       { label: 'Verbal',          sub: 'Language Comprehension (Gc)' }
+      };
+
+      // --- Seeded RNG (Mulberry32) ---
+      function createRng(seed) {
+        var s = seed >>> 0;
+        return function () {
+          s += 0x6d2b79f5;
+          var t = s;
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function shuffle(arr, rng) {
+        var out = arr.slice();
+        for (var i = out.length - 1; i > 0; i--) {
+          var j = Math.floor(rng() * (i + 1));
+          var tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+        }
+        return out;
+      }
+
+      function sampleDomain(domain, count, rng) {
+        var pool = FULL_BANK.filter(function (item) { return item.domain === domain; });
+        return shuffle(pool, rng).slice(0, count);
+      }
+
+      function buildQuickSet(seed) {
+        var rng = createRng(seed);
+        var domains = ['fluid', 'spatial', 'quantitative', 'verbal'];
+        var result = [];
+        domains.forEach(function (d) {
+          sampleDomain(d, 3, rng).forEach(function (item) { result.push(item); });
+        });
+        return result;
+      }
+
+      // --- State ---
+      var questions = [];
+      var currentIndex = 0;
+      var userAnswers = {};
+      var timeRemaining = TOTAL_TIME_SECONDS;
+      var timerInterval = null;
+      var autoAdvanceTimer = null;
+      var targetEndTime = null;
+      var sessionSeed = null;
+
+      // --- Restore or init session ---
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY_SESSION);
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            var now = Date.now();
+            var isFresh = !parsed.savedAt || (now - parsed.savedAt) < 7200000;
+            if (isFresh) {
+              if (typeof parsed.seed === 'number') sessionSeed = parsed.seed;
+              if (parsed.answers && typeof parsed.answers === 'object') userAnswers = parsed.answers;
+              if (typeof parsed.timeRemaining === 'number' && parsed.timeRemaining > 0) timeRemaining = parsed.timeRemaining;
+              if (typeof parsed.currentQuestionIndex === 'number') currentIndex = parsed.currentQuestionIndex;
+              if (typeof parsed.targetEndTime === 'number' && parsed.targetEndTime > now) {
+                targetEndTime = parsed.targetEndTime;
+                timeRemaining = Math.max(0, Math.round((targetEndTime - now) / 1000));
+              } else {
+                targetEndTime = now + timeRemaining * 1000;
+              }
+            } else {
+              localStorage.removeItem(STORAGE_KEY_SESSION);
+              targetEndTime = now + timeRemaining * 1000;
+            }
+          }
+        } else {
+          targetEndTime = Date.now() + timeRemaining * 1000;
+        }
+      } catch (e) {
+        targetEndTime = Date.now() + timeRemaining * 1000;
+      }
+
+      // Build question set from seed (new or restored)
+      if (!sessionSeed) sessionSeed = Math.floor(Math.random() * 0xffffffff);
+      questions = buildQuickSet(sessionSeed);
+
+      // Clamp currentIndex
+      if (currentIndex >= questions.length) currentIndex = 0;
+
+      // --- DOM Elements ---
+      var timerDisplay       = document.getElementById('timer-display');
+      var timerContainer     = document.getElementById('timer-container');
+      var statCurrent        = document.getElementById('stat-current');
+      var mobileQNum         = document.getElementById('mobile-q-num');
+      var progressBar        = document.getElementById('progress-bar');
+      var domainBadge        = document.getElementById('domain-badge');
+      var domainSublabel     = document.getElementById('domain-sublabel');
+      var promptText         = document.getElementById('question-prompt-text');
+      var stimulusCard       = document.getElementById('stimulus-card');
+      var stimulusContainer  = document.getElementById('stimulus-container');
+      var optionsGrid        = document.getElementById('options-grid');
+      var answeredCountEl    = document.getElementById('answered-count');
+      var keyHint            = document.getElementById('key-hint');
+      var btnPrev            = document.getElementById('btn-prev');
+      var btnNext            = document.getElementById('btn-next');
+      var btnNextText        = document.getElementById('btn-next-text');
+      var btnNextIcon        = document.getElementById('btn-next-icon');
+      var navigatorStrip     = document.getElementById('navigator-strip');
+      var btnTopSubmit       = document.getElementById('btn-top-submit');
+      var modalExit          = document.getElementById('modal-exit');
+      var btnExit            = document.getElementById('btn-exit');
+      var btnModalResume     = document.getElementById('btn-modal-resume');
+      var modalSubmit        = document.getElementById('modal-submit');
+      var submitModalSummary = document.getElementById('submit-modal-summary');
+      var btnConfirmSubmit   = document.getElementById('btn-confirm-submit');
+      var btnCancelSubmit    = document.getElementById('btn-cancel-submit');
+      var srAnnouncer        = document.getElementById('sr-announcer');
+
+      var testSubmitted = false;
+
+      // --- Save session ---
+      function saveSession() {
+        if (testSubmitted) return;
+        try {
+          localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({
+            seed: sessionSeed,
+            answers: userAnswers,
+            timeRemaining: timeRemaining,
+            currentQuestionIndex: currentIndex,
+            targetEndTime: targetEndTime,
+            savedAt: Date.now()
+          }));
+        } catch (e) {}
+      }
+
+      // --- Timer ---
+      function updateTimerDisplay() {
+        var mins = Math.floor(timeRemaining / 60);
+        var secs = timeRemaining % 60;
+        var formatted = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        if (timerDisplay) timerDisplay.textContent = formatted;
+
+        if (timeRemaining <= 60) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold animate-pulse';
+        } else if (timeRemaining <= 180) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 font-semibold';
+        } else {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium';
+        }
+      }
+
+      function syncTimerFromWallClock() {
+        if (!targetEndTime || testSubmitted) return;
+        var secondsLeft = Math.max(0, Math.round((targetEndTime - Date.now()) / 1000));
+        timeRemaining = secondsLeft;
+        updateTimerDisplay();
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          submitTestImmediately();
+        }
+      }
+
+      function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(function () {
+          syncTimerFromWallClock();
+          if (timeRemaining > 0) saveSession();
+        }, 1000);
+        window.addEventListener('focus', syncTimerFromWallClock);
+        document.addEventListener('visibilitychange', function () {
+          if (document.visibilityState === 'visible') syncTimerFromWallClock();
+        });
+      }
+
+      // Beforeunload warning
+      window.addEventListener('beforeunload', function (e) {
+        if (!testSubmitted && Object.keys(userAnswers).length > 0) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+
+      // --- Submit ---
+      function submitTestImmediately() {
+        testSubmitted = true;
+        try {
+          localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify(userAnswers));
+          localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(questions.map(function (q) { return q.id; })));
+          localStorage.setItem(STORAGE_KEY_TYPE, 'quick');
+          localStorage.removeItem(STORAGE_KEY_SESSION);
+        } catch (e) {}
+        window.location.href = '/results';
+      }
+
+      function openSubmitModal() {
+        var count = Object.keys(userAnswers).length;
+        var unanswered = TOTAL_QUESTIONS - count;
+        if (count === TOTAL_QUESTIONS) {
+          submitModalSummary.textContent = 'All 12 questions answered! Your responses are ready for psychometric scoring across all 4 CHC domains.';
+        } else {
+          submitModalSummary.textContent = 'You answered ' + count + ' of 12 questions (' + unanswered + ' unanswered). Unanswered items will be scored as incorrect. Continue?';
+        }
+        modalSubmit.classList.remove('hidden');
+        modalSubmit.classList.add('flex');
+        requestAnimationFrame(function () { if (btnConfirmSubmit) btnConfirmSubmit.focus(); });
+      }
+
+      function closeSubmitModal() {
+        modalSubmit.classList.add('hidden');
+        modalSubmit.classList.remove('flex');
+      }
+
+      function openExitModal() {
+        modalExit.classList.remove('hidden');
+        modalExit.classList.add('flex');
+        requestAnimationFrame(function () { if (btnModalResume) btnModalResume.focus(); });
+      }
+
+      function closeExitModal() {
+        modalExit.classList.add('hidden');
+        modalExit.classList.remove('flex');
+      }
+
+      // --- Render Question ---
+      function renderCurrentQuestion() {
+        var q = questions[currentIndex];
+        if (!q) return;
+
+        var qNum = currentIndex + 1;
+        if (statCurrent) statCurrent.textContent = String(qNum);
+        if (mobileQNum) mobileQNum.textContent = String(qNum);
+        if (progressBar) progressBar.style.width = ((qNum / TOTAL_QUESTIONS) * 100) + '%';
+        if (answeredCountEl) answeredCountEl.textContent = String(Object.keys(userAnswers).length);
+
+        // Domain badge
+        var domInfo = DOMAIN_LABELS[q.domain] || { label: 'Cognitive', sub: 'Assessment' };
+        if (domainBadge) domainBadge.textContent = domInfo.label;
+        if (domainSublabel) domainSublabel.textContent = domInfo.sub;
+
+        // Keyboard hint
+        var optCount = q.options.length;
+        if (keyHint) keyHint.textContent = 'Keys 1 to ' + optCount;
+
+        // Stimulus rendering based on promptType
+        if (stimulusContainer) {
+          stimulusContainer.innerHTML = '';
+        }
+
+        if (q.promptType === 'text') {
+          // Hide the card entirely - text shown cleanly in prompt heading
+          if (stimulusCard) stimulusCard.style.display = 'none';
+          if (promptText) {
+            promptText.textContent = q.promptText;
+            promptText.className = 'text-lg sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        } else if (q.promptType === 'svg' && q.promptSvg) {
+          // Show card for SVG questions
+          if (stimulusCard) stimulusCard.style.display = '';
+          if (stimulusContainer) stimulusContainer.innerHTML = q.promptSvg;
+          if (promptText) {
+            promptText.textContent = 'Select the option that logically completes the pattern:';
+            promptText.className = 'text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        } else {
+          // hybrid or fallback
+          if (stimulusCard) stimulusCard.style.display = '';
+          if (stimulusContainer && q.promptSvg) {
+            var hybridText = document.createElement('p');
+            hybridText.className = 'text-sm text-zinc-700 dark:text-zinc-300 mb-3 leading-relaxed';
+            hybridText.textContent = q.promptText;
+            stimulusContainer.appendChild(hybridText);
+            var svgWrap = document.createElement('div');
+            svgWrap.innerHTML = q.promptSvg;
+            stimulusContainer.appendChild(svgWrap);
+          }
+          if (promptText) {
+            promptText.textContent = 'Study the information below, then select the correct answer:';
+            promptText.className = 'text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        }
+
+        // Options grid
+        if (optionsGrid) {
+          optionsGrid.innerHTML = '';
+          var selectedOptionId = userAnswers[q.id];
+          var hasSvgOptions = q.options.some(function (o) { return o.svgContent; });
+          optionsGrid.className = hasSvgOptions
+            ? 'grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4'
+            : 'grid grid-cols-1 gap-3';
+
+          q.options.forEach(function (opt) {
+            var isSelected = selectedOptionId === opt.id;
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('data-option-id', String(opt.id));
+            btn.setAttribute('aria-label', 'Choice ' + opt.id);
+
+            var baseClass = 'relative p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-150 cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black min-h-[44px] ';
+            var stateClass = isSelected
+              ? 'bg-blue-50/70 dark:bg-blue-950/40 border-2 border-blue-600 dark:border-blue-400 ring-2 ring-blue-600/20 shadow-md scale-[1.02]'
+              : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-xs';
+
+            if (opt.svgContent) stateClass += ' min-h-[90px] sm:min-h-[110px]';
+            btn.className = baseClass + stateClass;
+
+            // Keyboard badge (top-left)
+            var badge = document.createElement('span');
+            badge.className = isSelected
+              ? 'absolute top-2 left-2 w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-xs font-bold flex items-center justify-center'
+              : 'absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold flex items-center justify-center border border-zinc-200 dark:border-zinc-700';
+            badge.textContent = String(opt.id);
+            btn.appendChild(badge);
+
+            // Option content
+            if (opt.svgContent) {
+              var svgWrap = document.createElement('div');
+              svgWrap.className = 'w-full flex items-center justify-center pointer-events-none mt-2';
+              svgWrap.innerHTML = opt.svgContent;
+              btn.appendChild(svgWrap);
+            }
+            if (opt.text) {
+              var textWrap = document.createElement('div');
+              textWrap.className = 'w-full px-6 py-1 text-sm sm:text-base text-zinc-800 dark:text-zinc-200 leading-snug pointer-events-none';
+              textWrap.textContent = opt.text;
+              btn.appendChild(textWrap);
+            }
+
+            btn.addEventListener('click', function () { selectOption(q.id, opt.id); });
+            optionsGrid.appendChild(btn);
+          });
+        }
+
+        // Nav buttons
+        if (btnPrev) btnPrev.disabled = currentIndex === 0;
+        if (btnNextText && btnNextIcon) {
+          if (currentIndex === TOTAL_QUESTIONS - 1) {
+            btnNextText.textContent = 'Finish Test';
+            btnNextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />';
+          } else {
+            btnNextText.textContent = 'Next';
+            btnNextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />';
+          }
+        }
+
+        renderNavigatorStrip();
+        saveSession();
+
+        if (srAnnouncer) {
+          srAnnouncer.textContent = 'Question ' + (currentIndex + 1) + ' of ' + TOTAL_QUESTIONS + ': ' + (q.promptText || 'Choose the correct pattern');
+        }
+      }
+
+      function renderNavigatorStrip() {
+        if (!navigatorStrip) return;
+        navigatorStrip.innerHTML = '';
+        for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+          var qId = questions[i].id;
+          var isCurrent = i === currentIndex;
+          var isAnswered = typeof userAnswers[qId] === 'number';
+          var pill = document.createElement('button');
+          pill.type = 'button';
+          pill.setAttribute('aria-label', 'Go to question ' + (i + 1));
+          var pillClass = 'w-full min-h-[36px] sm:min-h-[40px] rounded-xl font-mono text-xs font-semibold flex items-center justify-center transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ';
+          if (isCurrent) {
+            pillClass += 'bg-blue-600 text-white ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-black shadow-xs font-bold scale-105';
+          } else if (isAnswered) {
+            pillClass += 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900';
+          } else {
+            pillClass += 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800/80 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/60 hover:bg-zinc-200 dark:hover:bg-zinc-700';
+          }
+          pill.className = pillClass;
+          pill.textContent = String(i + 1);
+          pill.addEventListener('click', (function (idx) {
+            return function () {
+              clearTimeout(autoAdvanceTimer);
+              currentIndex = idx;
+              renderCurrentQuestion();
+            };
+          })(i));
+          navigatorStrip.appendChild(pill);
+        }
+      }
+
+      function selectOption(questionId, optionId) {
+        userAnswers[questionId] = optionId;
+        renderCurrentQuestion();
+        clearTimeout(autoAdvanceTimer);
+        var answeredIdx = currentIndex;
+        autoAdvanceTimer = setTimeout(function () {
+          if (currentIndex === answeredIdx && currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          }
+        }, 400);
+      }
+
+      // --- Button listeners ---
+      if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex > 0) { currentIndex -= 1; renderCurrentQuestion(); }
+        });
+      }
+      if (btnNext) {
+        btnNext.addEventListener('click', function () {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          } else {
+            openSubmitModal();
+          }
+        });
+      }
+      if (btnTopSubmit) btnTopSubmit.addEventListener('click', openSubmitModal);
+      if (btnExit) btnExit.addEventListener('click', openExitModal);
+      if (btnModalResume) btnModalResume.addEventListener('click', closeExitModal);
+      if (btnCancelSubmit) btnCancelSubmit.addEventListener('click', closeSubmitModal);
+      if (btnConfirmSubmit) btnConfirmSubmit.addEventListener('click', submitTestImmediately);
+
+      // Focus traps for modals
+      [modalExit, modalSubmit].forEach(function (modal) {
+        modal.addEventListener('keydown', function (e) {
+          if (e.key !== 'Tab') return;
+          var focusable = Array.from(modal.querySelectorAll('button, a, [tabindex]:not([tabindex="-1"])'));
+          var first = focusable[0];
+          var last = focusable[focusable.length - 1];
+          if (e.shiftKey) {
+            if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+          } else {
+            if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+          }
+        });
+      });
+
+      // --- Keyboard navigation ---
+      window.addEventListener('keydown', function (e) {
+        if (!modalExit.classList.contains('hidden') || !modalSubmit.classList.contains('hidden')) {
+          if (e.key === 'Escape') { closeExitModal(); closeSubmitModal(); }
+          return;
+        }
+
+        var currentQ = questions[currentIndex];
+        var optionCount = currentQ ? currentQ.options.length : 0;
+
+        // Dynamic keys 1-N based on current question option count
+        if (e.key >= '1' && parseInt(e.key, 10) <= optionCount) {
+          var optId = parseInt(e.key, 10);
+          if (currentQ) selectOption(currentQ.id, optId);
+          return;
+        }
+
+        if (e.key === 'ArrowLeft' || e.key === 'p' || e.key === 'P') {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex > 0) { currentIndex -= 1; renderCurrentQuestion(); }
+          return;
+        }
+        if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex < TOTAL_QUESTIONS - 1) { currentIndex += 1; renderCurrentQuestion(); }
+          return;
+        }
+        if (e.key === 'Enter' && currentIndex === TOTAL_QUESTIONS - 1) {
+          openSubmitModal();
+        }
+      });
+
+      // --- Initialize ---
+      startTimer();
+      renderCurrentQuestion();
+    })();
+  </script>
+</Layout>

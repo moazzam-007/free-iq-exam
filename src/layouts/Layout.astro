@@ -13,18 +13,45 @@ interface Props {
 const {
   title = "Free IQ Test 2026: Instant Results, No Email Required",
   description = "Take our fast, free IQ test with instant, reliable results. 24 reasoning items, standardized IQ-scale estimate and percentile breakdown. 100% free, no sign-up or credit card.",
-  canonicalUrl = Astro.url.href,
+  canonicalUrl,
   ogImage = "/og-image.png",
   noindex = false,
   schema,
 } = Astro.props;
+
+const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
+const resolvedCanonical = canonicalUrl || new URL(Astro.url.pathname, siteOrigin).href;
+const resolvedOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteOrigin).href;
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth no-transitions">
   <head>
+    <!-- Theme Initialization Script: Executed immediately before rendering to eliminate FOUC -->
+    <script is:inline>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+        window.addEventListener('DOMContentLoaded', function() {
+          requestAnimationFrame(function() {
+            document.documentElement.classList.remove('no-transitions');
+          });
+        });
+      })();
+    </script>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     
@@ -32,22 +59,22 @@ const {
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl} />
+    <link rel="canonical" href={resolvedCanonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:url" content={resolvedCanonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={resolvedOgImage} />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:url" content={resolvedCanonical} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={ogImage} />
+    <meta property="twitter:image" content={resolvedOgImage} />
 
     <!-- Schema.org JSON-LD Structured Data -->
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
@@ -56,30 +83,18 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
-
-    <!-- Theme Initialization Script: Strict default to Pure White -->
-    <script is:inline>
-      const savedTheme = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
-      if (savedTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        if (typeof localStorage !== 'undefined' && !savedTheme) {
-          localStorage.setItem('theme', 'light');
-        }
-      }
-    </script>
   </head>
-  <body class="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-zinc-50 font-sans antialiased transition-colors duration-200 flex flex-col selection:bg-blue-600 selection:text-white">
-    <slot />
+  <body class="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-zinc-50 font-sans antialiased flex flex-col selection:bg-blue-600 selection:text-white">
+    <!-- Accessible Skip Link (WCAG 2.4.1) -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white text-sm font-semibold"
+    >
+      Skip to main content
+    </a>
+
+    <div id="main-content" tabindex="-1" class="outline-none flex-1 flex flex-col">
+      <slot />
+    </div>
   </body>
 </html>
-
-<style is:global>
-  body {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  }
-  h1, h2, h3, h4, .font-heading {
-    font-family: 'Outfit', 'Inter', sans-serif;
-  }
-</style>

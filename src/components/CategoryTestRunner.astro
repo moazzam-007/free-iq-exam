@@ -1,0 +1,1072 @@
+---
+import { getDomainTestSet } from '../data/questions';
+
+export interface Props {
+  domain: 'fluid' | 'spatial' | 'quantitative' | 'verbal';
+  domainCode: string; // 'Gf', 'Gv', 'Gq', 'Gc'
+  domainTitle: string;
+  domainSubtitle: string;
+  domainDescription: string;
+  testDurationMinutes?: number;
+  itemCount?: number;
+  gradientClass?: string;
+  badgeClass?: string;
+}
+
+const {
+  domain,
+  domainCode,
+  domainTitle,
+  domainSubtitle,
+  domainDescription,
+  testDurationMinutes = 15,
+  itemCount = 16,
+  gradientClass = 'from-blue-600 to-indigo-600',
+  badgeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+} = Astro.props;
+
+// Fetch 16 items sorted by difficulty ascending
+const items = getDomainTestSet(domain, itemCount);
+
+const clientQuestions = items.map((q) => ({
+  id: q.id,
+  domain: q.domain,
+  subType: q.subType,
+  domainLabel: q.domainLabel,
+  promptType: q.promptType,
+  promptText: q.promptText,
+  promptSvg: q.promptSvg ?? null,
+  explanation: q.explanation,
+  options: q.options.map((opt) => ({
+    id: opt.id,
+    text: opt.text ?? '',
+    svgContent: opt.svgContent ?? null,
+    isCorrect: opt.isCorrect,
+  })),
+}));
+
+const questionsJson = JSON.stringify(clientQuestions);
+const runnerConfig = JSON.stringify({
+  domain,
+  domainCode,
+  domainTitle,
+  testDurationMinutes,
+  totalQuestions: items.length,
+});
+---
+
+<div id="category-assessment-root" class="w-full">
+  <!-- Mode Selector Tabs -->
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 mb-6">
+    <div class="p-1.5 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center gap-2 max-w-md mx-auto">
+      <button
+        id="mode-tab-timed"
+        type="button"
+        class="flex-1 min-h-[44px] py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        aria-pressed="true"
+      >
+        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Timed Test (15 min)</span>
+      </button>
+      <button
+        id="mode-tab-practice"
+        type="button"
+        class="flex-1 min-h-[44px] py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        aria-pressed="false"
+      >
+        <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+        <span>Practice Drill (Untimed)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Screen Reader Live Region for Transitions -->
+  <div id="cat-sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Active Test Runner Container -->
+  <div id="test-runner-container" class="w-full">
+    <!-- Runner Header (Offset top-16 sm:top-20 to eliminate collision with global Header) -->
+    <div class="sticky top-16 sm:top-20 z-30 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-y border-zinc-200 dark:border-zinc-800 transition-colors">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 sm:h-18 flex items-center justify-between gap-4">
+        <!-- Left: Domain / Mode Badge -->
+        <div class="flex items-center gap-2.5">
+          <span class={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold border ${badgeClass}`}>
+            <span>{domainCode}</span>
+            <span class="text-zinc-400 font-normal" aria-hidden="true">|</span>
+            <span id="active-mode-label">15-Min Assessment</span>
+          </span>
+        </div>
+
+        <!-- Center: Timer or Drill Indicator -->
+        <div class="flex items-center gap-4">
+          <div
+            id="cat-timer-container"
+            class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors"
+            role="timer"
+            aria-label="Remaining assessment time"
+          >
+            <svg id="cat-timer-icon" class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="cat-timer-display" class="font-mono text-sm sm:text-base font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
+              15:00
+            </span>
+          </div>
+
+          <div class="hidden sm:flex items-center gap-1 text-xs sm:text-sm font-mono text-zinc-600 dark:text-zinc-400">
+            <span>Item</span>
+            <span id="cat-stat-current" class="font-bold text-zinc-900 dark:text-white">1</span>
+            <span>of</span>
+            <span class="font-semibold text-zinc-900 dark:text-white">16</span>
+          </div>
+        </div>
+
+        <!-- Right: Submit / Finish Action (44px target) -->
+        <div class="flex items-center gap-2">
+          <button
+            id="btn-cat-submit"
+            type="button"
+            class="min-h-[44px] px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 shadow-sm transition-all flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            <span id="btn-cat-submit-text">Finish Test</span>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Linear Progress Bar -->
+      <div class="w-full h-1 bg-zinc-100 dark:bg-zinc-900 overflow-hidden" role="progressbar" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100">
+        <div
+          id="cat-progress-bar"
+          class={`h-full bg-gradient-to-r ${gradientClass} transition-all duration-300 ease-out`}
+          style="width: 6.25%;"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Active Question Main Area -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col justify-between min-h-[500px]">
+      <!-- Sub-bar: Subtype & Progress Count & Flag -->
+      <div class="flex items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-2">
+          <span id="cat-subtype-badge" class="px-2.5 py-1 rounded-md text-xs font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+            Pattern Induction
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-cat-flag"
+            type="button"
+            class="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-amber-600 hover:border-amber-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            title="Flag question for review"
+            aria-label="Flag current item"
+          >
+            <svg id="cat-flag-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.779V4.225l-2.908.727a9 9 0 01-6.086-.71l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
+            </svg>
+            <span id="cat-flag-label">Flag</span>
+          </button>
+
+          <span class="text-xs font-mono text-zinc-600 dark:text-zinc-400">
+            <span id="cat-answered-count">0</span> / 16 answered
+          </span>
+        </div>
+      </div>
+
+      <!-- Question Prompt Text -->
+      <div class="mb-4 sm:mb-6">
+        <p id="cat-prompt-text" class="text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+          Loading question...
+        </p>
+      </div>
+
+      <!-- Stimulus Card (for visual SVG items) -->
+      <div id="cat-stimulus-card" class="relative w-full max-w-lg mx-auto p-5 sm:p-7 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 backdrop-blur-md shadow-xs flex items-center justify-center min-h-[220px] sm:min-h-[270px] mb-4 overflow-hidden">
+        <div id="cat-stimulus-container" class="w-full flex items-center justify-center select-none">
+          <!-- Stimulus SVG injected here -->
+        </div>
+      </div>
+
+      <!-- Response Options Grid -->
+      <div class="w-full max-w-xl mx-auto mt-4 sm:mt-6">
+        <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3 text-center sm:text-left">
+          Select One Choice (Keys 1-N)
+        </div>
+        <div id="cat-options-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+          <!-- Options injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Practice Drill Feedback Box (only visible in practice mode) -->
+      <div id="cat-drill-feedback-box" class="hidden w-full max-w-xl mx-auto mt-6 transition-all duration-300">
+        <div id="cat-drill-banner" class="p-4 rounded-2xl border transition-all flex items-start gap-3">
+          <div id="cat-drill-icon" class="shrink-0 w-7 h-7 rounded-xl flex items-center justify-center mt-0.5"></div>
+          <div class="flex-1">
+            <h4 id="cat-drill-title" class="font-heading font-bold text-sm sm:text-base mb-1"></h4>
+            <p id="cat-drill-explanation" class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed"></p>
+            <button
+              id="btn-cat-drill-next"
+              type="button"
+              class="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 hover:opacity-90 transition-opacity"
+            >
+              <span>Continue to Next Question</span>
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Bottom Navigation Controls (Prev / Next Bar) -->
+      <div class="sticky bottom-0 z-20 w-full py-3 sm:py-4 bg-white/95 dark:bg-black/90 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800 mt-8 transition-colors">
+        <div class="flex items-center justify-between gap-4 max-w-4xl mx-auto">
+          <button
+            id="btn-cat-prev"
+            type="button"
+            class="min-h-[44px] px-5 py-2.5 rounded-full text-sm font-semibold border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            <span>Previous</span>
+          </button>
+
+          <div class="text-xs font-mono text-zinc-600 dark:text-zinc-400 sm:hidden">
+            <span id="cat-mobile-q-num">1</span> / 16
+          </div>
+
+          <button
+            id="btn-cat-next"
+            type="button"
+            class="min-h-[44px] px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 shadow-sm transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            <span id="btn-cat-next-text">Next</span>
+            <svg id="btn-cat-next-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 16-Pill Navigator Strip -->
+      <div class="w-full max-w-2xl mx-auto mt-8">
+        <div class="flex items-center justify-between mb-2 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+          <span>Question Navigator</span>
+          <span class="hidden sm:inline">Click any pill to jump</span>
+        </div>
+        <div id="cat-navigator-strip" class="grid grid-cols-8 sm:grid-cols-16 gap-1.5">
+          <!-- 16 pills injected dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-Page Instant Category Results View (hidden until test submitted) -->
+  <div id="cat-results-container" class="hidden max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <!-- Results Hero Card -->
+    <div class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm text-center relative overflow-hidden mb-10">
+      <div class="relative z-10 flex flex-col items-center">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono text-zinc-600 dark:text-zinc-300 mb-4">
+          <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+          <span>SPECIALIZED DOMAIN ASSESSMENT COMPLETED</span>
+        </div>
+
+        <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-1">
+          {domainTitle} Performance Report
+        </h2>
+        <p class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400 mb-6">
+          Construct: {domainCode} - {domainSubtitle}
+        </p>
+
+        <!-- Big Accuracy Display -->
+        <div class="flex items-baseline justify-center gap-2 my-2">
+          <span id="cat-res-accuracy" class="font-heading font-extrabold text-5xl sm:text-7xl text-zinc-950 dark:text-white tracking-tight leading-none">
+            0 / 16
+          </span>
+          <span id="cat-res-pct" class="text-xl sm:text-2xl font-mono text-zinc-500 dark:text-zinc-400 font-semibold">
+            (0%)
+          </span>
+        </div>
+
+        <!-- Qualitative Tier Badge -->
+        <div class="mt-3 mb-6">
+          <span id="cat-res-tier" class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">
+            Calculating...
+          </span>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl mt-4">
+          <div class="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Total Items</span>
+            <span class="text-lg sm:text-xl font-bold font-heading text-zinc-900 dark:text-white mt-1">16</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Correct</span>
+            <span id="cat-res-correct-count" class="text-lg sm:text-xl font-bold font-heading text-emerald-600 dark:text-emerald-400 mt-1">0</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Time Elapsed</span>
+            <span id="cat-res-time-elapsed" class="text-lg sm:text-xl font-bold font-heading text-zinc-900 dark:text-white mt-1">0:00</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Test Mode</span>
+            <span id="cat-res-mode-name" class="text-xs sm:text-sm font-bold font-heading text-blue-600 dark:text-blue-400 mt-2">Timed</span>
+          </div>
+        </div>
+
+        <!-- Domain Construct Diagnostic Feedback -->
+        <div class="w-full max-w-2xl mt-6 p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 text-left">
+          <h3 class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">
+            Psychometric Interpretation:
+          </h3>
+          <p id="cat-res-interpretation" class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            {domainDescription}
+          </p>
+        </div>
+
+        <!-- Action CTAs -->
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full max-w-xl mt-8">
+          <a
+            href="/test"
+            class="w-full sm:w-auto flex-1 min-h-[44px] px-6 py-3 rounded-2xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all text-center flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            <span>Take Comprehensive 24-Item IQ Test</span>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+          <button
+            id="btn-cat-retake"
+            type="button"
+            class="w-full sm:w-auto min-h-[44px] px-6 py-3 rounded-2xl text-sm font-semibold border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            Retake Domain
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question-by-Question Diagnostic Review -->
+    <div class="max-w-4xl mx-auto">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">
+            Item Diagnostic Review
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+            Step-by-step psychometric solutions and logical rule explanations.
+          </p>
+        </div>
+        <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">16 Questions</span>
+      </div>
+
+      <div id="cat-review-list" class="space-y-3">
+        <!-- Review items injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Confirmation Modal with Focus Trap & ARIA Dialog -->
+  <div
+    id="modal-cat-submit"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cat-submit-modal-title"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm"
+  >
+    <div class="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 id="cat-submit-modal-title" class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">Submit Category Test?</h3>
+      <p id="cat-submit-summary-text" class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+        Calculating summary...
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <button id="btn-cat-confirm-submit" type="button" class="w-full sm:w-auto flex-1 min-h-[44px] px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+          Calculate Domain Score
+        </button>
+        <button id="btn-cat-cancel-submit" type="button" class="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+          Continue Test
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Embedded Client Script -->
+<script is:inline define:vars={{ questionsJson, runnerConfig }}>
+  (function () {
+    var questions = JSON.parse(questionsJson);
+    var config = JSON.parse(runnerConfig);
+    var TOTAL_QUESTIONS = questions.length;
+    var TOTAL_TIME_SECONDS = config.testDurationMinutes * 60;
+
+    var STORAGE_KEY_SESSION = 'freeiq_cat_session_' + config.domain;
+
+    // State
+    var currentMode = 'timed'; // 'timed' or 'practice'
+    var currentIndex = 0;
+    var userAnswers = {}; // questionId -> optionId
+    var flaggedQuestions = {}; // questionId -> boolean
+    var timeRemaining = TOTAL_TIME_SECONDS;
+    var targetEndTime = null;
+    var timerInterval = null;
+    var startTimeMs = Date.now();
+    var testSubmitted = false;
+    var autoAdvanceTimer = null;
+
+    // Check URL params for mode
+    try {
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('mode') === 'practice') {
+        currentMode = 'practice';
+      }
+    } catch (e) {}
+
+    // Restore session if available
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY_SESSION);
+      if (saved) {
+        var parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          var now = Date.now();
+          var isFresh = !parsed.savedAt || (now - parsed.savedAt) < 7200000; // 2 hours
+          if (isFresh) {
+            if (parsed.answers) userAnswers = parsed.answers;
+            if (parsed.flags) flaggedQuestions = parsed.flags;
+            if (typeof parsed.timeRemaining === 'number') timeRemaining = parsed.timeRemaining;
+            if (typeof parsed.currentIndex === 'number' && parsed.currentIndex < TOTAL_QUESTIONS) currentIndex = parsed.currentIndex;
+            if (parsed.mode === 'timed' || parsed.mode === 'practice') currentMode = parsed.mode;
+            if (typeof parsed.targetEndTime === 'number' && parsed.mode === 'timed') {
+              var remaining = Math.max(0, Math.round((parsed.targetEndTime - now) / 1000));
+              if (remaining > 0) {
+                targetEndTime = parsed.targetEndTime;
+                timeRemaining = remaining;
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {}
+
+    function saveSession() {
+      if (testSubmitted) return;
+      try {
+        localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({
+          answers: userAnswers,
+          flags: flaggedQuestions,
+          timeRemaining: timeRemaining,
+          targetEndTime: targetEndTime,
+          currentIndex: currentIndex,
+          mode: currentMode,
+          savedAt: Date.now()
+        }));
+      } catch (e) {}
+    }
+
+    // DOM References
+    var modeTabTimed       = document.getElementById('mode-tab-timed');
+    var modeTabPractice    = document.getElementById('mode-tab-practice');
+    var activeModeLabel    = document.getElementById('active-mode-label');
+    var timerDisplay       = document.getElementById('cat-timer-display');
+    var timerContainer     = document.getElementById('cat-timer-container');
+    var timerIcon          = document.getElementById('cat-timer-icon');
+    var statCurrent        = document.getElementById('cat-stat-current');
+    var mobileQNum         = document.getElementById('cat-mobile-q-num');
+    var progressBar        = document.getElementById('cat-progress-bar');
+    var subtypeBadge       = document.getElementById('cat-subtype-badge');
+    var btnFlag            = document.getElementById('btn-cat-flag');
+    var flagLabel          = document.getElementById('cat-flag-label');
+    var flagIcon           = document.getElementById('cat-flag-icon');
+    var answeredCountEl    = document.getElementById('cat-answered-count');
+    var promptText         = document.getElementById('cat-prompt-text');
+    var stimulusCard       = document.getElementById('cat-stimulus-card');
+    var stimulusContainer  = document.getElementById('cat-stimulus-container');
+    var optionsGrid        = document.getElementById('cat-options-grid');
+    var drillFeedbackBox   = document.getElementById('cat-drill-feedback-box');
+    var drillBanner        = document.getElementById('cat-drill-banner');
+    var drillIcon          = document.getElementById('cat-drill-icon');
+    var drillTitle         = document.getElementById('cat-drill-title');
+    var drillExplanation   = document.getElementById('cat-drill-explanation');
+    var btnDrillNext       = document.getElementById('btn-cat-drill-next');
+    var btnPrev            = document.getElementById('btn-cat-prev');
+    var btnNext            = document.getElementById('btn-cat-next');
+    var btnNextText        = document.getElementById('btn-cat-next-text');
+    var navigatorStrip     = document.getElementById('cat-navigator-strip');
+    var btnSubmit          = document.getElementById('btn-cat-submit');
+    var modalSubmit        = document.getElementById('modal-cat-submit');
+    var submitSummaryText  = document.getElementById('cat-submit-summary-text');
+    var btnConfirmSubmit   = document.getElementById('btn-cat-confirm-submit');
+    var btnCancelSubmit    = document.getElementById('btn-cat-cancel-submit');
+    var testRunnerRoot     = document.getElementById('test-runner-container');
+    var resultsRoot        = document.getElementById('cat-results-container');
+    var btnRetake          = document.getElementById('btn-cat-retake');
+    var srAnnouncer        = document.getElementById('cat-sr-announcer');
+
+    // Format Time M:SS
+    function formatTime(sec) {
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+
+    // Wall-clock synchronization
+    function syncTimerFromWallClock() {
+      if (currentMode !== 'timed' || !targetEndTime || testSubmitted) return;
+      var now = Date.now();
+      var remaining = Math.max(0, Math.round((targetEndTime - now) / 1000));
+      timeRemaining = remaining;
+      if (timerDisplay) timerDisplay.textContent = formatTime(timeRemaining);
+      updateTimerStyles(timeRemaining);
+      if (timeRemaining <= 0) {
+        if (timerInterval) clearInterval(timerInterval);
+        finishAssessment();
+      }
+    }
+
+    function updateTimerStyles(sec) {
+      if (!timerContainer) return;
+      if (sec <= 60) {
+        timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold';
+      } else if (sec <= 180) {
+        timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 font-semibold';
+      } else {
+        timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200';
+      }
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      targetEndTime = Date.now() + timeRemaining * 1000;
+      if (timerDisplay) timerDisplay.textContent = formatTime(timeRemaining);
+      updateTimerStyles(timeRemaining);
+      timerInterval = setInterval(function () {
+        if (currentMode !== 'timed') return;
+        syncTimerFromWallClock();
+        if (timeRemaining % 5 === 0) saveSession();
+      }, 1000);
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && currentMode === 'timed') {
+        syncTimerFromWallClock();
+      }
+    });
+
+    window.addEventListener('focus', function () {
+      if (currentMode === 'timed') {
+        syncTimerFromWallClock();
+      }
+    });
+
+    // Setup Mode Tabs with safety confirmation to protect psychometric integrity
+    function setMode(mode) {
+      if (currentMode !== mode && Object.keys(userAnswers).length > 0) {
+        var proceed = confirm('Switching modes will reset your current responses for this session. Do you wish to restart in ' + (mode === 'timed' ? 'Timed' : 'Practice Drill') + ' mode?');
+        if (!proceed) return;
+        userAnswers = {};
+        flaggedQuestions = {};
+        currentIndex = 0;
+        timeRemaining = TOTAL_TIME_SECONDS;
+      }
+
+      currentMode = mode;
+      clearTimeout(autoAdvanceTimer);
+
+      if (mode === 'timed') {
+        modeTabTimed.className = 'flex-1 min-h-[44px] py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
+        modeTabPractice.className = 'flex-1 min-h-[44px] py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
+        modeTabTimed.setAttribute('aria-pressed', 'true');
+        modeTabPractice.setAttribute('aria-pressed', 'false');
+        activeModeLabel.textContent = '15-Min Assessment';
+        timerContainer.classList.remove('hidden');
+        startTimer();
+      } else {
+        if (timerInterval) clearInterval(timerInterval);
+        modeTabPractice.className = 'flex-1 min-h-[44px] py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
+        modeTabTimed.className = 'flex-1 min-h-[44px] py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
+        modeTabPractice.setAttribute('aria-pressed', 'true');
+        modeTabTimed.setAttribute('aria-pressed', 'false');
+        activeModeLabel.textContent = 'Practice Drill';
+        timerDisplay.textContent = 'Untimed Drill';
+      }
+      renderCurrentQuestion();
+      saveSession();
+    }
+
+    if (modeTabTimed) modeTabTimed.addEventListener('click', function () { setMode('timed'); });
+    if (modeTabPractice) modeTabPractice.addEventListener('click', function () { setMode('practice'); });
+
+    // Render Question
+    function renderCurrentQuestion() {
+      var q = questions[currentIndex];
+      if (!q) return;
+
+      if (statCurrent) statCurrent.textContent = String(currentIndex + 1);
+      if (mobileQNum) mobileQNum.textContent = String(currentIndex + 1);
+      if (progressBar) progressBar.style.width = (((currentIndex + 1) / TOTAL_QUESTIONS) * 100) + '%';
+      if (promptText) promptText.textContent = q.promptText;
+      if (subtypeBadge) subtypeBadge.textContent = (q.subType || '').replace(/_/g, ' ');
+
+      // Screen reader announcement
+      if (srAnnouncer) {
+        srAnnouncer.textContent = 'Question ' + (currentIndex + 1) + ' of ' + TOTAL_QUESTIONS + ': ' + q.promptText;
+      }
+
+      // Flag state
+      var isFlagged = Boolean(flaggedQuestions[q.id]);
+      if (flagLabel) flagLabel.textContent = isFlagged ? 'Flagged' : 'Flag';
+      if (btnFlag) {
+        if (isFlagged) {
+          btnFlag.className = 'min-h-[44px] inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium border border-amber-400 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300';
+          if (flagIcon) flagIcon.setAttribute('fill', 'currentColor');
+        } else {
+          btnFlag.className = 'min-h-[44px] inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-amber-600 hover:border-amber-300 transition-colors';
+          if (flagIcon) flagIcon.setAttribute('fill', 'none');
+        }
+      }
+
+      // Stimulus container
+      if (stimulusContainer) {
+        stimulusContainer.innerHTML = '';
+        if (q.promptSvg) {
+          stimulusContainer.innerHTML = q.promptSvg;
+        }
+      }
+
+      // Options Rendering
+      if (optionsGrid) {
+        optionsGrid.innerHTML = '';
+        var selectedId = userAnswers[q.id];
+
+        q.options.forEach(function (opt, optIdx) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'relative p-3 sm:p-4 rounded-2xl border transition-all flex flex-col items-center justify-center min-h-[90px] sm:min-h-[110px] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ';
+
+          var isSelected = selectedId === opt.id;
+
+          if (currentMode === 'practice' && selectedId !== undefined) {
+            // Practice Drill immediate feedback styling
+            if (opt.isCorrect) {
+              btn.className += 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-100 ring-2 ring-emerald-500 shadow-xs';
+            } else if (isSelected && !opt.isCorrect) {
+              btn.className += 'bg-rose-50 dark:bg-rose-950/40 border-rose-500 text-rose-900 dark:text-rose-100 ring-2 ring-rose-500 shadow-xs';
+            } else {
+              btn.className += 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-600 opacity-60';
+            }
+          } else {
+            // Normal / Timed mode styling
+            if (isSelected) {
+              btn.className += 'bg-blue-50 dark:bg-blue-950/50 border-blue-600 dark:border-blue-400 text-blue-950 dark:text-white ring-2 ring-blue-600 shadow-sm scale-102';
+            } else {
+              btn.className += 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-850';
+            }
+          }
+
+          // Key index badge (Keys 1-N)
+          var keyBadge = document.createElement('span');
+          keyBadge.className = 'absolute top-2 left-2 text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400';
+          keyBadge.textContent = String(optIdx + 1);
+          btn.appendChild(keyBadge);
+
+          // Content: SVG or Text
+          if (opt.svgContent) {
+            var svgWrap = document.createElement('div');
+            svgWrap.className = 'w-full flex items-center justify-center max-h-[70px] select-none';
+            svgWrap.innerHTML = opt.svgContent;
+            btn.appendChild(svgWrap);
+          } else {
+            var textSpan = document.createElement('span');
+            textSpan.className = 'text-sm sm:text-base font-medium';
+            textSpan.textContent = opt.text;
+            btn.appendChild(textSpan);
+          }
+
+          btn.addEventListener('click', function () {
+            selectOption(opt.id);
+          });
+
+          optionsGrid.appendChild(btn);
+        });
+      }
+
+      // Drill Feedback Display
+      if (currentMode === 'practice' && selectedId !== undefined) {
+        if (drillFeedbackBox) drillFeedbackBox.classList.remove('hidden');
+        var chosenOpt = q.options.find(function (o) { return o.id === selectedId; });
+        var isCorrect = chosenOpt && chosenOpt.isCorrect;
+
+        if (drillExplanation) drillExplanation.textContent = q.explanation || 'No detailed explanation provided for this item.';
+
+        if (isCorrect) {
+          if (drillBanner) drillBanner.className = 'p-4 rounded-2xl border transition-all flex items-start gap-3 bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800';
+          if (drillIcon) {
+            drillIcon.className = 'shrink-0 w-7 h-7 rounded-xl flex items-center justify-center mt-0.5 bg-emerald-600 text-white';
+            drillIcon.innerHTML = '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>';
+          }
+          if (drillTitle) {
+            drillTitle.className = 'font-heading font-bold text-sm sm:text-base mb-1 text-emerald-900 dark:text-emerald-200';
+            drillTitle.textContent = 'Correct Deduction';
+          }
+        } else {
+          if (drillBanner) drillBanner.className = 'p-4 rounded-2xl border transition-all flex items-start gap-3 bg-rose-50/80 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800';
+          if (drillIcon) {
+            drillIcon.className = 'shrink-0 w-7 h-7 rounded-xl flex items-center justify-center mt-0.5 bg-rose-600 text-white';
+            drillIcon.innerHTML = '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+          }
+          if (drillTitle) {
+            drillTitle.className = 'font-heading font-bold text-sm sm:text-base mb-1 text-rose-900 dark:text-rose-200';
+            drillTitle.textContent = 'Incorrect Choice - Review Logic';
+          }
+        }
+      } else {
+        if (drillFeedbackBox) drillFeedbackBox.classList.add('hidden');
+      }
+
+      // Prev / Next button states
+      if (btnPrev) btnPrev.disabled = currentIndex === 0;
+      if (btnNextText) btnNextText.textContent = currentIndex === TOTAL_QUESTIONS - 1 ? 'Review & Finish' : 'Next';
+
+      // Answered counter
+      var ansCount = Object.keys(userAnswers).length;
+      if (answeredCountEl) answeredCountEl.textContent = String(ansCount);
+
+      // Navigator strip update
+      renderNavigatorStrip();
+    }
+
+    // Select Option (Debounced with double-guard to eliminate question skipping)
+    function selectOption(optionId) {
+      var q = questions[currentIndex];
+      if (!q) return;
+
+      userAnswers[q.id] = optionId;
+      saveSession();
+      renderCurrentQuestion();
+
+      if (currentMode === 'timed') {
+        clearTimeout(autoAdvanceTimer);
+        var answeredIdx = currentIndex;
+        autoAdvanceTimer = setTimeout(function () {
+          if (currentIndex === answeredIdx && currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex++;
+            renderCurrentQuestion();
+          }
+        }, 400);
+      }
+    }
+
+    // Navigator Strip
+    function renderNavigatorStrip() {
+      if (!navigatorStrip) return;
+      navigatorStrip.innerHTML = '';
+
+      questions.forEach(function (q, idx) {
+        var pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = 'w-full min-h-[36px] py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ';
+        pill.setAttribute('aria-label', 'Go to item ' + (idx + 1));
+
+        var isCurrent = idx === currentIndex;
+        var isAnswered = userAnswers[q.id] !== undefined;
+        var isFlagged = Boolean(flaggedQuestions[q.id]);
+
+        if (isCurrent) {
+          pill.className += 'bg-blue-600 text-white ring-2 ring-blue-600/30 font-bold scale-105';
+        } else if (isFlagged) {
+          pill.className += 'bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
+        } else if (isAnswered) {
+          if (currentMode === 'practice') {
+            var chosen = q.options.find(function (o) { return o.id === userAnswers[q.id]; });
+            if (chosen && chosen.isCorrect) {
+              pill.className += 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-300';
+            } else {
+              pill.className += 'bg-rose-100 text-rose-900 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-300';
+            }
+          } else {
+            pill.className += 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 font-semibold';
+          }
+        } else {
+          pill.className += 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-800';
+        }
+
+        pill.textContent = String(idx + 1);
+        pill.addEventListener('click', function () {
+          clearTimeout(autoAdvanceTimer);
+          currentIndex = idx;
+          renderCurrentQuestion();
+        });
+
+        navigatorStrip.appendChild(pill);
+      });
+    }
+
+    // Toggle Flag
+    if (btnFlag) {
+      btnFlag.addEventListener('click', function () {
+        var q = questions[currentIndex];
+        if (!q) return;
+        flaggedQuestions[q.id] = !flaggedQuestions[q.id];
+        saveSession();
+        renderCurrentQuestion();
+      });
+    }
+
+    // Prev / Next listeners
+    if (btnPrev) {
+      btnPrev.addEventListener('click', function () {
+        clearTimeout(autoAdvanceTimer);
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderCurrentQuestion();
+        }
+      });
+    }
+
+    if (btnNext) {
+      btnNext.addEventListener('click', function () {
+        clearTimeout(autoAdvanceTimer);
+        if (currentIndex < TOTAL_QUESTIONS - 1) {
+          currentIndex++;
+          renderCurrentQuestion();
+        } else {
+          showSubmitModal();
+        }
+      });
+    }
+
+    if (btnDrillNext) {
+      btnDrillNext.addEventListener('click', function () {
+        clearTimeout(autoAdvanceTimer);
+        if (currentIndex < TOTAL_QUESTIONS - 1) {
+          currentIndex++;
+          renderCurrentQuestion();
+        } else {
+          showSubmitModal();
+        }
+      });
+    }
+
+    // Keyboard Shortcuts (1-9 for choices, ArrowLeft/ArrowRight)
+    window.addEventListener('keydown', function (e) {
+      if (testSubmitted) return;
+      if (modalSubmit && !modalSubmit.classList.contains('hidden')) {
+        if (e.key === 'Escape') closeSubmitModal();
+        return;
+      }
+
+      var num = parseInt(e.key, 10);
+      var q = questions[currentIndex];
+      if (q && !isNaN(num) && num >= 1 && num <= q.options.length) {
+        var opt = q.options[num - 1];
+        if (opt) selectOption(opt.id);
+      }
+
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        clearTimeout(autoAdvanceTimer);
+        currentIndex--;
+        renderCurrentQuestion();
+      } else if (e.key === 'ArrowRight' && currentIndex < TOTAL_QUESTIONS - 1) {
+        clearTimeout(autoAdvanceTimer);
+        currentIndex++;
+        renderCurrentQuestion();
+      }
+    });
+
+    // Submit Modal with focus trap and Escape handler
+    function showSubmitModal() {
+      clearTimeout(autoAdvanceTimer);
+      var ansCount = Object.keys(userAnswers).length;
+      var unansCount = TOTAL_QUESTIONS - ansCount;
+
+      if (submitSummaryText) {
+        if (unansCount === 0) {
+          submitSummaryText.textContent = 'All 16 questions answered! Ready to calculate your validated psychometric performance score.';
+        } else {
+          submitSummaryText.textContent = 'You have answered ' + ansCount + ' of ' + TOTAL_QUESTIONS + ' questions (' + unansCount + ' unanswered). You can finish now or return to answer remaining questions.';
+        }
+      }
+      if (modalSubmit) {
+        modalSubmit.classList.remove('hidden');
+        modalSubmit.classList.add('flex');
+        if (btnConfirmSubmit) btnConfirmSubmit.focus();
+      }
+    }
+
+    function closeSubmitModal() {
+      if (!modalSubmit) return;
+      modalSubmit.classList.add('hidden');
+      modalSubmit.classList.remove('flex');
+      if (btnSubmit) btnSubmit.focus();
+    }
+
+    if (btnSubmit) btnSubmit.addEventListener('click', showSubmitModal);
+    if (btnCancelSubmit) btnCancelSubmit.addEventListener('click', closeSubmitModal);
+    if (modalSubmit) {
+      modalSubmit.addEventListener('click', function (e) {
+        if (e.target === modalSubmit) closeSubmitModal();
+      });
+    }
+
+    if (btnConfirmSubmit) {
+      btnConfirmSubmit.addEventListener('click', function () {
+        closeSubmitModal();
+        finishAssessment();
+      });
+    }
+
+    // Finish Assessment and Render In-Page Results
+    function finishAssessment() {
+      testSubmitted = true;
+      if (timerInterval) clearInterval(timerInterval);
+      try { localStorage.removeItem(STORAGE_KEY_SESSION); } catch (e) {}
+
+      var correctCount = 0;
+      questions.forEach(function (q) {
+        var chosenId = userAnswers[q.id];
+        var correctOpt = q.options.find(function (o) { return o.isCorrect; });
+        if (correctOpt && chosenId === correctOpt.id) {
+          correctCount++;
+        }
+      });
+
+      var accuracyPct = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
+      var timeElapsedSec = Math.max(1, TOTAL_TIME_SECONDS - timeRemaining);
+      if (currentMode === 'practice') {
+        timeElapsedSec = Math.round((Date.now() - startTimeMs) / 1000);
+      }
+
+      // Hide runner, show results
+      if (testRunnerRoot) testRunnerRoot.classList.add('hidden');
+      if (resultsRoot) resultsRoot.classList.remove('hidden');
+
+      // Populate Hero Card
+      var resAccuracy = document.getElementById('cat-res-accuracy');
+      var resPct      = document.getElementById('cat-res-pct');
+      var resTier     = document.getElementById('cat-res-tier');
+      var resCorrect  = document.getElementById('cat-res-correct-count');
+      var resTime     = document.getElementById('cat-res-time-elapsed');
+      var resMode     = document.getElementById('cat-res-mode-name');
+
+      if (resAccuracy) resAccuracy.textContent = correctCount + ' / ' + TOTAL_QUESTIONS;
+      if (resPct)      resPct.textContent = '(' + accuracyPct + '%)';
+      if (resCorrect)  resCorrect.textContent = String(correctCount);
+      if (resTime)     resTime.textContent = formatTime(timeElapsedSec);
+      if (resMode)     resMode.textContent = currentMode === 'timed' ? 'Timed 15m' : 'Practice Drill';
+
+      // Tier Badge
+      if (resTier) {
+        if (accuracyPct >= 83) {
+          resTier.textContent = 'Strength Area';
+          resTier.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+        } else if (accuracyPct >= 67) {
+          resTier.textContent = 'High Average';
+          resTier.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800';
+        } else if (accuracyPct >= 50) {
+          resTier.textContent = 'Average Range';
+          resTier.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700';
+        } else {
+          resTier.textContent = 'Developing Area';
+          resTier.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+        }
+      }
+
+      // Populate Accordion
+      renderReviewAccordion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Review Accordion
+    function renderReviewAccordion() {
+      var list = document.getElementById('cat-review-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      questions.forEach(function (q, idx) {
+        var chosenId = userAnswers[q.id];
+        var correctOpt = q.options.find(function (o) { return o.isCorrect; });
+        var isCorrect = correctOpt && chosenId === correctOpt.id;
+
+        var card = document.createElement('div');
+        card.className = 'rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden';
+
+        // Accordion header button (44px target)
+        var headBtn = document.createElement('button');
+        headBtn.type = 'button';
+        headBtn.className = 'w-full min-h-[44px] px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3 text-left hover:bg-zinc-50 dark:hover:bg-zinc-850 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
+
+        var left = document.createElement('div');
+        left.className = 'flex items-center gap-3';
+
+        var statusIcon = document.createElement('span');
+        statusIcon.className = 'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ' +
+          (isCorrect ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300');
+        statusIcon.textContent = isCorrect ? '✓' : '✗';
+        left.appendChild(statusIcon);
+
+        var qTitle = document.createElement('span');
+        qTitle.className = 'font-heading font-semibold text-sm sm:text-base text-zinc-900 dark:text-white';
+        qTitle.textContent = 'Question ' + (idx + 1) + ' - ' + (q.subType || '').replace(/_/g, ' ');
+        left.appendChild(qTitle);
+
+        headBtn.appendChild(left);
+
+        var chevron = document.createElement('span');
+        chevron.className = 'text-zinc-400 font-mono text-xs transition-transform duration-200';
+        chevron.textContent = '▼';
+        headBtn.appendChild(chevron);
+
+        // Accordion content panel
+        var panel = document.createElement('div');
+        panel.className = 'hidden p-4 sm:p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/40';
+
+        var explanation = document.createElement('p');
+        explanation.className = 'text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed';
+        explanation.textContent = q.explanation || 'No explanation available.';
+        panel.appendChild(explanation);
+
+        headBtn.addEventListener('click', function () {
+          var isHidden = panel.classList.contains('hidden');
+          panel.classList.toggle('hidden');
+          chevron.textContent = isHidden ? '▲' : '▼';
+        });
+
+        card.appendChild(headBtn);
+        card.appendChild(panel);
+        list.appendChild(card);
+      });
+    }
+
+    // Retake handler
+    if (btnRetake) {
+      btnRetake.addEventListener('click', function () {
+        userAnswers = {};
+        flaggedQuestions = {};
+        currentIndex = 0;
+        timeRemaining = TOTAL_TIME_SECONDS;
+        testSubmitted = false;
+        startTimeMs = Date.now();
+        if (resultsRoot) resultsRoot.classList.add('hidden');
+        if (testRunnerRoot) testRunnerRoot.classList.remove('hidden');
+        setMode(currentMode);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // Initial Start
+    setMode(currentMode);
+  })();
+</script>

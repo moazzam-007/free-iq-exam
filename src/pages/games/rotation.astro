@@ -1,0 +1,554 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "3D Rotation Challenge - Spatial Speed Drill | FreeIQExam";
+const description = "Test visual-spatial processing speed (Gv). Mentally rotate 3D isometric cubes and identify whether views match before the countdown expires.";
+---
+
+<Layout title={title} description={description}>
+  <Header />
+
+  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <a href="/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Cognitive Games</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">3D Rotation</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 mb-1.5">
+          Gv - Visual-Spatial Speed
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+          3D Rotation Challenge
+        </h1>
+      </div>
+
+      <!-- Stat HUD -->
+      <div class="flex items-center gap-3 font-mono text-xs sm:text-sm">
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Trial</div>
+          <div id="hud-trial" class="font-bold text-zinc-800 dark:text-zinc-200 text-base">0 / 20</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Score</div>
+          <div id="hud-score" class="font-bold text-indigo-600 dark:text-indigo-400 text-base">0</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Avg Time</div>
+          <div id="hud-avg-time" class="font-bold text-zinc-800 dark:text-zinc-200 text-base">0.0s</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Best</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-600 dark:bg-indigo-500 text-white flex items-center justify-center mb-5 shadow-lg shadow-indigo-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          3D Mental Rotation Speed
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Two 3D cubes will appear side-by-side: <strong>Cube A</strong> and <strong>Cube B</strong>.
+          </p>
+          <p>
+            Mentally rotate the cubes in 3D space to check whether Cube B is the <strong>Same</strong> cube in a different orientation, or a <strong>Different</strong> cube with altered face features.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Speed matters: &lt;3s = +20 pts, &lt;6s = +10 pts, &lt;8s = +5 pts. 8-second trial limit.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+        >
+          <span>Begin Test (Space)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive game arena content -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- Trial Progress Ring & Timer Bar -->
+        <div class="w-full max-w-lg mb-6 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-mono font-semibold text-zinc-500 dark:text-zinc-400">Trial Timer:</span>
+            <span id="timer-text" class="text-sm font-mono font-bold text-indigo-600 dark:text-indigo-400">8.0s</span>
+          </div>
+
+          <!-- Mini SVG Timer Ring -->
+          <div class="relative w-8 h-8">
+            <svg class="w-8 h-8 -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="14" fill="none" class="stroke-zinc-200 dark:stroke-zinc-800" stroke-width="3" />
+              <circle id="timer-ring-arc" cx="18" cy="18" r="14" fill="none" stroke="currentColor" class="text-indigo-600 dark:text-indigo-400 transition-all duration-75" stroke-width="3" stroke-dasharray="88" stroke-dashoffset="0" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Cubes Comparison Area -->
+        <div class="w-full max-w-lg grid grid-cols-2 gap-4 sm:gap-8 mb-8">
+          <!-- Cube A Card -->
+          <div class="flex flex-col items-center p-4 sm:p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/80 shadow-inner">
+            <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 dark:text-zinc-400 uppercase mb-2">Cube A</span>
+            <div id="cube-a-container" class="w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
+              <!-- Programmatic SVG injected -->
+            </div>
+          </div>
+
+          <!-- Cube B Card -->
+          <div class="flex flex-col items-center p-4 sm:p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/80 shadow-inner">
+            <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 dark:text-zinc-400 uppercase mb-2">Cube B</span>
+            <div id="cube-b-container" class="w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
+              <!-- Programmatic SVG injected -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Response Buttons -->
+        <div class="w-full max-w-md grid grid-cols-2 gap-4">
+          <button
+            id="btn-same"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500 text-emerald-700 dark:text-emerald-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+          >
+            <span>SAME</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Key [ S ]</span>
+          </button>
+
+          <button
+            id="btn-diff"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-500 text-rose-700 dark:text-rose-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600"
+          >
+            <span>DIFFERENT</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Key [ D ]</span>
+          </button>
+        </div>
+
+        <!-- Feedback Toast -->
+        <div id="feedback-toast" role="status" aria-live="polite" class="h-6 mt-4 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+          Result feedback
+        </div>
+      </div>
+    </div>
+
+    <!-- End of Round Modal -->
+    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center">
+        <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <h3 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Rotation Drill Complete
+        </h3>
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-6">
+          Spatial Visualization Velocity Summary
+        </p>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-3 gap-3 mb-6 font-mono text-center">
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Final Score</div>
+            <div id="modal-score" class="font-bold text-lg text-indigo-600 dark:text-indigo-400">0</div>
+          </div>
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Accuracy</div>
+            <div id="modal-acc" class="font-bold text-lg text-emerald-600 dark:text-emerald-400">0%</div>
+          </div>
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Avg Speed</div>
+            <div id="modal-speed" class="font-bold text-lg text-zinc-900 dark:text-white">0.0s</div>
+          </div>
+        </div>
+
+        <div id="modal-best-alert" class="hidden mb-6 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          New Personal Best Record!
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98"
+          >
+            Play Again
+          </button>
+          <a
+            href="/games"
+            class="px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors"
+          >
+            Hub
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script is:inline>
+  (function() {
+    var TOTAL_TRIALS = 20;
+    var TRIAL_TIME_LIMIT_MS = 8000;
+    var STORAGE_KEY = 'fiq_game_rotation_best';
+
+    // Face color definitions (6 faces of reference cube)
+    // 0: Top, 1: Front, 2: Right, 3: Back, 4: Left, 5: Bottom
+    var PALETTES = [
+      { name: 'cyan', hex: '#06b6d4' },
+      { name: 'amber', hex: '#f59e0b' },
+      { name: 'rose', hex: '#f43f5e' },
+      { name: 'emerald', hex: '#10b981' },
+      { name: 'purple', hex: '#a855f7' },
+      { name: 'blue', hex: '#3b82f6' }
+    ];
+
+    // Valid 3D rigid rotations of a cube represented by visible faces [Top, Left, Right]
+    // Reference orientation: Top=0, Left=4, Right=1
+    var VALID_ROTATIONS = [
+      [0, 4, 1], // Identity
+      [0, 1, 2], // Yaw +90
+      [0, 2, 3], // Yaw +180
+      [0, 3, 4], // Yaw +270
+      [1, 4, 5], // Pitch down +90
+      [3, 4, 0], // Pitch up +90
+      [2, 0, 1], // Roll right
+      [4, 5, 1]  // Roll left
+    ];
+
+    var score = 0;
+    var trialIndex = 0;
+    var correctCount = 0;
+    var responseTimes = [];
+    var trialStartTime = 0;
+    var isRunning = false;
+    var trialTimer = null;
+    var animFrame = null;
+    var currentTrialData = null;
+
+    // DOM Elements
+    var hudTrial = document.getElementById('hud-trial');
+    var hudScore = document.getElementById('hud-score');
+    var hudAvgTime = document.getElementById('hud-avg-time');
+    var hudBest = document.getElementById('hud-best');
+    var startOverlay = document.getElementById('start-overlay');
+    var gameArenaContent = document.getElementById('game-arena-content');
+    var btnStartGame = document.getElementById('btn-start-game');
+    var timerText = document.getElementById('timer-text');
+    var timerRingArc = document.getElementById('timer-ring-arc');
+    var cubeAContainer = document.getElementById('cube-a-container');
+    var cubeBContainer = document.getElementById('cube-b-container');
+    var btnSame = document.getElementById('btn-same');
+    var btnDiff = document.getElementById('btn-diff');
+    var feedbackToast = document.getElementById('feedback-toast');
+    var modalEndRound = document.getElementById('modal-end-round');
+    var modalScore = document.getElementById('modal-score');
+    var modalAcc = document.getElementById('modal-acc');
+    var modalSpeed = document.getElementById('modal-speed');
+    var modalBestAlert = document.getElementById('modal-best-alert');
+    var btnModalRestart = document.getElementById('btn-modal-restart');
+
+    // Initial accessibility state: inert while start overlay is active
+    if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+    function loadBestScore() {
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          hudBest.textContent = saved;
+        }
+      } catch (e) {}
+    }
+    loadBestScore();
+
+    function updateHud() {
+      hudTrial.textContent = trialIndex + ' / ' + TOTAL_TRIALS;
+      hudScore.textContent = score;
+      if (responseTimes.length > 0) {
+        var sum = 0;
+        for (var i = 0; i < responseTimes.length; i++) sum += responseTimes[i];
+        var avg = (sum / responseTimes.length / 1000).toFixed(1);
+        hudAvgTime.textContent = avg + 's';
+      } else {
+        hudAvgTime.textContent = '0.0s';
+      }
+    }
+
+    function showFeedback(text, isPositive) {
+      if (!feedbackToast) return;
+      var icon = isPositive ? '✓ ' : '✗ ';
+      feedbackToast.textContent = icon + text;
+      feedbackToast.className = 'h-6 mt-4 text-xs font-mono font-semibold transition-opacity ' +
+        (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+      feedbackToast.style.opacity = '1';
+      setTimeout(function() {
+        feedbackToast.style.opacity = '0';
+      }, 700);
+    }
+
+    /**
+     * Programmatically generate isometric SVG cube
+     * faces: [topFaceIdx, leftFaceIdx, rightFaceIdx]
+     * modifiedFaceIndex: optional index of face with altered inset color
+     */
+    function renderCubeSvg(faces, modifiedFaceIndex, alteredColorHex) {
+      // Shading styles for isometric 3D illusion
+      // Top face: lighter, Left: base, Right: darker
+      var baseShades = {
+        top: '#cbd5e1', // Light slate
+        left: '#94a3b8', // Medium slate
+        right: '#64748b' // Dark slate
+      };
+
+      var topColor = (modifiedFaceIndex === 0 && alteredColorHex) ? alteredColorHex : PALETTES[faces[0]].hex;
+      var leftColor = (modifiedFaceIndex === 1 && alteredColorHex) ? alteredColorHex : PALETTES[faces[1]].hex;
+      var rightColor = (modifiedFaceIndex === 2 && alteredColorHex) ? alteredColorHex : PALETTES[faces[2]].hex;
+
+      var svg = [
+        '<svg viewBox=\"0 0 220 220\" class=\"w-full h-full drop-shadow-md\" xmlns=\"http://www.w3.org/2000/svg\">',
+        '  <g stroke=\"#334155\" stroke-width=\"2\" stroke-linejoin=\"round\">',
+        '    <!-- Top Face -->',
+        '    <polygon points=\"110,45 170,80 110,115 50,80\" fill=\"' + baseShades.top + '\" />',
+        '    <!-- Top Inset Rhombus Marker -->',
+        '    <polygon points=\"110,62 142,80 110,98 78,80\" fill=\"' + topColor + '\" stroke=\"rgba(0,0,0,0.15)\" stroke-width=\"1.5\" />',
+        '    <!-- Left Face -->',
+        '    <polygon points=\"50,80 110,115 110,185 50,150\" fill=\"' + baseShades.left + '\" />',
+        '    <!-- Left Inset Rhombus Marker -->',
+        '    <polygon points=\"65,103 95,120 95,155 65,138\" fill=\"' + leftColor + '\" stroke=\"rgba(0,0,0,0.15)\" stroke-width=\"1.5\" />',
+        '    <!-- Right Face -->',
+        '    <polygon points=\"110,115 170,80 170,150 110,185\" fill=\"' + baseShades.right + '\" />',
+        '    <!-- Right Inset Rhombus Marker -->',
+        '    <polygon points=\"125,120 155,103 155,138 125,155\" fill=\"' + rightColor + '\" stroke=\"rgba(0,0,0,0.15)\" stroke-width=\"1.5\" />',
+        '  </g>',
+        '</svg>'
+      ].join('');
+
+      return svg;
+    }
+
+    function createTrial() {
+      // Pick base rotation for Cube A
+      var rotAIdx = Math.floor(Math.random() * VALID_ROTATIONS.length);
+      var facesA = VALID_ROTATIONS[rotAIdx];
+
+      var isSame = Math.random() < 0.5;
+
+      // Pick a different rotation for Cube B
+      var rotBIdx = (rotAIdx + 1 + Math.floor(Math.random() * (VALID_ROTATIONS.length - 1))) % VALID_ROTATIONS.length;
+      var facesB = VALID_ROTATIONS[rotBIdx];
+
+      var modifiedFace = -1;
+      var alteredColor = null;
+
+      if (!isSame) {
+        // Pick one face of Cube B to modify
+        modifiedFace = Math.floor(Math.random() * 3);
+        // Pick distinct color not currently on that face
+        var currentFaceId = facesB[modifiedFace];
+        var distinctColors = ['#ef4444', '#8b5cf6', '#14b8a6', '#f97316'].filter(function(c) {
+          return c !== PALETTES[currentFaceId].hex;
+        });
+        alteredColor = distinctColors[Math.floor(Math.random() * distinctColors.length)];
+      }
+
+      return {
+        facesA: facesA,
+        facesB: facesB,
+        isSame: isSame,
+        modifiedFace: modifiedFace,
+        alteredColor: alteredColor
+      };
+    }
+
+    function startTimerLoop() {
+      trialStartTime = performance.now();
+      var circumference = 88;
+      var lastDisplayedTenth = -1;
+
+      function step() {
+        if (!isRunning) return;
+        var elapsed = performance.now() - trialStartTime;
+        var remaining = Math.max(0, TRIAL_TIME_LIMIT_MS - elapsed);
+        var currentTenth = Math.floor(remaining / 100);
+
+        if (currentTenth !== lastDisplayedTenth) {
+          lastDisplayedTenth = currentTenth;
+          var fraction = remaining / TRIAL_TIME_LIMIT_MS;
+          timerText.textContent = (remaining / 1000).toFixed(1) + 's';
+          timerRingArc.style.strokeDashoffset = (circumference * (1 - fraction)).toString();
+
+          if (remaining <= 2000) {
+            timerText.classList.add('text-rose-600', 'dark:text-rose-400');
+            timerRingArc.classList.add('text-rose-600', 'dark:text-rose-400');
+          } else {
+            timerText.classList.remove('text-rose-600', 'dark:text-rose-400');
+            timerRingArc.classList.remove('text-rose-600', 'dark:text-rose-400');
+          }
+        }
+
+        if (remaining > 0) {
+          animFrame = requestAnimationFrame(step);
+        } else {
+          handleTimeout();
+        }
+      }
+
+      animFrame = requestAnimationFrame(step);
+    }
+
+    function handleTimeout() {
+      cancelAnimationFrame(animFrame);
+      showFeedback('Timeout (0 pts)', false);
+      responseTimes.push(TRIAL_TIME_LIMIT_MS);
+      nextTrial();
+    }
+
+    function handleAnswer(userSame) {
+      if (!isRunning) return;
+      cancelAnimationFrame(animFrame);
+      var responseTime = performance.now() - trialStartTime;
+      responseTimes.push(responseTime);
+
+      var isCorrect = userSame === currentTrialData.isSame;
+      if (isCorrect) {
+        correctCount++;
+        var pts = 0;
+        if (responseTime <= 3000) {
+          pts = 20;
+        } else if (responseTime <= 6000) {
+          pts = 10;
+        } else {
+          pts = 5;
+        }
+        score += pts;
+        showFeedback('Correct! +' + pts + ' pts (' + (responseTime / 1000).toFixed(2) + 's)', true);
+      } else {
+        showFeedback('Incorrect (0 pts)', false);
+      }
+
+      nextTrial();
+    }
+
+    function nextTrial() {
+      trialIndex++;
+      updateHud();
+
+      if (trialIndex >= TOTAL_TRIALS) {
+        finishGame();
+        return;
+      }
+
+      currentTrialData = createTrial();
+      cubeAContainer.innerHTML = renderCubeSvg(currentTrialData.facesA, -1, null);
+      cubeBContainer.innerHTML = renderCubeSvg(currentTrialData.facesB, currentTrialData.modifiedFace, currentTrialData.alteredColor);
+
+      startTimerLoop();
+    }
+
+    function startGame() {
+      isRunning = true;
+      trialIndex = 0;
+      score = 0;
+      correctCount = 0;
+      responseTimes = [];
+
+      startOverlay.classList.add('hidden');
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+
+      updateHud();
+      nextTrial();
+    }
+
+    function finishGame() {
+      isRunning = false;
+      cancelAnimationFrame(animFrame);
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+      var accuracy = Math.round((correctCount / TOTAL_TRIALS) * 100);
+      var sum = 0;
+      for (var i = 0; i < responseTimes.length; i++) sum += responseTimes[i];
+      var avgSpeed = (sum / responseTimes.length / 1000).toFixed(2) + 's';
+
+      var savedBest = 0;
+      try {
+        savedBest = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      } catch (e) {}
+
+      var isNewBest = score > savedBest;
+      if (isNewBest) {
+        try {
+          localStorage.setItem(STORAGE_KEY, score.toString());
+        } catch (e) {}
+        loadBestScore();
+      }
+
+      modalScore.textContent = score;
+      modalAcc.textContent = accuracy + '%';
+      modalSpeed.textContent = avgSpeed;
+
+      if (isNewBest && score > 0) {
+        modalBestAlert.classList.remove('hidden');
+      } else {
+        modalBestAlert.classList.add('hidden');
+      }
+
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+      modalEndRound.focus();
+    }
+
+    // Event listeners
+    btnStartGame.addEventListener('click', startGame);
+    btnSame.addEventListener('click', function() { handleAnswer(true); });
+    btnDiff.addEventListener('click', function() { handleAnswer(false); });
+    btnModalRestart.addEventListener('click', function() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startGame();
+    });
+
+    window.addEventListener('keydown', function(e) {
+      if (e.repeat) return;
+      var key = e.key.toLowerCase();
+      if (key === ' ' && !isRunning && modalEndRound.classList.contains('hidden')) {
+        e.preventDefault();
+        startGame();
+      } else if (key === 'escape' && !modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+        modalEndRound.classList.remove('flex');
+        startOverlay.classList.remove('hidden');
+        if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+      } else if (key === 's') {
+        handleAnswer(true);
+      } else if (key === 'd') {
+        handleAnswer(false);
+      }
+    });
+  })();
+</script>

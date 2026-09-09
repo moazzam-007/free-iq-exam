@@ -1,0 +1,787 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Syllogism Blitz - Deductive Logic Speed Drill | FreeIQExam";
+const description = "Test formal deductive reasoning speed (Gc & Gf). Evaluate categorical syllogisms for logical validity under tight countdown timers.";
+---
+
+<Layout title={title} description={description}>
+  <Header />
+
+  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <a href="/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Cognitive Games</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Syllogism Blitz</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800 mb-1.5">
+          Gc & Gf - Deductive Logic
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+          Syllogism Blitz
+        </h1>
+      </div>
+
+      <!-- Stat HUD -->
+      <div class="flex items-center gap-3 font-mono text-xs sm:text-sm">
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 text-xs font-mono font-medium uppercase tracking-wider">Item</div>
+          <div id="hud-item" class="font-bold text-zinc-800 dark:text-zinc-200 text-base">0 / 20</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 text-xs font-mono font-medium uppercase tracking-wider">Score</div>
+          <div id="hud-score" class="font-bold text-amber-600 dark:text-amber-400 text-base">0</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 text-xs font-mono font-medium uppercase tracking-wider">Avg Time</div>
+          <div id="hud-avg-time" class="font-bold text-zinc-800 dark:text-zinc-200 text-base">0.0s</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 text-xs font-mono font-medium uppercase tracking-wider">Best</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-amber-600 dark:bg-amber-500 text-white flex items-center justify-center mb-5 shadow-lg shadow-amber-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Syllogism Logic Sprint
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            You will be given two premises and a proposed conclusion.
+          </p>
+          <p>
+            Determine whether the conclusion is <strong>Valid</strong> (must strictly follow from premises) or <strong>Invalid</strong> (cannot be proven or commits a fallacy).
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            20 syllogisms, 15-second limit per item. &lt;5s = +20 pts, &lt;10s = +15 pts, &lt;15s = +10 pts. Wrong = -5 pts.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
+        >
+          <span>Start Logic Drill (Space)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- Per-Item Countdown Bar -->
+        <div class="w-full max-w-xl mb-6">
+          <div class="flex items-center justify-between text-xs font-mono font-semibold mb-2">
+            <span class="text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Item Timer</span>
+            <span id="trial-timer-text" class="text-sm font-bold text-amber-600 dark:text-amber-400">15.0s</span>
+          </div>
+          <div class="w-full h-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700/60">
+            <div id="trial-progress-bar" class="h-full bg-amber-500 rounded-full transition-all duration-75 ease-linear" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Logic Card -->
+        <div id="syllogism-card" class="w-full max-w-xl p-6 sm:p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border-2 border-zinc-200 dark:border-zinc-700/80 mb-6 transition-all duration-200 shadow-inner">
+          <div class="space-y-4 text-left">
+            <div class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-700/60">
+              <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block mb-1">Premise 1:</span>
+              <p id="premise-1-text" class="text-base sm:text-lg font-medium text-zinc-900 dark:text-zinc-100">-</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-700/60">
+              <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block mb-1">Premise 2:</span>
+              <p id="premise-2-text" class="text-base sm:text-lg font-medium text-zinc-900 dark:text-zinc-100">-</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80">
+              <span class="text-xs font-mono font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 block mb-1">Conclusion:</span>
+              <p id="conclusion-text" class="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">-</p>
+            </div>
+          </div>
+
+          <!-- Explanation Toast (revealed after answer) -->
+          <div id="explanation-banner" role="status" aria-live="polite" class="hidden mt-4 p-3 rounded-xl text-xs sm:text-sm font-medium leading-relaxed border transition-all">
+            Explanation will appear here.
+          </div>
+        </div>
+
+        <!-- Action Response Buttons -->
+        <div class="w-full max-w-md grid grid-cols-2 gap-4">
+          <button
+            id="btn-valid"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500 hover:border-emerald-600 dark:hover:border-emerald-400 text-emerald-700 dark:text-emerald-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+          >
+            <span>VALID</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Key [ V ]</span>
+          </button>
+
+          <button
+            id="btn-invalid"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-500 hover:border-rose-600 dark:hover:border-rose-400 text-rose-700 dark:text-rose-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600"
+          >
+            <span>INVALID</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Key [ I ]</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- End of Round Modal -->
+    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl my-8">
+        <div class="text-center mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18" />
+            </svg>
+          </div>
+
+          <h3 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+            Logic Drill Completed!
+          </h3>
+          <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+            Deductive Reasoning Performance Summary
+          </p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-3 gap-3 mb-6 font-mono text-center">
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-xs font-mono font-medium uppercase">Final Score</div>
+            <div id="modal-score" class="font-bold text-lg text-amber-600 dark:text-amber-400">0</div>
+          </div>
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-xs font-mono font-medium uppercase">Accuracy</div>
+            <div id="modal-acc" class="font-bold text-lg text-emerald-600 dark:text-emerald-400">0%</div>
+          </div>
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-xs font-mono font-medium uppercase">Avg Speed</div>
+            <div id="modal-speed" class="font-bold text-lg text-zinc-900 dark:text-white">0.0s</div>
+          </div>
+        </div>
+
+        <div id="modal-best-alert" class="hidden mb-6 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold text-center">
+          New Personal Best Record!
+        </div>
+
+        <!-- Review All Answers Accordion -->
+        <div class="mb-6 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+          <button
+            id="btn-toggle-review"
+            type="button"
+            aria-expanded="false"
+            aria-controls="review-content"
+            class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-left font-heading font-semibold text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 flex items-center justify-between transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
+          >
+            <span>Review All 20 Answers & Explanations</span>
+            <svg id="review-chevron" class="w-4 h-4 text-zinc-500 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+          <div id="review-content" class="hidden p-4 max-h-64 overflow-y-auto space-y-3 bg-white dark:bg-zinc-900 text-left text-xs divide-y divide-zinc-100 dark:divide-zinc-800">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98"
+          >
+            Play Again
+          </button>
+          <a
+            href="/games"
+            class="px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors text-center"
+          >
+            Hub
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script is:inline>
+  (function() {
+    var TOTAL_ITEMS = 20;
+    var ITEM_TIME_LIMIT_MS = 15000;
+    var STORAGE_KEY = 'fiq_game_syllogism_best';
+
+    // Bank of 32 syllogisms
+    var SYLLOGISM_BANK = [
+      {
+        p1: 'All mammals have backbones.',
+        p2: 'All dolphins are mammals.',
+        c: 'Therefore, all dolphins have backbones.',
+        valid: true,
+        explanation: 'Barbara form (AAA-1) - valid transitive deduction.'
+      },
+      {
+        p1: 'All dogs are mammals.',
+        p2: 'All cats are mammals.',
+        c: 'Therefore, all dogs are cats.',
+        valid: false,
+        explanation: 'Fallacy of the Undistributed Middle - shared predicate does not connect subjects.'
+      },
+      {
+        p1: 'No reptiles have fur.',
+        p2: 'All iguanas are reptiles.',
+        c: 'Therefore, no iguanas have fur.',
+        valid: true,
+        explanation: 'Celarent form (EAE-1) - universal negative cleanly excludes minor term.'
+      },
+      {
+        p1: 'All birds lay eggs.',
+        p2: 'Platypuses lay eggs.',
+        c: 'Therefore, platypuses are birds.',
+        valid: false,
+        explanation: 'Undistributed middle - laying eggs is not an exclusive property of birds.'
+      },
+      {
+        p1: 'All surgeons are medical doctors.',
+        p2: 'Some researchers are surgeons.',
+        c: 'Therefore, some researchers are medical doctors.',
+        valid: true,
+        explanation: 'Darii form (AII-1) - universal affirmative with particular affirmative yields valid particular.'
+      },
+      {
+        p1: 'No philosophers are billionaires.',
+        p2: 'No billionaires are poets.',
+        c: 'Therefore, no philosophers are poets.',
+        valid: false,
+        explanation: 'Fallacy of Exclusive Premises - two negative premises yield no valid deduction.'
+      },
+      {
+        p1: 'No trees are animals.',
+        p2: 'Some living organisms are trees.',
+        c: 'Therefore, some living organisms are not animals.',
+        valid: true,
+        explanation: 'Ferio form (EIO-1) - negative universal and affirmative particular yield valid particular negative.'
+      },
+      {
+        p1: 'Some architects are musicians.',
+        p2: 'Some musicians are painters.',
+        c: 'Therefore, some architects are painters.',
+        valid: false,
+        explanation: 'Fallacy of Particular Premises - two particular statements cannot establish a connection.'
+      },
+      {
+        p1: 'All squares have four equal sides.',
+        p2: 'No triangles have four equal sides.',
+        c: 'Therefore, no triangles are squares.',
+        valid: true,
+        explanation: 'Camestres form (AEE-2) - valid universal negative deduction.'
+      },
+      {
+        p1: 'All carnivores eat meat.',
+        p2: 'No cows are carnivores.',
+        c: 'Therefore, no cows eat meat.',
+        valid: false,
+        explanation: 'Illicit Major - meat-eater is undistributed in the premise but distributed in the conclusion.'
+      },
+      {
+        p1: 'All emergency vehicles are authorized to speed.',
+        p2: 'Some transport vans are not authorized to speed.',
+        c: 'Therefore, some transport vans are not emergency vehicles.',
+        valid: true,
+        explanation: 'Baroco form (AOO-2) - universal affirmative with particular negative yields valid particular negative.'
+      },
+      {
+        p1: 'All roses are flowers.',
+        p2: 'Some flowers fade quickly.',
+        c: 'Therefore, all roses fade quickly.',
+        valid: false,
+        explanation: 'False generalization - properties of some flowers do not apply universally to roses.'
+      },
+      {
+        p1: 'All Daxes are Gorphs.',
+        p2: 'All Gorphs are Plenks.',
+        c: 'Therefore, all Daxes are Plenks.',
+        valid: true,
+        explanation: 'Pure transitive inclusion (AAA-1) holds regardless of semantic terms.'
+      },
+      {
+        p1: 'Some Wugs are Zibbles.',
+        p2: 'Some Zibbles are Feeps.',
+        c: 'Therefore, some Wugs are Feeps.',
+        valid: false,
+        explanation: 'The middle term Zibbles is undistributed across both particular premises.'
+      },
+      {
+        p1: 'No Krols are Vexts.',
+        p2: 'All Blicks are Krols.',
+        c: 'Therefore, no Blicks are Vexts.',
+        valid: true,
+        explanation: 'Celarent form (EAE-1) - all Blicks belong to Krols, none of which are Vexts.'
+      },
+      {
+        p1: 'All Lumens are Glorps.',
+        p2: 'All Glorps are Tazzes.',
+        c: 'Therefore, some Lumens are not Tazzes.',
+        valid: false,
+        explanation: 'Affirmative universal premises cannot logically produce a negative conclusion.'
+      },
+      {
+        p1: 'No Quilps are Zoids.',
+        p2: 'Some Flurgs are Zoids.',
+        c: 'Therefore, some Flurgs are not Quilps.',
+        valid: true,
+        explanation: 'Festino form (EIO-2) - valid deductive separation.'
+      },
+      {
+        p1: 'All Snarks are Boojums.',
+        p2: 'All Boojums are Bandersnatches.',
+        c: 'Therefore, exactly seven Snarks are Bandersnatches.',
+        valid: false,
+        explanation: 'Quantifier error - specific numeric quantities cannot be deduced from general categorical universals.'
+      },
+      {
+        p1: 'An integer is either even or odd.',
+        p2: 'The number 17 is not even.',
+        c: 'Therefore, the number 17 is odd.',
+        valid: true,
+        explanation: 'Disjunctive syllogism - eliminating one exhaustive disjunct forces the other.'
+      },
+      {
+        p1: 'A traveler is in France or in Europe.',
+        p2: 'The traveler is in France.',
+        c: 'Therefore, the traveler is not in Europe.',
+        valid: false,
+        explanation: 'Fallacy of Affirming a Disjunct - inclusive or allows both conditions to be true.'
+      },
+      {
+        p1: 'Some Jipts are not Kranes.',
+        p2: 'All Jipts are Skreefs.',
+        c: 'Therefore, some Skreefs are not Kranes.',
+        valid: true,
+        explanation: 'Bocardo form (OAO-3) - valid particular negative deduction.'
+      },
+      {
+        p1: 'All Prunds are Quazzes.',
+        p2: 'All Prunds are Rimmles.',
+        c: 'Therefore, all Rimmles are Quazzes.',
+        valid: false,
+        explanation: 'Illicit Minor - Rimmles is undistributed in the premise but distributed universally in conclusion.'
+      },
+      {
+        p1: 'No valid theories contradict observable data.',
+        p2: 'Mythological dogma contradicts observable data.',
+        c: 'Therefore, mythological dogma is not a valid theory.',
+        valid: true,
+        explanation: 'Cesare form (EAE-2) - complete mutual exclusion between the terms.'
+      },
+      {
+        p1: 'If it rains, the sidewalk becomes wet.',
+        p2: 'It does not rain.',
+        c: 'Therefore, the sidewalk does not become wet.',
+        valid: false,
+        explanation: 'Fallacy of Denying the Antecedent - the sidewalk could be wet from other sources.'
+      },
+      {
+        p1: 'If a compound is water, it contains hydrogen atoms.',
+        p2: 'Sample X contains no hydrogen atoms.',
+        c: 'Therefore, sample X is not water.',
+        valid: true,
+        explanation: 'Modus tollens - contrapositive deduction is formally necessary.'
+      },
+      {
+        p1: 'If a Trundle spins, a Gleek chimes.',
+        p2: 'A Gleek chimes.',
+        c: 'Therefore, a Trundle spins.',
+        valid: false,
+        explanation: 'Fallacy of Affirming the Consequent - a Gleek could chime for other unstated reasons.'
+      },
+      {
+        p1: 'All metals conduct electric current.',
+        p2: 'All copper wires are metals.',
+        c: 'Therefore, all copper wires conduct electric current.',
+        valid: true,
+        explanation: 'Barbara form (AAA-1) - copper wires inherit conductance through the metal category.'
+      },
+      {
+        p1: 'Everyone has a favorite color.',
+        p2: 'Blue is a color.',
+        c: 'Therefore, there is one single color that everyone shares as their favorite.',
+        valid: false,
+        explanation: 'Quantifier Shift Fallacy - each person having a favorite does not mean all favorites are identical.'
+      },
+      {
+        p1: 'No prime numbers end in the digit 0.',
+        p2: 'All multiples of 100 end in the digit 0.',
+        c: 'Therefore, no multiples of 100 are prime numbers.',
+        valid: true,
+        explanation: 'Celarent form (EAE-1) - disjoint sets guarantee no intersection.'
+      },
+      {
+        p1: 'Every brick in this building is lightweight.',
+        p2: 'This building is entirely constructed of bricks.',
+        c: 'Therefore, this entire building is lightweight.',
+        valid: false,
+        explanation: 'Fallacy of Composition - the aggregate weight of millions of lightweight bricks is immense.'
+      },
+      {
+        p1: 'Some Fribs are Goxes.',
+        p2: 'All Fribs are Zunds.',
+        c: 'Therefore, some Zunds are Goxes.',
+        valid: true,
+        explanation: 'Disamis form (IAI-3) - the overlap of Fribs with Goxes ensures an overlap of Zunds with Goxes.'
+      },
+      {
+        p1: 'No Yazzles are Skulks.',
+        p2: 'Some Skulks are Plods.',
+        c: 'Therefore, all Plods are Yazzles.',
+        valid: false,
+        explanation: 'A negative premise can never establish a universal affirmative conclusion.'
+      }
+    ];
+
+    var sessionItems = [];
+    var currentItemIndex = 0;
+    var score = 0;
+    var correctCount = 0;
+    var responseTimes = [];
+    var userLog = [];
+    var isRunning = false;
+    var itemStartTime = 0;
+    var timerAnimFrame = null;
+    var isAnsweringLocked = false;
+    var lastDisplayedTenth = -1;
+
+    // DOM Elements
+    var hudItem = document.getElementById('hud-item');
+    var hudScore = document.getElementById('hud-score');
+    var hudAvgTime = document.getElementById('hud-avg-time');
+    var hudBest = document.getElementById('hud-best');
+    var startOverlay = document.getElementById('start-overlay');
+    var btnStartGame = document.getElementById('btn-start-game');
+    var gameArenaContent = document.getElementById('game-arena-content');
+    var trialTimerText = document.getElementById('trial-timer-text');
+    var trialProgressBar = document.getElementById('trial-progress-bar');
+    var syllogismCard = document.getElementById('syllogism-card');
+    var premise1Text = document.getElementById('premise-1-text');
+    var premise2Text = document.getElementById('premise-2-text');
+    var conclusionText = document.getElementById('conclusion-text');
+    var explanationBanner = document.getElementById('explanation-banner');
+    var btnValid = document.getElementById('btn-valid');
+    var btnInvalid = document.getElementById('btn-invalid');
+
+    if (gameArenaContent) {
+      gameArenaContent.setAttribute('inert', '');
+    }
+
+    var modalEndRound = document.getElementById('modal-end-round');
+    var modalScore = document.getElementById('modal-score');
+    var modalAcc = document.getElementById('modal-acc');
+    var modalSpeed = document.getElementById('modal-speed');
+    var modalBestAlert = document.getElementById('modal-best-alert');
+    var btnToggleReview = document.getElementById('btn-toggle-review');
+    var reviewChevron = document.getElementById('review-chevron');
+    var reviewContent = document.getElementById('review-content');
+    var btnModalRestart = document.getElementById('btn-modal-restart');
+
+    function loadBestScore() {
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          hudBest.textContent = saved;
+        }
+      } catch (e) {}
+    }
+    loadBestScore();
+
+    function updateHud() {
+      hudItem.textContent = currentItemIndex + ' / ' + TOTAL_ITEMS;
+      hudScore.textContent = score;
+      if (responseTimes.length > 0) {
+        var sum = 0;
+        for (var i = 0; i < responseTimes.length; i++) sum += responseTimes[i];
+        var avg = (sum / responseTimes.length / 1000).toFixed(2);
+        hudAvgTime.textContent = avg + 's';
+      } else {
+        hudAvgTime.textContent = '0.0s';
+      }
+    }
+
+    function selectSessionItems() {
+      var shuffled = SYLLOGISM_BANK.slice();
+      shuffled.sort(function() { return 0.5 - Math.random(); });
+      sessionItems = shuffled.slice(0, TOTAL_ITEMS);
+    }
+
+    function renderCurrentItem() {
+      var item = sessionItems[currentItemIndex];
+      premise1Text.textContent = item.p1;
+      premise2Text.textContent = item.p2;
+      conclusionText.textContent = item.c;
+
+      explanationBanner.classList.add('hidden');
+      syllogismCard.className = 'w-full max-w-xl p-6 sm:p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border-2 border-zinc-200 dark:border-zinc-700/80 mb-6 transition-all duration-200 shadow-inner';
+      isAnsweringLocked = false;
+
+      startItemTimer();
+    }
+
+    function startItemTimer() {
+      itemStartTime = performance.now();
+      lastDisplayedTenth = -1;
+
+      function step() {
+        if (!isRunning) return;
+        var elapsed = performance.now() - itemStartTime;
+        var remaining = Math.max(0, ITEM_TIME_LIMIT_MS - elapsed);
+        var fraction = remaining / ITEM_TIME_LIMIT_MS;
+
+        var currentTenth = Math.floor(remaining / 100);
+        if (currentTenth !== lastDisplayedTenth) {
+          lastDisplayedTenth = currentTenth;
+          trialTimerText.textContent = (remaining / 1000).toFixed(1) + 's';
+        }
+        trialProgressBar.style.width = (fraction * 100).toFixed(1) + '%';
+
+        if (remaining <= 4000) {
+          trialTimerText.classList.add('text-rose-600', 'dark:text-rose-400');
+          trialProgressBar.classList.remove('bg-amber-500');
+          trialProgressBar.classList.add('bg-rose-500');
+        } else {
+          trialTimerText.classList.remove('text-rose-600', 'dark:text-rose-400');
+          trialProgressBar.classList.add('bg-amber-500');
+          trialProgressBar.classList.remove('bg-rose-500');
+        }
+
+        if (remaining > 0) {
+          timerAnimFrame = requestAnimationFrame(step);
+        } else {
+          handleTimeout();
+        }
+      }
+
+      timerAnimFrame = requestAnimationFrame(step);
+    }
+
+    function handleTimeout() {
+      cancelAnimationFrame(timerAnimFrame);
+      if (isAnsweringLocked) return;
+      isAnsweringLocked = true;
+
+      var item = sessionItems[currentItemIndex];
+      responseTimes.push(ITEM_TIME_LIMIT_MS);
+      userLog.push({
+        item: item,
+        userAnswer: 'Timeout',
+        isCorrect: false,
+        time: ITEM_TIME_LIMIT_MS
+      });
+
+      syllogismCard.classList.add('border-rose-500', 'bg-rose-50/50', 'dark:bg-rose-950/20');
+      explanationBanner.textContent = '✗ Timeout (0 pts) - ' + item.explanation;
+      explanationBanner.className = 'mt-4 p-3 rounded-xl text-xs sm:text-sm font-medium leading-relaxed border bg-rose-100 dark:bg-rose-950/60 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200 block';
+
+      setTimeout(advanceToNextItem, 1500);
+    }
+
+    function handleAnswer(userChoice) {
+      if (!isRunning || isAnsweringLocked) return;
+      isAnsweringLocked = true;
+      cancelAnimationFrame(timerAnimFrame);
+
+      var elapsed = performance.now() - itemStartTime;
+      responseTimes.push(elapsed);
+
+      var item = sessionItems[currentItemIndex];
+      var isCorrect = userChoice === item.valid;
+
+      var pts = 0;
+      if (isCorrect) {
+        correctCount++;
+        if (elapsed < 5000) {
+          pts = 20;
+        } else if (elapsed < 10000) {
+          pts = 15;
+        } else {
+          pts = 10;
+        }
+        score += pts;
+
+        syllogismCard.classList.add('border-emerald-500', 'bg-emerald-50/40', 'dark:bg-emerald-950/20');
+        explanationBanner.textContent = '✓ Correct (+' + pts + ' pts) - ' + item.explanation;
+        explanationBanner.className = 'mt-4 p-3 rounded-xl text-xs sm:text-sm font-medium leading-relaxed border bg-emerald-100 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 block';
+      } else {
+        score = Math.max(0, score - 5);
+        syllogismCard.classList.add('border-rose-500', 'bg-rose-50/40', 'dark:bg-rose-950/20');
+        explanationBanner.textContent = '✗ Incorrect (-5 pts) - ' + item.explanation;
+        explanationBanner.className = 'mt-4 p-3 rounded-xl text-xs sm:text-sm font-medium leading-relaxed border bg-rose-100 dark:bg-rose-950/60 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200 block';
+      }
+
+      userLog.push({
+        item: item,
+        userAnswer: userChoice ? 'Valid' : 'Invalid',
+        isCorrect: isCorrect,
+        time: elapsed
+      });
+
+      updateHud();
+      setTimeout(advanceToNextItem, 1400);
+    }
+
+    function advanceToNextItem() {
+      currentItemIndex++;
+      updateHud();
+
+      if (currentItemIndex >= TOTAL_ITEMS) {
+        finishDrill();
+        return;
+      }
+
+      renderCurrentItem();
+    }
+
+    function startDrill() {
+      isRunning = true;
+      currentItemIndex = 0;
+      score = 0;
+      correctCount = 0;
+      responseTimes = [];
+      userLog = [];
+      lastDisplayedTenth = -1;
+
+      if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+      startOverlay.classList.add('hidden');
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      reviewContent.classList.add('hidden');
+      reviewChevron.classList.remove('rotate-180');
+      btnToggleReview.setAttribute('aria-expanded', 'false');
+
+      selectSessionItems();
+      updateHud();
+      renderCurrentItem();
+    }
+
+    function finishDrill() {
+      isRunning = false;
+      cancelAnimationFrame(timerAnimFrame);
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+      var accuracy = Math.round((correctCount / TOTAL_ITEMS) * 100);
+      var sum = 0;
+      for (var i = 0; i < responseTimes.length; i++) sum += responseTimes[i];
+      var avgSpeed = (sum / responseTimes.length / 1000).toFixed(2) + 's';
+
+      var savedBest = 0;
+      try {
+        savedBest = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      } catch (e) {}
+
+      var isNewBest = score > savedBest;
+      if (isNewBest) {
+        try {
+          localStorage.setItem(STORAGE_KEY, score.toString());
+          loadBestScore();
+        } catch (e) {}
+      }
+
+      modalScore.textContent = score;
+      modalAcc.textContent = accuracy + '%';
+      modalSpeed.textContent = avgSpeed;
+
+      if (isNewBest && score > 0) {
+        modalBestAlert.classList.remove('hidden');
+      } else {
+        modalBestAlert.classList.add('hidden');
+      }
+
+      // Populate review accordion
+      var reviewHtml = '';
+      for (var i = 0; i < userLog.length; i++) {
+        var entry = userLog[i];
+        var badgeColor = entry.isCorrect ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-rose-600 dark:text-rose-400 font-bold';
+        reviewHtml += [
+          '<div class=\"pt-3 first:pt-0\">',
+          '  <div class=\"flex items-center justify-between mb-1\">',
+          '    <span class=\"font-mono font-bold text-zinc-500 dark:text-zinc-400\">#' + (i + 1) + '</span>',
+          '    <span class=\"' + badgeColor + '\">' + (entry.isCorrect ? 'Correct' : 'Incorrect') + ' (' + entry.userAnswer + ')</span>',
+          '  </div>',
+          '  <p class=\"text-zinc-700 dark:text-zinc-300\"><strong>P1:</strong> ' + entry.item.p1 + '</p>',
+          '  <p class=\"text-zinc-700 dark:text-zinc-300\"><strong>P2:</strong> ' + entry.item.p2 + '</p>',
+          '  <p class=\"text-zinc-900 dark:text-white font-semibold\"><strong>C:</strong> ' + entry.item.c + '</p>',
+          '  <p class=\"text-zinc-500 dark:text-zinc-400 mt-1 italic\">' + entry.item.explanation + '</p>',
+          '</div>'
+        ].join('');
+      }
+      reviewContent.innerHTML = reviewHtml;
+
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+      try {
+        modalEndRound.focus();
+      } catch (e) {}
+    }
+
+    // Event listeners
+    btnValid.addEventListener('click', function() { handleAnswer(true); });
+    btnInvalid.addEventListener('click', function() { handleAnswer(false); });
+    btnStartGame.addEventListener('click', startDrill);
+    btnModalRestart.addEventListener('click', function() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startDrill();
+    });
+
+    btnToggleReview.addEventListener('click', function() {
+      var isHidden = reviewContent.classList.toggle('hidden');
+      btnToggleReview.setAttribute('aria-expanded', String(!isHidden));
+      if (isHidden) {
+        reviewChevron.classList.remove('rotate-180');
+      } else {
+        reviewChevron.classList.add('rotate-180');
+      }
+    });
+
+    // Keyboard shortcuts V, I, Space, Escape
+    window.addEventListener('keydown', function(e) {
+      if (e.repeat) return;
+      var key = e.key.toLowerCase();
+      if (e.key === 'Escape' && !modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+        modalEndRound.classList.remove('flex');
+        if (startOverlay) {
+          startOverlay.classList.remove('hidden');
+          if (btnStartGame) btnStartGame.focus();
+        }
+      } else if (key === ' ' && !isRunning && modalEndRound.classList.contains('hidden')) {
+        e.preventDefault();
+        startDrill();
+      } else if (key === 'v') {
+        handleAnswer(true);
+      } else if (key === 'i') {
+        handleAnswer(false);
+      }
+    });
+  })();
+</script>

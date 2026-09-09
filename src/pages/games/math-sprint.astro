@@ -1,0 +1,578 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Speed Math Sprint - Mental Arithmetic Drill | FreeIQExam";
+const description = "60-second rapid mental math sprint. Solve escalating equations under time pressure to train quantitative reasoning speed (Gq) and working memory.";
+---
+
+<Layout title={title} description={description}>
+  <Header />
+
+  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <a href="/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Cognitive Games</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Speed Math</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 mb-1.5">
+          Gq & Gs - Quantitative Speed
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+          Speed Math Sprint
+        </h1>
+      </div>
+
+      <!-- Stat HUD -->
+      <div class="flex items-center gap-3 font-mono text-xs sm:text-sm">
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Level</div>
+          <div id="hud-level" class="font-bold text-emerald-600 dark:text-emerald-400 text-base">Tier 1</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Streak</div>
+          <div id="hud-streak" class="font-bold text-amber-500 text-base">0</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Score</div>
+          <div id="hud-score" class="font-bold text-zinc-800 dark:text-zinc-100 text-base">0</div>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs font-mono font-medium tracking-wider">Best</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.75 6.75h14.5M12 4.75v14.5m4-4l-3-3m3 3l3-3m-14 3h6m-6 3h6" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          60-Second Math Sprint
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Solve as many mental arithmetic equations as possible before the 60-second timer hits zero.
+          </p>
+          <p>
+            Difficulty escalates across 4 tiers as you build streaks: single digits, double digits, mixed operations, and mental division/squares.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Scoring: +10 pts correct, -3 pts wrong. Streak bonus every 5 consecutive correct!
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+        >
+          <span>Start Sprint (Space)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- 60-Second Countdown Header -->
+        <div class="w-full max-w-lg mb-6">
+          <div class="flex items-center justify-between text-xs font-mono font-semibold mb-2">
+            <span class="text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Time Remaining</span>
+            <span id="sprint-timer-text" class="text-lg font-bold text-emerald-600 dark:text-emerald-400">60.0s</span>
+          </div>
+          <div class="w-full h-3 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700/60">
+            <div id="sprint-progress-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-100 ease-linear" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Equation Display Box -->
+        <div class="w-full max-w-lg min-h-[140px] p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 flex flex-col items-center justify-center mb-8 relative shadow-inner">
+          <!-- Streak Badge -->
+          <div id="streak-bonus-badge" class="hidden absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-300 dark:border-amber-700 text-xs font-mono font-bold animate-bounce">
+            5x Streak (+5 Bonus)
+          </div>
+
+          <div id="equation-text" class="font-heading font-extrabold text-4xl sm:text-5xl text-zinc-950 dark:text-white tracking-wide">
+            Ready
+          </div>
+        </div>
+
+        <!-- 4 Multiple Choice Answer Options -->
+        <div class="w-full max-w-lg grid grid-cols-2 gap-4">
+          {[0, 1, 2, 3].map((optIdx) => (
+            <button
+              id={`btn-opt-${optIdx}`}
+              type="button"
+              class="min-h-[56px] py-4 px-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500 text-zinc-900 dark:text-zinc-100 font-heading font-bold text-xl sm:text-2xl transition-all duration-100 hover:scale-102 active:scale-95 flex items-center justify-between shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+            >
+              <span id={`opt-text-${optIdx}`}>-</span>
+              <span class="text-xs font-mono font-medium text-zinc-400 dark:text-zinc-500 uppercase">[{optIdx + 1}]</span>
+            </button>
+          ))}
+        </div>
+
+        <!-- Feedback Toast -->
+        <div id="feedback-toast" role="status" aria-live="polite" class="h-6 mt-4 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+          Status
+        </div>
+      </div>
+    </div>
+
+    <!-- End of Round Modal -->
+    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.004 0V4.875A2.625 2.625 0 0011.625 2.25h-.75A2.625 2.625 0 008.25 4.875v7.5" />
+          </svg>
+        </div>
+
+        <h3 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Sprint Completed!
+        </h3>
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-6">
+          Quantitative Speed Breakdown
+        </p>
+
+        <!-- Stats Grid (4 items) -->
+        <div class="grid grid-cols-2 gap-3 mb-6 font-mono text-center">
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Final Score</div>
+            <div id="modal-score" class="font-bold text-xl text-emerald-600 dark:text-emerald-400">0</div>
+          </div>
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Accuracy</div>
+            <div id="modal-acc" class="font-bold text-xl text-zinc-900 dark:text-white">0%</div>
+          </div>
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Attempted</div>
+            <div id="modal-attempted" class="font-bold text-xl text-indigo-600 dark:text-indigo-400">0</div>
+          </div>
+          <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Best Streak</div>
+            <div id="modal-streak" class="font-bold text-xl text-amber-500">0</div>
+          </div>
+        </div>
+
+        <div id="modal-best-alert" class="hidden mb-6 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          New Personal Best Record!
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98"
+          >
+            Sprint Again
+          </button>
+          <a
+            href="/games"
+            class="px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors"
+          >
+            Hub
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script is:inline>
+  (function() {
+    var TOTAL_DURATION_MS = 60000;
+    var STORAGE_KEY = 'fiq_game_math_best';
+
+    var score = 0;
+    var streak = 0;
+    var longestStreak = 0;
+    var correctCount = 0;
+    var wrongCount = 0;
+    var isRunning = false;
+    var startTime = 0;
+    var timerAnimFrame = null;
+    var currentProblem = null;
+    var lastDisplayedTenth = -1;
+
+    // DOM Elements
+    var hudLevel = document.getElementById('hud-level');
+    var hudStreak = document.getElementById('hud-streak');
+    var hudScore = document.getElementById('hud-score');
+    var hudBest = document.getElementById('hud-best');
+    var startOverlay = document.getElementById('start-overlay');
+    var btnStartGame = document.getElementById('btn-start-game');
+    var gameArenaContent = document.getElementById('game-arena-content');
+    var sprintTimerText = document.getElementById('sprint-timer-text');
+    var sprintProgressBar = document.getElementById('sprint-progress-bar');
+    var equationText = document.getElementById('equation-text');
+    var streakBonusBadge = document.getElementById('streak-bonus-badge');
+    var feedbackToast = document.getElementById('feedback-toast');
+
+    if (gameArenaContent) {
+      gameArenaContent.setAttribute('inert', '');
+    }
+
+    var optButtons = [
+      document.getElementById('btn-opt-0'),
+      document.getElementById('btn-opt-1'),
+      document.getElementById('btn-opt-2'),
+      document.getElementById('btn-opt-3')
+    ];
+    var optTexts = [
+      document.getElementById('opt-text-0'),
+      document.getElementById('opt-text-1'),
+      document.getElementById('opt-text-2'),
+      document.getElementById('opt-text-3')
+    ];
+
+    var modalEndRound = document.getElementById('modal-end-round');
+    var modalScore = document.getElementById('modal-score');
+    var modalAcc = document.getElementById('modal-acc');
+    var modalAttempted = document.getElementById('modal-attempted');
+    var modalStreak = document.getElementById('modal-streak');
+    var modalBestAlert = document.getElementById('modal-best-alert');
+    var btnModalRestart = document.getElementById('btn-modal-restart');
+
+    function loadBestScore() {
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          hudBest.textContent = saved;
+        }
+      } catch (e) {
+        // localStorage unavailable
+      }
+    }
+    loadBestScore();
+
+    function getTier() {
+      if (correctCount < 10) return 1;
+      if (correctCount < 20) return 2;
+      if (correctCount < 30) return 3;
+      return 4;
+    }
+
+    function updateHud() {
+      var tier = getTier();
+      hudLevel.textContent = 'Tier ' + tier;
+      hudStreak.textContent = streak;
+      hudScore.textContent = score;
+    }
+
+    function showFeedback(text, isPositive) {
+      if (!feedbackToast) return;
+      feedbackToast.textContent = (isPositive ? '✓ ' : '✗ ') + text;
+      feedbackToast.className = 'h-6 mt-4 text-xs font-mono font-semibold transition-opacity ' +
+        (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+      feedbackToast.style.opacity = '1';
+      setTimeout(function() {
+        feedbackToast.style.opacity = '0';
+      }, 600);
+    }
+
+    function generateProblem() {
+      var tier = getTier();
+      var expr = '';
+      var ans = 0;
+
+      if (tier === 1) {
+        // Level 1: Single-digit addition/subtraction
+        var op = Math.random() < 0.5 ? '+' : '-';
+        if (op === '+') {
+          var a = Math.floor(Math.random() * 8) + 2; // 2..9
+          var b = Math.floor(Math.random() * 8) + 2;
+          expr = a + ' + ' + b;
+          ans = a + b;
+        } else {
+          var b = Math.floor(Math.random() * 8) + 2;
+          var res = Math.floor(Math.random() * 8) + 1;
+          var a = b + res;
+          expr = a + ' - ' + b;
+          ans = res;
+        }
+      } else if (tier === 2) {
+        // Level 2: Two-digit +/- single-digit, or single-digit product
+        var roll = Math.random();
+        if (roll < 0.4) {
+          var a = Math.floor(Math.random() * 70) + 15;
+          var b = Math.floor(Math.random() * 8) + 2;
+          expr = a + ' + ' + b;
+          ans = a + b;
+        } else if (roll < 0.7) {
+          var a = Math.floor(Math.random() * 70) + 20;
+          var b = Math.floor(Math.random() * 8) + 2;
+          expr = a + ' - ' + b;
+          ans = a - b;
+        } else {
+          var a = Math.floor(Math.random() * 7) + 3; // 3..9
+          var b = Math.floor(Math.random() * 8) + 2;
+          expr = a + ' × ' + b;
+          ans = a * b;
+        }
+      } else if (tier === 3) {
+        // Level 3: Two-digit * single-digit, 2-digit +/- 2-digit, mixed
+        var roll = Math.random();
+        if (roll < 0.4) {
+          var a = Math.floor(Math.random() * 15) + 11; // 11..25
+          var b = Math.floor(Math.random() * 6) + 3; // 3..8
+          expr = a + ' × ' + b;
+          ans = a * b;
+        } else if (roll < 0.7) {
+          var a = Math.floor(Math.random() * 6) + 3;
+          var b = Math.floor(Math.random() * 5) + 2;
+          var c = Math.floor(Math.random() * 5) + 2;
+          expr = a + ' × (' + b + ' + ' + c + ')';
+          ans = a * (b + c);
+        } else {
+          var a = Math.floor(Math.random() * 50) + 30;
+          var b = Math.floor(Math.random() * 25) + 15;
+          expr = a + ' - ' + b;
+          ans = a - b;
+        }
+      } else {
+        // Level 4: Mental division, squares, combined
+        var roll = Math.random();
+        if (roll < 0.35) {
+          var b = Math.floor(Math.random() * 7) + 3; // 3..9
+          var res = Math.floor(Math.random() * 12) + 6; // 6..17
+          var a = b * res;
+          var c = Math.floor(Math.random() * 12) + 3;
+          expr = a + ' ÷ ' + b + ' + ' + c;
+          ans = res + c;
+        } else if (roll < 0.7) {
+          var a = Math.floor(Math.random() * 8) + 11; // 11..18
+          expr = a + '²';
+          ans = a * a;
+        } else {
+          var b = Math.floor(Math.random() * 7) + 3;
+          var res = Math.floor(Math.random() * 10) + 4;
+          var a = b * res;
+          expr = a + ' ÷ ' + b;
+          ans = res;
+        }
+      }
+
+      // Generate 3 unique plausible distractors
+      var options = [ans];
+      var offsets = [-1, 1, -2, 2, -3, 3, -10, 10, -5, 5, -4, 4];
+      offsets.sort(function() { return 0.5 - Math.random(); });
+
+      for (var i = 0; i < offsets.length; i++) {
+        var cand = ans + offsets[i];
+        if (cand > 0 && options.indexOf(cand) === -1) {
+          options.push(cand);
+        }
+        if (options.length === 4) break;
+      }
+
+      // If still less than 4, fill
+      var extra = 1;
+      while (options.length < 4) {
+        var cand = ans + extra;
+        if (options.indexOf(cand) === -1) options.push(cand);
+        extra += 2;
+      }
+
+      // Shuffle options
+      options.sort(function() { return 0.5 - Math.random(); });
+
+      return {
+        expr: expr,
+        ans: ans,
+        options: options
+      };
+    }
+
+    function renderProblem() {
+      currentProblem = generateProblem();
+      equationText.textContent = currentProblem.expr + ' = ?';
+
+      for (var i = 0; i < 4; i++) {
+        optTexts[i].textContent = currentProblem.options[i];
+        optButtons[i].className = 'min-h-[56px] py-4 px-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500 text-zinc-900 dark:text-zinc-100 font-heading font-bold text-xl sm:text-2xl transition-all duration-100 hover:scale-102 active:scale-95 flex items-center justify-between shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600';
+      }
+    }
+
+    function handleChoice(optIdx) {
+      if (!isRunning || !currentProblem) return;
+      var chosenVal = currentProblem.options[optIdx];
+      var btn = optButtons[optIdx];
+
+      if (chosenVal === currentProblem.ans) {
+        score += 10;
+        correctCount++;
+        streak++;
+        if (streak > longestStreak) longestStreak = streak;
+
+        // Check for 5-streak bonus
+        if (streak % 5 === 0) {
+          score += 5;
+          streakBonusBadge.textContent = streak + 'x Streak (+5 Bonus)';
+          streakBonusBadge.classList.remove('hidden');
+          setTimeout(function() {
+            streakBonusBadge.classList.add('hidden');
+          }, 1200);
+          showFeedback('Streak Bonus! +15 pts', true);
+        } else {
+          showFeedback('Correct! +10 pts', true);
+        }
+
+        btn.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/40');
+      } else {
+        score = Math.max(0, score - 3);
+        wrongCount++;
+        streak = 0;
+        showFeedback('Wrong! -3 pts (Answer: ' + currentProblem.ans + ')', false);
+        btn.classList.add('border-rose-500', 'bg-rose-50', 'dark:bg-rose-950/40');
+      }
+
+      updateHud();
+      setTimeout(function() {
+        if (isRunning) renderProblem();
+      }, 120);
+    }
+
+    function timerStep() {
+      if (!isRunning) return;
+      var elapsed = performance.now() - startTime;
+      var remaining = Math.max(0, TOTAL_DURATION_MS - elapsed);
+      var fraction = remaining / TOTAL_DURATION_MS;
+
+      var currentTenth = Math.floor(remaining / 100);
+      if (currentTenth !== lastDisplayedTenth) {
+        lastDisplayedTenth = currentTenth;
+        sprintTimerText.textContent = (remaining / 1000).toFixed(1) + 's';
+      }
+      sprintProgressBar.style.width = (fraction * 100).toFixed(1) + '%';
+
+      if (remaining <= 10000) {
+        sprintTimerText.classList.add('text-rose-600', 'dark:text-rose-400', 'animate-pulse');
+        sprintProgressBar.classList.remove('bg-emerald-500');
+        sprintProgressBar.classList.add('bg-rose-500');
+      } else {
+        sprintTimerText.classList.remove('text-rose-600', 'dark:text-rose-400', 'animate-pulse');
+        sprintProgressBar.classList.add('bg-emerald-500');
+        sprintProgressBar.classList.remove('bg-rose-500');
+      }
+
+      if (remaining > 0) {
+        timerAnimFrame = requestAnimationFrame(timerStep);
+      } else {
+        finishSprint();
+      }
+    }
+
+    function startSprint() {
+      isRunning = true;
+      score = 0;
+      streak = 0;
+      longestStreak = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      lastDisplayedTenth = -1;
+      startTime = performance.now();
+
+      if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+      startOverlay.classList.add('hidden');
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+
+      updateHud();
+      renderProblem();
+      timerAnimFrame = requestAnimationFrame(timerStep);
+    }
+
+    function finishSprint() {
+      isRunning = false;
+      cancelAnimationFrame(timerAnimFrame);
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+      var totalAttempted = correctCount + wrongCount;
+      var accuracy = totalAttempted > 0 ? Math.round((correctCount / totalAttempted) * 100) : 0;
+
+      var savedBest = 0;
+      try {
+        savedBest = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      } catch (e) {}
+
+      var isNewBest = score > savedBest;
+      if (isNewBest) {
+        try {
+          localStorage.setItem(STORAGE_KEY, score.toString());
+          loadBestScore();
+        } catch (e) {}
+      }
+
+      modalScore.textContent = score;
+      modalAcc.textContent = accuracy + '%';
+      modalAttempted.textContent = totalAttempted;
+      modalStreak.textContent = longestStreak;
+
+      if (isNewBest && score > 0) {
+        modalBestAlert.classList.remove('hidden');
+      } else {
+        modalBestAlert.classList.add('hidden');
+      }
+
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+      try {
+        modalEndRound.focus();
+      } catch (e) {}
+    }
+
+    // Bind option buttons
+    optButtons.forEach(function(btn, idx) {
+      btn.addEventListener('click', function() { handleChoice(idx); });
+    });
+
+    btnStartGame.addEventListener('click', startSprint);
+    btnModalRestart.addEventListener('click', function() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startSprint();
+    });
+
+    // Keyboard controls
+    window.addEventListener('keydown', function(e) {
+      if (e.repeat) return;
+      var key = e.key;
+      if (key === 'Escape' && !modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+        modalEndRound.classList.remove('flex');
+        if (startOverlay) {
+          startOverlay.classList.remove('hidden');
+          if (btnStartGame) btnStartGame.focus();
+        }
+      } else if (key === ' ' && !isRunning && modalEndRound.classList.contains('hidden')) {
+        e.preventDefault();
+        startSprint();
+      } else if (key === '1') {
+        handleChoice(0);
+      } else if (key === '2') {
+        handleChoice(1);
+      } else if (key === '3') {
+        handleChoice(2);
+      } else if (key === '4') {
+        handleChoice(3);
+      }
+    });
+  })();
+</script>

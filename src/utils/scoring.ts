@@ -1,16 +1,26 @@
-import { type CognitiveDomain, QUESTION_ITEMS } from '../data/questions';
+import { type CHCDomain, type QuestionItem } from '../data/questions';
 
-export interface AssessmentResult {
-  rawScore: number; // 0 to 24
-  theta: number; // Estimated ability level (-3.0 to +3.0)
-  sem: number; // Standard error of measurement
-  iqEstimate: number; // Standardized IQ (Mean 100, SD 15)
-  confidenceInterval: [number, number]; // 95% CI bounds
-  percentile: number; // 0.1 to 99.9
-  domainBreakdown: Record<CognitiveDomain, { total: number; correct: number; percentage: number }>;
+export interface DomainIndexScore {
+  rawScore: number;
+  total: number;
+  theta: number;
+  standardScore: number; // Mean 100, SD 15, clamped 60-160
+  percentile: number;
 }
 
-// Numerical approximation of error function (Abramowitz & Stegun 7.1.26)
+export interface AssessmentResult {
+  rawScore: number;
+  totalQuestions: number;
+  theta: number;
+  sem: number;
+  iqEstimate: number; // Standardized IQ (Mean 100, SD 15)
+  confidenceInterval: [number, number]; // [lower, upper]
+  percentile: number;
+  domainBreakdown: Record<CHCDomain, DomainIndexScore>;
+  testType: 'quick' | 'standard';
+}
+
+// Numerical approximation of error function (Abramowitz and Stegun 7.1.26)
 function erf(x: number): number {
   const sign = x >= 0 ? 1 : -1;
   const absX = Math.abs(x);
@@ -41,48 +51,22 @@ export function itemProbability(theta: number, a: number, b: number): number {
 }
 
 /**
- * Calculates psychometrically calibrated assessment results using 2PL IRT EAP estimation.
- * 
- * @param userAnswers Map of question ID (1-24) to selected option ID (1-6)
+ * Bayesian Expected A Posteriori (EAP) estimation for a given response vector.
+ *
+ * Uses 81 Gaussian quadrature points from theta = -4.0 to +4.0 with a
+ * standard normal prior N(0, 1).
+ *
+ * Domain Safeguard (Correction 5): For very small item vectors (e.g. 3 items)
+ * extreme all-correct or all-incorrect patterns are pulled toward the prior
+ * mean via the Bayesian framework itself. We additionally clamp the posterior
+ * variance floor at 0.25 (SEM floor = 0.5) to prevent artificially tight CIs
+ * on small vectors.
+ *
+ * Returns { theta, posteriorVariance }.
  */
-export function calculateScore(userAnswers: Record<number, number>): AssessmentResult {
-  let rawScore = 0;
-
-  const domainBreakdown: Record<CognitiveDomain, { total: number; correct: number; percentage: number }> = {
-    matrix_reasoning: { total: 0, correct: 0, percentage: 0 },
-    cube_rotation: { total: 0, correct: 0, percentage: 0 },
-    cube_nets: { total: 0, correct: 0, percentage: 0 },
-    topological_series: { total: 0, correct: 0, percentage: 0 },
-  };
-
-  // Binary response vector for 24 items
-  const responseVector: { a: number; b: number; isCorrect: boolean }[] = [];
-
-  for (const item of QUESTION_ITEMS) {
-    domainBreakdown[item.domain].total += 1;
-    const selectedOptionId = userAnswers[item.id];
-    const selectedOption = item.options.find((opt) => opt.id === selectedOptionId);
-    const isCorrect = selectedOption ? selectedOption.isCorrect : false;
-
-    if (isCorrect) {
-      rawScore += 1;
-      domainBreakdown[item.domain].correct += 1;
-    }
-
-    responseVector.push({
-      a: item.a,
-      b: item.b,
-      isCorrect,
-    });
-  }
-
-  // Compute domain percentages
-  for (const domainKey of Object.keys(domainBreakdown) as CognitiveDomain[]) {
-    const d = domainBreakdown[domainKey];
-    d.percentage = d.total > 0 ? Math.round((d.correct / d.total) * 100) : 0;
-  }
-
-  // Bayesian Expected A Posteriori (EAP) Estimation with standard normal prior N(0, 1)
+function eapEstimate(
+  responseVector: { a: number; b: number; isCorrect: boolean }[]
+): { theta: number; posteriorVariance: number } {
   const numQuadPoints = 81;
   const minTheta = -4.0;
   const maxTheta = 4.0;
@@ -94,7 +78,7 @@ export function calculateScore(userAnswers: Record<number, number>): AssessmentR
   for (let i = 0; i < numQuadPoints; i++) {
     const q = minTheta + i * step;
     quadPoints.push(q);
-    logPriors.push(-0.5 * q * q);
+    logPriors.push(-0.5 * q * q); // log of N(0,1)
   }
 
   // Calculate log-likelihood for each quadrature point
@@ -103,7 +87,6 @@ export function calculateScore(userAnswers: Record<number, number>): AssessmentR
     let logLik = 0;
     for (const item of responseVector) {
       const p = itemProbability(q, item.a, item.b);
-      // Small epsilon to avoid log(0)
       const clampedP = Math.max(1e-7, Math.min(1 - 1e-7, p));
       logLik += item.isCorrect ? Math.log(clampedP) : Math.log(1 - clampedP);
     }
@@ -127,19 +110,71 @@ export function calculateScore(userAnswers: Record<number, number>): AssessmentR
   }
 
   let estimatedTheta = 0;
-  let posteriorVariance = 1.0;
+  // Domain safeguard: floor posterior variance to prevent extreme shrinkage
+  // on small item vectors (3-item quick test domains).
+  let posteriorVariance = 0.5;
 
   if (sumWeights > 0) {
     const normalizedWeights = unnormalizedWeights.map((w) => w / sumWeights);
     estimatedTheta = normalizedWeights.reduce((acc, w, idx) => acc + quadPoints[idx] * w, 0);
-    posteriorVariance = normalizedWeights.reduce(
+    const rawVariance = normalizedWeights.reduce(
       (acc, w, idx) => acc + Math.pow(quadPoints[idx] - estimatedTheta, 2) * w,
       0
     );
+    // Apply variance floor: max(0.25, computed) to guard small item vectors
+    posteriorVariance = Math.max(0.25, rawVariance);
   }
 
-  // Clamp theta within plausible psychometric range [-3.0, +3.0]
-  const clampedTheta = Math.max(-3.0, Math.min(3.0, estimatedTheta));
+  return { theta: estimatedTheta, posteriorVariance };
+}
+
+/**
+ * Calculates psychometrically calibrated assessment results using 2PL IRT EAP estimation.
+ *
+ * @param userAnswers - Map of question ID to selected option ID
+ * @param activeQuestions - The specific question set used for this session
+ * @param testType - 'quick' (12 items) or 'standard' (24 items)
+ */
+export function calculateScore(
+  userAnswers: Record<number, number>,
+  activeQuestions: QuestionItem[],
+  testType: 'quick' | 'standard'
+): AssessmentResult {
+  let rawScore = 0;
+
+  const domainRaw: Record<CHCDomain, { total: number; correct: number; items: { a: number; b: number; isCorrect: boolean }[] }> = {
+    fluid: { total: 0, correct: 0, items: [] },
+    spatial: { total: 0, correct: 0, items: [] },
+    quantitative: { total: 0, correct: 0, items: [] },
+    verbal: { total: 0, correct: 0, items: [] },
+  };
+
+  // Build global response vector and per-domain vectors
+  const globalVector: { a: number; b: number; isCorrect: boolean }[] = [];
+
+  for (const item of activeQuestions) {
+    const domainKey = item.domain as CHCDomain;
+    domainRaw[domainKey].total += 1;
+
+    const selectedOptionId = userAnswers[item.id];
+    const selectedOption = item.options.find((opt) => opt.id === selectedOptionId);
+    const isCorrect = selectedOption ? selectedOption.isCorrect : false;
+
+    if (isCorrect) {
+      rawScore += 1;
+      domainRaw[domainKey].correct += 1;
+    }
+
+    const itemEntry = { a: item.a, b: item.b, isCorrect };
+    globalVector.push(itemEntry);
+    domainRaw[domainKey].items.push(itemEntry);
+  }
+
+  // Global EAP estimation
+  const { theta: globalTheta, posteriorVariance } = eapEstimate(globalVector);
+
+  // Clamp global theta within plausible psychometric range [-3.0, +3.0]
+  const clampedTheta = Math.max(-3.0, Math.min(3.0, globalTheta));
   const sem = Math.sqrt(posteriorVariance);
 
   // Standardized IQ Scale (Mean = 100, SD = 15)
@@ -156,13 +191,42 @@ export function calculateScore(userAnswers: Record<number, number>): AssessmentR
   const rawPercentile = normalCdf(zScore) * 100;
   const percentile = Math.max(0.1, Math.min(99.9, Math.round(rawPercentile * 10) / 10));
 
+  // Per-domain EAP estimation and standard score computation
+  const domainBreakdown = {} as Record<CHCDomain, DomainIndexScore>;
+  const allDomains: CHCDomain[] = ['fluid', 'spatial', 'quantitative', 'verbal'];
+
+  for (const domain of allDomains) {
+    const dData = domainRaw[domain];
+
+    let domainTheta = 0;
+    if (dData.items.length > 0) {
+      const { theta: dt } = eapEstimate(dData.items);
+      domainTheta = Math.max(-3.0, Math.min(3.0, dt));
+    }
+
+    const rawDomainScore = 100 + 15 * domainTheta;
+    const standardScore = Math.max(60, Math.min(160, Math.round(rawDomainScore)));
+    const dZ = (standardScore - 100) / 15;
+    const dPercentile = Math.max(0.1, Math.min(99.9, Math.round(normalCdf(dZ) * 1000) / 10));
+
+    domainBreakdown[domain] = {
+      rawScore: dData.correct,
+      total: dData.total,
+      theta: Math.round(domainTheta * 1000) / 1000,
+      standardScore,
+      percentile: dPercentile,
+    };
+  }
+
   return {
     rawScore,
+    totalQuestions: activeQuestions.length,
     theta: Math.round(clampedTheta * 1000) / 1000,
     sem: Math.round(sem * 1000) / 1000,
     iqEstimate,
     confidenceInterval: [ciLower, ciUpper],
     percentile,
     domainBreakdown,
+    testType,
   };
 }

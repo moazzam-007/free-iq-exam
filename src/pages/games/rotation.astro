@@ -3,14 +3,55 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 
-const title = "3D Rotation Challenge - Spatial Speed Drill | FreeIQExam";
-const description = "Test visual-spatial processing speed (Gv). Mentally rotate 3D isometric cubes and identify whether views match before the countdown expires.";
+const title = "Mental Rotation Test Free - 3D Spatial Speed Challenge | FreeIQExam";
+const description = "Take the 3D mental rotation test online free. Evaluate visual-spatial processing speed and mental manipulation based on Shepard & Metzler (1971).";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "3D Mental Rotation Challenge",
+    "url": "https://freeiqexam.com/games/rotation",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Scientific 3D mental rotation cognitive test measuring visual-spatial orientation and speeded object manipulation."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Cognitive Games",
+        "item": "https://freeiqexam.com/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "3D Rotation Challenge",
+        "item": "https://freeiqexam.com/games/rotation"
+      }
+    ]
+  }
+];
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} schema={schema}>
   <Header />
 
-  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
     <!-- Breadcrumb -->
     <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
       <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
@@ -23,8 +64,8 @@ const description = "Test visual-spatial processing speed (Gv). Mentally rotate 
     <!-- Header / HUD -->
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
       <div>
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 mb-1.5">
-          Gv - Visual-Spatial Speed
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-sky mb-1.5">
+          Gv &bull; Visual-Spatial Speed
         </div>
         <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
           3D Rotation Challenge
@@ -42,19 +83,19 @@ const description = "Test visual-spatial processing speed (Gv). Mentally rotate 
           <span class="font-bold font-mono text-indigo-600 dark:text-indigo-400">(?)</span>
           <span>How to Play</span>
         </button>
-        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[58px] sm:min-w-[70px]">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
           <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Trial</div>
           <div id="hud-trial" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 20</div>
         </div>
-        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[58px] sm:min-w-[70px]">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
           <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Score</div>
           <div id="hud-score" class="font-bold text-indigo-600 dark:text-indigo-400 text-sm sm:text-base">0</div>
         </div>
-        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[58px] sm:min-w-[70px]">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
           <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Avg Time</div>
           <div id="hud-avg-time" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0.0s</div>
         </div>
-        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[58px] sm:min-w-[70px]">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
           <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Best</div>
           <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
         </div>
@@ -62,10 +103,10 @@ const description = "Test visual-spatial processing speed (Gv). Mentally rotate 
     </section>
 
     <!-- Main Game Arena -->
-    <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
       <!-- Start Screen Overlay -->
       <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
-        <div class="w-16 h-16 rounded-2xl bg-indigo-600 dark:bg-indigo-500 text-white flex items-center justify-center mb-5 shadow-lg shadow-indigo-500/20">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-sky flex items-center justify-center mb-5 shadow-lg shadow-indigo-500/20">
           <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
           </svg>
@@ -342,6 +383,71 @@ const description = "Test visual-spatial processing speed (Gv). Mentally rotate 
         </div>
       </div>
     </div>
+
+    <!-- Educational Guide & Cognitive Science Section (Crawler Visible) -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-sky mb-2">
+          CHC Broad Ability: Visual Processing (Gv) &amp; Spatial Rotation
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Mental Rotation: Spatial Manipulation &amp; Viewpoint Invariance
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Mental rotation is the ability to mentally simulate the rotation of two-dimensional and three-dimensional representations of objects. Psychologists study mental rotation to observe how the human brain maintains internal analog representations of physical geometry and inspects topological relationships from alternative visual angles.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. How to Play &amp; Controls
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Examine the reference cube on the left and the candidate cube on the right. Determine whether the candidate is a valid 3D rotation of the reference, or an impossible mirror enantiomer. Press <strong>[1]</strong> for Same or <strong>[2]</strong> for Different.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Scoring &amp; Angular Disparity
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Points are awarded for accurate decisions with speed bonuses for sub-2.5s reaction times. Reaction latency increases linearly as the angular disparity between views increases from 45&deg; to 180&deg;.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Scientific Foundation
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            First demonstrated in seminal experiments by Roger Shepard and Jacqueline Metzler (1971, <em>Science</em>), the mental rotation paradigm proves that mental manipulation is an analog spatial transformation rather than abstract propositional logic.
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Important Psychometric Note:</strong> The 3D Rotation Challenge assesses speeded spatial visualization under practice conditions. It measures visual-spatial fluency and does not represent an overall composite IQ score.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Explore Visual-Spatial Reasoning Tests
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Test your folding nets, 3D rotations, and spatial logic with our dedicated 16-question assessment.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/spatial-reasoning-test" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Spatial Subtest</a>
+          <a href="/test" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Full 20m Exam</a>
+        </div>
+      </div>
+    </section>
   </main>
 
   <Footer />

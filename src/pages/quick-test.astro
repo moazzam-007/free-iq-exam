@@ -2,8 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import { QUESTION_BANK } from '../data/questions';
 
-const title = "Quick IQ Screening Test (10 Min) - Instant Results Free | FreeIQExam";
-const description = "Fast, scientific 12-question cognitive screening test. Get your provisional IQ score range and percentile estimate in under 10 minutes. No email or registration required.";
+const title = "Quick IQ Test: Fast 10-Minute Free Screening Test | FreeIQExam";
+const description = "Fast, scientific 12-question cognitive screening test. Get your provisional IQ score range and percentile estimate in under 10 minutes. 100% free, no email or signup required.";
 
 const schema = [
   {
@@ -142,7 +142,7 @@ const bankJson = JSON.stringify(sanitizedBank);
     <div class="w-full h-1 bg-zinc-100 dark:bg-zinc-900 overflow-hidden" role="progressbar" aria-valuenow="8" aria-valuemin="0" aria-valuemax="100">
       <div
         id="progress-bar"
-        class="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-300 ease-out"
+        class="h-full bg-blue-600 transition-all duration-300 ease-out"
         style="width: 8.33%;"
       ></div>
     </div>
@@ -163,13 +163,14 @@ const bankJson = JSON.stringify(sanitizedBank);
 
   <!-- Main Active Assessment Area -->
   <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-between">
+    <h1 class="sr-only">Quick IQ Test: Fast 10-Minute Free Screening with Instant Results</h1>
 
     <!-- Top Metadata Bar -->
     <div class="flex items-center justify-between mb-4 sm:mb-6">
       <div class="flex items-center gap-2.5">
         <span
           id="domain-badge"
-          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-medium tracking-wide bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900"
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-medium tracking-wide bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80"
         >
           Loading...
         </span>
@@ -425,12 +426,23 @@ const bankJson = JSON.stringify(sanitizedBank);
         targetEndTime = Date.now() + timeRemaining * 1000;
       }
 
-      // Build question set from seed (new or restored)
       if (!sessionSeed) sessionSeed = Math.floor(Math.random() * 0xffffffff);
       questions = buildQuickSet(sessionSeed);
 
       // Clamp currentIndex
       if (currentIndex >= questions.length) currentIndex = 0;
+
+      // Fisher-Yates shuffle for question options copy
+      function shuffleOptions(opts) {
+        var copy = opts.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = temp;
+        }
+        return copy;
+      }
 
       // --- DOM Elements ---
       var timerDisplay       = document.getElementById('timer-display');
@@ -651,17 +663,21 @@ const bankJson = JSON.stringify(sanitizedBank);
         if (optionsGrid) {
           optionsGrid.innerHTML = '';
           var selectedOptionId = userAnswers[q.id];
-          var hasSvgOptions = q.options.some(function (o) { return o.svgContent; });
+          if (!q._shuffledOptions) {
+            q._shuffledOptions = shuffleOptions(q.options);
+          }
+          var displayedOptions = q._shuffledOptions;
+          var hasSvgOptions = displayedOptions.some(function (o) { return o.svgContent; });
           optionsGrid.className = hasSvgOptions
             ? 'grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4'
             : 'grid grid-cols-1 gap-3';
 
-          q.options.forEach(function (opt) {
+          displayedOptions.forEach(function (opt, optIdx) {
             var isSelected = selectedOptionId === opt.id;
             var btn = document.createElement('button');
             btn.type = 'button';
             btn.setAttribute('data-option-id', String(opt.id));
-            btn.setAttribute('aria-label', 'Choice ' + opt.id);
+            btn.setAttribute('aria-label', 'Choice ' + (optIdx + 1));
 
             var baseClass = 'relative p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-150 cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black min-h-[44px] ';
             var stateClass = isSelected
@@ -676,7 +692,7 @@ const bankJson = JSON.stringify(sanitizedBank);
             badge.className = isSelected
               ? 'absolute top-2 left-2 w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-xs font-bold flex items-center justify-center'
               : 'absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold flex items-center justify-center border border-zinc-200 dark:border-zinc-700';
-            badge.textContent = String(opt.id);
+            badge.textContent = String(optIdx + 1);
             btn.appendChild(badge);
 
             // Option content
@@ -829,8 +845,9 @@ const bankJson = JSON.stringify(sanitizedBank);
 
         // Dynamic keys 1-N based on current question option count
         if (e.key >= '1' && parseInt(e.key, 10) <= optionCount) {
-          var optId = parseInt(e.key, 10);
-          if (currentQ) selectOption(currentQ.id, optId);
+          var keyIdx = parseInt(e.key, 10) - 1;
+          var opts = currentQ._shuffledOptions || currentQ.options;
+          if (currentQ && opts[keyIdx]) selectOption(currentQ.id, opts[keyIdx].id);
           return;
         }
 

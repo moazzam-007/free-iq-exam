@@ -186,9 +186,8 @@ export function calculateScore(
   const ciLower = Math.max(60, Math.round(iqEstimate - 1.96 * semIq));
   const ciUpper = Math.min(160, Math.round(iqEstimate + 1.96 * semIq));
 
-  // Percentile rank derived from standard normal CDF
-  const zScore = (iqEstimate - 100) / 15;
-  const rawPercentile = normalCdf(zScore) * 100;
+  // Percentile rank derived from standard normal CDF using continuous latent ability theta
+  const rawPercentile = normalCdf(clampedTheta) * 100;
   const percentile = Math.max(0.1, Math.min(99.9, Math.round(rawPercentile * 10) / 10));
 
   // Per-domain EAP estimation and standard score computation
@@ -206,8 +205,7 @@ export function calculateScore(
 
     const rawDomainScore = 100 + 15 * domainTheta;
     const standardScore = Math.max(60, Math.min(160, Math.round(rawDomainScore)));
-    const dZ = (standardScore - 100) / 15;
-    const dPercentile = Math.max(0.1, Math.min(99.9, Math.round(normalCdf(dZ) * 1000) / 10));
+    const dPercentile = Math.max(0.1, Math.min(99.9, Math.round(normalCdf(domainTheta) * 1000) / 10));
 
     domainBreakdown[domain] = {
       rawScore: dData.correct,

@@ -8,6 +8,7 @@ const { currentPath = Astro.url.pathname } = Astro.props;
 const normalizePath = (p: string) => p.replace(/\/$/, '') || '/';
 const currentNorm = normalizePath(currentPath);
 
+const isHomeActive = currentNorm === '/';
 const isAssessmentsActive = ['/test', '/quick-test', '/practice'].some(
   (p) => currentNorm === p || (p !== '/' && currentNorm.startsWith(p))
 );
@@ -23,7 +24,7 @@ const allMobileLinks = [
   { href: '/test', label: 'Full IQ Test (20 min)', badge: 'Official', group: 'Assessments' },
   { href: '/quick-test', label: 'Quick Screening (10 min)', badge: 'Fast', group: 'Assessments' },
   { href: '/practice', label: 'Practice Hub (Untimed)', badge: '', group: 'Assessments' },
-  { href: '/games', label: 'Cognitive Games', badge: '10 Drills', group: 'Training & Rank' },
+  { href: '/games', label: 'Cognitive Games', badge: '', group: 'Training & Rank' },
   { href: '/leaderboard', label: 'Global Leaderboard', badge: '', group: 'Training & Rank' },
   { href: '/profile', label: 'My Cognitive Profile', badge: '', group: 'Training & Rank' },
   { href: '/iq-score-chart', label: 'Score Distribution Chart', badge: '', group: 'Science & Reference' },
@@ -38,21 +39,34 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
 <header class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-zinc-950/85 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
     
-    <!-- 1. Brand Logo: Blue/Cyan Flask Squircle + Wordmark -->
-    <a href="/" class="flex items-center gap-3 group shrink-0" aria-label="FreeIQExam Home">
-      <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform duration-200">
-        <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M9 3h6M10 3v6L5 18a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3" />
-        </svg>
-      </div>
+    <!-- 1. Brand Logo: Minimalist 3-Dot Cognitive Mark + Wordmark -->
+    <a href="/" class="flex items-center gap-2.5 group shrink-0" aria-label="FreeIQExam Home">
+      <svg class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform duration-200" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="9.5" r="5.5" class="fill-blue-600 dark:fill-blue-500" />
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600" />
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400" />
+      </svg>
       <span class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-zinc-950 dark:text-white leading-tight">
-        Free<span class="text-blue-600 dark:text-blue-500">IQExam</span>
+        Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
       </span>
     </a>
 
     <!-- 2. Center Desktop Navigation Links -->
     <nav class="hidden lg:flex items-center gap-6 xl:gap-7 text-[13.5px] font-medium" aria-label="Primary Navigation">
       
+      <!-- Link: Home -->
+      <a
+        href="/"
+        class={`py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
+          isHomeActive
+            ? 'text-blue-600 dark:text-blue-400 font-semibold'
+            : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+        }`}
+        aria-current={isHomeActive ? 'page' : undefined}
+      >
+        Home
+      </a>
+
       <!-- Dropdown 1: Assessments ▾ -->
       <div class="relative group" id="nav-dropdown-assessments">
         <button
@@ -78,7 +92,7 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/quick-test"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
                 ⚡
               </div>
               <div>
@@ -95,7 +109,7 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/test"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
                 🎯
               </div>
               <div>
@@ -112,7 +126,7 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/practice"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item border-t border-zinc-100 dark:border-zinc-800/60 mt-1"
             >
-              <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
                 🧩
               </div>
               <div>
@@ -128,18 +142,15 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
         </div>
       </div>
 
-      <!-- Cognitive Games (with 10 count pill) -->
+      <!-- Cognitive Games -->
       <a
         href="/games"
-        class={`flex items-center gap-1.5 py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
+        class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
           isGamesActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
         }`}
         aria-current={isGamesActive ? 'page' : undefined}
       >
-        <span>Cognitive Games</span>
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300">
-          10
-        </span>
+        Cognitive Games
       </a>
 
       <!-- Leaderboard -->
@@ -178,7 +189,7 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/iq-score-chart"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
                 📊
               </div>
               <div>
@@ -195,7 +206,7 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/iq-percentile-calculator"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 text-sm font-mono font-bold">
+              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm font-mono font-bold">
                 %
               </div>
               <div>
@@ -212,7 +223,7 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/methodology"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
                 🔬
               </div>
               <div>
@@ -331,13 +342,13 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
   <!-- Drawer Header -->
   <div class="h-16 px-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
     <div class="flex items-center gap-2.5">
-      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 3h6M10 3v6L5 18a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3" />
-        </svg>
-      </div>
+      <svg class="w-7 h-7 shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="9.5" r="5.5" class="fill-blue-600 dark:fill-blue-500" />
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600" />
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400" />
+      </svg>
       <span class="font-heading font-extrabold text-base text-zinc-950 dark:text-white">
-        Free<span class="text-blue-600 dark:text-blue-500">IQExam</span>
+        Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
       </span>
     </div>
     <button
@@ -372,6 +383,20 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
 
   <!-- Drawer Grouped Links -->
   <div class="p-4 flex flex-col gap-5 overflow-y-auto flex-1">
+    <div class="flex flex-col gap-1">
+      <a
+        href="/"
+        class={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
+          currentNorm === '/'
+            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold'
+            : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white'
+        }`}
+        aria-current={currentNorm === '/' ? 'page' : undefined}
+      >
+        <span>Home</span>
+      </a>
+    </div>
+
     {mobileGroups.map((grp) => (
       <div>
         <p class="px-2 pb-2 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">

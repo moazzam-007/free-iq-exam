@@ -3,14 +3,55 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 
-const title = "Dual N-Back Memory - Working Memory Training | FreeIQExam";
-const description = "Scientific Dual N-Back cognitive drill. Simultaneously track spatial positions and visual letters to expand working memory capacity and attention control.";
+const title = "Dual N-Back Free Online - Working Memory Training Drill | FreeIQExam";
+const description = "Play Dual N-Back free online. Scientific working memory drill tracking spatial positions and visual letters N steps back. Based on Jaeggi et al. (2008).";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Dual N-Back Memory Training",
+    "url": "https://freeiqexam.com/games/n-back",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Scientific Dual N-Back cognitive task challenging simultaneous spatial and auditory/letter working memory updating."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Cognitive Games",
+        "item": "https://freeiqexam.com/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Dual N-Back",
+        "item": "https://freeiqexam.com/games/n-back"
+      }
+    ]
+  }
+];
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} schema={schema}>
   <Header />
 
-  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
     <!-- Breadcrumb -->
     <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
       <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
@@ -23,8 +64,8 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
     <!-- Header / HUD -->
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
       <div>
-        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 mb-1.5">
-          Gwm - Working Memory
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-mint mb-1.5">
+          Gwm &bull; Working Memory
         </div>
         <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
           Dual N-Back Memory
@@ -42,19 +83,19 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
           <span class="font-bold font-mono text-blue-600 dark:text-blue-400">(?)</span>
           <span>How to Play</span>
         </button>
-        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[62px] sm:min-w-[70px]">
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
           <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Level</div>
           <div id="hud-n-level" class="font-bold text-blue-600 dark:text-blue-400 text-sm sm:text-base">2-Back</div>
         </div>
-        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[62px] sm:min-w-[70px]">
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
           <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Trial</div>
           <div id="hud-trial-count" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 20</div>
         </div>
-        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[62px] sm:min-w-[70px]">
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
           <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Score</div>
           <div id="hud-score" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">0</div>
         </div>
-        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700 text-center min-w-[62px] sm:min-w-[70px]">
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
           <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Best</div>
           <div id="hud-best-score" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
         </div>
@@ -62,10 +103,10 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
     </section>
 
     <!-- Main Game Arena -->
-    <div class="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
       <!-- Start Screen Overlay -->
       <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
-        <div class="w-16 h-16 rounded-2xl bg-blue-600 dark:bg-blue-500 text-white flex items-center justify-center mb-5 shadow-lg shadow-blue-500/20">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-mint flex items-center justify-center mb-5 shadow-lg shadow-blue-500/20">
           <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.5-7.5h15" />
           </svg>
@@ -331,6 +372,71 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
         </div>
       </div>
     </div>
+
+    <!-- Educational Guide & Cognitive Science Section (Crawler Visible) -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-mint mb-2">
+          CHC Broad Ability: Working Memory (Gwm)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Understanding Dual N-Back: Working Memory &amp; Cognitive Control
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Dual N-Back is one of the most widely researched paradigms in cognitive psychology for probing working memory capacity and executive updating. While standard tasks involve a single perceptual channel, Dual N-Back requires the simultaneous monitoring and updating of two independent information streams: spatial position (visuospatial sketchpad) and letter identity (phonological loop).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. How to Play &amp; Controls
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            In each trial, a square flashes on the 3x3 grid while a letter is displayed. Compare both stimuli to the presentation <strong>N steps back</strong>. Press <strong>[A]</strong> for position match, <strong>[L]</strong> for letter match, or both if both match.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Scoring &amp; Adaptive Progression
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Performance is scored using decision accuracy across all trials combined with the active N-level weight. Scoring &ge; 85% advances you to the next N-back level, while &lt; 65% drops one level.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Scientific Foundation
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            First formalized by W. K. Kirchner (1958) and popularized by Susanne Jaeggi et al. (2008, PNAS), the N-back paradigm measures executive updating, resistance to proactive interference, and working memory maintenance.
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Important Psychometric Note:</strong> Dual N-Back performance reflects operational fluency, working memory updating, and task-specific practice effects. It does not measure innate general intelligence (<em>g</em>) or substitute for a standardized clinical IQ assessment.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Looking for a Full Cognitive Assessment?
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Evaluate your Fluid Reasoning, Visual-Spatial, Quantitative, and Verbal abilities with our standardized 24-question exam.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/quick-test" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Quick 10m Test</a>
+          <a href="/test" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Full 20m Exam</a>
+        </div>
+      </div>
+    </section>
   </main>
 
   <Footer />
@@ -363,6 +469,8 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
     var correctLetterMatches = 0;
     var falsePosMatches = 0;
     var falseLetterMatches = 0;
+    var missedPosMatches = 0;
+    var missedLetterMatches = 0;
     var totalDecisions = 0;
     var correctDecisions = 0;
     var currentStreak = 0;
@@ -531,24 +639,46 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
       totalDecisions += 2;
 
       // Position decision
-      var posCorrect = (posMatched && pressedPos) || (!posMatched && !pressedPos);
-      if (posCorrect) {
-        correctDecisions++;
-        currentStreak++;
-        if (currentStreak > longestStreak) longestStreak = currentStreak;
+      if (posMatched) {
+        if (pressedPos) {
+          correctDecisions++;
+          currentStreak++;
+        } else {
+          missedPosMatches++;
+          currentStreak = 0;
+        }
       } else {
-        currentStreak = 0;
+        if (!pressedPos) {
+          correctDecisions++;
+          if (correctPosMatches + correctLetterMatches > 0) {
+            currentStreak++;
+          }
+        } else {
+          currentStreak = 0;
+        }
       }
+      if (currentStreak > longestStreak) longestStreak = currentStreak;
 
       // Letter decision
-      var letterCorrect = (letterMatched && pressedLetter) || (!letterMatched && !pressedLetter);
-      if (letterCorrect) {
-        correctDecisions++;
-        currentStreak++;
-        if (currentStreak > longestStreak) longestStreak = currentStreak;
+      if (letterMatched) {
+        if (pressedLetter) {
+          correctDecisions++;
+          currentStreak++;
+        } else {
+          missedLetterMatches++;
+          currentStreak = 0;
+        }
       } else {
-        currentStreak = 0;
+        if (!pressedLetter) {
+          correctDecisions++;
+          if (correctPosMatches + correctLetterMatches > 0) {
+            currentStreak++;
+          }
+        } else {
+          currentStreak = 0;
+        }
       }
+      if (currentStreak > longestStreak) longestStreak = currentStreak;
     }
 
     function resetInputButtons() {
@@ -595,6 +725,8 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
       correctLetterMatches = 0;
       falsePosMatches = 0;
       falseLetterMatches = 0;
+      missedPosMatches = 0;
+      missedLetterMatches = 0;
       totalDecisions = 0;
       correctDecisions = 0;
       currentStreak = 0;
@@ -623,14 +755,30 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
       resetInputButtons();
       if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
 
-      var accuracyDecimal = totalDecisions > 0 ? (correctDecisions / totalDecisions) : 0;
+      var totalHits = correctPosMatches + correctLetterMatches;
+      var totalMisses = missedPosMatches + missedLetterMatches;
+      var totalFalseAlarms = falsePosMatches + falseLetterMatches;
+      var totalErrors = totalMisses + totalFalseAlarms;
+      var totalTargets = totalHits + totalMisses;
+      var totalNonTargets = Math.max(1, totalDecisions - totalTargets);
+
+      // Signal Detection balanced accuracy: requires active target engagement (hits > 0)
+      var accuracyDecimal = 0;
+      if (totalHits > 0 && totalTargets > 0) {
+        var hitRate = totalHits / totalTargets;
+        var crRate = Math.max(0, (totalNonTargets - totalFalseAlarms) / totalNonTargets);
+        accuracyDecimal = Math.max(0, Math.min(1, (hitRate + crRate) / 2));
+      }
       var accuracyPct = Math.round(accuracyDecimal * 100);
 
       // Scoring formula:
       // levelFactor = Math.min(currentN, 4) * 10
-      // performanceScore = Math.min(100, Math.max(0, Math.round((accuracy * 60) + levelFactor)))
+      // Requires at least one target hit to earn level factor
       var levelFactor = Math.min(currentN, 4) * 10;
-      var performanceScore = Math.min(100, Math.max(0, Math.round((accuracyDecimal * 60) + levelFactor)));
+      var performanceScore = 0;
+      if (totalHits > 0) {
+        performanceScore = Math.min(100, Math.max(0, Math.round((accuracyDecimal * 60) + levelFactor)));
+      }
       var durationSec = Math.max(1, Math.round((performance.now() - sessionStartTime) / 1000));
 
       // Level progression for next round
@@ -656,8 +804,8 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
             performanceScore: performanceScore,
             accuracy: parseFloat(accuracyDecimal.toFixed(4)),
             trialsCompleted: TOTAL_TRIALS,
-            correctCount: correctPosMatches + correctLetterMatches,
-            errorCount: falsePosMatches + falseLetterMatches,
+            correctCount: totalHits,
+            errorCount: totalErrors,
             bestStreak: longestStreak,
             maxLevel: currentN + '-Back',
           },
@@ -690,11 +838,15 @@ const description = "Scientific Dual N-Back cognitive drill. Simultaneously trac
 
       modalAccuracy.textContent = accuracyPct + '%';
       modalNextN.textContent = currentN + '-Back';
-      modalHitsFa.textContent = (correctPosMatches + correctLetterMatches) + ' / ' + (falsePosMatches + falseLetterMatches);
+      modalHitsFa.textContent = totalHits + ' / ' + totalErrors;
       modalStreak.textContent = longestStreak.toString();
       modalLevelStatus.textContent = statusMsg;
 
-      modalFormulaCalc.textContent = '(' + accuracyPct + '% * 60 = ' + Math.round(accuracyDecimal * 60) + ' pts) + (Level ' + prevN + ' Weight = ' + levelFactor + ' pts) = ' + performanceScore + ' pts';
+      if (totalHits > 0) {
+        modalFormulaCalc.textContent = '(' + accuracyPct + '% * 60 = ' + Math.round(accuracyDecimal * 60) + ' pts) + (Level ' + prevN + ' Weight = ' + levelFactor + ' pts) = ' + performanceScore + ' pts';
+      } else {
+        modalFormulaCalc.textContent = '(0% * 60 = 0 pts) + (Level ' + prevN + ' Weight = 0 pts [0 hits recorded]) = 0 pts';
+      }
 
       if (isNewBest && performanceScore > 0) {
         modalBestAlert.classList.remove('hidden');

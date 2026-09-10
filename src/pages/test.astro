@@ -2,8 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import { QUESTION_BANK } from '../data/questions';
 
-const title = "Free IQ Test: 24 Questions, 20 Minutes | FreeIQExam";
-const description = "Comprehensive 24-item cognitive assessment across 4 CHC domains: Fluid Reasoning, Visual-Spatial, Quantitative, and Verbal Comprehension. Scored via 2PL Item Response Theory with instant results.";
+const title = "Free Online IQ Test: 24 Questions, 20-Minute Assessment | FreeIQExam";
+const description = "Standardized 24-item online IQ test evaluated via 2PL Item Response Theory across 4 CHC domains. Get your estimated IQ-scale score and percentile breakdown instantly.";
 
 // Expose full sanitized bank to client for dynamic session sampling.
 // Client selects 6 items per CHC domain each new session.
@@ -167,13 +167,14 @@ const schema = [
 
   <!-- Main Active Assessment Area -->
   <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-between">
+    <h1 class="sr-only">Free Online IQ Test: 20-Minute Full Cognitive Assessment</h1>
 
     <!-- Top Metadata Bar -->
     <div class="flex items-center justify-between mb-4 sm:mb-6">
       <div class="flex items-center gap-2.5">
         <span
           id="domain-badge"
-          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-medium tracking-wide bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900"
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-medium tracking-wide bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80"
         >
           Loading...
         </span>
@@ -189,9 +190,9 @@ const schema = [
 
     <!-- Stimulus Prompt Instruction -->
     <div class="mb-4 sm:mb-6">
-      <h1 id="question-prompt-text" class="text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+      <p id="question-prompt-text" class="text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
         Loading question...
-      </h1>
+      </p>
     </div>
 
     <!-- Question Stimulus Graphic Card (hidden for text-only questions) -->
@@ -454,6 +455,18 @@ const schema = [
       questions = buildStandardSet(sessionSeed);
       if (currentIndex >= questions.length) currentIndex = 0;
 
+      // Fisher-Yates shuffle for question options copy
+      function shuffleOptions(opts) {
+        var copy = opts.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = temp;
+        }
+        return copy;
+      }
+
       // --- DOM Elements ---
       var timerDisplay    = document.getElementById('timer-display');
       var timerContainer  = document.getElementById('timer-container');
@@ -675,17 +688,21 @@ const schema = [
         if (optionsGrid) {
           optionsGrid.innerHTML = '';
           var selectedOptionId = userAnswers[q.id];
-          var hasSvgOptions = q.options.some(function (o) { return o.svgContent; });
+          if (!q._shuffledOptions) {
+            q._shuffledOptions = shuffleOptions(q.options);
+          }
+          var displayedOptions = q._shuffledOptions;
+          var hasSvgOptions = displayedOptions.some(function (o) { return o.svgContent; });
           optionsGrid.className = hasSvgOptions
             ? 'grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4'
             : 'grid grid-cols-1 gap-3';
 
-          q.options.forEach(function (opt) {
+          displayedOptions.forEach(function (opt, optIdx) {
             var isSelected = selectedOptionId === opt.id;
             var btn = document.createElement('button');
             btn.type = 'button';
             btn.setAttribute('data-option-id', String(opt.id));
-            btn.setAttribute('aria-label', 'Choice ' + opt.id);
+            btn.setAttribute('aria-label', 'Choice ' + (optIdx + 1));
 
             var baseClass = 'relative p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-150 cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black min-h-[44px] ';
             var stateClass = isSelected
@@ -698,7 +715,7 @@ const schema = [
             badge.className = isSelected
               ? 'absolute top-2 left-2 w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-xs font-bold flex items-center justify-center'
               : 'absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold flex items-center justify-center border border-zinc-200 dark:border-zinc-700';
-            badge.textContent = String(opt.id);
+            badge.textContent = String(optIdx + 1);
             btn.appendChild(badge);
 
             if (opt.svgContent) {
@@ -851,8 +868,9 @@ const schema = [
 
         // Dynamic keys 1-N bound to actual option count of current question
         if (e.key >= '1' && parseInt(e.key, 10) <= optionCount) {
-          var optId = parseInt(e.key, 10);
-          if (currentQ) selectOption(currentQ.id, optId);
+          var keyIdx = parseInt(e.key, 10) - 1;
+          var opts = currentQ._shuffledOptions || currentQ.options;
+          if (currentQ && opts[keyIdx]) selectOption(currentQ.id, opts[keyIdx].id);
           return;
         }
 

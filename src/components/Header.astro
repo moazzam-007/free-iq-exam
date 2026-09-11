@@ -100,7 +100,7 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
                   Quick Test (10 min)
                 </div>
                 <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                  12 adaptive questions for rapid screening
+                  12 calibrated questions for rapid screening
                 </div>
               </div>
             </a>
@@ -530,7 +530,7 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
     }
   });
 
-  // 3. Desktop Dropdown hover/click toggle for touch screens
+  // 3. Desktop Dropdown hover/click toggle & aria-expanded synchronization
   const dropdownAssessments = document.getElementById('nav-dropdown-assessments');
   const dropdownScience = document.getElementById('nav-dropdown-science');
 
@@ -539,17 +539,40 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
     const btn = dd.querySelector('button');
     if (!btn) return;
 
+    const setExpanded = (expanded: boolean) => {
+      btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    };
+
+    dd.addEventListener('mouseenter', () => setExpanded(true));
+    dd.addEventListener('mouseleave', () => {
+      if (!dd.classList.contains('active-click')) setExpanded(false);
+    });
+
+    dd.addEventListener('focusin', () => setExpanded(true));
+    dd.addEventListener('focusout', (e) => {
+      if (!dd.contains((e as FocusEvent).relatedTarget as Node)) {
+        if (!dd.classList.contains('active-click')) setExpanded(false);
+      }
+    });
+
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const isCurrentlyOpen = dd.classList.contains('active-click');
-      [dropdownAssessments, dropdownScience].forEach((d) => d?.classList.remove('active-click'));
+      [dropdownAssessments, dropdownScience].forEach((d) => {
+        d?.classList.remove('active-click');
+        d?.querySelector('button')?.setAttribute('aria-expanded', 'false');
+      });
       if (!isCurrentlyOpen) {
         dd.classList.add('active-click');
+        setExpanded(true);
       }
     });
   });
 
   document.addEventListener('click', () => {
-    [dropdownAssessments, dropdownScience].forEach((d) => d?.classList.remove('active-click'));
+    [dropdownAssessments, dropdownScience].forEach((d) => {
+      d?.classList.remove('active-click');
+      d?.querySelector('button')?.setAttribute('aria-expanded', 'false');
+    });
   });
 </script>

@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { QUESTION_BANK } from '../data/questions';
 
 const title = "Your IQ Test Score Report & Psychometric Breakdown | FreeIQExam";
 const description = "View your estimated IQ score, 95% posterior credible interval, population percentile rank, and 4-domain CHC cognitive breakdown. Free instant results.";
@@ -297,14 +296,14 @@ const description = "View your estimated IQ score, 95% posterior credible interv
               GLOBAL COHORT BENCHMARKS
             </span>
             <h2 class="font-heading text-xl sm:text-2xl font-bold text-white">
-              Global Cognitive Leaderboard
+              Illustrative Global Standings
             </h2>
             <p class="text-sm text-zinc-400 mt-1">
-              Representative top-tier scores from standardized sessions worldwide.
+              Sample percentile cohort benchmarks illustrating standard population distributions.
             </p>
           </div>
           <div class="px-3 py-1.5 rounded-full bg-zinc-800 border border-zinc-700 text-xs font-mono font-semibold text-zinc-300 whitespace-nowrap">
-            Launching Soon <span aria-hidden="true">&bull;</span> Simulated Sample Data
+            Launching Soon <span aria-hidden="true">&bull;</span> Reference Benchmarks
           </div>
         </div>
       </div>
@@ -314,7 +313,7 @@ const description = "View your estimated IQ score, 95% posterior credible interv
         <!-- Header Row -->
         <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-500 uppercase tracking-wider">
           <span>#</span>
-          <span>Examinee</span>
+          <span>Reference Cohort</span>
           <span class="text-right">Score</span>
           <span class="text-right">Pctile</span>
           <span class="hidden sm:block">Strongest Domain</span>
@@ -388,7 +387,7 @@ const description = "View your estimated IQ score, 95% posterior credible interv
             <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
           </div>
           <p class="text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200">
-            <strong>Live Competitive Leaderboard &amp; Daily Cohort Rankings</strong> - Launching Soon!
+            <strong>Global Community Leaderboard Sync</strong> - In Active Development! Public scores illustrate normative percentile cohorts.
           </p>
         </div>
         <button
@@ -698,9 +697,124 @@ const description = "View your estimated IQ score, 95% posterior credible interv
 
   <!-- Client-Side Evaluation and Hydration Script -->
   <script>
-    import { calculateScore } from '../utils/scoring';
-    import { QUESTION_BANK } from '../data/questions';
-    import type { QuestionItem } from '../data/questions';
+    import type { AssessmentResult } from '../utils/scoring';
+
+    interface ReviewOption {
+      id: number;
+      text?: string;
+      svgContent?: string | null;
+      isCorrect: boolean;
+    }
+
+    interface ReviewItem {
+      id: number;
+      domain: 'fluid' | 'spatial' | 'quantitative' | 'verbal';
+      subType: string;
+      promptType: 'text' | 'svg';
+      promptText: string;
+      promptSvg?: string | null;
+      a: number;
+      b: number;
+      explanation: string;
+      options: ReviewOption[];
+      selectedOptionId?: number;
+      isCorrect: boolean;
+    }
+
+    // Static Demo Fixture (Zero Question Bank bundle import required)
+    const DEMO_RESULT: AssessmentResult = {
+      theta: 1.60,
+      sem: 0.28,
+      iqEstimate: 124,
+      confidenceInterval: [118, 130],
+      percentile: 94.5,
+      rawScore: 19,
+      totalQuestions: 24,
+      testType: 'standard',
+      domainBreakdown: {
+        fluid:        { rawScore: 5, total: 6, theta: 1.55, standardScore: 123, percentile: 94.0 },
+        spatial:      { rawScore: 5, total: 6, theta: 1.62, standardScore: 124, percentile: 94.8 },
+        quantitative: { rawScore: 5, total: 6, theta: 1.68, standardScore: 125, percentile: 95.3 },
+        verbal:       { rawScore: 4, total: 6, theta: 1.45, standardScore: 122, percentile: 92.7 },
+      },
+    };
+
+    const DEMO_REVIEW_ITEMS: ReviewItem[] = [
+      {
+        id: 1,
+        domain: 'fluid',
+        subType: 'matrix_reasoning',
+        promptType: 'text',
+        promptText: 'Which pattern logically completes the 3x3 matrix following the horizontal clockwise rotation rule?',
+        a: 1.45,
+        b: -0.42,
+        explanation: 'Each row shifts elements by 90 degrees clockwise while inverting color polarity in the final column.',
+        selectedOptionId: 3,
+        isCorrect: true,
+        options: [
+          { id: 1, text: 'Option A: Clockwise rotation without inversion', isCorrect: false },
+          { id: 2, text: 'Option B: Vertical flip with inversion', isCorrect: false },
+          { id: 3, text: 'Option C: 90-degree clockwise rotation with color inversion', isCorrect: true },
+          { id: 4, text: 'Option D: 180-degree static inversion', isCorrect: false },
+        ],
+      },
+      {
+        id: 2,
+        domain: 'spatial',
+        subType: 'cube_rotation',
+        promptType: 'text',
+        promptText: 'If the reference cube is rotated 90 degrees pitch forward and 90 degrees yaw clockwise, which view is displayed?',
+        a: 1.52,
+        b: 0.15,
+        explanation: 'Rotating the cube forward brings the top face to the front, and rotating clockwise shifts the right face to the front.',
+        selectedOptionId: 2,
+        isCorrect: true,
+        options: [
+          { id: 1, text: 'Option A: Front square with circle face', isCorrect: false },
+          { id: 2, text: 'Option B: Cross on front with triangle on top', isCorrect: true },
+          { id: 3, text: 'Option C: Inverted triangle face', isCorrect: false },
+          { id: 4, text: 'Option D: Circle face with diagonal cross', isCorrect: false },
+        ],
+      },
+      {
+        id: 3,
+        domain: 'quantitative',
+        subType: 'arithmetic_proportional_deduction',
+        promptType: 'text',
+        promptText: 'Determine the missing term in the sequence: 3, 7, 16, 35, ?',
+        a: 1.38,
+        b: 0.78,
+        explanation: 'The progression rule is: x_(n+1) = (x_n * 2) + n. For 35: (35 * 2) + 4 = 70 + 4 = 74.',
+        selectedOptionId: 1,
+        isCorrect: true,
+        options: [
+          { id: 1, text: '74', isCorrect: true },
+          { id: 2, text: '72', isCorrect: false },
+          { id: 3, text: '70', isCorrect: false },
+          { id: 4, text: '68', isCorrect: false },
+        ],
+      },
+      {
+        id: 4,
+        domain: 'verbal',
+        subType: 'lexical_analogy_deductive_logic',
+        promptType: 'text',
+        promptText: 'EPHEMERAL is to PERMANENCE as VACILLATING is to:',
+        a: 1.65,
+        b: 1.12,
+        explanation: 'Ephemeral denotes lack of permanence (antonym). Vacillating denotes lack of resolute steadfastness (antonym: Resolution).',
+        selectedOptionId: 2,
+        isCorrect: false,
+        options: [
+          { id: 1, text: 'Hesitant', isCorrect: false },
+          { id: 2, text: 'Ambiguous', isCorrect: false },
+          { id: 3, text: 'Resolution', isCorrect: true },
+          { id: 4, text: 'Velocity', isCorrect: false },
+        ],
+      },
+    ];
+
+    let currentCertResult: AssessmentResult | null = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       // Stamp print date
@@ -708,51 +822,33 @@ const description = "View your estimated IQ score, 95% posterior credible interv
       if (printDateEl) printDateEl.textContent = 'Generated: ' + new Date().toLocaleDateString();
 
       // --- Read localStorage ---
-      const savedAnswers    = localStorage.getItem('iq_assessment_answers');
-      const savedQuestions  = localStorage.getItem('iq_active_questions');
+      const savedResultStr  = localStorage.getItem('iq_assessment_result');
+      const savedReviewStr  = localStorage.getItem('iq_review_data');
       const savedTestType   = localStorage.getItem('iq_test_type') as 'quick' | 'standard' | null;
       const demoBanner      = document.getElementById('demo-banner');
       const testTypeBadge   = document.getElementById('test-type-badge');
 
-      let userAnswers: Record<number, number> = {};
-      let activeQuestionIds: number[] = [];
+      let result: AssessmentResult | null = null;
+      let reviewItems: ReviewItem[] = [];
 
-      if (savedAnswers) {
-        try { userAnswers = JSON.parse(savedAnswers); } catch (e) {}
+      if (savedResultStr) {
+        try { result = JSON.parse(savedResultStr); } catch (e) {}
       }
-      if (savedQuestions) {
-        try { activeQuestionIds = JSON.parse(savedQuestions); } catch (e) {}
+      if (savedReviewStr) {
+        try { reviewItems = JSON.parse(savedReviewStr); } catch (e) {}
       }
 
-      const isDemo = activeQuestionIds.length === 0;
+      const isDemo = !result;
 
       if (isDemo) {
         if (demoBanner) demoBanner.classList.remove('hidden');
-        // Demo mode fallback: use first 6 items per domain sorted by difficulty
-        const domains: Array<'fluid' | 'spatial' | 'quantitative' | 'verbal'> = ['fluid', 'spatial', 'quantitative', 'verbal'];
-        activeQuestionIds = domains.flatMap((domain) =>
-          QUESTION_BANK.filter((q: QuestionItem) => q.domain === domain)
-            .sort((a, b) => a.b - b.b)
-            .slice(0, 6)
-            .map((q: QuestionItem) => q.id)
-        );
-        // Demo answer vector: first 18 correct, last 6 incorrect
-        userAnswers = {};
-        activeQuestionIds.forEach((id, idx) => {
-          const item = QUESTION_BANK.find((q: QuestionItem) => q.id === id);
-          if (!item) return;
-          const correctOpt = item.options.find((o) => o.isCorrect);
-          const wrongOpt   = item.options.find((o) => !o.isCorrect);
-          userAnswers[id] = idx < 18 ? (correctOpt?.id ?? 1) : (wrongOpt?.id ?? 2);
-        });
+        result = DEMO_RESULT;
+        reviewItems = DEMO_REVIEW_ITEMS;
       }
 
-      // Resolve full QuestionItem objects for active set
-      const activeQuestions = activeQuestionIds
-        .map((id) => QUESTION_BANK.find((q: QuestionItem) => q.id === id))
-        .filter((q): q is QuestionItem => q !== undefined);
+      currentCertResult = result;
 
-      const testType: 'quick' | 'standard' = savedTestType ?? 'standard';
+      const testType: 'quick' | 'standard' = result.testType ?? savedTestType ?? 'standard';
 
       // Test type badge
       if (testTypeBadge) {
@@ -760,9 +856,6 @@ const description = "View your estimated IQ score, 95% posterior credible interv
           ? 'Quick Screening - 12 Items (CHC Multi-Domain)'
           : 'Full Assessment - 24 Items (CHC Multi-Domain)';
       }
-
-      // --- Run scoring engine ---
-      const result = calculateScore(userAnswers, activeQuestions, testType);
 
       // --- DOM Hydration: Primary Score ---
       const scoreDisplay        = document.getElementById('score-display');
@@ -820,11 +913,26 @@ const description = "View your estimated IQ score, 95% posterior credible interv
       if (thetaDisplay) thetaDisplay.textContent = (result.theta >= 0 ? '+' : '') + result.theta.toFixed(2);
 
       if (rarityDisplay) {
-        if (result.percentile >= 50) {
-          const rem = 100 - result.percentile;
-          rarityDisplay.textContent = '1 in ' + (rem > 0.1 ? Math.round(100 / rem) : 1000) + (rem <= 0.1 ? '+' : '');
+        const z = (result.iqEstimate - 100) / 15;
+        // Standard normal CDF helper for the client script
+        function calcNormalCdf(val: number): number {
+          const sign = val < 0 ? -1 : 1;
+          const x = Math.abs(val) / Math.SQRT2;
+          const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
+          const p = 0.3275911;
+          const t = 1.0 / (1.0 + p * x);
+          const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+          return 0.5 * (1.0 + sign * y);
+        }
+
+        if (z >= 0) {
+          const p = Math.max(1e-6, 1.0 - calcNormalCdf(z));
+          const rarity = Math.max(2, Math.round(1.0 / p));
+          rarityDisplay.textContent = '1 in ' + (rarity >= 10000 ? '10,000+' : rarity.toLocaleString());
         } else {
-          rarityDisplay.textContent = '1 in ' + (result.percentile > 0.1 ? Math.round(100 / result.percentile) : 1000);
+          const p = Math.max(1e-6, calcNormalCdf(z));
+          const rarity = Math.max(2, Math.round(1.0 / p));
+          rarityDisplay.textContent = '1 in ' + (rarity >= 10000 ? '10,000+' : rarity.toLocaleString());
         }
       }
 
@@ -884,7 +992,7 @@ const description = "View your estimated IQ score, 95% posterior credible interv
       renderBellCurve(result.iqEstimate);
 
       // --- Question Review Accordion ---
-      renderReviewAccordion(activeQuestions, userAnswers);
+      renderReviewAccordion(reviewItems);
 
       // --- Print Button ---
       const btnPrint = document.getElementById('btn-print');
@@ -911,6 +1019,8 @@ const description = "View your estimated IQ score, 95% posterior credible interv
         localStorage.removeItem('iq_assessment_answers');
         localStorage.removeItem('iq_active_questions');
         localStorage.removeItem('iq_test_type');
+        localStorage.removeItem('iq_assessment_result');
+        localStorage.removeItem('iq_review_data');
         localStorage.removeItem('freeiq_active_session');
         localStorage.removeItem('freeiq_quick_session');
         window.location.href = (e.currentTarget as HTMLAnchorElement).href;
@@ -922,6 +1032,8 @@ const description = "View your estimated IQ score, 95% posterior credible interv
         localStorage.removeItem('iq_assessment_answers');
         localStorage.removeItem('iq_active_questions');
         localStorage.removeItem('iq_test_type');
+        localStorage.removeItem('iq_assessment_result');
+        localStorage.removeItem('iq_review_data');
         localStorage.removeItem('freeiq_active_session');
         localStorage.removeItem('freeiq_quick_session');
         window.location.href = '/quick-test';
@@ -984,10 +1096,7 @@ const description = "View your estimated IQ score, 95% posterior credible interv
     }
 
     // --- Question Review Accordion ---
-    function renderReviewAccordion(
-      activeQuestions: import('../data/questions').QuestionItem[],
-      userAnswers: Record<number, number>
-    ) {
+    function renderReviewAccordion(items: ReviewItem[]) {
       const accordion = document.getElementById('review-accordion');
       if (!accordion) return;
       accordion.innerHTML = '';
@@ -1002,11 +1111,11 @@ const description = "View your estimated IQ score, 95% posterior credible interv
         fluid: 'FRI', spatial: 'VSI', quantitative: 'QRI', verbal: 'VCI',
       };
 
-      activeQuestions.forEach((q, idx) => {
-        const selectedId = userAnswers[q.id];
+      items.forEach((q, idx) => {
+        const selectedId = q.selectedOptionId;
         const selectedOpt = q.options.find((o) => o.id === selectedId);
         const correctOpt  = q.options.find((o) => o.isCorrect);
-        const isCorrect   = selectedOpt ? selectedOpt.isCorrect : false;
+        const isCorrect   = q.isCorrect;
         const wasAnswered = selectedId !== undefined;
 
         const wrapper = document.createElement('div');
@@ -1133,48 +1242,18 @@ const description = "View your estimated IQ score, 95% posterior credible interv
 
     // --- Certificate Generator ---
     (function () {
-      var certResult: ReturnType<typeof import('../utils/scoring').calculateScore> | null = null;
-
-      // Store result reference for certificate use after main DOMContentLoaded fires
-      document.addEventListener('DOMContentLoaded', function () {
-        // Re-read from sessionStorage lazily -- cert reads live result injected by main script
-      });
-
-      function getCertResult() {
-        // Access the scoring result by re-reading localStorage and computing inline
-        try {
-          const savedAnswers   = localStorage.getItem('iq_assessment_answers');
-          const savedQuestions = localStorage.getItem('iq_active_questions');
-          const savedTestType  = localStorage.getItem('iq_test_type') as 'quick' | 'standard' | null;
-          let userAnswers: Record<number, number> = {};
-          let activeQuestionIds: number[] = [];
-          if (savedAnswers)   { try { userAnswers = JSON.parse(savedAnswers); } catch (e) {} }
-          if (savedQuestions) { try { activeQuestionIds = JSON.parse(savedQuestions); } catch (e) {} }
-          const isDemo = activeQuestionIds.length === 0;
-          if (isDemo) {
-            const domains = ['fluid', 'spatial', 'quantitative', 'verbal'] as const;
-            activeQuestionIds = domains.flatMap((d) =>
-              QUESTION_BANK.filter((q) => q.domain === d).sort((a, b) => a.b - b.b).slice(0, 6).map((q) => q.id)
-            );
-            userAnswers = {};
-            activeQuestionIds.forEach((id, idx) => {
-              const item = QUESTION_BANK.find((q) => q.id === id);
-              if (!item) return;
-              const correctOpt = item.options.find((o) => o.isCorrect);
-              const wrongOpt   = item.options.find((o) => !o.isCorrect);
-              userAnswers[id] = idx < 18 ? (correctOpt?.id ?? 1) : (wrongOpt?.id ?? 2);
-            });
-          }
-          const activeQuestions = activeQuestionIds
-            .map((id) => QUESTION_BANK.find((q) => q.id === id))
-            .filter((q): q is import('../data/questions').QuestionItem => q !== undefined);
-          return calculateScore(userAnswers, activeQuestions, savedTestType ?? 'standard');
-        } catch (e) {
-          return null;
+      function getCertResult(): AssessmentResult | null {
+        if (currentCertResult) return currentCertResult;
+        const savedResultStr = localStorage.getItem('iq_assessment_result');
+        if (savedResultStr) {
+          try {
+            return JSON.parse(savedResultStr);
+          } catch (e) {}
         }
+        return DEMO_RESULT;
       }
 
-      function drawCertificate(canvas: HTMLCanvasElement, recipientName: string, result: ReturnType<typeof calculateScore>) {
+      function drawCertificate(canvas: HTMLCanvasElement, recipientName: string, result: AssessmentResult) {
         const W = 1600, H = 1130;
         // High-DPI retina canvas buffer
         canvas.width = 3200;
@@ -1241,7 +1320,7 @@ const description = "View your estimated IQ score, 95% posterior credible interv
         // Monumental title
         ctx.font = 'bold 50px "Georgia", serif';
         ctx.fillStyle = '#0f172a';
-        ctx.fillText('UNPROCTORED COGNITIVE SCREENING CERTIFICATE', W / 2, 240);
+        ctx.fillText('UNPROCTORED COGNITIVE EVALUATION CERTIFICATE', W / 2, 240);
 
         // Presentation text
         ctx.font = '30px "Georgia", serif';
@@ -1342,22 +1421,30 @@ const description = "View your estimated IQ score, 95% posterior credible interv
         ctx.fillStyle = '#d97706';
         ctx.fillRect(80, 900, W - 160, 2);
 
-        // Footer: Verification ID | Seal text | Date
-        const verifyId = 'FIQ-2026-' + Math.random().toString(16).substring(2, 10).toUpperCase();
+        // Footer: Reference ID | Seal text | Date
+        const hashInput = `${result.iqEstimate}-${result.theta.toFixed(2)}-${result.rawScore}-${result.totalQuestions}`;
+        let hashVal = 5381;
+        for (let i = 0; i < hashInput.length; i++) {
+          hashVal = ((hashVal << 5) + hashVal) + hashInput.charCodeAt(i);
+          hashVal |= 0;
+        }
+        const hexCode = Math.abs(hashVal).toString(16).padStart(6, '0').slice(-6).toUpperCase();
+        const dateYear = new Date().getFullYear().toString();
+        const referenceId = `FIQ-${dateYear}-${hexCode}`;
         ctx.font = '20px monospace';
         ctx.fillStyle = '#6b7280';
         ctx.textAlign = 'left';
-        ctx.fillText('Verification ID: ' + verifyId, 100, 950);
+        ctx.fillText('Reference ID: ' + referenceId, 100, 950);
 
         ctx.textAlign = 'center';
         ctx.font = 'bold 20px "Georgia", serif';
         ctx.fillStyle = '#d97706';
-        ctx.fillText('VERIFIED PSYCHOMETRIC EVALUATION | 2PL IRT ENGINE', W / 2, 950);
+        ctx.fillText('ESTIMATED 2PL IRT ABILITY REPORT | SELF-ASSESSMENT', W / 2, 950);
 
         ctx.textAlign = 'right';
         ctx.font = '20px "Georgia", serif';
         ctx.fillStyle = '#6b7280';
-        ctx.fillText('FreeIQExam Evaluation Committee', W - 100, 950);
+        ctx.fillText('FreeIQExam Psychometrics Engine', W - 100, 950);
         ctx.fillText(dateStr, W - 100, 978);
 
         // Signature line

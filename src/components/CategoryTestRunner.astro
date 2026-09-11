@@ -28,6 +28,7 @@ const {
 // Fetch 16 items sorted by difficulty ascending
 const items = getDomainTestSet(domain, itemCount);
 
+// Sanitize question options passed to client: strip isCorrect and explanation
 const clientQuestions = items.map((q) => ({
   id: q.id,
   domain: q.domain,
@@ -36,16 +37,28 @@ const clientQuestions = items.map((q) => ({
   promptType: q.promptType,
   promptText: q.promptText,
   promptSvg: q.promptSvg ?? null,
-  explanation: q.explanation,
   a: q.a,
   b: q.b,
   options: q.options.map((opt) => ({
     id: opt.id,
     text: opt.text ?? '',
     svgContent: opt.svgContent ?? null,
-    isCorrect: opt.isCorrect,
   })),
 }));
+
+// Obfuscated scoring answer key token to prevent raw booleans from leaking in HTML options
+const answerKeyToken = Buffer.from(
+  JSON.stringify(
+    items.reduce((acc, q) => {
+      const correctOpt = q.options.find((o) => o.isCorrect);
+      acc[q.id] = {
+        correctId: correctOpt ? correctOpt.id : 1,
+        explanation: q.explanation || '',
+      };
+      return acc;
+    }, {} as Record<number, { correctId: number; explanation: string }>)
+  )
+).toString('base64');
 
 const questionsJson = JSON.stringify(clientQuestions);
 const runnerConfig = JSON.stringify({
@@ -466,10 +479,15 @@ const runnerConfig = JSON.stringify({
 </div>
 
 <!-- Embedded Client Script -->
-<script is:inline define:vars={{ questionsJson, runnerConfig }}>
+<script is:inline define:vars={{ questionsJson, runnerConfig, answerKeyToken }}>
   (function () {
     var questions = JSON.parse(questionsJson);
     var config = JSON.parse(runnerConfig);
+    var answerKeyMap = {};
+    try {
+      var decoded = atob(answerKeyToken);
+      answerKeyMap = JSON.parse(decoded);
+    } catch (e) {}
     var TOTAL_QUESTIONS = questions.length;
     var TOTAL_TIME_SECONDS = config.testDurationMinutes * 60;
 
@@ -681,6 +699,15 @@ const runnerConfig = JSON.stringify({
     if (modeTabTimed) modeTabTimed.addEventListener('click', function () { setMode('timed'); });
     if (modeTabPractice) modeTabPractice.addEventListener('click', function () { setMode('practice'); });
 
+    // Defense-in-depth SVG sanitization helper
+    function sanitizeSvg(raw) {
+      if (!raw || typeof raw !== 'string') return '';
+      return raw
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/\bon\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '')
+        .replace(/javascript:/gi, '');
+    }
+
     // Render Question
     function renderCurrentQuestion() {
       var q = questions[currentIndex];
@@ -714,7 +741,7 @@ const runnerConfig = JSON.stringify({
       if (stimulusContainer) {
         stimulusContainer.innerHTML = '';
         if (q.promptSvg) {
-          stimulusContainer.innerHTML = q.promptSvg;
+          stimulusContainer.innerHTML = sanitizeSvg(q.promptSvg);
         }
       }
 
@@ -737,9 +764,11 @@ const runnerConfig = JSON.stringify({
 
           if (currentMode === 'practice' && selectedId !== undefined) {
             // Practice Drill immediate feedback styling
-            if (opt.isCorrect) {
+            var keyInfo = answerKeyMap[q.id];
+            var isThisCorrect = keyInfo && opt.id === keyInfo.correctId;
+            if (isThisCorrect) {
               btn.className += 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-100 ring-2 ring-emerald-500 shadow-xs';
-            } else if (isSelected && !opt.isCorrect) {
+            } else if (isSelected && !isThisCorrect) {
               btn.className += 'bg-rose-50 dark:bg-rose-950/40 border-rose-500 text-rose-900 dark:text-rose-100 ring-2 ring-rose-500 shadow-xs';
             } else {
               btn.className += 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-600 opacity-60';
@@ -763,7 +792,7 @@ const runnerConfig = JSON.stringify({
           if (opt.svgContent) {
             var svgWrap = document.createElement('div');
             svgWrap.className = 'w-full flex items-center justify-center max-h-[70px] select-none';
-            svgWrap.innerHTML = opt.svgContent;
+            svgWrap.innerHTML = sanitizeSvg(opt.svgContent);
             btn.appendChild(svgWrap);
           } else {
             var textSpan = document.createElement('span');
@@ -783,10 +812,10 @@ const runnerConfig = JSON.stringify({
       // Drill Feedback Display
       if (currentMode === 'practice' && selectedId !== undefined) {
         if (drillFeedbackBox) drillFeedbackBox.classList.remove('hidden');
-        var chosenOpt = q.options.find(function (o) { return o.id === selectedId; });
-        var isCorrect = chosenOpt && chosenOpt.isCorrect;
+        var keyInfo = answerKeyMap[q.id];
+        var isCorrect = keyInfo && selectedId === keyInfo.correctId;
 
-        if (drillExplanation) drillExplanation.textContent = q.explanation || 'No detailed explanation provided for this item.';
+        if (drillExplanation) drillExplanation.textContent = (keyInfo && keyInfo.explanation) || 'No detailed explanation provided for this item.';
 
         if (isCorrect) {
           if (drillBanner) drillBanner.className = 'p-4 rounded-2xl border transition-all flex items-start gap-3 bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800';
@@ -867,8 +896,9 @@ const runnerConfig = JSON.stringify({
           pill.className += 'bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
         } else if (isAnswered) {
           if (currentMode === 'practice') {
-            var chosen = q.options.find(function (o) { return o.id === userAnswers[q.id]; });
-            if (chosen && chosen.isCorrect) {
+            var keyInfo = answerKeyMap[q.id];
+            var isCorrect = keyInfo && userAnswers[q.id] === keyInfo.correctId;
+            if (isCorrect) {
               pill.className += 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-300';
             } else {
               pill.className += 'bg-rose-100 text-rose-900 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-300';
@@ -1039,8 +1069,8 @@ const runnerConfig = JSON.stringify({
       var correctCount = 0;
       questions.forEach(function (q) {
         var chosenId = userAnswers[q.id];
-        var correctOpt = q.options.find(function (o) { return o.isCorrect; });
-        if (correctOpt && chosenId === correctOpt.id) {
+        var keyInfo = answerKeyMap[q.id];
+        if (keyInfo && chosenId === keyInfo.correctId) {
           correctCount++;
         }
       });
@@ -1051,35 +1081,45 @@ const runnerConfig = JSON.stringify({
         timeElapsedSec = Math.round((Date.now() - startTimeMs) / 1000);
       }
 
-      // Persist category assessment result to profileStore
+      // Reconstruct scored items for scoring engine and persistence
+      var scoredQuestions = questions.map(function (q) {
+        var keyInfo = answerKeyMap[q.id];
+        var correctId = keyInfo ? keyInfo.correctId : 0;
+        return {
+          id: q.id,
+          domain: q.domain,
+          subType: q.subType,
+          domainLabel: q.domainLabel,
+          promptType: q.promptType,
+          promptText: q.promptText,
+          promptSvg: q.promptSvg,
+          a: q.a,
+          b: q.b,
+          explanation: keyInfo ? keyInfo.explanation : '',
+          options: q.options.map(function (opt) {
+            return {
+              id: opt.id,
+              text: opt.text,
+              svgContent: opt.svgContent,
+              isCorrect: opt.id === correctId,
+            };
+          }),
+        };
+      });
+
+      // Persist category assessment result to profileStore via 2PL/3PL IRT engine
       try {
         if (typeof window.__fiqSaveCategoryAssessment === 'function') {
-          window.__fiqSaveCategoryAssessment(config.domain, timeElapsedSec, userAnswers, questions);
+          window.__fiqSaveCategoryAssessment(config.domain, timeElapsedSec, userAnswers, scoredQuestions);
         } else {
-          var rawProf = localStorage.getItem('fiq_profile_v1');
-          var prof = rawProf ? JSON.parse(rawProf) : { schemaVersion: 1, appVersion: '1.0.0', createdAt: new Date().toISOString(), lastActiveAt: new Date().toISOString(), assessments: [], games: [] };
-          if (!Array.isArray(prof.assessments)) prof.assessments = [];
-          var estIq = Math.max(60, Math.min(160, Math.round(100 + 15 * ((accuracyPct - 50) / 25))));
-          prof.assessments.unshift({
-            id: 'asm_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
-            schemaVersion: 1,
-            assessmentType: 'category-' + config.domain,
-            assessmentVersion: '1.0.0',
-            completedAt: new Date().toISOString(),
-            durationSeconds: timeElapsedSec,
-            rawScore: correctCount,
-            totalQuestions: TOTAL_QUESTIONS,
-            theta: Math.round(((estIq - 100) / 15) * 100) / 100,
-            sem: 0.35,
-            iqEstimate: estIq,
-            confidenceInterval: [Math.max(60, estIq - 10), Math.min(160, estIq + 10)],
-            percentile: accuracyPct,
+          window.addEventListener('DOMContentLoaded', function () {
+            if (typeof window.__fiqSaveCategoryAssessment === 'function') {
+              window.__fiqSaveCategoryAssessment(config.domain, timeElapsedSec, userAnswers, scoredQuestions);
+            }
           });
-          prof.lastActiveAt = new Date().toISOString();
-          localStorage.setItem('fiq_profile_v1', JSON.stringify(prof));
         }
       } catch (e) {
-        console.warn('[CategoryTestRunner] Storage persistence failed:', e);
+        console.warn('[CategoryTestRunner] Assessment persistence failed:', e);
       }
 
       // Hide runner, show results
@@ -1130,8 +1170,8 @@ const runnerConfig = JSON.stringify({
 
       questions.forEach(function (q, idx) {
         var chosenId = userAnswers[q.id];
-        var correctOpt = q.options.find(function (o) { return o.isCorrect; });
-        var isCorrect = correctOpt && chosenId === correctOpt.id;
+        var keyInfo = answerKeyMap[q.id];
+        var isCorrect = keyInfo && chosenId === keyInfo.correctId;
 
         var card = document.createElement('div');
         card.className = 'rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden';
@@ -1168,7 +1208,7 @@ const runnerConfig = JSON.stringify({
 
         var explanation = document.createElement('p');
         explanation.className = 'text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed';
-        explanation.textContent = q.explanation || 'No explanation available.';
+        explanation.textContent = (keyInfo && keyInfo.explanation) || 'No explanation available.';
         panel.appendChild(explanation);
 
         headBtn.addEventListener('click', function () {
@@ -1223,7 +1263,7 @@ const runnerConfig = JSON.stringify({
 
   window.__fiqSaveCategoryAssessment = function (domain, durationSeconds, userAnswers, questions) {
     try {
-      const scoreResult = calculateScore(userAnswers, questions, 'quick');
+      const scoreResult = calculateScore(userAnswers, questions, 'category');
       const assessmentType = ('category-' + domain) as AssessmentType;
 
       saveAssessmentRecord({

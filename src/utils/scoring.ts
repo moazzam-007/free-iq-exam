@@ -17,7 +17,7 @@ export interface AssessmentResult {
   confidenceInterval: [number, number]; // [lower, upper]
   percentile: number;
   domainBreakdown: Record<CHCDomain, DomainIndexScore>;
-  testType: 'quick' | 'standard';
+  testType: 'quick' | 'standard' | 'category';
 }
 
 // Numerical approximation of error function (Abramowitz and Stegun 7.1.26)
@@ -40,14 +40,16 @@ export function normalCdf(z: number): number {
   return 0.5 * (1.0 + erf(z / Math.SQRT2));
 }
 
-// 2PL IRT Probability Function with D = 1.702 scaling constant
-export function itemProbability(theta: number, a: number, b: number): number {
+// 3PL IRT Probability Function with D = 1.702 scaling constant and pseudo-guessing parameter c
+export function itemProbability(theta: number, a: number, b: number, c: number = 0.20): number {
   const D = 1.702;
+  const clampedC = Math.max(0, Math.min(0.33, c));
   const exponent = -D * a * (theta - b);
   // Guard against numerical overflow
-  if (exponent > 40) return 0;
-  if (exponent < -40) return 1;
-  return 1.0 / (1.0 + Math.exp(exponent));
+  if (exponent > 40) return clampedC;
+  if (exponent < -40) return 1.0;
+  const logistic = 1.0 / (1.0 + Math.exp(exponent));
+  return clampedC + (1.0 - clampedC) * logistic;
 }
 
 /**
@@ -65,7 +67,7 @@ export function itemProbability(theta: number, a: number, b: number): number {
  * Returns { theta, posteriorVariance }.
  */
 function eapEstimate(
-  responseVector: { a: number; b: number; isCorrect: boolean }[]
+  responseVector: { a: number; b: number; c?: number; isCorrect: boolean }[]
 ): { theta: number; posteriorVariance: number } {
   const numQuadPoints = 81;
   const minTheta = -4.0;
@@ -86,7 +88,7 @@ function eapEstimate(
   for (const q of quadPoints) {
     let logLik = 0;
     for (const item of responseVector) {
-      const p = itemProbability(q, item.a, item.b);
+      const p = itemProbability(q, item.a, item.b, item.c ?? 0.20);
       const clampedP = Math.max(1e-7, Math.min(1 - 1e-7, p));
       logLik += item.isCorrect ? Math.log(clampedP) : Math.log(1 - clampedP);
     }
@@ -121,8 +123,11 @@ function eapEstimate(
       (acc, w, idx) => acc + Math.pow(quadPoints[idx] - estimatedTheta, 2) * w,
       0
     );
-    // Apply variance floor: max(0.25, computed) to guard small item vectors
-    posteriorVariance = Math.max(0.25, rawVariance);
+    // Apply variance floor conditioned on response vector length:
+    // Short subscales (< 8 items): 0.25 floor to guard small item vectors
+    // Full tests (>= 8 items): 0.01 floor to allow true high-precision estimation
+    const varianceFloor = responseVector.length < 8 ? 0.25 : 0.01;
+    posteriorVariance = Math.max(varianceFloor, rawVariance);
   }
 
   return { theta: estimatedTheta, posteriorVariance };
@@ -133,16 +138,16 @@ function eapEstimate(
  *
  * @param userAnswers - Map of question ID to selected option ID
  * @param activeQuestions - The specific question set used for this session
- * @param testType - 'quick' (12 items) or 'standard' (24 items)
+ * @param testType - 'quick' (12 items), 'standard' (24 items), or 'category' (16 items)
  */
 export function calculateScore(
   userAnswers: Record<number, number>,
   activeQuestions: QuestionItem[],
-  testType: 'quick' | 'standard'
+  testType: 'quick' | 'standard' | 'category' = 'standard'
 ): AssessmentResult {
   let rawScore = 0;
 
-  const domainRaw: Record<CHCDomain, { total: number; correct: number; items: { a: number; b: number; isCorrect: boolean }[] }> = {
+  const domainRaw: Record<CHCDomain, { total: number; correct: number; items: { a: number; b: number; c?: number; isCorrect: boolean }[] }> = {
     fluid: { total: 0, correct: 0, items: [] },
     spatial: { total: 0, correct: 0, items: [] },
     quantitative: { total: 0, correct: 0, items: [] },
@@ -150,24 +155,30 @@ export function calculateScore(
   };
 
   // Build global response vector and per-domain vectors
-  const globalVector: { a: number; b: number; isCorrect: boolean }[] = [];
+  const globalVector: { a: number; b: number; c?: number; isCorrect: boolean }[] = [];
 
   for (const item of activeQuestions) {
-    const domainKey = item.domain as CHCDomain;
-    domainRaw[domainKey].total += 1;
-
     const selectedOptionId = userAnswers[item.id];
-    const selectedOption = item.options.find((opt) => opt.id === selectedOptionId);
+    const selectedOption = item.options ? item.options.find((opt) => opt.id === selectedOptionId) : undefined;
     const isCorrect = selectedOption ? selectedOption.isCorrect : false;
 
     if (isCorrect) {
       rawScore += 1;
-      domainRaw[domainKey].correct += 1;
     }
 
-    const itemEntry = { a: item.a, b: item.b, isCorrect };
+    const optionCount = item.options && item.options.length > 0 ? item.options.length : 5;
+    const cGuess = 1.0 / optionCount;
+    const itemEntry = { a: item.a, b: item.b, c: cGuess, isCorrect };
     globalVector.push(itemEntry);
-    domainRaw[domainKey].items.push(itemEntry);
+
+    const domainKey = item.domain as CHCDomain;
+    if (domainKey in domainRaw) {
+      domainRaw[domainKey].total += 1;
+      if (isCorrect) {
+        domainRaw[domainKey].correct += 1;
+      }
+      domainRaw[domainKey].items.push(itemEntry);
+    }
   }
 
   // Global EAP estimation
@@ -187,7 +198,7 @@ export function calculateScore(
   const ciUpper = Math.min(160, Math.round(iqEstimate + 1.96 * semIq));
 
   // Percentile rank derived from standard normal CDF using continuous latent ability theta
-  const rawPercentile = normalCdf(clampedTheta) * 100;
+  const rawPercentile = normalCdf(globalTheta) * 100;
   const percentile = Math.max(0.1, Math.min(99.9, Math.round(rawPercentile * 10) / 10));
 
   // Per-domain EAP estimation and standard score computation

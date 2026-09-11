@@ -22,6 +22,9 @@ const {
 const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
 const resolvedCanonical = canonicalUrl || new URL(Astro.url.pathname, siteOrigin).href;
 const resolvedOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteOrigin).href;
+
+const publicGaId = import.meta.env.PUBLIC_GA_ID;
+const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
 ---
 
 <!doctype html>
@@ -70,6 +73,9 @@ const resolvedOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -77,6 +83,7 @@ const resolvedOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, 
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={resolvedOgImage} />
+    <meta property="twitter:image:alt" content={title} />
 
     <!-- Schema.org JSON-LD Structured Data -->
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
@@ -85,6 +92,29 @@ const resolvedOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Analytics: Google Analytics 4 (guarded by PUBLIC_GA_ID) -->
+    {publicGaId && publicGaId !== 'G-XXXXXXXXXX' && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${publicGaId}`}></script>
+        <script is:inline define:vars={{ gaId: publicGaId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
+
+    <!-- Google AdSense (guarded by PUBLIC_ADSENSE_PUB_ID) -->
+    {publicAdsensePubId && (
+      <script
+        is:inline
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publicAdsensePubId}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
   </head>
   <body class="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-zinc-50 font-sans antialiased flex flex-col selection:bg-blue-600 selection:text-white">
     <!-- Accessible Skip Link (WCAG 2.4.1) -->

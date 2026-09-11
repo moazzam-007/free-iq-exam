@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Profile Storage Engine & Client-Side State Manager
  * Source of Truth: Scrachpad/PROFILE_DATA_SCHEMA.md
  * 
@@ -200,8 +200,24 @@ export function getProfile(): UserProfileData {
     }
 
     const parsed = JSON.parse(raw);
-    if (!parsed || parsed.schemaVersion !== CURRENT_SCHEMA_VERSION) {
+    if (!parsed || typeof parsed !== 'object') {
       return getDefaultProfile();
+    }
+
+    if (parsed.schemaVersion !== CURRENT_SCHEMA_VERSION) {
+      if (typeof parsed.schemaVersion === 'number' && parsed.schemaVersion < CURRENT_SCHEMA_VERSION) {
+        // Schema forward-migration: upgrade schema version and preserve user assessments and games
+        parsed.schemaVersion = CURRENT_SCHEMA_VERSION;
+        parsed.assessments = Array.isArray(parsed.assessments)
+          ? parsed.assessments.map((a: any) => ({ ...a, schemaVersion: CURRENT_SCHEMA_VERSION }))
+          : [];
+        parsed.games = Array.isArray(parsed.games)
+          ? parsed.games.map((g: any) => ({ ...g, schemaVersion: CURRENT_SCHEMA_VERSION }))
+          : [];
+        saveProfileToStorage(parsed);
+      } else {
+        return getDefaultProfile();
+      }
     }
 
     // Ensure array properties exist
@@ -431,6 +447,34 @@ export function exportProfileJson(): string {
   return JSON.stringify(exportPayload, null, 2);
 }
 
+function sanitizeDomainBreakdown(raw: any): AssessmentRecord['domainBreakdown'] | undefined {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+
+  const validDomains = ['fluid', 'spatial', 'quantitative', 'verbal'];
+  const sanitized: NonNullable<AssessmentRecord['domainBreakdown']> = {};
+
+  for (const domain of validDomains) {
+    const d = raw[domain];
+    if (d && typeof d === 'object') {
+      const total = Math.max(0, Math.min(100, Math.round(Number(d.total) || 0)));
+      const rawScore = Math.max(0, Math.min(total, Math.round(Number(d.rawScore) || 0)));
+      const theta = Math.max(-4.0, Math.min(4.0, Number(d.theta) || 0));
+      const standardScore = Math.max(40, Math.min(160, Math.round(Number(d.standardScore) || 100)));
+      const percentile = Math.max(0.1, Math.min(99.9, Number(d.percentile) || 50));
+
+      sanitized[domain] = {
+        rawScore,
+        total,
+        theta,
+        standardScore,
+        percentile,
+      };
+    }
+  }
+
+  return Object.keys(sanitized).length > 0 ? sanitized : undefined;
+}
+
 export function importProfileJson(jsonStr: string): {
   success: boolean;
   importedCount: number;
@@ -510,7 +554,7 @@ export function importProfileJson(jsonStr: string): {
           iqEstimate: Math.max(50, Math.min(170, Math.round(Number(asm.iqEstimate) || 100))),
           confidenceInterval: ci as [number, number],
           percentile: Math.max(0.1, Math.min(99.9, Number(asm.percentile) || 50)),
-          domainBreakdown: asm.domainBreakdown,
+          domainBreakdown: sanitizeDomainBreakdown(asm.domainBreakdown),
         };
 
         currentProfile.assessments.push(sanitizedAsm);

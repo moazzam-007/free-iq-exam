@@ -70,6 +70,20 @@ const sanitizedBank = QUESTION_BANK.map((q) => ({
 }));
 
 const bankJson = JSON.stringify(sanitizedBank);
+
+// Obfuscated scoring answer key token: questionId -> { c: correctOptionId, exp: explanation }
+const answerKeyToken = Buffer.from(
+  JSON.stringify(
+    QUESTION_BANK.reduce((acc, q) => {
+      const correctOpt = q.options.find((o) => o.isCorrect);
+      acc[q.id] = {
+        c: correctOpt ? correctOpt.id : 1,
+        exp: q.explanation || '',
+      };
+      return acc;
+    }, {} as Record<number, { c: number; exp: string }>)
+  )
+).toString('base64');
 ---
 
 <Layout title={title} description={description} schema={schema}>
@@ -330,9 +344,14 @@ const bankJson = JSON.stringify(sanitizedBank);
   </div>
 
   <!-- Embedded Client Logic -->
-  <script is:inline define:vars={{ bankJson }}>
+  <script is:inline define:vars={{ bankJson, answerKeyToken }}>
     (function () {
       var FULL_BANK = JSON.parse(bankJson);
+      var answerKeyMap = {};
+      try {
+        var decoded = atob(answerKeyToken);
+        answerKeyMap = JSON.parse(decoded);
+      } catch (e) {}
       var TOTAL_QUESTIONS = 12;
       var TOTAL_TIME_SECONDS = 10 * 60; // 600 seconds
 
@@ -394,6 +413,8 @@ const bankJson = JSON.stringify(sanitizedBank);
       var autoAdvanceTimer = null;
       var targetEndTime = null;
       var sessionSeed = null;
+      var startTimeMs = Date.now();
+      var sessionExpired = false;
 
       // --- Restore or init session ---
       try {
@@ -404,13 +425,19 @@ const bankJson = JSON.stringify(sanitizedBank);
             var now = Date.now();
             var isFresh = !parsed.savedAt || (now - parsed.savedAt) < 7200000;
             if (isFresh) {
+              if (typeof parsed.startTimeMs === 'number') startTimeMs = parsed.startTimeMs;
               if (typeof parsed.seed === 'number') sessionSeed = parsed.seed;
               if (parsed.answers && typeof parsed.answers === 'object') userAnswers = parsed.answers;
               if (typeof parsed.timeRemaining === 'number' && parsed.timeRemaining > 0) timeRemaining = parsed.timeRemaining;
               if (typeof parsed.currentQuestionIndex === 'number') currentIndex = parsed.currentQuestionIndex;
-              if (typeof parsed.targetEndTime === 'number' && parsed.targetEndTime > now) {
-                targetEndTime = parsed.targetEndTime;
-                timeRemaining = Math.max(0, Math.round((targetEndTime - now) / 1000));
+              if (typeof parsed.targetEndTime === 'number') {
+                if (parsed.targetEndTime <= now) {
+                  timeRemaining = 0;
+                  sessionExpired = true;
+                } else {
+                  targetEndTime = parsed.targetEndTime;
+                  timeRemaining = Math.max(0, Math.round((targetEndTime - now) / 1000));
+                }
               } else {
                 targetEndTime = now + timeRemaining * 1000;
               }
@@ -431,6 +458,12 @@ const bankJson = JSON.stringify(sanitizedBank);
 
       // Clamp currentIndex
       if (currentIndex >= questions.length) currentIndex = 0;
+
+      if (sessionExpired) {
+        localStorage.removeItem(STORAGE_KEY_SESSION);
+        submitTestImmediately();
+        return;
+      }
 
       // Fisher-Yates shuffle for question options copy
       function shuffleOptions(opts) {
@@ -480,6 +513,7 @@ const bankJson = JSON.stringify(sanitizedBank);
         if (testSubmitted) return;
         try {
           localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({
+            startTimeMs: startTimeMs,
             seed: sessionSeed,
             answers: userAnswers,
             timeRemaining: timeRemaining,
@@ -541,9 +575,39 @@ const bankJson = JSON.stringify(sanitizedBank);
       function submitTestImmediately() {
         testSubmitted = true;
         try {
+          var timeElapsedSec = Math.max(1, Math.round((Date.now() - startTimeMs) / 1000));
+          var scoredQuestions = questions.map(function (q) {
+            var key = answerKeyMap[q.id];
+            var correctId = key ? key.c : 0;
+            return {
+              id: q.id,
+              domain: q.domain,
+              subType: q.subType,
+              domainLabel: q.domainLabel,
+              promptType: q.promptType,
+              promptText: q.promptText,
+              promptSvg: q.promptSvg,
+              a: q.a,
+              b: q.b,
+              explanation: key ? key.exp : '',
+              options: q.options.map(function (opt) {
+                return {
+                  id: opt.id,
+                  text: opt.text,
+                  svgContent: opt.svgContent,
+                  isCorrect: opt.id === correctId,
+                };
+              }),
+            };
+          });
+
           localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify(userAnswers));
           localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(questions.map(function (q) { return q.id; })));
           localStorage.setItem(STORAGE_KEY_TYPE, 'quick');
+
+          if (typeof window.__fiqSaveSessionResult === 'function') {
+            window.__fiqSaveSessionResult(userAnswers, scoredQuestions, 'quick', timeElapsedSec);
+          }
           localStorage.removeItem(STORAGE_KEY_SESSION);
         } catch (e) {}
         window.location.href = '/results';
@@ -585,6 +649,15 @@ const bankJson = JSON.stringify(sanitizedBank);
       } catch (storageErr) {
         var warnEl = document.getElementById('storage-warning-banner');
         if (warnEl) warnEl.classList.remove('hidden');
+      }
+
+      // Defense-in-depth SVG sanitization helper
+      function sanitizeSvg(raw) {
+        if (!raw || typeof raw !== 'string') return '';
+        return raw
+          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+          .replace(/\bon\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '')
+          .replace(/javascript:/gi, '');
       }
 
       // --- Render Question ---
@@ -636,7 +709,7 @@ const bankJson = JSON.stringify(sanitizedBank);
         } else if (q.promptType === 'svg' && q.promptSvg) {
           // Show card for SVG questions
           if (stimulusCard) stimulusCard.style.display = '';
-          if (stimulusContainer) stimulusContainer.innerHTML = q.promptSvg;
+          if (stimulusContainer) stimulusContainer.innerHTML = sanitizeSvg(q.promptSvg);
           if (promptText) {
             promptText.textContent = (q.promptText && q.promptText.trim().length > 0)
               ? q.promptText
@@ -652,7 +725,7 @@ const bankJson = JSON.stringify(sanitizedBank);
             hybridText.textContent = q.promptText;
             stimulusContainer.appendChild(hybridText);
             var svgWrap = document.createElement('div');
-            svgWrap.innerHTML = q.promptSvg;
+            svgWrap.innerHTML = sanitizeSvg(q.promptSvg);
             stimulusContainer.appendChild(svgWrap);
           }
           if (promptText) {
@@ -701,7 +774,7 @@ const bankJson = JSON.stringify(sanitizedBank);
             if (opt.svgContent) {
               var svgWrap = document.createElement('div');
               svgWrap.className = 'w-full flex items-center justify-center pointer-events-none mt-2';
-              svgWrap.innerHTML = opt.svgContent;
+              svgWrap.innerHTML = sanitizeSvg(opt.svgContent);
               btn.appendChild(svgWrap);
             }
             if (opt.text) {
@@ -872,5 +945,69 @@ const bankJson = JSON.stringify(sanitizedBank);
       startTimer();
       renderCurrentQuestion();
     })();
+  </script>
+
+  <script>
+    import { calculateScore } from '../utils/scoring';
+    import { saveAssessmentRecord } from '../utils/profileStore';
+    import type { QuestionItem } from '../data/questions';
+
+    declare global {
+      interface Window {
+        __fiqSaveSessionResult?: (
+          userAnswers: Record<number, number>,
+          scoredQuestions: QuestionItem[],
+          testType: 'standard' | 'quick',
+          durationSeconds?: number
+        ) => void;
+      }
+    }
+
+    window.__fiqSaveSessionResult = function (userAnswers, scoredQuestions, testType, durationSeconds) {
+      try {
+        const scoreResult = calculateScore(userAnswers, scoredQuestions, testType);
+        localStorage.setItem('iq_assessment_result', JSON.stringify(scoreResult));
+
+        const reviewData = scoredQuestions.map((q) => {
+          const selectedId = userAnswers[q.id];
+          const selectedOpt = q.options.find((o) => o.id === selectedId);
+          return {
+            id: q.id,
+            domain: q.domain,
+            subType: q.subType,
+            promptType: q.promptType,
+            promptText: q.promptText,
+            promptSvg: q.promptSvg ?? null,
+            a: q.a,
+            b: q.b,
+            explanation: q.explanation,
+            options: q.options,
+            selectedOptionId: selectedId,
+            isCorrect: selectedOpt ? selectedOpt.isCorrect : false,
+          };
+        });
+        localStorage.setItem('iq_review_data', JSON.stringify(reviewData));
+
+        const defaultDuration = testType === 'quick' ? 600 : 1200;
+        const actualDuration = typeof durationSeconds === 'number' && durationSeconds > 0 ? durationSeconds : defaultDuration;
+
+        saveAssessmentRecord({
+          assessmentType: testType === 'quick' ? 'quick-12' : 'flagship-24',
+          assessmentVersion: '1.0.0',
+          completedAt: new Date().toISOString(),
+          durationSeconds: actualDuration,
+          rawScore: scoreResult.rawScore,
+          totalQuestions: scoredQuestions.length,
+          theta: scoreResult.theta,
+          sem: scoreResult.sem,
+          iqEstimate: scoreResult.iqEstimate,
+          confidenceInterval: scoreResult.confidenceInterval,
+          percentile: scoreResult.percentile,
+          domainBreakdown: scoreResult.domainBreakdown,
+        });
+      } catch (err) {
+        console.warn('[QuickTest] Failed to persist scored assessment:', err);
+      }
+    };
   </script>
 </Layout>

@@ -21,7 +21,7 @@ export interface QuestionItem {
   promptSvg?: string;
   options: QuestionOption[];
   a: number; // Discrimination parameter (0.8 - 2.2)
-  b: number; // Difficulty parameter (-2.5 - +2.5)
+  b: number; // Difficulty parameter (-2.5 to +2.7)
   explanation: string;
   sourceRef?: string;
 }
@@ -59,10 +59,8 @@ function shuffleWithRng<T>(arr: T[], rng: () => number): T[] {
 }
 
 /**
- * Sample N items from a domain pool.
- * Items are sorted by difficulty (b parameter, ascending) within each domain before
- * sampling to ensure balanced difficulty spread when taking a slice.
- * Uses seeded RNG so the same seed always yields the same set.
+ * Sample N items uniformly from a domain pool using a seeded RNG (Fisher-Yates shuffle).
+ * Uses seeded Mulberry32 RNG so identical seeds yield reproducible item sequences.
  */
 function sampleDomain(
   domain: CHCDomain,
@@ -116,18 +114,55 @@ export function getStandardTestSet(seed?: number): QuestionItem[] {
 
 /**
  * Returns up to `count` items from a single CHC domain for focused category tests.
- * Items are sorted by difficulty (b parameter ascending) so tests progress from
- * easiest to hardest, ensuring a natural and fair assessment experience.
- * This function is deterministic - same domain + count always returns same items.
+ * Implements stratified sampling across difficulty terciles (Easy, Medium, Hard)
+ * to eliminate ceiling effects and ensure full latent ability coverage (-2.0 to +2.5).
+ * Items are sorted by difficulty (b parameter ascending) so tests progress naturally.
+ *
  * @param domain - The CHC domain to sample from
  * @param count  - Number of items to return (default 16)
+ * @param seed   - Optional seed for deterministic reproducibility
  */
 export function getDomainTestSet(
   domain: CHCDomain,
-  count: number = 16
+  count: number = 16,
+  seed?: number
 ): QuestionItem[] {
   const pool = QUESTION_BANK.filter((item) => item.domain === domain);
-  // Sort by difficulty ascending (easiest first for natural progression)
+  if (pool.length <= count) {
+    return [...pool].sort((a, b) => a.b - b.b);
+  }
+
+  // Sort domain pool by difficulty b ascending
   const sorted = [...pool].sort((a, b) => a.b - b.b);
-  return sorted.slice(0, count);
+
+  // Split pool into 3 terciles: Easy (bottom 33%), Medium (middle 33%), Hard (top 34%)
+  const n = sorted.length;
+  const t1 = Math.floor(n / 3);
+  const t2 = Math.floor((2 * n) / 3);
+
+  const easyPool = sorted.slice(0, t1);
+  const mediumPool = sorted.slice(t1, t2);
+  const hardPool = sorted.slice(t2);
+
+  // Allocate items proportionally across terciles (e.g. 5 easy, 6 medium, 5 hard for count = 16)
+  const easyCount = Math.floor(count / 3);
+  const hardCount = Math.floor(count / 3);
+  const mediumCount = count - easyCount - hardCount;
+
+  const effectiveSeed = seed ?? Math.floor(Math.random() * 0xffffffff);
+  const rng = createRng(effectiveSeed);
+
+  const sampleTier = (tier: QuestionItem[], k: number): QuestionItem[] => {
+    if (tier.length <= k) return [...tier];
+    return shuffleWithRng(tier, rng).slice(0, k);
+  };
+
+  const selected = [
+    ...sampleTier(easyPool, easyCount),
+    ...sampleTier(mediumPool, mediumCount),
+    ...sampleTier(hardPool, hardCount),
+  ];
+
+  // Sort final selected items by difficulty ascending (b ascending)
+  return selected.sort((a, b) => a.b - b.b);
 }

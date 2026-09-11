@@ -1,0 +1,527 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = "Таблица баллов IQ: нормальное распределение и кривая | FreeIQExam";
+const description = "Колоколообразная кривая IQ: медиана 100, ±1 SD (85–115, 68,2%), ±2 SD, ±3 SD. Стандартное отклонение SD15 наглядно.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Таблица баллов IQ: нормальное распределение, процентили и классификации",
+    "description": "Подробная таблица баллов IQ с колоколообразной кривой нормального распределения, интервалами стандартного отклонения, процентильными эквивалентами и когнитивными классификациями от 70 до 145+.",
+    "url": "https://freeiqexam.com/ru/iq-score-chart/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "FreeIQExam",
+      "url": "https://freeiqexam.com/ru/"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Таблица баллов IQ",
+        "item": "https://freeiqexam.com/ru/iq-score-chart/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Какой балл IQ считается хорошим?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Балл IQ от 90 до 109 является статистически средним. Результат 115 и выше (одно стандартное отклонение выше среднего) помещает вас в верхние 16% населения и обычно классифицируется как высокая норма. Балл 120–129 классифицируется как уровень выше среднего (верхние 9% — 2,5%), а баллы 130 и выше соответствуют одарённости либо очень высокому интеллекту (верхние 2,27%)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Что означает IQ 115?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "IQ 115 — это ровно одно стандартное отклонение (SD 15) выше среднего значения популяции 100. Ему соответствует приблизительно 84,1-й процентиль: вы выполнили тест наравне или лучше, чем примерно 84 человека из 100 в общей популяции."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Что означают IQ 120 или 125?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "IQ 120 соответствует 90,9-му процентилю (верхние 9,1%), а IQ 125 — 95,2-му процентилю (верхние 4,8%). Оба относятся к когнитивной классификации «Выше среднего» по шкале Векслера WAIS-IV, отражая развитое решение задач, быструю абстракцию и выраженные аналитические способности."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Какая доля населения имеет IQ выше 130?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "На стандартных шкалах интеллекта со стандартным отклонением (SD 15) (таких как WAIS-IV) балл IQ 130 находится ровно на два стандартных отклонения выше среднего. Математически примерно 2,27% населения набирают 130 баллов и выше. Это стандартный порог для членства в Mensa."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "В чём разница между SD 15, SD 16 и SD 24 на таблице IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Разные психометрические шкалы используют разные стандартные отклонения. Шкала Векслера использует SD 15 (где 130 — это 98-й процентиль). Историческая форма L-M Стэнфорд–Бине использовала SD 16 (где 132 — это 98-й процентиль). Тест Кеттелла Culture Fair использует SD 24 (где 148 — это 98-й процентиль). Хотя числовые баллы различаются, они описывают один и тот же процентильный ранг и одинаковое отклонение от среднего популяции."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Может ли балл IQ меняться со временем?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Баллы IQ взрослых показывают высокую ретестовую стабильность (корреляции обычно r = 0,80–0,90 на протяжении лет). Однако результаты могут колебаться в пределах стандартной ошибки измерения (обычно ±3–5 баллов) из-за тестовой тревожности, усталости, состояния здоровья или эффекта тренировки. Между поколениями сырые результаты исторически смещались вследствие эффекта Флинна, что требует периодического пересмотра тестовых норм."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Каков средний IQ врача?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Психометрические исследования и данные о когнитивных требованиях профессий (такие как Висконсинское лонгитюдное исследование Хаузера и нормативный анализ Wonderlic) показывают, что врачи и хирурги в среднем имеют IQ от 120 до 125. Этот диапазон соответствует классификации «Выше среднего», примерно 91–95-му процентилям общей популяции."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/iq-score-chart" idPath="/tabel-distribusi-iq" canonicalUrl="https://freeiqexam.com/ru/iq-score-chart">
+  <Header currentPath="/iq-score-chart"  enPath="/iq-score-chart" idPath="/tabel-distribusi-iq"/>
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    
+    <!-- Hero Section -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-medium uppercase tracking-wider mb-4">
+        <span>Нормальное распределение &bull; Стандартное отклонение (SD 15)</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Стандартизированная таблица баллов IQ и колоколообразная кривая
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Узнайте, где находятся результаты когнитивной оценки относительно общей популяции. Изучите пороги стандартного отклонения, накопленные процентили и официальные психометрические классификации.
+      </p>
+    </header>
+
+    <!-- Interactive SVG Normal Distribution Bell Curve -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
+        <div>
+          <h2 id="bell-curve" class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Нормальное распределение (колоколообразная кривая)
+          </h2>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+            Метрика стандартного отклонения (&mu; = 100, &sigma; = 15). 68,2% населения набирают от 85 до 115.
+          </p>
+        </div>
+        <span class="text-xs font-mono px-3 py-1 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300">
+          Модель гауссова распределения
+        </span>
+      </div>
+
+      <div class="w-full overflow-x-auto pb-4">
+        <div class="min-w-[600px] max-w-3xl mx-auto">
+          <svg viewBox="0 0 600 250" class="w-full h-auto select-none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="chartZone68" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35" />
+                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.05" />
+              </linearGradient>
+              <linearGradient id="chartZone95" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6366f1" stop-opacity="0.25" />
+                <stop offset="100%" stop-color="#6366f1" stop-opacity="0.03" />
+              </linearGradient>
+              <linearGradient id="chartZone99" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#a855f7" stop-opacity="0.15" />
+                <stop offset="100%" stop-color="#a855f7" stop-opacity="0.01" />
+              </linearGradient>
+            </defs>
+
+            <!-- Horizontal Baseline -->
+            <line x1="50" y1="190" x2="550" y2="190" stroke="#d4d4d8" class="dark:stroke-zinc-700" stroke-width="2" />
+
+            <!-- SD 15 Shaded Zones -->
+            <!-- 99.7% Zone (-3 SD to +3 SD: 55 to 145) -->
+            <path d="M 50 190 Q 200 185, 300 45 Q 400 185, 550 190 Z" fill="url(#chartZone99)" />
+
+            <!-- 95.4% Zone (-2 SD to +2 SD: 70 to 130) -->
+            <path d="M 133.3 190 Q 200 180, 300 45 Q 400 180, 466.6 190 Z" fill="url(#chartZone95)" />
+
+            <!-- 68.2% Zone (-1 SD to +1 SD: 85 to 115) -->
+            <path d="M 216.6 190 Q 250 120, 300 45 Q 350 120, 383.3 190 Z" fill="url(#chartZone68)" />
+
+            <!-- Smooth Bell Curve Line -->
+            <path d="M 50 190 C 130 190, 200 185, 250 120 C 275 80, 290 45, 300 45 C 310 45, 325 80, 350 120 C 400 185, 470 190, 550 190" stroke="#2563eb" stroke-width="3" stroke-linecap="round" />
+
+            <!-- Vertical SD Boundaries -->
+            <line x1="216.6" y1="120" x2="216.6" y2="190" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="383.3" y1="120" x2="383.3" y2="190" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="133.3" y1="165" x2="133.3" y2="190" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="466.6" y1="165" x2="466.6" y2="190" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="300" y1="45" x2="300" y2="190" stroke="#18181b" class="dark:stroke-zinc-400" stroke-width="2" />
+
+            <!-- SD Percentage Badges -->
+            <rect x="272" y="105" width="56" height="20" rx="10" fill="#2563eb" />
+            <text x="300" y="119" font-family="monospace" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">68,2%</text>
+
+            <rect x="400" y="145" width="50" height="18" rx="9" fill="#4f46e5" />
+            <text x="425" y="158" font-family="monospace" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">13,6%</text>
+
+            <rect x="150" y="145" width="50" height="18" rx="9" fill="#4f46e5" />
+            <text x="175" y="158" font-family="monospace" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">13,6%</text>
+
+            <!-- Ticks & Score Numbers -->
+            <text x="50" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">55</text>
+            <text x="50" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-3 SD</text>
+
+            <text x="133.3" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">70</text>
+            <text x="133.3" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-2 SD</text>
+
+            <text x="216.6" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">85</text>
+            <text x="216.6" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">-1 SD</text>
+
+            <text x="300" y="210" font-family="monospace" font-size="12" font-weight="bold" fill="#2563eb" text-anchor="middle">100</text>
+            <text x="300" y="225" font-family="sans-serif" font-size="9" font-weight="bold" fill="#2563eb" text-anchor="middle">Медиана</text>
+
+            <text x="383.3" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">115</text>
+            <text x="383.3" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+1 SD</text>
+
+            <text x="466.6" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">130</text>
+            <text x="466.6" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+2 SD</text>
+
+            <text x="550" y="210" font-family="monospace" font-size="11" fill="#71717a" text-anchor="middle">145</text>
+            <text x="550" y="225" font-family="sans-serif" font-size="9" fill="#a1a1aa" text-anchor="middle">+3 SD</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Classification Table -->
+    <section>
+      <div class="mb-4">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Таблица классификации отклоняющегося IQ (SD 15)
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Теоретическое распределение популяции по шкале измерения интеллекта Векслера.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table class="w-full min-w-[560px] text-left text-xs sm:text-sm">
+          <thead class="sticky top-0 bg-zinc-100/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10 border-b border-zinc-200 dark:border-zinc-800 font-mono uppercase text-zinc-600 dark:text-zinc-400 text-[11px]">
+            <tr>
+              <th class="py-3.5 px-4">Диапазон баллов</th>
+              <th class="py-3.5 px-4">Диапазон процентилей</th>
+              <th class="py-3.5 px-4">Классификационная метка</th>
+              <th class="py-3.5 px-4">Доля в популяции</th>
+              <th class="py-3.5 px-4">Редкость</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200/80 dark:divide-zinc-800 bg-white dark:bg-black font-mono">
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">145+</td>
+              <td class="py-3.5 px-4">99,87% – 99,99%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Очень высокий интеллект/Гениальность</td>
+              <td class="py-3.5 px-4">0,13%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 из 741</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">130–144</td>
+              <td class="py-3.5 px-4">98% – 99,8%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Одарённость/Высокий интеллект</td>
+              <td class="py-3.5 px-4">2,14%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 из 44</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">120–129</td>
+              <td class="py-3.5 px-4">91% – 97%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Выше среднего</td>
+              <td class="py-3.5 px-4">6,72%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 из 11</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">110–119</td>
+              <td class="py-3.5 px-4">75% – 90%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Высокая норма</td>
+              <td class="py-3.5 px-4">16,13%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 из 4</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">90–109</td>
+              <td class="py-3.5 px-4">25% – 74%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Средний уровень интеллекта</td>
+              <td class="py-3.5 px-4">50,00%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 из 2</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">80–89</td>
+              <td class="py-3.5 px-4">9% – 24%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Низкая норма</td>
+              <td class="py-3.5 px-4">16,13%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 из 4</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">70–79</td>
+              <td class="py-3.5 px-4">2% – 8%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Пограничный уровень</td>
+              <td class="py-3.5 px-4">6,72%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 из 11</td>
+            </tr>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+              <td class="py-3.5 px-4 font-bold text-zinc-500 dark:text-zinc-400">&lt; 70</td>
+              <td class="py-3.5 px-4">&lt; 2%</td>
+              <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Крайне низкий уровень</td>
+              <td class="py-3.5 px-4">2,27%</td>
+              <td class="py-3.5 px-4 text-zinc-500">1 из 44</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="mt-3 p-4 text-xs text-zinc-500 dark:text-zinc-400 bg-zinc-50/50 dark:bg-zinc-900/30 border-t border-zinc-200 dark:border-zinc-800">
+          *Примечание: сообщества высокого IQ, такие как Mensa, устанавливают порог членства на уровне 98-го процентиля и выше (IQ 130 по SD 15 либо IQ 132 по SD 16), определяемого по итогам контролируемых одобренных экзаменов под наблюдением.
+        </p>
+      </div>
+    </section>
+
+    <!-- Comparison Table: SD 15 vs SD 16 vs SD 24 -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+      <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white mb-2">
+        Сравнение стандартных отклонений: SD 15 и SD 16
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mb-6">
+        Не все баллы IQ измеряются по одной шкале. Стандартное отклонение задаёт разброс баллов относительно среднего значения популяции 100.
+      </p>
+
+      <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black">
+        <table class="w-full text-left text-xs sm:text-sm font-mono">
+          <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 text-[11px] uppercase">
+            <tr>
+              <th class="py-3 px-4">Процентиль</th>
+              <th class="py-3 px-4">Шкала Векслера (SD 15)</th>
+              <th class="py-3 px-4">Стэнфорд–Бине (SD 16)</th>
+              <th class="py-3 px-4">Шкала Кеттелла (SD 24)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">99,9-й (верхние 0,1%)</td>
+              <td class="py-3 px-4">146</td>
+              <td class="py-3 px-4">149</td>
+              <td class="py-3 px-4">174</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">98,0-й (Mensa, верхние 2%)</td>
+              <td class="py-3 px-4">130</td>
+              <td class="py-3 px-4">132</td>
+              <td class="py-3 px-4">148</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">90,0-й (верхние 10%)</td>
+              <td class="py-3 px-4">119</td>
+              <td class="py-3 px-4">121</td>
+              <td class="py-3 px-4">131</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">50,0-й (медиана)</td>
+              <td class="py-3 px-4">100</td>
+              <td class="py-3 px-4">100</td>
+              <td class="py-3 px-4">100</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- High-Conversion Assessment CTA Banner -->
+    <section class="p-8 sm:p-12 rounded-3xl bg-zinc-900 border border-zinc-800 text-white text-center shadow-lg relative overflow-hidden">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight text-white">
+        Узнайте своё место на колоколообразной кривой
+      </h2>
+      <p class="text-zinc-300 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+        Пройдите стандартизированную невербальную оценку подвижного интеллекта из 24 заданий. Мгновенно получите ориентировочный балл IQ (SD 15) и процентильный ранг — без почты и платных барьеров.
+      </p>
+      <a 
+        href="/ru/test" 
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-500/20 transition-all hover:scale-102 active:scale-98"
+      >
+        <span>Пройти бесплатный тест (20 минут)</span>
+        <span class="font-mono text-lg">&rarr;</span>
+      </a>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="space-y-4">
+      <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white mb-6">
+        Частые вопросы о баллах IQ и распределении
+      </h2>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>Какой балл IQ считается хорошим?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            Балл IQ от 90 до 109 является статистически средним. Результат 115 и выше (одно стандартное отклонение выше среднего) помещает вас в верхние 16% населения и обычно классифицируется как высокая норма. Балл 120–129 классифицируется как уровень выше среднего (верхние 9% — 2,5%), а баллы 130 и выше соответствуют одарённости либо очень высокому интеллекту (верхние 2,27%).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>Что означает IQ 115?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            IQ 115 — это ровно одно стандартное отклонение (SD 15) выше среднего значения популяции 100. Ему соответствует приблизительно 84,1-й процентиль: вы выполнили тест наравне или лучше, чем примерно 84 человека из 100 в общей популяции.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>Что означают IQ 120 или 125?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            IQ 120 соответствует 90,9-му процентилю (верхние 9,1%), а IQ 125 — 95,2-му процентилю (верхние 4,8%). Оба относятся к когнитивной классификации «Выше среднего» по шкале Векслера WAIS-IV, отражая развитое решение задач, быструю абстракцию и выраженные аналитические способности.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>Какая доля населения имеет IQ выше 130?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            На стандартных шкалах интеллекта со стандартным отклонением (SD 15) (таких как WAIS-IV) балл IQ 130 находится ровно на два стандартных отклонения выше среднего. Математически примерно 2,27% населения набирают 130 баллов и выше. Это стандартный порог для членства в Mensa.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>В чём разница между SD 15, SD 16 и SD 24 на таблице IQ?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            Разные психометрические шкалы используют разные стандартные отклонения. Шкала Векслера использует SD 15 (где 130 — это 98-й процентиль). Историческая форма L-M Стэнфорд–Бине использовала SD 16 (где 132 — это 98-й процентиль). Тест Кеттелла Culture Fair использует SD 24 (где 148 — это 98-й процентиль). Хотя числовые баллы различаются, они описывают один и тот же процентильный ранг и одинаковое отклонение от среднего популяции.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>Может ли балл IQ меняться со временем?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            Баллы IQ взрослых показывают высокую ретестовую стабильность (корреляции обычно r = 0,80–0,90 на протяжении лет). Однако результаты могут колебаться в пределах стандартной ошибки измерения (обычно ±3–5 баллов) из-за тестовой тревожности, усталости, состояния здоровья или эффекта тренировки. Между поколениями сырые результаты исторически смещались вследствие эффекта Флинна, что требует периодического пересмотра тестовых норм.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-base text-zinc-900 dark:text-zinc-100 cursor-pointer list-none flex items-center justify-between">
+            <span>Каков средний IQ врача?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
+            Психометрические исследования и данные о когнитивных требованиях профессий (такие как Висконсинское лонгитюдное исследование Хаузера и нормативный анализ Wonderlic) показывают, что врачи и хирурги в среднем имеют IQ от 120 до 125. Этот диапазон соответствует классификации «Выше среднего», примерно 91–95-му процентилям общей популяции.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Related Cognitive Reference Guides -->
+    <section class="space-y-4">
+      <div class="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Смежные справочные руководства по психометрии и инструменты
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+          Углубите понимание когнитивных распределений, клинических классификаций и критериев сообществ высокого IQ.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a
+          href="/ru/iq-classification-scale"
+          class="p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all group block"
+        >
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
+            Таксономия &bull; WAIS-IV
+          </div>
+          <h3 class="font-heading font-bold text-base text-zinc-900 dark:text-white flex items-center justify-between">
+            <span>Шкала классификации IQ</span>
+            <span class="text-blue-600 dark:text-blue-400 font-mono transition-transform group-hover:translate-x-0.5">&rarr;</span>
+          </h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+            Сравните уровни Векслера, Стэнфорд–Бине и Вудкока–Джонсона, пропорции нормальной кривой и эффект Флинна.
+          </p>
+        </a>
+
+        <a
+          href="/ru/high-iq-societies"
+          class="p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all group block"
+        >
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
+            Сообщества &bull; Пороги Mensa
+          </div>
+          <h3 class="font-heading font-bold text-base text-zinc-900 dark:text-white flex items-center justify-between">
+            <span>Гид по сообществам высокого IQ</span>
+            <span class="text-blue-600 dark:text-blue-400 font-mono transition-transform group-hover:translate-x-0.5">&rarr;</span>
+          </h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+            Пороговые процентили Mensa, Intertel и Triple Nine. Включая правила зачёта ранее сданных экзаменов (SAT, GRE, ACT).
+          </p>
+        </a>
+
+        <a
+          href="/ru/iq-percentile-calculator"
+          class="p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all group block sm:col-span-2 lg:col-span-1"
+        >
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
+            Калькулятор &bull; Гауссова CDF
+          </div>
+          <h3 class="font-heading font-bold text-base text-zinc-900 dark:text-white flex items-center justify-between">
+            <span>Калькулятор процентилей IQ</span>
+            <span class="text-blue-600 dark:text-blue-400 font-mono transition-transform group-hover:translate-x-0.5">&rarr;</span>
+          </h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+            Преобразуйте любой стандартизированный балл IQ в точный процентильный ранг и коэффициент редкости для SD 15, 16 или 24.
+          </p>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>

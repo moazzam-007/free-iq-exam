@@ -1,0 +1,137 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const title = "Profil Kognitif Pribadi & Riwayat Aktivitas | FreeIQExam";
+const description = "Akses profil kognitif lokal privat Anda. Tinjau riwayat asesmen IQ psikometrik terstandarisasi, kelincahan domain kognitif, serta ekspor atau pulihkan data Anda.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "name": "Profil Kognitif Pribadi",
+  "description": description,
+  "url": "https://freeiqexam.com/id/profil"
+};
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/profile">
+  <Header currentPath="/id/profil" enPath="/profile" />
+
+  <main class="flex-1 py-10 sm:py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+    <!-- Breadcrumb & Header Meta -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Profil Saya</span>
+    </nav>
+
+    <!-- Page Title & Privacy Header -->
+    <div class="mb-10 sm:mb-12">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-semibold uppercase tracking-wider mb-4">
+        <span class="w-2 h-2 rounded-full bg-blue-500" aria-hidden="true"></span>
+        <span>Hanya Sisi Klien &bull; 100% Privat (Tanpa Akun, Nol Telemetri)</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight mb-3">
+        Profil Kognitif Pribadi &amp; Log Aktivitas
+      </h1>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Semua sesi ujian dan latihan game disimpan secara lokal di memori browser Anda. Anda memiliki kepemilikan penuh atas data Anda dengan ekspor cadangan JSON, pemulihan offline, dan privasi mutlak.
+      </p>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div
+      id="toast-container"
+      class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <!-- EMPTY STATE HERO -->
+    <div
+      id="profile-empty-state"
+      class="hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-8 sm:p-12 text-center shadow-sm"
+    >
+      <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 rounded-3xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
+        <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+        </svg>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+        Bangun Profil Kognitif Pribadi Anda
+      </h2>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-8 leading-relaxed">
+        Anda belum menyelesaikan tes atau permainan latihan di perangkat ini. Selesaikan tes IQ atau latih otak dengan mini-game kognitif, dan riwayat performa Anda akan muncul di sini secara otomatis.
+      </p>
+
+      <!-- Empty State Action CTAs -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-xl mx-auto">
+        <a
+          href="/id/tes"
+          class="w-full sm:w-auto inline-flex items-center justify-center min-h-[44px] px-6 py-3 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all hover:scale-102 active:scale-98 gap-2"
+        >
+          <span>Mulai Tes IQ Lengkap (20 Menit)</span>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+        <a
+          href="/id/tes-singkat"
+          class="w-full sm:w-auto inline-flex items-center justify-center min-h-[44px] px-5 py-3 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-300 dark:border-zinc-700 transition-all gap-2"
+        >
+          <span>Tes Singkat (10 Menit)</span>
+        </a>
+        <a
+          href="/id/permainan"
+          class="w-full sm:w-auto inline-flex items-center justify-center min-h-[44px] px-5 py-3 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-300 dark:border-zinc-700 transition-all gap-2"
+        >
+          <span>10 Permainan Kognitif</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ACTIVE DASHBOARD STATE -->
+    <div id="profile-active-state" class="hidden space-y-12 sm:space-y-16">
+      <section aria-labelledby="heading-assessments">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="heading-assessments" class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white">
+            Riwayat Asesmen Formal
+          </h2>
+          <span id="assessment-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">0 Sesi</span>
+        </div>
+        <div id="assessments-list" class="space-y-4"></div>
+      </section>
+
+      <section aria-labelledby="heading-games">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="heading-games" class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white">
+            Rekor Latihan Permainan Otak
+          </h2>
+          <span id="games-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">0 Rekor</span>
+        </div>
+        <div id="games-records-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script is:inline>
+    function checkState() {
+      const activeState = document.getElementById('profile-active-state');
+      const emptyState = document.getElementById('profile-empty-state');
+      const resultData = localStorage.getItem('iq_assessment_result');
+      
+      if (resultData) {
+        if (activeState) activeState.classList.remove('hidden');
+        if (emptyState) emptyState.classList.add('hidden');
+      } else {
+        if (activeState) activeState.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+      }
+    }
+    document.addEventListener('DOMContentLoaded', checkState);
+    checkState();
+  </script>
+</Layout>

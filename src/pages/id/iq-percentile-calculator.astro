@@ -1,0 +1,630 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const title = "Kalkulator IQ: Hitung Persentil & Arti Skor IQ | FreeIQExam";
+const description = "Gunakan kalkulator IQ gratis untuk mengubah skor IQ menjadi persentil, melihat tingkat kelangkaan, dan memahami rumus persentil IQ pada skala dengan SD 15.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Kalkulator Persentil IQ",
+    "url": "https://freeiqexam.com/id/kalkulator-persentil-iq/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "description": "Alat utilitas konversi dua arah instan antara skor IQ standar (SD 15) dan peringkat persentil distribusi normal.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Kalkulator Persentil IQ",
+        "item": "https://freeiqexam.com/id/kalkulator-persentil-iq/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Apa itu peringkat persentil IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Peringkat persentil IQ menunjukkan persentase populasi umum yang memperoleh skor sama dengan atau di bawah skor IQ tertentu pada kurva distribusi normal terstandardisasi (Rata-rata 100, SD 15)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Berapa persentil untuk skor IQ 100?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Skor IQ 100 adalah nilai tengah (median) tepat dari populasi umum, yang sesuai persis dengan persentil ke-50,0."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Berapa skor IQ yang dibutuhkan untuk memenuhi syarat masuk Mensa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mensa mensyaratkan skor pada atau di atas persentil ke-98 (2% teratas populasi), yang setara dengan skor IQ 130 atau lebih tinggi pada skala Wechsler (SD 15), 132 pada skala Stanford-Binet (SD 16), atau 148 pada skala Cattell (SD 24)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara persentil IQ dihitung secara matematis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Persentil IQ dihitung menggunakan fungsi distribusi kumulatif normal standar (CDF). Pertama, nilai Z-score dihitung dengan rumus z = (IQ - 100) / 15, kemudian diintegrasikan melalui fungsi error Gauss (Gaussian error function)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu kalkulator IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kalkulator IQ adalah alat untuk mengubah skor IQ menjadi informasi turunan seperti persentil atau kelangkaan. Ia tidak membuat skor IQ baru; ia menjelaskan posisi skor yang sudah Anda miliki pada distribusi tertentu."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa rumus persentil IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pada model normal standar, skor dapat diubah menjadi z-score dengan membandingkan jaraknya dari rerata dan membaginya dengan simpangan baku. Nilai z kemudian dipetakan melalui fungsi distribusi kumulatif normal untuk mendapatkan persentil."
+        }
+      }
+    ]
+  }
+];
+
+const percentileTableRows = [
+  { iq: "160", pct: "99,997%", rarity: "1 dari 31.560", z: "+4,00", desc: "Tingkat Langka Ekstrem" },
+  { iq: "150", pct: "99,957%", rarity: "1 dari 2.330", z: "+3,33", desc: "Tingkat Sangat Berbakat" },
+  { iq: "145", pct: "99,865%", rarity: "1 dari 741", z: "+3,00", desc: "Ambang +3 Simpangan Baku" },
+  { iq: "140", pct: "99,617%", rarity: "1 dari 261", z: "+2,67", desc: "Kualifikasi Triple Nine Society" },
+  { iq: "135", pct: "99,018%", rarity: "1 dari 102", z: "+2,33", desc: "Kualifikasi Intertel (1% Teratas)" },
+  { iq: "130", pct: "97,725%", rarity: "1 dari 44", z: "+2,00", desc: "Ambang Kualifikasi Mensa (2% Teratas)" },
+  { iq: "125", pct: "95,221%", rarity: "1 dari 21", z: "+1,67", desc: "Klasifikasi Unggul (Superior)" },
+  { iq: "120", pct: "90,879%", rarity: "1 dari 11", z: "+1,33", desc: "10% Teratas Populasi" },
+  { iq: "115", pct: "84,134%", rarity: "1 dari 6,3", z: "+1,00", desc: "Ambang +1 Simpangan Baku" },
+  { iq: "110", pct: "74,751%", rarity: "1 dari 4,0", z: "+0,67", desc: "Klasifikasi Rata-rata Tinggi" },
+  { iq: "105", pct: "63,056%", rarity: "1 dari 2,7", z: "+0,33", desc: "Sedikit di Atas Rata-rata" },
+  { iq: "100", pct: "50,000%", rarity: "1 dari 2,0", z: "0,00", desc: "Median Populasi Tepat" },
+  { iq: "95", pct: "36,944%", rarity: "1 dari 2,7", z: "-0,33", desc: "Sedikit di Bawah Rata-rata" },
+  { iq: "90", pct: "25,249%", rarity: "1 dari 4,0", z: "-0,67", desc: "Batas Bawah Rata-rata Normal" },
+  { iq: "85", pct: "15,866%", rarity: "1 dari 6,3", z: "-1,00", desc: "Ambang -1 Simpangan Baku" },
+  { iq: "80", pct: "9,121%", rarity: "1 dari 11", z: "-1,33", desc: "Klasifikasi Rata-rata Rendah" },
+  { iq: "75", pct: "4,779%", rarity: "1 dari 21", z: "-1,67", desc: "Garis Batas Fungsi Kognitif" },
+  { iq: "70", pct: "2,275%", rarity: "1 dari 44", z: "-2,00", desc: "Ambang Batas Klinis Disabilitas" }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/iq-percentile-calculator">
+  <Header currentPath="/id/kalkulator-persentil-iq" enPath="/iq-percentile-calculator" />
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-medium uppercase tracking-wider mb-4">
+        <span>Utilitas Interaktif &bull; Model Wechsler SD 15</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Kalkulator IQ: Hitung Persentil dari Skor IQ
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Konversikan skor IQ apa pun ke peringkat persentil distribusi normal teoritis, atau hitung estimasi skor IQ yang diperlukan untuk mencapai persentil populasi tertentu.
+      </p>
+      <p class="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Masukkan skor IQ untuk melihat perkiraan persentil dan posisi relatifnya. Kalkulator ini membantu menjawab pertanyaan seperti “IQ 120 ada di persentil berapa?” dan “bagaimana cara menghitung nilai IQ?”, tetapi hasil tetap bergantung pada skala dan distribusi yang digunakan.
+      </p>
+    </header>
+
+    <!-- Interactive 2-Way Calculator Component Card -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs max-w-2xl mx-auto w-full">
+      
+      <!-- Mode Toggle Buttons -->
+      <div class="flex items-center p-1 rounded-2xl bg-zinc-200/70 dark:bg-zinc-800/70 mb-8 max-w-md mx-auto">
+        <button
+          id="tab-iq-to-pct"
+          type="button"
+          class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs"
+        >
+          Hitung Persentil dari Skor IQ
+        </button>
+        <button
+          id="tab-pct-to-iq"
+          type="button"
+          class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+        >
+          Hitung Skor IQ dari Persentil
+        </button>
+      </div>
+
+      <!-- Mode 1: IQ -> Percentile Panel -->
+      <div id="panel-iq-to-pct" class="space-y-6">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="iq-input" class="text-sm font-semibold text-zinc-900 dark:text-white">
+              Masukkan Skor IQ (SD 15)
+            </label>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Rentang: 55 hingga 160</span>
+          </div>
+          <div class="relative">
+            <input
+              id="iq-input"
+              type="number"
+              min="55"
+              max="160"
+              value="120"
+              class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-2xl font-bold font-mono text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-500 dark:text-zinc-400 font-semibold">IQ</span>
+          </div>
+          <!-- Range Slider -->
+          <input
+            id="iq-slider"
+            type="range"
+            min="55"
+            max="160"
+            value="120"
+            aria-label="Penggeser Rentang Skor IQ"
+            class="w-full mt-4 accent-blue-600 cursor-pointer min-h-[44px]"
+          />
+        </div>
+
+        <!-- Output Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Persentil Dihitung</span>
+            <span id="out-pct" class="text-xl sm:text-2xl font-black font-mono text-blue-600 dark:text-blue-400">90,88%</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Z-Score Standar</span>
+            <span id="out-z" class="text-xl sm:text-2xl font-black font-mono text-zinc-900 dark:text-white">+1,33</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Rasio Kelangkaan</span>
+            <span id="out-rarity" class="text-xl sm:text-2xl font-black font-mono text-zinc-900 dark:text-white">1 dari 11</span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-100/80 dark:bg-zinc-800/50 flex items-center justify-between text-xs sm:text-sm">
+          <span class="text-zinc-600 dark:text-zinc-400 font-medium">Klasifikasi Kognitif:</span>
+          <span id="out-class" class="font-bold text-zinc-900 dark:text-white">Unggul (Superior)</span>
+        </div>
+      </div>
+
+      <!-- Mode 2: Percentile -> IQ Panel -->
+      <div id="panel-pct-to-iq" class="space-y-6 hidden">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="pct-input" class="text-sm font-semibold text-zinc-900 dark:text-white">
+              Masukkan Persentil Populasi (0,1% - 99,99%)
+            </label>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Rentang: 0,1 hingga 99,99</span>
+          </div>
+          <div class="relative">
+            <input
+              id="pct-input"
+              type="number"
+              step="0.01"
+              min="0.01"
+              max="99.99"
+              value="98.0"
+              class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-2xl font-bold font-mono text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-500 dark:text-zinc-400 font-semibold">%</span>
+          </div>
+          <!-- Range Slider -->
+          <input
+            id="pct-slider"
+            type="range"
+            min="1"
+            max="999"
+            value="980"
+            aria-label="Penggeser Rentang Persentil"
+            class="w-full mt-4 accent-blue-600 cursor-pointer min-h-[44px]"
+          />
+        </div>
+
+        <!-- Output Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Estimasi Skor IQ (SD 15)</span>
+            <span id="out-iq-val" class="text-xl sm:text-2xl font-black font-mono text-blue-600 dark:text-blue-400">131</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Z-Score Standar</span>
+            <span id="out-iq-z" class="text-xl sm:text-2xl font-black font-mono text-zinc-900 dark:text-white">+2,05</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Rasio Kelangkaan</span>
+            <span id="out-iq-rarity" class="text-xl sm:text-2xl font-black font-mono text-zinc-900 dark:text-white">1 dari 50</span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-100/80 dark:bg-zinc-800/50 flex items-center justify-between text-xs sm:text-sm">
+          <span class="text-zinc-600 dark:text-zinc-400 font-medium">Klasifikasi Kognitif:</span>
+          <span id="out-iq-class" class="font-bold text-zinc-900 dark:text-white">Sangat Unggul / Berbakat</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Percentile Conversion Reference Table -->
+    <section>
+      <div class="mb-4">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Tabel Referensi Standar Konversi Skor IQ ke Persentil
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Nilai matematis persentil teoritis, Z-score Gauss, dan rasio kelangkaan populasi dari IQ 70 hingga 160 (SD 15).
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table class="w-full min-w-[580px] text-left text-xs sm:text-sm">
+          <thead class="sticky top-0 bg-zinc-100/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10 border-b border-zinc-200 dark:border-zinc-800 font-mono uppercase text-zinc-600 dark:text-zinc-400 text-[11px]">
+            <tr>
+              <th class="py-3.5 px-4">Skor IQ (SD 15)</th>
+              <th class="py-3.5 px-4">Peringkat Persentil</th>
+              <th class="py-3.5 px-4">Z-Score</th>
+              <th class="py-3.5 px-4">Rasio Kelangkaan</th>
+              <th class="py-3.5 px-4">Deskripsi Tingkat Kognitif</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200/80 dark:divide-zinc-800 bg-white dark:bg-black font-mono">
+            {percentileTableRows.map((row) => (
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">{row.iq}</td>
+                <td class="py-3.5 px-4 font-bold text-blue-600 dark:text-blue-400">{row.pct}</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-300">{row.z}</td>
+                <td class="py-3.5 px-4 text-zinc-500">{row.rarity}</td>
+                <td class="py-3.5 px-4 font-sans text-zinc-700 dark:text-zinc-300 text-xs">{row.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Educational Guide Section -->
+    <section class="space-y-6 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base">
+      <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white">
+        Cara Membaca dan Memahami Peringkat Persentil IQ
+      </h2>
+      <p>
+        Peringkat persentil adalah ukuran posisi relatif yang menyatakan persentase orang dalam kelompok normatif yang memperoleh skor lebih rendah dari atau sama dengan skor Anda. Berbeda dengan persentase jawaban benar pada ujian sekolah biasa, persentil IQ adalah metrik komparatif berbasis populasi.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+            Non-Linearitas Persentil Kurva Lonceng
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+            Karena bentuk lonceng Gauss sangat padat di bagian tengah, kenaikan 5 poin IQ dari 100 ke 105 meningkatkan persentil sebesar 13% (dari persentil 50 ke 63). Namun, kenaikan 5 poin yang sama dari 135 ke 140 hanya meningkatkan persentil sebesar 0,6% (dari 99,0% ke 99,6%) karena area ekor distribusi yang sangat langka.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+            Konsep Z-Score Standar
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+            Z-score mengukur berapa banyak simpangan baku suatu nilai berada di atas atau di bawah rata-rata populasi. Z-score 0,00 setara dengan IQ 100 (persentil 50), Z-score +1,00 setara dengan IQ 115 (persentil 84,1), dan Z-score +2,00 setara dengan IQ 130 (persentil 97,7).
+          </p>
+        </div>
+      </div>
+
+      
+      <div class="pt-6 border-t border-zinc-200 dark:border-zinc-800 space-y-4">
+        <h3 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white">
+          Formulasi Matematis Transformasi Z-Score dan Fungsi Error Gauss
+        </h3>
+        <p>
+          Secara matematis, setiap skor IQ simpangan deviasi 15 diubah menjadi nilai baku Z-score melalui persamaan linear standar:
+        </p>
+        <div class="p-4 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 font-mono text-center text-sm text-zinc-900 dark:text-white">
+          Z = (Skor IQ - 100) / 15
+        </div>
+        <p>
+          Setelah Z-score diperoleh, persentil kumulatif dihitung dengan mengintegrasikan fungsi kepadatan probabilitas Gaussian dari minus tak hingga hingga nilai Z yang ditentukan. Proses integrasi ini secara komputasi menggunakan aproksimasi fungsi error Gauss (<em>Gaussian Error Function, erf</em>) dengan tingkat presisi numerik tinggi.
+        </p>
+        <p>
+          Dalam konteks seleksi bakat dan evaluasi neuropsikologis, pemahaman terhadap persentil jauh lebih informatif dibandingkan sekadar angka mentah. Persentil secara langsung menunjukkan kelangkaan populasi riil, membantu para pendidik dan profesional klinis menentukan kebutuhan program akselerasi atau intervensi dukungan belajar yang tepat sasaran.
+        </p>
+        <p>
+          Selain itu, penting untuk diingat bahwa setiap instrumen pengukuran memiliki kesalahan standar pengukuran (<em>Standard Error of Measurement, SEM</em>). Pada sebagian besar tes IQ klinis standar, SEM berkisar antara 3 hingga 5 poin, yang berarti interval kepercayaan 95% untuk skor 120 berada pada rentang 112 hingga 128. Kalkulator ini memberikan estimasi titik tengah teoritis berdasarkan kurva normal murni.
+        </p>
+        <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white pt-2">
+          Perbedaan Skala Simpangan Baku: Wechsler (SD 15) vs Cattell (SD 24)
+        </h3>
+        <p>
+          Salah satu sumber kebingungan paling umum dalam psikometri adalah perbandingan antar skala tes yang berbeda. Pada skala Wechsler dan sebagian besar instrumen modern, satu simpangan baku (&sigma;) bernilai 15 poin. Namun, pada skala Cattell Culture Fair klasik, simpangan baku bernilai 24 poin.
+        </p>
+        <p>
+          Artinya, skor IQ 148 pada skala Cattell mewakili persis dua simpangan baku di atas rata-rata (+2&sigma;), yang setara persis dengan skor IQ 130 pada skala Wechsler (keduanya berada di persentil ke-97,7). Kalkulator ini mengonversi nilai dengan basis standar industri SD 15 untuk memastikan konsistensi dan akurasi komparasi global.
+        </p>
+      </div>
+
+      <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-3">
+        <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white">
+          Interpretasi Klinis Persentil dalam Penilaian Psikometri
+        </h3>
+        <p>
+          Dalam evaluasi klinis dan diagnostik psikologis, penggunaan peringkat persentil sering kali lebih diutamakan daripada angka IQ mentah ketika menyampaikan hasil kepada klien, orang tua, atau pendidik. Hal ini karena persentil memberikan gambaran intuitif yang langsung dapat dipahami tanpa memerlukan latar belakang statistik yang mendalam.
+        </p>
+        <p>
+          Sebagai contoh, menyatakan bahwa seorang anak berada di persentil ke-95 secara langsung mengomunikasikan bahwa kemampuannya melampaui 95 dari 100 teman sebayanya. Hal ini mempermudah perencanaan kurikulum khusus dan intervensi edukatif yang adaptif sesuai dengan potensi unik masing-masing individu.
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="space-y-4">
+      <div class="border-b border-zinc-200 dark:border-zinc-800 pb-4">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Pertanyaan yang Sering Diajukan (FAQ)
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Penjelasan seputar kalkulasi persentil, rumus matematis, dan ambang batas komunitas intelektual.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa itu peringkat persentil IQ?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Peringkat persentil IQ menunjukkan persentase populasi umum yang memperoleh skor sama dengan atau di bawah skor IQ tertentu pada kurva distribusi normal terstandardisasi (Rata-rata 100, SD 15).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Berapa persentil untuk skor IQ 100?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Skor IQ 100 adalah nilai tengah (median) tepat dari populasi umum, yang sesuai persis dengan persentil ke-50,0.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Berapa skor IQ yang dibutuhkan untuk memenuhi syarat masuk Mensa?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Mensa mensyaratkan skor pada atau di atas persentil ke-98 (2% teratas populasi), yang setara dengan skor IQ 130 atau lebih tinggi pada skala Wechsler (SD 15), 132 pada skala Stanford-Binet (SD 16), atau 148 pada skala Cattell (SD 24).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Bagaimana cara persentil IQ dihitung secara matematis?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Persentil IQ dihitung menggunakan fungsi distribusi kumulatif normal standar (CDF). Pertama, nilai Z-score dihitung dengan rumus z = (IQ - 100) / 15, kemudian diintegrasikan melalui fungsi error Gauss (Gaussian error function).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa itu kalkulator IQ?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Kalkulator IQ adalah alat untuk mengubah skor IQ menjadi informasi turunan seperti persentil atau kelangkaan. Ia tidak membuat skor IQ baru; ia menjelaskan posisi skor yang sudah Anda miliki pada distribusi tertentu.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa rumus persentil IQ?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Pada model normal standar, skor dapat diubah menjadi z-score dengan membandingkan jaraknya dari rerata dan membaginya dengan simpangan baku. Nilai z kemudian dipetakan melalui fungsi distribusi kumulatif normal untuk mendapatkan persentil.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="p-8 rounded-3xl bg-blue-600 text-white text-center space-y-4">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-3xl">
+        Ingin Mengukur Persentil Kognitif Sejati Anda?
+      </h2>
+      <p class="max-w-xl mx-auto text-blue-100 text-sm sm:text-base">
+        Ikuti tes IQ terstandarisasi berbasis Teori Respons Butir 2PL kami untuk mengetahui peringkat persentil resmi Anda di antara populasi global.
+      </p>
+      <div class="pt-2">
+        <a
+          href="/id/tes"
+          class="inline-flex items-center justify-center px-6 py-3 rounded-2xl bg-white text-blue-600 font-bold hover:bg-blue-50 transition-colors shadow-sm"
+        >
+          Mulai Tes IQ Sekarang &rarr;
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script is:inline>
+    function normalCDF(z) {
+      const t = 1.0 / (1.0 + 0.2316419 * Math.abs(z));
+      const d = 0.3989423 * Math.exp(-z * z / 2.0);
+      let p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+      if (z > 0) p = 1.0 - p;
+      return p;
+    }
+
+    function inverseNormalCDF(p) {
+      if (p <= 0 || p >= 1) return 0;
+      const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+      const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+      const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+      const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+
+      const pLow = 0.02425;
+      const pHigh = 1 - pLow;
+      let q, r;
+
+      if (p < pLow) {
+        q = Math.sqrt(-2 * Math.log(p));
+        return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+      }
+      if (p <= pHigh) {
+        q = p - 0.5;
+        r = q * q;
+        return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+      }
+      q = Math.sqrt(-2 * Math.log(1 - p));
+      return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+    }
+
+    function getIQClassification(iq) {
+      if (iq >= 130) return "Sangat Unggul / Berbakat (Sangat Superior)";
+      if (iq >= 120) return "Unggul (Superior)";
+      if (iq >= 110) return "Rata-rata Tinggi";
+      if (iq >= 90) return "Rata-rata (Normal)";
+      if (iq >= 80) return "Rata-rata Rendah";
+      if (iq >= 70) return "Garis Batas (Borderline)";
+      return "Sangat Rendah (Extremely Low)";
+    }
+
+    // Tab Switching
+    const tabIqToPct = document.getElementById('tab-iq-to-pct');
+    const tabPctToIq = document.getElementById('tab-pct-to-iq');
+    const panelIqToPct = document.getElementById('panel-iq-to-pct');
+    const panelPctToIq = document.getElementById('panel-pct-to-iq');
+
+    tabIqToPct.addEventListener('click', () => {
+      tabIqToPct.className = "flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs";
+      tabPctToIq.className = "flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white";
+      panelIqToPct.classList.remove('hidden');
+      panelPctToIq.classList.add('hidden');
+    });
+
+    tabPctToIq.addEventListener('click', () => {
+      tabPctToIq.className = "flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs";
+      tabIqToPct.className = "flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white";
+      panelPctToIq.classList.remove('hidden');
+      panelIqToPct.classList.add('hidden');
+    });
+
+    // Mode 1: IQ -> Percentile
+    const iqInput = document.getElementById('iq-input');
+    const iqSlider = document.getElementById('iq-slider');
+    const outPct = document.getElementById('out-pct');
+    const outZ = document.getElementById('out-z');
+    const outRarity = document.getElementById('out-rarity');
+    const outClass = document.getElementById('out-class');
+
+    function updateFromIQ(val) {
+      const z = (val - 100) / 15;
+      const pct = (1 - normalCDF(z)) * 100;
+      const zStr = (z >= 0 ? "+" : "") + z.toFixed(2).replace('.', ',');
+      const pctStr = pct.toFixed(2).replace('.', ',') + "%";
+      
+      let rarityStr = "1 dari 2";
+      if (pct > 50) {
+        const r = Math.round(100 / (100 - pct));
+        rarityStr = "1 dari " + r.toLocaleString('id-ID');
+      } else if (pct < 50) {
+        const r = Math.round(100 / pct);
+        rarityStr = "1 dari " + r.toLocaleString('id-ID');
+      }
+
+      outPct.textContent = pctStr;
+      outZ.textContent = zStr;
+      outRarity.textContent = rarityStr;
+      outClass.textContent = getIQClassification(val);
+    }
+
+    iqInput.addEventListener('input', (e) => {
+      let val = parseInt(e.target.value, 10);
+      if (isNaN(val)) return;
+      if (val < 55) val = 55;
+      if (val > 160) val = 160;
+      iqSlider.value = val;
+      updateFromIQ(val);
+    });
+
+    iqSlider.addEventListener('input', (e) => {
+      iqInput.value = e.target.value;
+      updateFromIQ(parseInt(e.target.value, 10));
+    });
+
+    // Mode 2: Percentile -> IQ
+    const pctInput = document.getElementById('pct-input');
+    const pctSlider = document.getElementById('pct-slider');
+    const outIqVal = document.getElementById('out-iq-val');
+    const outIqZ = document.getElementById('out-iq-z');
+    const outIqRarity = document.getElementById('out-iq-rarity');
+    const outIqClass = document.getElementById('out-iq-class');
+
+    function updateFromPct(pctVal) {
+      const p = pctVal / 100;
+      const z = inverseNormalCDF(p);
+      const iq = Math.round(100 + 15 * z);
+      const zStr = (z >= 0 ? "+" : "") + z.toFixed(2).replace('.', ',');
+
+      let rarityStr = "1 dari 2";
+      if (pctVal > 50) {
+        const r = Math.round(100 / (100 - pctVal));
+        rarityStr = "1 dari " + r.toLocaleString('id-ID');
+      } else if (pctVal < 50) {
+        const r = Math.round(100 / pctVal);
+        rarityStr = "1 dari " + r.toLocaleString('id-ID');
+      }
+
+      outIqVal.textContent = iq;
+      outIqZ.textContent = zStr;
+      outIqRarity.textContent = rarityStr;
+      outIqClass.textContent = getIQClassification(iq);
+    }
+
+    pctInput.addEventListener('input', (e) => {
+      let val = parseFloat(e.target.value);
+      if (isNaN(val)) return;
+      if (val < 0.01) val = 0.01;
+      if (val > 99.99) val = 99.99;
+      pctSlider.value = Math.round(val * 10);
+      updateFromPct(val);
+    });
+
+    pctSlider.addEventListener('input', (e) => {
+      const val = (e.target.value / 10).toFixed(1);
+      pctInput.value = val;
+      updateFromPct(parseFloat(val));
+    });
+
+    // Initial update
+    updateFromIQ(120);
+    updateFromPct(98.0);
+  </script>
+</Layout>

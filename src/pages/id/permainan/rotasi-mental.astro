@@ -1,0 +1,894 @@
+---
+import LayoutId from '../../../components/id/LayoutId.astro';
+import HeaderId from '../../../components/id/HeaderId.astro';
+import FooterId from '../../../components/id/FooterId.astro';
+
+const title = "Tes Rotasi Mental 3D Online Gratis - Kecepatan Spasial | FreeIQExam";
+const description = "Ikuti tes rotasi mental 3D online gratis. Evaluasi kecepatan pemrosesan visual-spasial dan manipulasi objek mental berdasarkan Shepard & Metzler (1971).";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tantangan Rotasi Mental 3D",
+    "url": "https://freeiqexam.com/id/permainan/rotasi-mental",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Uji kognitif rotasi mental 3D ilmiah untuk mengukur orientasi visual-spasial dan kecepatan manipulasi objek dalam ruang."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan Kognitif",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Rotasi Mental 3D",
+        "item": "https://freeiqexam.com/id/permainan/rotasi-mental"
+      }
+    ]
+  }
+];
+---
+
+<LayoutId title={title} description={description} schema={schema} enPath="/games/rotation">
+  <HeaderId enPath="/games/rotation" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <a href="/id/permainan" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Permainan Kognitif</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Rotasi 3D</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-sky mb-1.5">
+          Gv &bull; Kecepatan Visual-Spasial
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+          Tantangan Rotasi Mental 3D
+        </h1>
+      </div>
+
+      <!-- Stat HUD + Help Button -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <button
+          id="btn-how-to-play"
+          type="button"
+          aria-label="Petunjuk cara bermain"
+          class="min-h-[44px] px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800/90 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-sans font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+        >
+          <span class="font-bold font-mono text-indigo-600 dark:text-indigo-400">(?)</span>
+          <span>Cara Bermain</span>
+        </button>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Percobaan</div>
+          <div id="hud-trial" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 20</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Skor</div>
+          <div id="hud-score" class="font-bold text-indigo-600 dark:text-indigo-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Waktu Rata-rata</div>
+          <div id="hud-avg-time" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0.0s</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Terbaik</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-sky flex items-center justify-center mb-5 shadow-lg shadow-indigo-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Kecepatan Rotasi Mental 3D
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Dua kubus 3D akan ditampilkan berdampingan: <strong>Kubus A</strong> dan <strong>Kubus B</strong>.
+          </p>
+          <p>
+            Putar kubus secara mental dalam ruang 3 dimensi untuk menentukan apakah Kubus B adalah kubus yang <strong>Sama</strong> dengan sudut pandang berbeda, atau kubus yang <strong>Berbeda</strong> dengan fitur sisi yang diubah.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Kecepatan sangat berpengaruh: &lt;3 detik = +20 poin, &lt;6 detik = +10 poin, &lt;8 detik = +5 poin. Batas waktu per percobaan adalah 8 detik.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+        >
+          <span>Mulai Latihan (Spasi)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive game arena content -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- Trial Progress Ring & Timer Bar -->
+        <div class="w-full max-w-lg mb-6 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-mono font-semibold text-zinc-500 dark:text-zinc-400">Pengatur Waktu:</span>
+            <span id="timer-text" class="text-sm font-mono font-bold text-indigo-600 dark:text-indigo-400">8.0s</span>
+          </div>
+
+          <!-- Mini SVG Timer Ring -->
+          <div class="relative w-8 h-8">
+            <svg class="w-8 h-8 -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="14" fill="none" class="stroke-zinc-200 dark:stroke-zinc-800" stroke-width="3" />
+              <circle id="timer-ring-arc" cx="18" cy="18" r="14" fill="none" stroke="currentColor" class="text-indigo-600 dark:text-indigo-400 transition-all duration-75" stroke-width="3" stroke-dasharray="88" stroke-dashoffset="0" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Cubes Comparison Area -->
+        <div class="w-full max-w-lg grid grid-cols-2 gap-4 sm:gap-8 mb-8">
+          <!-- Cube A Card -->
+          <div class="flex flex-col items-center p-4 sm:p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/80 shadow-inner">
+            <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 dark:text-zinc-400 uppercase mb-2">Kubus A</span>
+            <div id="cube-a-container" class="w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
+              <!-- Programmatic SVG injected -->
+            </div>
+          </div>
+
+          <!-- Cube B Card -->
+          <div class="flex flex-col items-center p-4 sm:p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/80 shadow-inner">
+            <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 dark:text-zinc-400 uppercase mb-2">Kubus B</span>
+            <div id="cube-b-container" class="w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
+              <!-- Programmatic SVG injected -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Response Buttons -->
+        <div class="w-full max-w-md grid grid-cols-2 gap-4">
+          <button
+            id="btn-same"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500 text-emerald-700 dark:text-emerald-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+          >
+            <span>SAMA</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Tombol [ S ]</span>
+          </button>
+
+          <button
+            id="btn-diff"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-500 text-rose-700 dark:text-rose-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 cursor-pointer"
+          >
+            <span>BERBEDA</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Tombol [ D ]</span>
+          </button>
+        </div>
+
+        <!-- Feedback Toast -->
+        <div id="feedback-toast" role="status" aria-live="polite" class="h-6 mt-4 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+          Umpan balik hasil
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Play Instructions Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4"
+    >
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-left relative max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          aria-label="Tutup petunjuk cara bermain"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <div>
+            <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+              Cara Bermain Rotasi Mental 3D
+            </h2>
+            <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">Aktivitas Visual-Spasial (Gv)</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Mekanika Permainan</h4>
+            <p>1. Pada setiap percobaan, dua kubus isometrik 3D muncul berdampingan: Kubus A dan Kubus B.</p>
+            <p>2. Putar Kubus A secara mental dalam ruang 3D untuk melihat apakah penanda warna sisinya cocok dengan Kubus B.</p>
+            <p>3. Jika Kubus B adalah rotasi 3D yang valid dari Kubus A, tekan <strong>SAMA [S]</strong>.</p>
+            <p>4. Jika ada penanda sisi yang berubah atau secara fisik mustahil dicapai melalui rotasi saja, tekan <strong>BERBEDA [D]</strong>.</p>
+            <p>5. Berikan respons secepat mungkin: jawaban benar yang lebih cepat mendapatkan poin bonus kecepatan yang lebih tinggi dalam batas waktu 8,0 detik.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Kontrol Keyboard</h4>
+            <ul class="space-y-1 text-xs font-mono">
+              <li>• <span class="font-bold text-zinc-900 dark:text-white">[Spasi]</span> : Mulai sesi / Ulangi latihan</li>
+              <li>• <span class="font-bold text-emerald-600 dark:text-emerald-400">[S]</span> : Kubus SAMA</li>
+              <li>• <span class="font-bold text-rose-600 dark:text-rose-400">[D]</span> : Kubus BERBEDA</li>
+              <li>• <span class="font-bold text-zinc-900 dark:text-white">[Escape]</span> : Tutup dialog</li>
+            </ul>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/60 text-xs">
+            <span class="font-bold text-indigo-950 dark:text-indigo-200">Fondasi Ilmiah:</span>
+            <span class="text-indigo-900 dark:text-indigo-300 ml-1">Paradigma Rotasi Mental (Shepard &amp; Metzler, 1971). Melibatkan manipulasi spasial, transformasi koordinat mental, dan kecepatan pemrosesan visual-spasial cepat (Gv).</span>
+          </div>
+        </div>
+
+        <button
+          id="btn-close-how-got-it"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-heading font-bold text-sm shadow-md transition-all duration-150 hover:scale-101 active:scale-99 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+        >
+          <span>Paham, Mulai Bermain</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- End of Round Modal -->
+    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center relative max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          aria-label="Tutup ringkasan sesi"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <h2 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Latihan Rotasi Selesai
+        </h2>
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">
+          Ringkasan Kecepatan Visualisasi Spasial
+        </p>
+
+        <!-- Standardized 0-100 Task Performance Score -->
+        <div class="mb-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800">
+          <div class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Skor Kinerja Tugas
+          </div>
+          <div class="flex items-baseline justify-center gap-1.5 my-1">
+            <span id="modal-perf-score" class="text-4xl sm:text-5xl font-extrabold font-heading text-zinc-950 dark:text-white">0</span>
+            <span class="text-sm font-mono text-zinc-400">/ 100</span>
+          </div>
+          <div id="modal-tier-badge" class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+            <span id="modal-tier-name">Fondasi Kuat</span>
+          </div>
+          <p id="modal-tier-desc" class="mt-2 text-xs text-zinc-600 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed"></p>
+        </div>
+
+        <!-- Paradigm-Specific Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Akurasi</div>
+            <div id="modal-acc" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Median RT</div>
+            <div id="modal-speed" class="font-bold text-base text-indigo-600 dark:text-indigo-400">0 ms</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Benar</div>
+            <div id="modal-correct" class="font-bold text-base text-zinc-900 dark:text-white">0 / 20</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Kesalahan</div>
+            <div id="modal-errors" class="font-bold text-base text-rose-500">0</div>
+          </div>
+        </div>
+
+        <!-- Transparent Scoring Formula Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Rincian Penilaian
+          </div>
+          <p class="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-semibold mb-1">
+            Skor = (Akurasi Spasial * 70) + Bonus Kecepatan (hingga 30 poin untuk RT &lt; 2s)
+          </p>
+          <p id="modal-formula-calc" class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400"></p>
+        </div>
+
+        <!-- Scientific Paradigm Attribution Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Fondasi Ilmiah
+          </div>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400">
+            Paradigma Rotasi Mental (Shepard &amp; Metzler, 1971). Aktivitas Visual-Spasial (Gv).
+          </p>
+        </div>
+
+        <!-- Practice Effects Disclaimer -->
+        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic mb-5 leading-normal">
+          Skor kinerja mencerminkan kefasihan operasional tugas dan kecepatan respons di bawah efek latihan, bukan kecerdasan umum bawaan (g). Latihan berulang mengasah ketangkasan kognitif.
+        </p>
+
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          Rekor Pribadi Baru Tercapai!
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+          >
+            Main Lagi
+          </button>
+          <a
+            href="/id/permainan"
+            class="min-h-[44px] px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+          >
+            Pusat Permainan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Guide & Cognitive Science Section -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-sky mb-2">
+          Kemampuan Luas CHC: Pemrosesan Visual (Gv) &amp; Rotasi Spasial
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Rotasi Mental: Manipulasi Spasial &amp; Invariansi Sudut Pandang
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Rotasi mental adalah kemampuan untuk mensimulasikan perputaran representasi objek dua dimensi dan tiga dimensi dalam pikiran. Para psikolog kognitif mempelajari rotasi mental untuk mengamati bagaimana otak manusia mempertahankan representasi analog internal dari geometri fisik dan memeriksa hubungan topologis dari sudut visual alternatif.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. Cara Bermain &amp; Kontrol
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Periksa kubus acuan di sebelah kiri dan kubus kandidat di sebelah kanan. Tentukan apakah kandidat adalah rotasi 3D yang valid dari acuan, atau cerminan enantiomer yang mustahil. Tekan <strong>[S]</strong> untuk Sama atau <strong>[D]</strong> untuk Berbeda.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Penilaian &amp; Disparitas Sudut
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Poin diberikan untuk keputusan yang akurat dengan bonus kecepatan untuk waktu reaksi di bawah 2,5 detik. Latensi reaksi meningkat secara linier seiring bertambahnya disparitas sudut antara dua kubus dari 45&deg; hingga 180&deg;.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Fondasi Ilmiah
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Pertama kali dibuktikan dalam eksperimen terkemuka oleh Roger Shepard dan Jacqueline Metzler (1971, <em>Science</em>), paradigma rotasi mental membuktikan bahwa manipulasi mental adalah transformasi spasial analog dan bukan sekadar logika proposisional abstrak.
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Catatan Psikometrik Penting:</strong> Tantangan Rotasi 3D menilai visualisasi spasial berbasis kecepatan dalam kondisi latihan. Latihan ini mengukur kelancaran visual-spasial dan tidak mewakili skor IQ komposit menyeluruh secara mandiri.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Jelajahi Tes Penalaran Spasial Lengkap
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Uji jaring-jaring lipat, rotasi 3D, dan logika spasial Anda dengan evaluasi 16 soal khusus kami.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/id/tes-spasial" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Subtes Spasial</a>
+          <a href="/id/tes-iq-cepat" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Ujian Lengkap 20 Menit</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <FooterId />
+</LayoutId>
+
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../../utils/profileStore';
+
+  (function() {
+    var TOTAL_TRIALS = 20;
+    var TRIAL_TIME_LIMIT_MS = 8000;
+    var STORAGE_KEY = 'fiq_game_rotation_best';
+
+    // Face color definitions (6 faces of reference cube)
+    var PALETTES = [
+      { name: 'cyan', hex: '#06b6d4' },
+      { name: 'amber', hex: '#f59e0b' },
+      { name: 'rose', hex: '#f43f5e' },
+      { name: 'emerald', hex: '#10b981' },
+      { name: 'purple', hex: '#a855f7' },
+      { name: 'blue', hex: '#3b82f6' }
+    ];
+
+    var VALID_ROTATIONS = [
+      [0, 4, 1], // Identity
+      [0, 1, 2], // Yaw +90
+      [0, 2, 3], // Yaw +180
+      [0, 3, 4], // Yaw +270
+      [1, 4, 5], // Pitch down +90
+      [3, 4, 0], // Pitch up +90
+      [2, 0, 1], // Roll right
+      [4, 5, 1]  // Roll left
+    ];
+
+    var score = 0;
+    var trialIndex = 0;
+    var correctCount = 0;
+    var responseTimes: number[] = [];
+    var trialStartTime = 0;
+    var sessionStartTime = 0;
+    var isRunning = false;
+    var animFrame: any = null;
+    var currentTrialData: any = null;
+    var currentStreak = 0;
+    var longestStreak = 0;
+
+    var hudTrial = document.getElementById('hud-trial')!;
+    var hudScore = document.getElementById('hud-score')!;
+    var hudAvgTime = document.getElementById('hud-avg-time')!;
+    var hudBest = document.getElementById('hud-best')!;
+    var btnHowToPlay = document.getElementById('btn-how-to-play')!;
+    var modalHowToPlay = document.getElementById('modal-how-to-play')!;
+    var btnCloseHowModal = document.getElementById('btn-close-how-modal')!;
+    var btnCloseHowGotIt = document.getElementById('btn-close-how-got-it')!;
+
+    var startOverlay = document.getElementById('start-overlay')!;
+    var gameArenaContent = document.getElementById('game-arena-content')!;
+    var btnStartGame = document.getElementById('btn-start-game')!;
+    var timerText = document.getElementById('timer-text')!;
+    var timerRingArc = document.getElementById('timer-ring-arc')!;
+    var cubeAContainer = document.getElementById('cube-a-container')!;
+    var cubeBContainer = document.getElementById('cube-b-container')!;
+    var btnSame = document.getElementById('btn-same')!;
+    var btnDiff = document.getElementById('btn-diff')!;
+    var feedbackToast = document.getElementById('feedback-toast');
+
+    var modalEndRound = document.getElementById('modal-end-round')!;
+    var btnCloseEndModal = document.getElementById('btn-close-end-modal')!;
+    var modalPerfScore = document.getElementById('modal-perf-score')!;
+    var modalTierBadge = document.getElementById('modal-tier-badge')!;
+    var modalTierName = document.getElementById('modal-tier-name')!;
+    var modalTierDesc = document.getElementById('modal-tier-desc')!;
+    var modalAcc = document.getElementById('modal-acc')!;
+    var modalSpeed = document.getElementById('modal-speed')!;
+    var modalCorrect = document.getElementById('modal-correct')!;
+    var modalErrors = document.getElementById('modal-errors')!;
+    var modalFormulaCalc = document.getElementById('modal-formula-calc')!;
+    var modalBestAlert = document.getElementById('modal-best-alert')!;
+    var btnModalRestart = document.getElementById('btn-modal-restart')!;
+
+    if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+    function calculateMedian(arr: number[]): number {
+      if (!arr || arr.length === 0) return 0;
+      var sorted = arr.slice().sort(function(a, b) { return a - b; });
+      var mid = Math.floor(sorted.length / 2);
+      return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    function loadBestScore() {
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          hudBest.textContent = saved;
+        }
+      } catch (e) {}
+    }
+    loadBestScore();
+
+    function updateHud() {
+      hudTrial.textContent = trialIndex + ' / ' + TOTAL_TRIALS;
+      hudScore.textContent = score.toString();
+      if (responseTimes.length > 0) {
+        var sum = 0;
+        for (var i = 0; i < responseTimes.length; i++) sum += responseTimes[i];
+        var avg = (sum / responseTimes.length / 1000).toFixed(1);
+        hudAvgTime.textContent = avg + 's';
+      } else {
+        hudAvgTime.textContent = '0.0s';
+      }
+    }
+
+    function showFeedback(text: string, isPositive: boolean) {
+      if (!feedbackToast) return;
+      var icon = isPositive ? '✓ ' : '✗ ';
+      feedbackToast.textContent = icon + text;
+      feedbackToast.className = 'h-6 mt-4 text-xs font-mono font-semibold transition-opacity ' +
+        (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+      feedbackToast.style.opacity = '1';
+      setTimeout(function() {
+        if (feedbackToast) feedbackToast.style.opacity = '0';
+      }, 700);
+    }
+
+    function renderCubeSvg(faces: number[], modifiedFaceIndex: number, alteredColorHex: string | null): string {
+      var baseShades = {
+        top: '#cbd5e1',
+        left: '#94a3b8',
+        right: '#64748b'
+      };
+
+      var topColor = (modifiedFaceIndex === 0 && alteredColorHex) ? alteredColorHex : PALETTES[faces[0]].hex;
+      var leftColor = (modifiedFaceIndex === 1 && alteredColorHex) ? alteredColorHex : PALETTES[faces[1]].hex;
+      var rightColor = (modifiedFaceIndex === 2 && alteredColorHex) ? alteredColorHex : PALETTES[faces[2]].hex;
+
+      var svg = [
+        '<svg viewBox="0 0 220 220" class="w-full h-full drop-shadow-md" xmlns="http://www.w3.org/2000/svg">',
+        '  <g stroke="#334155" stroke-width="2" stroke-linejoin="round">',
+        '    <polygon points="110,45 170,80 110,115 50,80" fill="' + baseShades.top + '" />',
+        '    <polygon points="110,62 142,80 110,98 78,80" fill="' + topColor + '" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" />',
+        '    <polygon points="50,80 110,115 110,185 50,150" fill="' + baseShades.left + '" />',
+        '    <polygon points="65,103 95,120 95,155 65,138" fill="' + leftColor + '" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" />',
+        '    <polygon points="110,115 170,80 170,150 110,185" fill="' + baseShades.right + '" />',
+        '    <polygon points="125,120 155,103 155,138 125,155" fill="' + rightColor + '" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" />',
+        '  </g>',
+        '</svg>'
+      ].join('');
+
+      return svg;
+    }
+
+    function createTrial() {
+      var rotAIdx = Math.floor(Math.random() * VALID_ROTATIONS.length);
+      var facesA = VALID_ROTATIONS[rotAIdx];
+
+      var isSame = Math.random() < 0.5;
+
+      var rotBIdx = (rotAIdx + 1 + Math.floor(Math.random() * (VALID_ROTATIONS.length - 1))) % VALID_ROTATIONS.length;
+      var facesB = VALID_ROTATIONS[rotBIdx];
+
+      var modifiedFace = -1;
+      var alteredColor: string | null = null;
+
+      if (!isSame) {
+        modifiedFace = Math.floor(Math.random() * 3);
+        var currentFaceId = facesB[modifiedFace];
+        var distinctColors = ['#ef4444', '#8b5cf6', '#14b8a6', '#f97316'].filter(function(c) {
+          return c !== PALETTES[currentFaceId].hex;
+        });
+        alteredColor = distinctColors[Math.floor(Math.random() * distinctColors.length)];
+      }
+
+      return {
+        facesA: facesA,
+        facesB: facesB,
+        isSame: isSame,
+        modifiedFace: modifiedFace,
+        alteredColor: alteredColor
+      };
+    }
+
+    function startTimerLoop() {
+      trialStartTime = performance.now();
+      var circumference = 88;
+      var lastDisplayedTenth = -1;
+
+      function step() {
+        if (!isRunning) return;
+        var elapsed = performance.now() - trialStartTime;
+        var remaining = Math.max(0, TRIAL_TIME_LIMIT_MS - elapsed);
+        var currentTenth = Math.floor(remaining / 100);
+
+        if (currentTenth !== lastDisplayedTenth) {
+          lastDisplayedTenth = currentTenth;
+          var fraction = remaining / TRIAL_TIME_LIMIT_MS;
+          timerText.textContent = (remaining / 1000).toFixed(1) + 's';
+          timerRingArc.style.strokeDashoffset = (circumference * (1 - fraction)).toString();
+
+          if (remaining <= 2000) {
+            timerText.classList.add('text-rose-600', 'dark:text-rose-400');
+            timerRingArc.classList.add('text-rose-600', 'dark:text-rose-400');
+          } else {
+            timerText.classList.remove('text-rose-600', 'dark:text-rose-400');
+            timerRingArc.classList.remove('text-rose-600', 'dark:text-rose-400');
+          }
+        }
+
+        if (remaining > 0) {
+          animFrame = requestAnimationFrame(step);
+        } else {
+          handleTimeout();
+        }
+      }
+
+      animFrame = requestAnimationFrame(step);
+    }
+
+    function handleTimeout() {
+      cancelAnimationFrame(animFrame);
+      showFeedback('Waktu Habis (0 poin)', false);
+      responseTimes.push(TRIAL_TIME_LIMIT_MS);
+      currentStreak = 0;
+      nextTrial();
+    }
+
+    function handleAnswer(userSame: boolean) {
+      if (!isRunning) return;
+      cancelAnimationFrame(animFrame);
+      var responseTime = performance.now() - trialStartTime;
+      responseTimes.push(responseTime);
+
+      var isCorrect = userSame === currentTrialData.isSame;
+      if (isCorrect) {
+        correctCount++;
+        currentStreak++;
+        if (currentStreak > longestStreak) longestStreak = currentStreak;
+
+        var pts = 0;
+        if (responseTime <= 3000) {
+          pts = 20;
+        } else if (responseTime <= 6000) {
+          pts = 10;
+        } else {
+          pts = 5;
+        }
+        score += pts;
+        showFeedback('Benar! +' + pts + ' poin (' + (responseTime / 1000).toFixed(2) + 's)', true);
+      } else {
+        currentStreak = 0;
+        showFeedback('Salah (0 poin)', false);
+      }
+
+      nextTrial();
+    }
+
+    function nextTrial() {
+      trialIndex++;
+      updateHud();
+
+      if (trialIndex >= TOTAL_TRIALS) {
+        finishGame();
+        return;
+      }
+
+      currentTrialData = createTrial();
+      cubeAContainer.innerHTML = renderCubeSvg(currentTrialData.facesA, -1, null);
+      cubeBContainer.innerHTML = renderCubeSvg(currentTrialData.facesB, currentTrialData.modifiedFace, currentTrialData.alteredColor);
+
+      startTimerLoop();
+    }
+
+    function startGame() {
+      isRunning = true;
+      trialIndex = 0;
+      score = 0;
+      correctCount = 0;
+      responseTimes = [];
+      currentStreak = 0;
+      longestStreak = 0;
+      sessionStartTime = performance.now();
+
+      startOverlay.classList.add('hidden');
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      if (modalHowToPlay) {
+        modalHowToPlay.classList.add('hidden');
+        modalHowToPlay.classList.remove('flex');
+      }
+      if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+
+      updateHud();
+      nextTrial();
+    }
+
+    function finishGame() {
+      isRunning = false;
+      cancelAnimationFrame(animFrame);
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+      var accuracyDecimal = correctCount / TOTAL_TRIALS;
+      var accuracyPct = Math.round(accuracyDecimal * 100);
+      var medianRT = calculateMedian(responseTimes);
+
+      var speedBonus = Math.max(0, Math.min(30, Math.round((8000 - medianRT) / 200)));
+      var performanceScore = Math.min(100, Math.max(0, Math.round((accuracyDecimal * 70) + speedBonus)));
+      var durationSec = Math.max(1, Math.round((performance.now() - sessionStartTime) / 1000));
+
+      try {
+        saveGameRecord({
+          gameId: 'rotation',
+          durationSeconds: durationSec,
+          mode: 'standard',
+          metrics: {
+            performanceScore: performanceScore,
+            accuracy: parseFloat(accuracyDecimal.toFixed(4)),
+            trialsCompleted: TOTAL_TRIALS,
+            correctCount: correctCount,
+            errorCount: TOTAL_TRIALS - correctCount,
+            medianRT: Math.round(medianRT),
+            bestStreak: longestStreak,
+          },
+        });
+      } catch (err) {
+        console.error('Failed to save game record:', err);
+      }
+
+      var savedBest = 0;
+      try {
+        savedBest = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      } catch (e) {}
+
+      var isNewBest = performanceScore > savedBest;
+      if (isNewBest) {
+        try {
+          localStorage.setItem(STORAGE_KEY, performanceScore.toString());
+        } catch (e) {}
+        loadBestScore();
+      }
+
+      modalPerfScore.textContent = performanceScore.toString();
+
+      var tier = getPerformanceTier(performanceScore);
+      modalTierBadge.className = 'mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ' + tier.badgeClass;
+      modalTierName.textContent = tier.tier;
+      modalTierDesc.textContent = tier.description;
+
+      modalAcc.textContent = accuracyPct + '%';
+      modalSpeed.textContent = Math.round(medianRT) + ' ms';
+      modalCorrect.textContent = correctCount + ' / ' + TOTAL_TRIALS;
+      modalErrors.textContent = (TOTAL_TRIALS - correctCount).toString();
+
+      modalFormulaCalc.textContent = '(' + accuracyPct + '% * 70 = ' + Math.round(accuracyDecimal * 70) + ' poin) + (Bonus Kecepatan = ' + speedBonus + ' poin untuk ' + Math.round(medianRT) + ' ms) = ' + performanceScore + ' poin';
+
+      if (isNewBest && performanceScore > 0) {
+        modalBestAlert.classList.remove('hidden');
+      } else {
+        modalBestAlert.classList.add('hidden');
+      }
+
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+      modalEndRound.focus();
+    }
+
+    function openHowModal() {
+      modalHowToPlay.classList.remove('hidden');
+      modalHowToPlay.classList.add('flex');
+      modalHowToPlay.focus();
+    }
+
+    function closeHowModal() {
+      modalHowToPlay.classList.add('hidden');
+      modalHowToPlay.classList.remove('flex');
+    }
+
+    function closeEndModal() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startOverlay.classList.remove('hidden');
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+      if (btnStartGame) btnStartGame.focus();
+    }
+
+    btnHowToPlay.addEventListener('click', openHowModal);
+    btnCloseHowModal.addEventListener('click', closeHowModal);
+    btnCloseHowGotIt.addEventListener('click', function() {
+      closeHowModal();
+      if (btnStartGame) btnStartGame.focus();
+    });
+
+    modalHowToPlay.addEventListener('click', function(e) {
+      if (e.target === modalHowToPlay) {
+        closeHowModal();
+      }
+    });
+
+    btnCloseEndModal.addEventListener('click', closeEndModal);
+    modalEndRound.addEventListener('click', function(e) {
+      if (e.target === modalEndRound) {
+        closeEndModal();
+      }
+    });
+
+    btnStartGame.addEventListener('click', startGame);
+    btnSame.addEventListener('click', function() { handleAnswer(true); });
+    btnDiff.addEventListener('click', function() { handleAnswer(false); });
+    btnModalRestart.addEventListener('click', function() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startGame();
+    });
+
+    window.addEventListener('keydown', function(e) {
+      if (e.repeat) return;
+      var key = e.key.toLowerCase();
+
+      var isHowOpen = !modalHowToPlay.classList.contains('hidden');
+      var isEndOpen = !modalEndRound.classList.contains('hidden');
+
+      if (key === 'escape') {
+        if (isHowOpen) {
+          closeHowModal();
+          return;
+        }
+        if (isEndOpen) {
+          closeEndModal();
+          return;
+        }
+      }
+
+      if (isHowOpen || isEndOpen) {
+        return;
+      }
+
+      if (key === ' ' && !isRunning) {
+        e.preventDefault();
+        startGame();
+      } else if (key === 's') {
+        handleAnswer(true);
+      } else if (key === 'd') {
+        handleAnswer(false);
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,869 @@
+---
+import LayoutId from '../../../components/id/LayoutId.astro';
+import HeaderId from '../../../components/id/HeaderId.astro';
+import FooterId from '../../../components/id/FooterId.astro';
+
+const title = "Tes Rentang Digit Online Gratis - Latihan Kapasitas Memori Kerja | FreeIQExam";
+const description = "Ikuti tes rentang digit (digit span) online gratis. Uji kapasitas memori kerja maju dan mundur (Gwm) berdasarkan model Miller (1956) dan indeks WAIS.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Latihan Kapasitas Memori Rentang Digit",
+    "url": "https://freeiqexam.com/id/permainan/digit-span",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Latihan kognitif rentang digit maju dan mundur terstandarisasi untuk mengukur kapasitas memori kerja auditori dan retensi fonologis."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan Kognitif",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Rentang Digit",
+        "item": "https://freeiqexam.com/id/permainan/digit-span"
+      }
+    ]
+  }
+];
+---
+
+<LayoutId title={title} description={description} schema={schema} enPath="/games/digit-span">
+  <HeaderId enPath="/games/digit-span" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <a href="/id/permainan" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Permainan Kognitif</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Memori Rentang Digit</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-lav mb-1.5">
+          Gwm &bull; Memori Kerja
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            Memori Rentang Digit
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 text-xs font-mono font-medium gap-1.5 cursor-pointer"
+            aria-label="Petunjuk cara bermain"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+            <span>Cara Bermain</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat HUD (4 rounded cards) -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Rentang</div>
+          <div id="hud-span" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">3 Digit</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Skor</div>
+          <div id="hud-score" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Puncak</div>
+          <div id="hud-peak" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Terbaik</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center min-h-[440px] justify-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-lav flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Memori Rentang Digit
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Perhatikan urutan angka yang muncul satu per satu. Kemudian masukkan kembali deretan angka tersebut dalam urutan yang tepat atau terbalik.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Urutan dimulai dari 3 digit dan bertambah hingga 10 digit. Gagal dalam dua percobaan berturut-turut pada rentang yang sama akan mengakhiri sesi.
+          </p>
+        </div>
+
+        <!-- Mode Selection Toggle -->
+        <div class="mb-6 flex items-center justify-center p-1 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 max-w-sm w-full">
+          <button
+            id="btn-mode-forward"
+            type="button"
+            class="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-semibold font-mono transition-all duration-150 bg-white dark:bg-zinc-700 text-emerald-600 dark:text-emerald-400 shadow-sm cursor-pointer"
+          >
+            Maju (Forward)
+          </button>
+          <button
+            id="btn-mode-backward"
+            type="button"
+            class="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-semibold font-mono transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+          >
+            Mundur (Backward)
+          </button>
+        </div>
+
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <span>Mulai Sesi (Spasi)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" inert class="w-full flex flex-col items-center">
+        <!-- Top Status: Mode and Trial -->
+        <div class="w-full max-w-md flex items-center justify-between gap-4 mb-4 font-mono text-xs">
+          <div id="trial-indicator" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+            Percobaan A (1 dari 2)
+          </div>
+          <div id="mode-badge" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold">
+            Mode: Maju
+          </div>
+        </div>
+
+        <!-- Flash Area / Digital Display -->
+        <div class="relative w-full max-w-md h-40 sm:h-44 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 flex flex-col items-center justify-center p-4 mb-6 shadow-inner">
+          <div id="digit-display" class="text-6xl sm:text-7xl font-mono font-black text-zinc-950 dark:text-white transition-transform duration-100">
+            -
+          </div>
+          <div id="instruction-cue" class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 mt-2">
+            Tekan Mulai untuk memulai
+          </div>
+          <div id="flash-progress-bar" class="absolute bottom-0 left-0 h-1 bg-emerald-500 transition-all duration-200 w-0 rounded-b-2xl"></div>
+        </div>
+
+        <!-- Recall Input Slots -->
+        <div class="w-full max-w-md mb-6">
+          <div class="text-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-2" id="input-label">
+            Masukkan urutan:
+          </div>
+          <div id="slots-container" class="flex items-center justify-center gap-2 flex-wrap min-h-[48px]">
+            <!-- Dynamic input slots -->
+          </div>
+        </div>
+
+        <!-- Touch-Friendly Numeric Keypad -->
+        <div id="keypad-container" class="w-full max-w-xs grid grid-cols-3 gap-2.5 mb-2">
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="1">1</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="2">2</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="3">3</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="4">4</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="5">5</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="6">6</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="7">7</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="8">8</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="9">9</button>
+          <button type="button" id="btn-keypad-clear" class="min-h-[48px] rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-mono font-bold text-sm transition-colors cursor-pointer" aria-label="Hapus digit terakhir">Hapus</button>
+          <button type="button" class="keypad-btn min-h-[48px] rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-lg transition-colors cursor-pointer" data-val="0">0</button>
+          <button type="button" id="btn-keypad-submit" class="min-h-[48px] rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-sm transition-colors shadow-sm cursor-pointer" aria-label="Kirim urutan">Kirim</button>
+        </div>
+
+        <p class="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 mt-2 text-center">
+          Pintasan keyboard: Gunakan 0-9, Backspace untuk menghapus, dan Enter untuk mengirim.
+        </p>
+      </div>
+    </div>
+
+    <!-- Accessible "How to Play" Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm hidden"
+    >
+      <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
+          aria-label="Tutup petunjuk"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+            Cara Bermain: Memori Rentang Digit
+          </h2>
+        </div>
+
+        <div class="space-y-3 text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+          <p>
+            <strong>1. Tahap Penyimpanan (Encoding):</strong> Angka tunggal akan muncul bergantian pada layar (1.000 ms muncul, jeda 250 ms). Ucapkan dan hafalkan urutan secara internal.
+          </p>
+          <p>
+            <strong>2. Pilihan Mode:</strong>
+            <br />- <em>Mode Maju (Forward):</em> Ketik angka sesuai urutan kemunculan aslinya.
+            <br />- <em>Mode Mundur (Backward):</em> Ketik angka dalam urutan <strong>TERBALIK</strong> (angka terakhir dimasukkan pertama).
+          </p>
+          <p>
+            <strong>3. Progresi Adaptif:</strong> Latihan dimulai dari rentang 3 digit. Tersedia 2 percobaan per panjang rentang (Percobaan A dan B). Berhasil minimal 1 kali akan menaikkan panjang rentang (+1 digit). Gagal pada kedua percobaan akan mengakhiri sesi.
+          </p>
+          <p>
+            <strong>4. Kontrol Input:</strong> Gunakan keypad di layar atau tombol keyboard angka `0-9`, `Backspace`, dan `Enter`.
+          </p>
+        </div>
+
+        <button
+          id="btn-confirm-how"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 cursor-pointer"
+        >
+          Paham, Mulai Bermain
+        </button>
+      </div>
+    </div>
+
+    <!-- Accessible End of Round Modal -->
+    <div
+      id="modal-end-round"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-end-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm hidden"
+    >
+      <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
+          aria-label="Tutup ringkasan sesi"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="modal-end-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Sesi Selesai!
+        </h2>
+        <p class="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-5">
+          Ringkasan Kapasitas Memori Kerja Rentang Digit
+        </p>
+
+        <!-- Performance Score (0 - 100) -->
+        <div class="mb-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+            Skor Kinerja Tugas
+          </div>
+          <div id="modal-score" class="text-4xl sm:text-5xl font-extrabold text-emerald-600 dark:text-emerald-400 font-heading">
+            0
+          </div>
+          <div class="mt-2.5 flex items-center justify-center gap-2">
+            <span id="modal-tier-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">
+              Berkembang
+            </span>
+          </div>
+          <p id="modal-tier-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm mx-auto">
+            Performa mencerminkan akurasi ingatan berurutan dan manipulasi rentang.
+          </p>
+        </div>
+
+        <!-- Paradigm Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Rentang Maks</div>
+            <div id="modal-max-span" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0 Digit</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Mode</div>
+            <div id="modal-mode-label" class="font-bold text-base text-zinc-900 dark:text-white">Maju</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Akurasi</div>
+            <div id="modal-acc" class="font-bold text-base text-zinc-900 dark:text-white">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Runtutan Terbaik</div>
+            <div id="modal-streak" class="font-bold text-base text-zinc-900 dark:text-white">0</div>
+          </div>
+        </div>
+
+        <!-- Personal Best Alert -->
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          Rekor Pribadi Baru Tercapai!
+        </div>
+
+        <!-- Scientific Attribution Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-heading">Fondasi Ilmiah:</span>
+          Berdasarkan Subtes Digit Span Wechsler (WAIS-IV; Wechsler, 2008). Mengukur pengulangan akustik, pemanggilan serial langsung, dan manipulasi mental eksekutif sentral.
+        </div>
+
+        <!-- Scoring Formula Breakdown Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-mono">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-sans">Formula Penilaian:</span>
+          Maju: (Rentang Maks / 9 * 75) + (Akurasi * 25) | Mundur: (Rentang Maks / 8 * 80) + (Akurasi * 20)
+        </div>
+
+        <!-- Practice Effects Disclaimer -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-5 text-[11px] text-zinc-500 dark:text-zinc-400 italic leading-relaxed">
+          Skor kinerja mencerminkan kefasihan operasional tugas dan kecepatan respons di bawah efek latihan, bukan kecerdasan umum bawaan (g). Latihan berulang mengasah ketangkasan kognitif.
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          >
+            Main Lagi
+          </button>
+          <a
+            href="/id/permainan"
+            class="px-5 min-h-[44px] flex items-center justify-center rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors"
+          >
+            Pusat Permainan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Guide & Cognitive Science Section -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-lav mb-2">
+          Kemampuan Luas CHC: Memori Jangka Pendek &amp; Memori Kerja (Gwm)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Rentang Digit: Kapasitas Lingkar Fonologis &amp; Manipulasi Memori
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Tugas Rentang Digit (Digit Span) adalah tolok ukur klinis paling umum untuk mengukur kapasitas penyimpanan auditori jangka pendek dan manipulasi memori kerja. Dalam baterai neuropsikologis seperti Wechsler Adult Intelligence Scale (WAIS-IV), Rentang Digit berfungsi sebagai subtes inti yang berkontribusi langsung pada Indeks Memori Kerja (Working Memory Index / WMI).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. Rentang Maju vs. Rentang Mundur
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <strong>Rentang Maju</strong> mengukur pengulangan fonologis pasif langsung. <strong>Rentang Mundur</strong> menuntut manipulasi mental aktif dan penataan ulang urutan dalam eksekutif sentral sebelum pemanggilan kembali.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Norma Populasi (Hukum Miller)
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Orang dewasa sehat rata-rata mencapai rentang maju <strong>7 &plusmn; 2 digit</strong> dan rentang mundur <strong>5 &plusmn; 2 digit</strong>, mencerminkan kapasitas terbatas penyimpanan fonologis manusia.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Fondasi Ilmiah
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Dipopulerkan oleh George A. Miller (1956, <em>The Magical Number Seven, Plus or Minus Two</em>) serta model memori kerja tripartit Alan Baddeley, Rentang Digit tetap menjadi komponen fundamental dalam evaluasi kognitif klinis.
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Catatan Psikometrik Penting:</strong> Kinerja Rentang Digit menilai rentang pendengaran jangka pendek dan penataan ulang eksekutif di bawah kondisi latihan. Tugas ini tidak mengukur kecerdasan umum (<em>g</em>) secara terisolasi atau menggantikan evaluasi psikometrik klinis lengkap.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Ingin Mengikuti Evaluasi Terstandarisasi Lengkap?
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Uji kemampuan Penalaran Fluida, Spasial, Kuantitatif, dan Verbal Anda dengan tes 24 soal kami.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/id/latihan" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Tes Cepat 10 Menit</a>
+          <a href="/id/tes-iq-cepat" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Ujian Lengkap 20 Menit</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <FooterId />
+</LayoutId>
+
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../../utils/profileStore';
+
+  const STORAGE_KEY = 'fiq_game_digitspan_best';
+
+  // Game state
+  let activeMode: 'forward' | 'backward' = 'forward';
+  let currentSpan = 3;
+  let currentSubTrial: 0 | 1 = 0; // 0 = Percobaan A, 1 = Percobaan B
+  let trialsPassedAtCurrentSpan = 0;
+  let maxSpan = 0;
+  let trialsCompleted = 0;
+  let correctCount = 0;
+  let errorCount = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
+  let sessionStartTime = 0;
+
+  let currentSequence: number[] = [];
+  let userInputDigits: number[] = [];
+  let isDisplayingDigits = false;
+  let isGameActive = false;
+
+  // Audio Context
+  let audioCtx: AudioContext | null = null;
+  function playTone(freq: number, duration: number) {
+    try {
+      if (!audioCtx) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      if (audioCtx) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      }
+    } catch {
+      // Audio fallback
+    }
+  }
+
+  // DOM Elements
+  const hudSpan = document.getElementById('hud-span') as HTMLElement;
+  const hudScore = document.getElementById('hud-score') as HTMLElement;
+  const hudPeak = document.getElementById('hud-peak') as HTMLElement;
+  const hudBest = document.getElementById('hud-best') as HTMLElement;
+
+  const startOverlay = document.getElementById('start-overlay') as HTMLElement;
+  const btnStartGame = document.getElementById('btn-start-game') as HTMLButtonElement;
+  const gameArenaContent = document.getElementById('game-arena-content') as HTMLElement;
+
+  const btnModeForward = document.getElementById('btn-mode-forward') as HTMLButtonElement;
+  const btnModeBackward = document.getElementById('btn-mode-backward') as HTMLButtonElement;
+
+  const trialIndicator = document.getElementById('trial-indicator') as HTMLElement;
+  const modeBadge = document.getElementById('mode-badge') as HTMLElement;
+  const digitDisplay = document.getElementById('digit-display') as HTMLElement;
+  const instructionCue = document.getElementById('instruction-cue') as HTMLElement;
+  const flashProgressBar = document.getElementById('flash-progress-bar') as HTMLElement;
+  const slotsContainer = document.getElementById('slots-container') as HTMLElement;
+  const inputLabel = document.getElementById('input-label') as HTMLElement;
+
+  const keypadBtns = document.querySelectorAll('.keypad-btn');
+  const btnKeypadClear = document.getElementById('btn-keypad-clear') as HTMLButtonElement;
+  const btnKeypadSubmit = document.getElementById('btn-keypad-submit') as HTMLButtonElement;
+
+  // Modal elements
+  const btnHowToPlay = document.getElementById('btn-how-to-play') as HTMLButtonElement;
+  const modalHowToPlay = document.getElementById('modal-how-to-play') as HTMLElement;
+  const btnCloseHowModal = document.getElementById('btn-close-how-modal') as HTMLButtonElement;
+  const btnConfirmHow = document.getElementById('btn-confirm-how') as HTMLButtonElement;
+
+  const modalEndRound = document.getElementById('modal-end-round') as HTMLElement;
+  const btnCloseEndModal = document.getElementById('btn-close-end-modal') as HTMLButtonElement;
+  const modalScore = document.getElementById('modal-score') as HTMLElement;
+  const modalTierBadge = document.getElementById('modal-tier-badge') as HTMLElement;
+  const modalTierDesc = document.getElementById('modal-tier-desc') as HTMLElement;
+  const modalMaxSpan = document.getElementById('modal-max-span') as HTMLElement;
+  const modalModeLabel = document.getElementById('modal-mode-label') as HTMLElement;
+  const modalAcc = document.getElementById('modal-acc') as HTMLElement;
+  const modalStreak = document.getElementById('modal-streak') as HTMLElement;
+  const modalBestAlert = document.getElementById('modal-best-alert') as HTMLElement;
+  const btnModalRestart = document.getElementById('btn-modal-restart') as HTMLButtonElement;
+
+  function loadBestScore() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && hudBest) {
+        hudBest.textContent = saved;
+      }
+    } catch {}
+  }
+  loadBestScore();
+
+  // Mode Selection Handlers
+  btnModeForward.addEventListener('click', () => {
+    activeMode = 'forward';
+    btnModeForward.className = 'flex-1 min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-semibold font-mono transition-all duration-150 bg-white dark:bg-zinc-700 text-emerald-600 dark:text-emerald-400 shadow-sm cursor-pointer';
+    btnModeBackward.className = 'flex-1 min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-semibold font-mono transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer';
+  });
+
+  btnModeBackward.addEventListener('click', () => {
+    activeMode = 'backward';
+    btnModeBackward.className = 'flex-1 min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-semibold font-mono transition-all duration-150 bg-white dark:bg-zinc-700 text-emerald-600 dark:text-emerald-400 shadow-sm cursor-pointer';
+    btnModeForward.className = 'flex-1 min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-semibold font-mono transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer';
+  });
+
+  function updateHUD() {
+    hudSpan.textContent = `${currentSpan} Digit`;
+    hudPeak.textContent = `${maxSpan} Digit`;
+    trialIndicator.textContent = `Rentang ${currentSpan} - Percobaan ${currentSubTrial === 0 ? 'A' : 'B'} (dari 2)`;
+    modeBadge.textContent = activeMode === 'forward' ? 'Mode: Maju' : 'Mode: Mundur';
+
+    const accuracy = trialsCompleted > 0 ? correctCount / trialsCompleted : 0;
+    let score = 0;
+    if (activeMode === 'forward') {
+      const spanScore = Math.min(75, Math.round((maxSpan / 9) * 75));
+      const accBonus = Math.round(accuracy * 25);
+      score = Math.min(100, Math.max(0, spanScore + accBonus));
+    } else {
+      const spanScore = Math.min(80, Math.round((maxSpan / 8) * 80));
+      const accBonus = Math.round(accuracy * 20);
+      score = Math.min(100, Math.max(0, spanScore + accBonus));
+    }
+    hudScore.textContent = String(score);
+  }
+
+  function renderSlots() {
+    slotsContainer.innerHTML = '';
+    for (let i = 0; i < currentSpan; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'w-10 h-12 rounded-xl border-2 flex items-center justify-center font-mono font-bold text-xl transition-all duration-150 ' +
+        (i < userInputDigits.length
+          ? 'border-emerald-500 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200'
+          : i === userInputDigits.length
+            ? 'border-emerald-400 bg-zinc-50 dark:bg-zinc-800 text-zinc-400 animate-pulse'
+            : 'border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 text-zinc-400');
+      slot.textContent = i < userInputDigits.length ? String(userInputDigits[i]) : '';
+      slotsContainer.appendChild(slot);
+    }
+  }
+
+  function generateRandomSequence(length: number): number[] {
+    const seq: number[] = [];
+    let prev = -1;
+    for (let i = 0; i < length; i++) {
+      let digit: number;
+      do {
+        digit = Math.floor(Math.random() * 10);
+      } while (digit === prev && length <= 6);
+      seq.push(digit);
+      prev = digit;
+    }
+    return seq;
+  }
+
+  async function startTrial() {
+    isDisplayingDigits = true;
+    userInputDigits = [];
+    renderSlots();
+    updateHUD();
+
+    currentSequence = generateRandomSequence(currentSpan);
+    instructionCue.textContent = 'Hafalkan urutan angka...';
+    inputLabel.textContent = 'Menampilkan angka... (input dikunci)';
+    flashProgressBar.style.width = '0%';
+
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    for (let i = 0; i < currentSequence.length; i++) {
+      if (!isGameActive) return;
+      digitDisplay.textContent = String(currentSequence[i]);
+      digitDisplay.classList.remove('scale-95');
+      digitDisplay.classList.add('scale-110');
+      flashProgressBar.style.width = `${Math.round(((i + 1) / currentSequence.length) * 100)}%`;
+      playTone(520 + currentSequence[i] * 30, 0.12);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      digitDisplay.textContent = '';
+      digitDisplay.classList.remove('scale-110');
+      digitDisplay.classList.add('scale-95');
+
+      if (i < currentSequence.length - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+    }
+
+    isDisplayingDigits = false;
+    digitDisplay.textContent = '?';
+    instructionCue.textContent = activeMode === 'forward'
+      ? 'Masukkan angka sesuai urutan aslinya'
+      : 'Masukkan angka dalam urutan TERBALIK';
+    inputLabel.textContent = activeMode === 'forward'
+      ? 'Ketik angka dalam urutan maju:'
+      : 'Ketik angka dalam urutan mundur (terbalik):';
+    flashProgressBar.style.width = '100%';
+  }
+
+  function handleInputDigit(num: number) {
+    if (isDisplayingDigits || !isGameActive) return;
+    if (userInputDigits.length < currentSpan) {
+      userInputDigits.push(num);
+      playTone(600 + num * 25, 0.06);
+      renderSlots();
+    }
+  }
+
+  function handleBackspace() {
+    if (isDisplayingDigits || !isGameActive) return;
+    if (userInputDigits.length > 0) {
+      userInputDigits.pop();
+      playTone(380, 0.05);
+      renderSlots();
+    }
+  }
+
+  async function handleSubmit() {
+    if (isDisplayingDigits || !isGameActive) return;
+    if (userInputDigits.length < currentSpan) {
+      instructionCue.textContent = `Silakan masukkan seluruh ${currentSpan} digit angka`;
+      playTone(240, 0.15);
+      return;
+    }
+
+    trialsCompleted++;
+    const expected = activeMode === 'forward'
+      ? currentSequence.join('')
+      : [...currentSequence].reverse().join('');
+    const actual = userInputDigits.join('');
+
+    const isCorrect = expected === actual;
+
+    if (isCorrect) {
+      correctCount++;
+      trialsPassedAtCurrentSpan++;
+      currentStreak++;
+      longestStreak = Math.max(longestStreak, currentStreak);
+      maxSpan = Math.max(maxSpan, currentSpan);
+      instructionCue.textContent = 'Urutan benar!';
+      digitDisplay.textContent = 'Benar';
+      digitDisplay.className = 'text-5xl sm:text-6xl font-mono font-black text-emerald-600 dark:text-emerald-400';
+      playTone(659.25, 0.1);
+      setTimeout(() => playTone(880, 0.18), 110);
+    } else {
+      errorCount++;
+      currentStreak = 0;
+      instructionCue.textContent = `Kurang tepat. Seharusnya: ${expected}`;
+      digitDisplay.textContent = 'Salah';
+      digitDisplay.className = 'text-5xl sm:text-6xl font-mono font-black text-rose-600 dark:text-rose-400';
+      playTone(280, 0.18);
+    }
+
+    updateHUD();
+
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    digitDisplay.className = 'text-6xl sm:text-7xl font-mono font-black text-zinc-950 dark:text-white transition-transform duration-100';
+
+    if (currentSubTrial === 0) {
+      currentSubTrial = 1;
+      startTrial();
+    } else {
+      if (trialsPassedAtCurrentSpan >= 1) {
+        if (currentSpan >= 10) {
+          endGame();
+        } else {
+          currentSpan++;
+          currentSubTrial = 0;
+          trialsPassedAtCurrentSpan = 0;
+          startTrial();
+        }
+      } else {
+        endGame();
+      }
+    }
+  }
+
+  function endGame() {
+    isGameActive = false;
+    const sessionDurationSec = Math.max(1, Math.round((Date.now() - sessionStartTime) / 1000));
+    const accuracy = trialsCompleted > 0 ? correctCount / trialsCompleted : 0;
+
+    let performanceScore = 0;
+    if (activeMode === 'forward') {
+      const spanScore = Math.min(75, Math.round((maxSpan / 9) * 75));
+      const accBonus = Math.round(accuracy * 25);
+      performanceScore = Math.min(100, Math.max(0, spanScore + accBonus));
+    } else {
+      const spanScore = Math.min(80, Math.round((maxSpan / 8) * 80));
+      const accBonus = Math.round(accuracy * 20);
+      performanceScore = Math.min(100, Math.max(0, spanScore + accBonus));
+    }
+
+    saveGameRecord({
+      gameId: 'digit-span',
+      durationSeconds: sessionDurationSec,
+      mode: activeMode,
+      metrics: {
+        performanceScore,
+        accuracy: Number(accuracy.toFixed(2)),
+        trialsCompleted,
+        correctCount,
+        errorCount,
+        maxSpan,
+        bestStreak: longestStreak,
+      },
+    });
+
+    let isNewBest = false;
+    try {
+      const saved = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      if (performanceScore > saved) {
+        localStorage.setItem(STORAGE_KEY, String(performanceScore));
+        isNewBest = true;
+      }
+    } catch {}
+    loadBestScore();
+
+    modalScore.textContent = String(performanceScore);
+    const tierInfo = getPerformanceTier(performanceScore);
+    modalTierBadge.textContent = tierInfo.tier;
+    modalTierBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${tierInfo.badgeClass}`;
+    modalTierDesc.textContent = tierInfo.description;
+
+    modalMaxSpan.textContent = `${maxSpan} Digit`;
+    modalModeLabel.textContent = activeMode === 'forward' ? 'Maju' : 'Mundur';
+    modalAcc.textContent = `${Math.round(accuracy * 100)}%`;
+    modalStreak.textContent = String(longestStreak);
+
+    if (isNewBest) {
+      modalBestAlert.classList.remove('hidden');
+    } else {
+      modalBestAlert.classList.add('hidden');
+    }
+
+    modalEndRound.classList.remove('hidden');
+  }
+
+  function startGame() {
+    isGameActive = true;
+    sessionStartTime = Date.now();
+    currentSpan = 3;
+    currentSubTrial = 0;
+    trialsPassedAtCurrentSpan = 0;
+    maxSpan = 0;
+    trialsCompleted = 0;
+    correctCount = 0;
+    errorCount = 0;
+    currentStreak = 0;
+    longestStreak = 0;
+
+    startOverlay.classList.add('hidden');
+    gameArenaContent.removeAttribute('inert');
+    modalEndRound.classList.add('hidden');
+
+    startTrial();
+  }
+
+  btnStartGame.addEventListener('click', startGame);
+
+  keypadBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const val = btn.getAttribute('data-val');
+      if (val !== null) {
+        handleInputDigit(parseInt(val, 10));
+      }
+    });
+  });
+
+  btnKeypadClear.addEventListener('click', handleBackspace);
+  btnKeypadSubmit.addEventListener('click', handleSubmit);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && !isGameActive && modalHowToPlay.classList.contains('hidden') && modalEndRound.classList.contains('hidden')) {
+      e.preventDefault();
+      startGame();
+      return;
+    }
+
+    if (isGameActive && !isDisplayingDigits) {
+      if (e.key >= '0' && e.key <= '9') {
+        e.preventDefault();
+        handleInputDigit(parseInt(e.key, 10));
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        handleBackspace();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSubmit();
+      }
+    }
+
+    if (e.key === 'Escape') {
+      if (!modalHowToPlay.classList.contains('hidden')) {
+        modalHowToPlay.classList.add('hidden');
+      }
+      if (!modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+      }
+    }
+  });
+
+  btnHowToPlay.addEventListener('click', () => modalHowToPlay.classList.remove('hidden'));
+  btnCloseHowModal.addEventListener('click', () => modalHowToPlay.classList.add('hidden'));
+  btnConfirmHow.addEventListener('click', () => modalHowToPlay.classList.add('hidden'));
+
+  btnCloseEndModal.addEventListener('click', () => modalEndRound.classList.add('hidden'));
+  btnModalRestart.addEventListener('click', () => {
+    modalEndRound.classList.add('hidden');
+    startGame();
+  });
+</script>

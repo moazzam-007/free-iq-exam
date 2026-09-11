@@ -1,0 +1,1136 @@
+---
+import LayoutId from '../../../components/id/LayoutId.astro';
+import HeaderId from '../../../components/id/HeaderId.astro';
+import FooterId from '../../../components/id/FooterId.astro';
+
+const title = "Tes Penalaran Deduktif Online Gratis - Logika Silogisme Cepat | FreeIQExam";
+const description = "Uji kecepatan penalaran deduktif formal online gratis. Evaluasi silogisme kategoris dan validitas logika di bawah batas waktu berdasarkan Aristoteles & Johnson-Laird.";
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Silogisme Kilat - Uji Kecepatan Logika Deduktif",
+    "url": "https://freeiqexam.com/id/permainan/silogisme",
+    "description": "Uji kecepatan penalaran deduktif formal online gratis. Evaluasi silogisme kategoris dan validitas logika di bawah batas waktu berdasarkan Aristoteles & Johnson-Laird.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan Kognitif",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Silogisme Kilat",
+        "item": "https://freeiqexam.com/id/permainan/silogisme"
+      }
+    ]
+  }
+];
+---
+
+<LayoutId title={title} description={description} schema={jsonLd} enPath="/games/syllogism">
+  <HeaderId enPath="/games/syllogism" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <a href="/id/permainan" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Permainan Kognitif</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Silogisme Kilat</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-peach mb-1.5">
+          Gc &amp; Gf &bull; Logika Deduktif
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+          Silogisme Kilat
+        </h1>
+      </div>
+
+      <!-- Stat HUD + Help Button -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <button
+          id="btn-how-to-play"
+          type="button"
+          aria-label="Petunjuk cara bermain"
+          class="min-h-[44px] px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800/90 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-sans font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+        >
+          <span class="font-bold font-mono text-amber-600 dark:text-amber-400">(?)</span>
+          <span>Cara Bermain</span>
+        </button>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Soal</div>
+          <div id="hud-item" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 15</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Skor</div>
+          <div id="hud-score" class="font-bold text-amber-600 dark:text-amber-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Waktu Rata-rata</div>
+          <div id="hud-avg-time" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0.0s</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Terbaik</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-peach flex items-center justify-center mb-5 shadow-lg shadow-amber-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Latihan Logika Silogisme
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Anda akan diberikan dua premis dasar dan satu usulan kesimpulan.
+          </p>
+          <p>
+            Tentukan apakah kesimpulan tersebut <strong>Valid</strong> (secara mutlak harus benar mengikuti premis) atau <strong>Tidak Valid</strong> (tidak dapat dibuktikan atau mengandung kekeliruan logika).
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            15 silogisme, batas waktu 15 detik per soal. &lt;5s = +20 poin, &lt;10s = +15 poin, &lt;15s = +10 poin. Salah = -5 poin.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+        >
+          <span>Mulai Latihan Logika (Spasi)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- Per-Item Countdown Bar -->
+        <div class="w-full max-w-xl mb-6">
+          <div class="flex items-center justify-between text-xs font-mono font-semibold mb-2">
+            <span class="text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Pengatur Waktu Soal</span>
+            <span id="trial-timer-text" class="text-sm font-bold text-amber-600 dark:text-amber-400">15.0s</span>
+          </div>
+          <div class="w-full h-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700/60">
+            <div id="trial-progress-bar" class="h-full bg-amber-500 rounded-full transition-all duration-75 ease-linear" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Syllogism Premises Card -->
+        <div class="w-full max-w-xl p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/80 shadow-inner mb-8">
+          <div class="space-y-4">
+            <!-- Premise 1 -->
+            <div class="flex items-start gap-3">
+              <span class="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-mono font-bold text-xs shrink-0 mt-0.5">P1</span>
+              <p id="premise-1-text" class="text-sm sm:text-base text-zinc-800 dark:text-zinc-200 font-medium leading-relaxed">
+                Memuat Premis 1...
+              </p>
+            </div>
+
+            <!-- Premise 2 -->
+            <div class="flex items-start gap-3">
+              <span class="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-mono font-bold text-xs shrink-0 mt-0.5">P2</span>
+              <p id="premise-2-text" class="text-sm sm:text-base text-zinc-800 dark:text-zinc-200 font-medium leading-relaxed">
+                Memuat Premis 2...
+              </p>
+            </div>
+
+            <!-- Divider with Conclusion Tag -->
+            <div class="pt-4 mt-2 border-t border-zinc-200 dark:border-zinc-700/60 flex items-start gap-3">
+              <span class="px-2.5 py-1 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 font-mono font-bold text-xs shrink-0 mt-0.5">K</span>
+              <p id="conclusion-text" class="text-base sm:text-lg text-zinc-950 dark:text-white font-heading font-bold leading-relaxed">
+                Memuat Kesimpulan...
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Response Buttons -->
+        <div class="w-full max-w-xl grid grid-cols-2 gap-4">
+          <button
+            id="btn-valid"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500 hover:border-emerald-600 dark:hover:border-emerald-400 text-emerald-700 dark:text-emerald-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+          >
+            <span>VALID</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Tombol [ V ]</span>
+          </button>
+
+          <button
+            id="btn-invalid"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-500 hover:border-rose-600 dark:hover:border-rose-400 text-rose-700 dark:text-rose-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 cursor-pointer"
+          >
+            <span>TIDAK VALID</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Tombol [ I ]</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Play Instructions Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4"
+    >
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-left relative max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          aria-label="Tutup petunjuk cara bermain"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <div>
+            <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+              Cara Bermain Silogisme Kilat
+            </h2>
+            <p class="text-xs text-amber-600 dark:text-amber-400 font-medium">Aktivitas Penalaran Fluida (Gf)</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Mekanika Permainan</h4>
+            <p>1. Di setiap soal, Anda disajikan dua premis (P1 dan P2) dan satu kesimpulan usulan (K).</p>
+            <p>2. Evaluasi logika deduktif secara ketat: Apakah kesimpulan tersebut <strong>pasti benar</strong> jika kedua premis dianggap benar?</p>
+            <p>3. Tekan <strong>VALID [V]</strong> jika argumen tersebut logis sesuai aturan deduksi formal.</p>
+            <p>4. Tekan <strong>TIDAK VALID [I]</strong> jika argumen mengandung kekeliruan formal (misal term tengah tidak terdistribusi, illicit major/minor).</p>
+            <p>5. Selesaikan 15 soal dengan batas waktu 15 detik per soal. Deduksi yang lebih cepat memperoleh bonus skor yang lebih tinggi.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Kontrol Keyboard</h4>
+            <ul class="space-y-1 text-xs font-mono">
+              <li>• <span class="font-bold text-zinc-900 dark:text-white">[Spasi]</span> : Mulai latihan / Ulangi</li>
+              <li>• <span class="font-bold text-emerald-600 dark:text-emerald-400">[V]</span> : Argumen VALID secara deduktif</li>
+              <li>• <span class="font-bold text-rose-600 dark:text-rose-400">[I]</span> : Argumen TIDAK VALID secara deduktif</li>
+              <li>• <span class="font-bold text-zinc-900 dark:text-white">[Escape]</span> : Tutup dialog</li>
+            </ul>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs">
+            <span class="font-bold text-amber-950 dark:text-amber-200">Fondasi Ilmiah:</span>
+            <span class="text-amber-900 dark:text-amber-300 ml-1">Paradigma Penalaran Deduktif Silogistis Aristotelian. Melibatkan evaluasi validitas formal, integrasi premis memori kerja, dan penalaran logika fluida (Gf).</span>
+          </div>
+        </div>
+
+        <button
+          id="btn-close-how-got-it"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-heading font-bold text-sm shadow-md transition-all duration-150 hover:scale-101 active:scale-99 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+        >
+          <span>Paham, Mulai Bermain</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- End of Round Modal -->
+    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center relative max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          aria-label="Tutup ringkasan sesi"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18" />
+          </svg>
+        </div>
+
+        <h2 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Latihan Logika Selesai!
+        </h2>
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">
+          Ringkasan Kinerja Penalaran Deduktif
+        </p>
+
+        <!-- Standardized 0-100 Task Performance Score -->
+        <div class="mb-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800">
+          <div class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Skor Kinerja Tugas
+          </div>
+          <div class="flex items-baseline justify-center gap-1.5 my-1">
+            <span id="modal-perf-score" class="text-4xl sm:text-5xl font-extrabold font-heading text-zinc-950 dark:text-white">0</span>
+            <span class="text-sm font-mono text-zinc-400">/ 100</span>
+          </div>
+          <div id="modal-tier-badge" class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+            <span id="modal-tier-name">Fondasi Kuat</span>
+          </div>
+          <p id="modal-tier-desc" class="mt-2 text-xs text-zinc-600 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed"></p>
+        </div>
+
+        <!-- Paradigm-Specific Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Akurasi</div>
+            <div id="modal-acc" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Median RT</div>
+            <div id="modal-speed" class="font-bold text-base text-amber-600 dark:text-amber-400">0.0s</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Rincian</div>
+            <div id="modal-breakdown" class="font-bold text-base text-zinc-900 dark:text-white">0 V / 0 S</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Runtutan Terbaik</div>
+            <div id="modal-streak" class="font-bold text-base text-amber-500">0</div>
+          </div>
+        </div>
+
+        <!-- Transparent Scoring Formula Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Rincian Penilaian
+          </div>
+          <p class="text-xs font-mono text-amber-600 dark:text-amber-400 font-semibold mb-1">
+            Skor = (Akurasi Deduksi * 75) + Bonus Kecepatan Deduksi (hingga 25 poin)
+          </p>
+          <p id="modal-formula-calc" class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400"></p>
+        </div>
+
+        <!-- Scientific Paradigm Attribution Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Fondasi Ilmiah
+          </div>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400">
+            Paradigma Penalaran Deduktif Silogistis Aristotelian. Aktivitas Penalaran Fluida (Gf).
+          </p>
+        </div>
+
+        <!-- Practice Effects Disclaimer -->
+        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic mb-5 leading-normal">
+          Skor kinerja mencerminkan kefasihan operasional tugas dan kecepatan respons di bawah efek latihan, bukan kecerdasan umum bawaan (g). Latihan berulang mengasah ketangkasan kognitif.
+        </p>
+
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold text-center">
+          Rekor Pribadi Baru Tercapai!
+        </div>
+
+        <!-- Review All Answers Accordion -->
+        <div class="mb-6 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+          <button
+            id="btn-toggle-review"
+            type="button"
+            aria-expanded="false"
+            aria-controls="review-content"
+            class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-left font-heading font-semibold text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 flex items-center justify-between transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+          >
+            <span>Tinjau Seluruh 15 Jawaban &amp; Penjelasan</span>
+            <svg id="review-chevron" class="w-4 h-4 text-zinc-500 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+          <div id="review-content" class="hidden p-4 max-h-64 overflow-y-auto space-y-3 bg-white dark:bg-zinc-900 text-left text-xs divide-y divide-zinc-100 dark:divide-zinc-800">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+          >
+            Main Lagi
+          </button>
+          <a
+            href="/id/permainan"
+            class="min-h-[44px] px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
+          >
+            Pusat Permainan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Section -->
+    <section class="mt-16 pt-12 border-t border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+      <h2 class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-4">
+        Penalaran Deduktif, Silogisme Kategoris &amp; Validitas Logika
+      </h2>
+      <div class="prose prose-zinc dark:prose-invert max-w-none text-sm leading-relaxed space-y-4">
+        <p>
+          Silogisme kategoris adalah argumen deduktif formal tiga bagian yang terdiri dari premis mayor, premis minor, dan sebuah kesimpulan. Pertama kali diformalkan oleh Aristoteles dalam <em>Prior Analytics</em> (sekitar 350 SM), logika silogistis membentuk landasan epistemologi formal dan evaluasi psikometrik modern untuk penalaran deduktif, yang mencakup penalaran fluida (<em>Gf</em>) dan pemahaman kristalisasi verbal (<em>Gc</em>) dalam taksonomi kognitif Cattell-Horn-Carroll (CHC).
+        </p>
+        <p>
+          Berbeda dengan penalaran induktif yang kesimpulannya bersifat probabilitas atau perkiraan, logika deduktif bersifat biner: jika kedua premis diterima sebagai kebenaran mutlak, kesimpulan yang valid <strong>pasti benar secara niscaya</strong>. Silogisme Kilat melatih kemampuan Anda untuk mengisolasi validitas struktural logis dari plausibilitas empiris di bawah batas waktu yang ketat.
+        </p>
+
+        <h3 class="text-lg font-heading font-semibold text-zinc-900 dark:text-zinc-100 mt-6 mb-2">
+          Efek Bias Keyakinan (Belief Bias) dalam Logika Deduktif
+        </h3>
+        <p>
+          Salah satu bias kognitif yang paling persisten menurut para psikolog kognitif (Evans, Barston, &amp; Pollard, 1983; Johnson-Laird, 1983) adalah <strong>bias keyakinan (belief bias)</strong>: kecenderungan untuk menilai validitas suatu argumen berdasarkan apakah kesimpulannya terdengar masuk akal dalam kehidupan sehari-hari, bukan berdasarkan apakah kesimpulan tersebut benar-benar mengikuti premis secara logis.
+        </p>
+        <p>
+          Sebagai contoh, perhatikan silogisme: <em>"Semua burung dapat terbang. Burung unta adalah burung. Oleh karena itu, burung unta dapat terbang."</em> Secara struktural, argumen ini 100% <strong>Valid</strong>, meskipun kesimpulan faktualnya bertentangan dengan ornitologi dunia nyata. Sebaliknya, suatu argumen dapat menyajikan fakta yang benar namun melalui logika yang tidak valid. Silogisme Kilat secara eksplisit menyajikan kedua jenis soal ini untuk melatih korteks prefrontal Anda membangun model mental yang objektif dan menolak kesimpulan tidak valid terlepas dari asosiasi dunia nyata.
+        </p>
+
+        <h3 class="text-lg font-heading font-semibold text-zinc-900 dark:text-zinc-100 mt-6 mb-2">
+          Mekanika Latihan &amp; Metrik Kinerja
+        </h3>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>15 Soal Berbatas Waktu:</strong> Setiap soal memberikan batas waktu maksimal 15 detik untuk membaca kedua premis dan mengevaluasi apakah kesimpulan yang diberikan sah secara logika.</li>
+          <li><strong>Klasifikasi Validitas Biner:</strong> Tentukan apakah argumen tersebut <em>Valid</em> (kesimpulan mutlak mengikuti premis) atau <em>Tidak Valid / Keliru</em> (kesimpulan tidak harus mengikuti premis).</li>
+          <li><strong>Integrasi Kecepatan-Akurasi:</strong> Skor memberikan penghargaan tinggi untuk pembacaan cepat dan ketepatan deduksi tanpa kesalahan.</li>
+          <li><strong>Penjelasan Lengkap Setiap Jawaban:</strong> Tinjau bukti langkah demi langkah untuk setiap silogisme di akhir putaran untuk menguasai distribusi term dan diagram Venn logis.</li>
+        </ul>
+
+        <div class="my-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+          <strong>Catatan Latihan Kognitif:</strong> Silogisme Kilat adalah latihan kognitif edukatif yang dirancang untuk mengasah kecepatan deduksi dan kebiasaan berpikir logis. Meskipun tugas logika formal merupakan subkomponen standar dalam tes psikometri, latihan berbasis browser dapat dipengaruhi efek latihan dan tidak menggantikan tes IQ klinis menyeluruh.
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-wrap gap-4 text-xs">
+          <a href="/id/tes-verbal" class="text-amber-600 dark:text-amber-400 hover:underline font-medium">Subtes Penalaran Verbal &rarr;</a>
+          <a href="/id/tes-penalaran-fluida" class="text-amber-600 dark:text-amber-400 hover:underline font-medium">Tes Penalaran Fluida &rarr;</a>
+          <a href="/id/permainan/sequence-rush" class="text-amber-600 dark:text-amber-400 hover:underline font-medium">Latihan Deret Cepat &rarr;</a>
+          <a href="/id/permainan" class="text-amber-600 dark:text-amber-400 hover:underline font-medium">Semua Permainan Kognitif &rarr;</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <FooterId />
+</LayoutId>
+
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../../utils/profileStore';
+
+  (function() {
+    var TOTAL_ITEMS = 15;
+    var ITEM_TIME_LIMIT_MS = 15000;
+    var STORAGE_KEY = 'fiq_game_syllogism_best';
+
+    var SYLLOGISM_BANK = [
+      {
+        p1: 'Semua mamalia memiliki tulang belakang.',
+        p2: 'Semua lumba-lumba adalah mamalia.',
+        c: 'Oleh karena itu, semua lumba-lumba memiliki tulang belakang.',
+        valid: true,
+        explanation: 'Bentuk Barbara (AAA-1) - deduksi transitif yang valid.'
+      },
+      {
+        p1: 'Semua anjing adalah mamalia.',
+        p2: 'Semua kucing adalah mamalia.',
+        c: 'Oleh karena itu, semua anjing adalah kucing.',
+        valid: false,
+        explanation: 'Kekeliruan Term Tengah yang Tidak Terdistribusi (Undistributed Middle) - predikat yang sama tidak menghubungkan subjek.'
+      },
+      {
+        p1: 'Tidak ada reptil yang memiliki bulu.',
+        p2: 'Semua iguana adalah reptil.',
+        c: 'Oleh karena itu, tidak ada iguana yang memiliki bulu.',
+        valid: true,
+        explanation: 'Bentuk Celarent (EAE-1) - universal negatif mengecualikan term minor secara mutlak.'
+      },
+      {
+        p1: 'Semua burung bertelur.',
+        p2: 'Platipus bertelur.',
+        c: 'Oleh karena itu, platipus adalah burung.',
+        valid: false,
+        explanation: 'Term tengah tidak terdistribusi - kemampuan bertelur bukan sifat eksklusif burung.'
+      },
+      {
+        p1: 'Semua dokter bedah adalah dokter medis.',
+        p2: 'Sebagian peneliti adalah dokter bedah.',
+        c: 'Oleh karena itu, sebagian peneliti adalah dokter medis.',
+        valid: true,
+        explanation: 'Bentuk Darii (AII-1) - premis universal afirmatif dan partikular afirmatif menghasilkan partikular yang valid.'
+      },
+      {
+        p1: 'Tidak ada filsuf yang merupakan miliarder.',
+        p2: 'Tidak ada miliarder yang merupakan penyair.',
+        c: 'Oleh karena itu, tidak ada filsuf yang merupakan penyair.',
+        valid: false,
+        explanation: 'Kekeliruan Dua Premis Negatif - dua premis negatif tidak menghasilkan kesimpulan deduktif yang valid.'
+      },
+      {
+        p1: 'Tidak ada pohon yang merupakan hewan.',
+        p2: 'Sebagian makhluk hidup adalah pohon.',
+        c: 'Oleh karena itu, sebagian makhluk hidup bukan hewan.',
+        valid: true,
+        explanation: 'Bentuk Ferio (EIO-1) - universal negatif dan afirmatif partikular menghasilkan partikular negatif yang valid.'
+      },
+      {
+        p1: 'Sebagian arsitek adalah musisi.',
+        p2: 'Sebagian musisi adalah pelukis.',
+        c: 'Oleh karena itu, sebagian arsitek adalah pelukis.',
+        valid: false,
+        explanation: 'Kekeliruan Premis Partikular - dua pernyataan partikular tidak dapat membangun korelasi pasti.'
+      },
+      {
+        p1: 'Semua persegi memiliki empat sisi yang sama panjang.',
+        p2: 'Tidak ada segitiga yang memiliki empat sisi yang sama panjang.',
+        c: 'Oleh karena itu, tidak ada segitiga yang merupakan persegi.',
+        valid: true,
+        explanation: 'Bentuk Camestres (AEE-2) - deduksi universal negatif yang valid.'
+      },
+      {
+        p1: 'Semua karnivora memakan daging.',
+        p2: 'Tidak ada sapi yang merupakan karnivora.',
+        c: 'Oleh karena itu, tidak ada sapi yang memakan daging.',
+        valid: false,
+        explanation: 'Illicit Major - pemakan daging tidak terdistribusi dalam premis namun terdistribusi dalam kesimpulan.'
+      },
+      {
+        p1: 'Semua kendaraan darurat diizinkan melaju cepat.',
+        p2: 'Sebagian mobil van tidak diizinkan melaju cepat.',
+        c: 'Oleh karena itu, sebagian mobil van bukan kendaraan darurat.',
+        valid: true,
+        explanation: 'Bentuk Baroco (AOO-2) - universal afirmatif dan partikular negatif menghasilkan partikular negatif yang valid.'
+      },
+      {
+        p1: 'Semua mawar adalah bunga.',
+        p2: 'Sebagian bunga cepat layu.',
+        c: 'Oleh karena itu, semua mawar cepat layu.',
+        valid: false,
+        explanation: 'Generalisasi keliru - sifat sebagian bunga tidak berlaku secara universal untuk mawar.'
+      },
+      {
+        p1: 'Semua Dax adalah Gorph.',
+        p2: 'Semua Gorph adalah Plenk.',
+        c: 'Oleh karena itu, semua Dax adalah Plenk.',
+        valid: true,
+        explanation: 'Inklusi transitif murni (AAA-1) berlaku terlepas dari istilah semantik.'
+      },
+      {
+        p1: 'Sebagian Wug adalah Zibble.',
+        p2: 'Sebagian Zibble adalah Feep.',
+        c: 'Oleh karena itu, sebagian Wug adalah Feep.',
+        valid: false,
+        explanation: 'Term tengah Zibble tidak terdistribusi di kedua premis partikular.'
+      },
+      {
+        p1: 'Tidak ada Krol yang merupakan Vext.',
+        p2: 'Semua Blick adalah Krol.',
+        c: 'Oleh karena itu, tidak ada Blick yang merupakan Vext.',
+        valid: true,
+        explanation: 'Bentuk Celarent (EAE-1) - semua Blick termasuk Krol, dan tidak ada Krol yang merupakan Vext.'
+      },
+      {
+        p1: 'Semua Lumen adalah Glorp.',
+        p2: 'Semua Glorp adalah Tazz.',
+        c: 'Oleh karena itu, sebagian Lumen bukan Tazz.',
+        valid: false,
+        explanation: 'Premis universal afirmatif tidak dapat menghasilkan kesimpulan negatif.'
+      },
+      {
+        p1: 'Tidak ada Quilp yang merupakan Zoid.',
+        p2: 'Sebagian Flurg adalah Zoid.',
+        c: 'Oleh karena itu, sebagian Flurg bukan Quilp.',
+        valid: true,
+        explanation: 'Bentuk Festino (EIO-2) - pemisahan deduktif yang valid.'
+      },
+      {
+        p1: 'Semua Snark adalah Boojum.',
+        p2: 'Semua Boojum adalah Bandersnatch.',
+        c: 'Oleh karena itu, tepat tujuh Snark adalah Bandersnatch.',
+        valid: false,
+        explanation: 'Kesalahan kuantifier - kuantitas numerik spesifik tidak dapat dideduksi dari premis kategoris umum.'
+      },
+      {
+        p1: 'Sebuah bilangan bulat adalah genap atau ganjil.',
+        p2: 'Angka 17 bukan bilangan genap.',
+        c: 'Oleh karena itu, angka 17 adalah bilangan ganjil.',
+        valid: true,
+        explanation: 'Silogisme disjungtif - mengeliminasi satu disjungsi memaksa kepastian disjungsi lainnya.'
+      },
+      {
+        p1: 'Seorang pelancong berada di Prancis atau di Eropa.',
+        p2: 'Pelancong tersebut berada di Prancis.',
+        c: 'Oleh karena itu, pelancong tersebut tidak berada di Eropa.',
+        valid: false,
+        explanation: 'Kekeliruan Menegaskan Disjungsi - disjungsi inklusif memungkinkan kedua kondisi benar bersamaan.'
+      },
+      {
+        p1: 'Sebagian Jipt bukan Krane.',
+        p2: 'Semua Jipt adalah Skreef.',
+        c: 'Oleh karena itu, sebagian Skreef bukan Krane.',
+        valid: true,
+        explanation: 'Bentuk Bocardo (OAO-3) - deduksi partikular negatif yang valid.'
+      },
+      {
+        p1: 'Semua Prund adalah Quazz.',
+        p2: 'Semua Prund adalah Rimmle.',
+        c: 'Oleh karena itu, semua Rimmle adalah Quazz.',
+        valid: false,
+        explanation: 'Illicit Minor - Rimmle tidak terdistribusi di premis namun terdistribusi secara universal dalam kesimpulan.'
+      },
+      {
+        p1: 'Tidak ada teori yang valid bertentangan dengan data yang dapat diamati.',
+        p2: 'Dogma mitologi bertentangan dengan data yang dapat diamati.',
+        c: 'Oleh karena itu, dogma mitologi bukan teori yang valid.',
+        valid: true,
+        explanation: 'Bentuk Cesare (EAE-2) - pengecualian timbal balik yang mutlak antar term.'
+      },
+      {
+        p1: 'Jika hujan turun, trotoar menjadi basah.',
+        p2: 'Hujan tidak turun.',
+        c: 'Oleh karena itu, trotoar tidak menjadi basah.',
+        valid: false,
+        explanation: 'Kekeliruan Menyangkal Anteseden - trotoar bisa basah karena sumber air lain.'
+      },
+      {
+        p1: 'Jika suatu zat adalah air, maka zat tersebut mengandung atom hidrogen.',
+        p2: 'Sampel X tidak mengandung atom hidrogen.',
+        c: 'Oleh karena itu, sampel X bukan air.',
+        valid: true,
+        explanation: 'Modus tollens - deduksi kontrapositif yang sah secara formal.'
+      },
+      {
+        p1: 'Jika Trundle berputar, Gleek akan berdentang.',
+        p2: 'Gleek berdentang.',
+        c: 'Oleh karena itu, Trundle berputar.',
+        valid: false,
+        explanation: 'Kekeliruan Menegaskan Konsekuen - Gleek bisa berdentang karena faktor lain.'
+      },
+      {
+        p1: 'Semua logam menghantarkan arus listrik.',
+        p2: 'Semua kawat tembaga adalah logam.',
+        c: 'Oleh karena itu, semua kawat tembaga menghantarkan arus listrik.',
+        valid: true,
+        explanation: 'Bentuk Barbara (AAA-1) - kawat tembaga mewarisi sifat konduktivitas melalui kategori logam.'
+      },
+      {
+        p1: 'Setiap orang memiliki warna favorit.',
+        p2: 'Biru adalah warna.',
+        c: 'Oleh karena itu, ada satu warna yang menjadi warna favorit semua orang secara bersamaan.',
+        valid: false,
+        explanation: 'Kekeliruan Pergeseran Kuantifier - setiap orang memiliki kesukaan tidak berarti mereka semua menyukai hal yang identik.'
+      },
+      {
+        p1: 'Tidak ada bilangan prima yang berakhiran digit 0.',
+        p2: 'Semua bilangan kelipatan 100 berakhiran digit 0.',
+        c: 'Oleh karena itu, tidak ada bilangan kelipatan 100 yang merupakan bilangan prima.',
+        valid: true,
+        explanation: 'Bentuk Celarent (EAE-1) - himpunan terpisah menjamin tidak adanya irisan.'
+      },
+      {
+        p1: 'Setiap batu bata di gedung ini berbobot ringan.',
+        p2: 'Gedung ini seluruhnya dibangun dari batu bata.',
+        c: 'Oleh karena itu, seluruh gedung ini berbobot ringan.',
+        valid: false,
+        explanation: 'Kekeliruan Komposisi - gabungan jutaan batu bata ringan menghasilkan bobot total yang sangat berat.'
+      },
+      {
+        p1: 'Sebagian Frib adalah Gox.',
+        p2: 'Semua Frib adalah Zund.',
+        c: 'Oleh karena itu, sebagian Zund adalah Gox.',
+        valid: true,
+        explanation: 'Bentuk Disamis (IAI-3) - irisan Frib dengan Gox memastikan adanya irisan antara Zund dan Gox.'
+      },
+      {
+        p1: 'Tidak ada Yazzle yang merupakan Skulk.',
+        p2: 'Sebagian Skulk adalah Plod.',
+        c: 'Oleh karena itu, semua Plod adalah Yazzle.',
+        valid: false,
+        explanation: 'Premis negatif tidak pernah bisa menghasilkan kesimpulan universal afirmatif.'
+      }
+    ];
+
+    var sessionItems: any[] = [];
+    var currentItemIndex = 0;
+    var score = 0;
+    var correctCount = 0;
+    var validIdentified = 0;
+    var fallaciesIdentified = 0;
+    var responseTimes: number[] = [];
+    var userLog: any[] = [];
+    var isRunning = false;
+    var itemStartTime = 0;
+    var sessionStartTime = 0;
+    var timerAnimFrame: any = null;
+    var isAnsweringLocked = false;
+    var lastDisplayedTenth = -1;
+    var currentStreak = 0;
+    var longestStreak = 0;
+
+    var hudItem = document.getElementById('hud-item')!;
+    var hudScore = document.getElementById('hud-score')!;
+    var hudAvgTime = document.getElementById('hud-avg-time')!;
+    var hudBest = document.getElementById('hud-best')!;
+    var btnHowToPlay = document.getElementById('btn-how-to-play')!;
+    var modalHowToPlay = document.getElementById('modal-how-to-play')!;
+    var btnCloseHowModal = document.getElementById('btn-close-how-modal')!;
+    var btnCloseHowGotIt = document.getElementById('btn-close-how-got-it')!;
+
+    var startOverlay = document.getElementById('start-overlay')!;
+    var btnStartGame = document.getElementById('btn-start-game')!;
+    var gameArenaContent = document.getElementById('game-arena-content')!;
+    var trialTimerText = document.getElementById('trial-timer-text')!;
+    var trialProgressBar = document.getElementById('trial-progress-bar')!;
+    var premise1Text = document.getElementById('premise-1-text')!;
+    var premise2Text = document.getElementById('premise-2-text')!;
+    var conclusionText = document.getElementById('conclusion-text')!;
+    var btnValid = document.getElementById('btn-valid')!;
+    var btnInvalid = document.getElementById('btn-invalid')!;
+
+    var modalEndRound = document.getElementById('modal-end-round')!;
+    var btnCloseEndModal = document.getElementById('btn-close-end-modal')!;
+    var modalPerfScore = document.getElementById('modal-perf-score')!;
+    var modalTierBadge = document.getElementById('modal-tier-badge')!;
+    var modalTierName = document.getElementById('modal-tier-name')!;
+    var modalTierDesc = document.getElementById('modal-tier-desc')!;
+    var modalAcc = document.getElementById('modal-acc')!;
+    var modalSpeed = document.getElementById('modal-speed')!;
+    var modalBreakdown = document.getElementById('modal-breakdown')!;
+    var modalStreak = document.getElementById('modal-streak')!;
+    var modalFormulaCalc = document.getElementById('modal-formula-calc')!;
+    var modalBestAlert = document.getElementById('modal-best-alert')!;
+    var btnToggleReview = document.getElementById('btn-toggle-review')!;
+    var reviewChevron = document.getElementById('review-chevron')!;
+    var reviewContent = document.getElementById('review-content')!;
+    var btnModalRestart = document.getElementById('btn-modal-restart')!;
+
+    if (gameArenaContent) {
+      gameArenaContent.setAttribute('inert', '');
+    }
+
+    function calculateMedian(arr: number[]): number {
+      if (!arr || arr.length === 0) return 0;
+      var sorted = arr.slice().sort(function(a, b) { return a - b; });
+      var mid = Math.floor(sorted.length / 2);
+      return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    function loadBestScore() {
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          hudBest.textContent = saved;
+        }
+      } catch (e) {}
+    }
+    loadBestScore();
+
+    function updateHud() {
+      hudItem.textContent = currentItemIndex + ' / ' + TOTAL_ITEMS;
+      hudScore.textContent = score.toString();
+      if (responseTimes.length > 0) {
+        var sum = 0;
+        for (var i = 0; i < responseTimes.length; i++) sum += responseTimes[i];
+        var avg = (sum / responseTimes.length / 1000).toFixed(1);
+        hudAvgTime.textContent = avg + 's';
+      } else {
+        hudAvgTime.textContent = '0.0s';
+      }
+    }
+
+    function selectSessionItems() {
+      var pool = SYLLOGISM_BANK.slice();
+      pool.sort(function() { return 0.5 - Math.random(); });
+      sessionItems = pool.slice(0, TOTAL_ITEMS);
+    }
+
+    function renderCurrentItem() {
+      isAnsweringLocked = false;
+      var item = sessionItems[currentItemIndex];
+      premise1Text.textContent = item.p1;
+      premise2Text.textContent = item.p2;
+      conclusionText.textContent = item.c;
+
+      btnValid.className = 'min-h-[56px] py-4 px-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500 hover:border-emerald-600 dark:hover:border-emerald-400 text-emerald-700 dark:text-emerald-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer';
+      btnInvalid.className = 'min-h-[56px] py-4 px-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-500 hover:border-rose-600 dark:hover:border-rose-400 text-rose-700 dark:text-rose-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 cursor-pointer';
+
+      startItemTimer();
+    }
+
+    function startItemTimer() {
+      itemStartTime = performance.now();
+      lastDisplayedTenth = -1;
+
+      function step() {
+        if (!isRunning) return;
+        var elapsed = performance.now() - itemStartTime;
+        var remaining = Math.max(0, ITEM_TIME_LIMIT_MS - elapsed);
+        var fraction = remaining / ITEM_TIME_LIMIT_MS;
+
+        var currentTenth = Math.floor(remaining / 100);
+        if (currentTenth !== lastDisplayedTenth) {
+          lastDisplayedTenth = currentTenth;
+          trialTimerText.textContent = (remaining / 1000).toFixed(1) + 's';
+        }
+        trialProgressBar.style.width = (fraction * 100).toFixed(1) + '%';
+
+        if (remaining <= 4000) {
+          trialTimerText.classList.add('text-rose-600', 'dark:text-rose-400');
+          trialProgressBar.classList.remove('bg-amber-500');
+          trialProgressBar.classList.add('bg-rose-500');
+        } else {
+          trialTimerText.classList.remove('text-rose-600', 'dark:text-rose-400');
+          trialProgressBar.classList.add('bg-amber-500');
+          trialProgressBar.classList.remove('bg-rose-500');
+        }
+
+        if (remaining > 0) {
+          timerAnimFrame = requestAnimationFrame(step);
+        } else {
+          handleTimeout();
+        }
+      }
+
+      timerAnimFrame = requestAnimationFrame(step);
+    }
+
+    function handleTimeout() {
+      cancelAnimationFrame(timerAnimFrame);
+      if (isAnsweringLocked) return;
+      isAnsweringLocked = true;
+
+      var elapsed = ITEM_TIME_LIMIT_MS;
+      responseTimes.push(elapsed);
+      currentStreak = 0;
+
+      var cur = sessionItems[currentItemIndex];
+      userLog.push({
+        item: cur,
+        userAnswer: 'Waktu Habis',
+        isCorrect: false,
+        timeMs: elapsed
+      });
+
+      nextItem();
+    }
+
+    function handleAnswer(userValid: boolean) {
+      if (!isRunning || isAnsweringLocked) return;
+      isAnsweringLocked = true;
+      cancelAnimationFrame(timerAnimFrame);
+
+      var elapsed = performance.now() - itemStartTime;
+      responseTimes.push(elapsed);
+
+      var cur = sessionItems[currentItemIndex];
+      var isCorrect = userValid === cur.valid;
+
+      if (isCorrect) {
+        correctCount++;
+        currentStreak++;
+        if (currentStreak > longestStreak) longestStreak = currentStreak;
+
+        if (cur.valid) {
+          validIdentified++;
+        } else {
+          fallaciesIdentified++;
+        }
+
+        var pts = 0;
+        if (elapsed < 5000) {
+          pts = 20;
+        } else if (elapsed < 10000) {
+          pts = 15;
+        } else {
+          pts = 10;
+        }
+        score += pts;
+
+        if (userValid) {
+          btnValid.classList.add('ring-4', 'ring-emerald-400');
+        } else {
+          btnInvalid.classList.add('ring-4', 'ring-emerald-400');
+        }
+      } else {
+        currentStreak = 0;
+        score = Math.max(0, score - 5);
+        if (userValid) {
+          btnValid.classList.add('ring-4', 'ring-rose-400');
+        } else {
+          btnInvalid.classList.add('ring-4', 'ring-rose-400');
+        }
+      }
+
+      userLog.push({
+        item: cur,
+        userAnswer: userValid ? 'Valid' : 'Tidak Valid',
+        isCorrect: isCorrect,
+        timeMs: elapsed
+      });
+
+      updateHud();
+      setTimeout(nextItem, 300);
+    }
+
+    function nextItem() {
+      currentItemIndex++;
+      updateHud();
+
+      if (currentItemIndex >= TOTAL_ITEMS) {
+        finishDrill();
+        return;
+      }
+
+      renderCurrentItem();
+    }
+
+    function startDrill() {
+      isRunning = true;
+      currentItemIndex = 0;
+      score = 0;
+      correctCount = 0;
+      validIdentified = 0;
+      fallaciesIdentified = 0;
+      currentStreak = 0;
+      longestStreak = 0;
+      responseTimes = [];
+      userLog = [];
+      lastDisplayedTenth = -1;
+      sessionStartTime = performance.now();
+
+      if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+      startOverlay.classList.add('hidden');
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      if (modalHowToPlay) {
+        modalHowToPlay.classList.add('hidden');
+        modalHowToPlay.classList.remove('flex');
+      }
+      reviewContent.classList.add('hidden');
+      reviewChevron.classList.remove('rotate-180');
+      btnToggleReview.setAttribute('aria-expanded', 'false');
+
+      selectSessionItems();
+      updateHud();
+      renderCurrentItem();
+    }
+
+    function finishDrill() {
+      isRunning = false;
+      cancelAnimationFrame(timerAnimFrame);
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+      var accuracyDecimal = correctCount / TOTAL_ITEMS;
+      var accuracyPct = Math.round(accuracyDecimal * 100);
+      var medianRT = calculateMedian(responseTimes);
+
+      var deductionSpeedBonus = Math.max(0, Math.min(25, Math.round((7000 - medianRT) / 200)));
+      var performanceScore = Math.min(100, Math.max(0, Math.round((accuracyDecimal * 75) + deductionSpeedBonus)));
+      var durationSec = Math.max(1, Math.round((performance.now() - sessionStartTime) / 1000));
+
+      try {
+        saveGameRecord({
+          gameId: 'syllogism',
+          durationSeconds: durationSec,
+          mode: 'standard',
+          metrics: {
+            performanceScore: performanceScore,
+            accuracy: parseFloat(accuracyDecimal.toFixed(4)),
+            trialsCompleted: TOTAL_ITEMS,
+            correctCount: correctCount,
+            errorCount: TOTAL_ITEMS - correctCount,
+            medianRT: Math.round(medianRT),
+            bestStreak: longestStreak,
+          },
+        });
+      } catch (err) {
+        console.error('Failed to save game record:', err);
+      }
+
+      var savedBest = 0;
+      try {
+        savedBest = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      } catch (e) {}
+
+      var isNewBest = performanceScore > savedBest;
+      if (isNewBest) {
+        try {
+          localStorage.setItem(STORAGE_KEY, performanceScore.toString());
+          loadBestScore();
+        } catch (e) {}
+      }
+
+      modalPerfScore.textContent = performanceScore.toString();
+
+      var tier = getPerformanceTier(performanceScore);
+      modalTierBadge.className = 'mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ' + tier.badgeClass;
+      modalTierName.textContent = tier.tier;
+      modalTierDesc.textContent = tier.description;
+
+      modalAcc.textContent = accuracyPct + '%';
+      modalSpeed.textContent = (medianRT / 1000).toFixed(1) + 's';
+      modalBreakdown.textContent = validIdentified + ' Valid / ' + fallaciesIdentified + ' Keliru';
+      modalStreak.textContent = longestStreak.toString();
+
+      modalFormulaCalc.textContent = '(' + accuracyPct + '% * 75 = ' + Math.round(accuracyDecimal * 75) + ' poin) + (Bonus Kecepatan = ' + deductionSpeedBonus + ' poin untuk ' + Math.round(medianRT) + ' ms) = ' + performanceScore + ' poin';
+
+      if (isNewBest && performanceScore > 0) {
+        modalBestAlert.classList.remove('hidden');
+      } else {
+        modalBestAlert.classList.add('hidden');
+      }
+
+      var reviewHtml = '';
+      for (var i = 0; i < userLog.length; i++) {
+        var entry = userLog[i];
+        var badgeColor = entry.isCorrect ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-rose-600 dark:text-rose-400 font-bold';
+        reviewHtml += [
+          '<div class="pt-3 first:pt-0">',
+          '  <div class="flex items-center justify-between mb-1">',
+          '    <span class="font-mono font-bold text-zinc-500 dark:text-zinc-400">#' + (i + 1) + '</span>',
+          '    <span class="' + badgeColor + '">' + (entry.isCorrect ? 'Benar' : 'Salah') + ' (' + entry.userAnswer + ')</span>',
+          '  </div>',
+          '  <p class="text-zinc-700 dark:text-zinc-300"><strong>P1:</strong> ' + entry.item.p1 + '</p>',
+          '  <p class="text-zinc-700 dark:text-zinc-300"><strong>P2:</strong> ' + entry.item.p2 + '</p>',
+          '  <p class="text-zinc-900 dark:text-white font-semibold"><strong>K:</strong> ' + entry.item.c + '</p>',
+          '  <p class="text-zinc-500 dark:text-zinc-400 mt-1 italic">' + entry.item.explanation + '</p>',
+          '</div>'
+        ].join('');
+      }
+      reviewContent.innerHTML = reviewHtml;
+
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+      try {
+        modalEndRound.focus();
+      } catch (e) {}
+    }
+
+    function openHowModal() {
+      modalHowToPlay.classList.remove('hidden');
+      modalHowToPlay.classList.add('flex');
+      modalHowToPlay.focus();
+    }
+
+    function closeHowModal() {
+      modalHowToPlay.classList.add('hidden');
+      modalHowToPlay.classList.remove('flex');
+    }
+
+    function closeEndModal() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startOverlay.classList.remove('hidden');
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+      if (btnStartGame) btnStartGame.focus();
+    }
+
+    btnHowToPlay.addEventListener('click', openHowModal);
+    btnCloseHowModal.addEventListener('click', closeHowModal);
+    btnCloseHowGotIt.addEventListener('click', function() {
+      closeHowModal();
+      if (btnStartGame) btnStartGame.focus();
+    });
+
+    modalHowToPlay.addEventListener('click', function(e) {
+      if (e.target === modalHowToPlay) {
+        closeHowModal();
+      }
+    });
+
+    btnCloseEndModal.addEventListener('click', closeEndModal);
+    modalEndRound.addEventListener('click', function(e) {
+      if (e.target === modalEndRound) {
+        closeEndModal();
+      }
+    });
+
+    btnValid.addEventListener('click', function() { handleAnswer(true); });
+    btnInvalid.addEventListener('click', function() { handleAnswer(false); });
+    btnStartGame.addEventListener('click', startDrill);
+    btnModalRestart.addEventListener('click', function() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startDrill();
+    });
+
+    btnToggleReview.addEventListener('click', function() {
+      var isHidden = reviewContent.classList.toggle('hidden');
+      btnToggleReview.setAttribute('aria-expanded', String(!isHidden));
+      if (isHidden) {
+        reviewChevron.classList.remove('rotate-180');
+      } else {
+        reviewChevron.classList.add('rotate-180');
+      }
+    });
+
+    window.addEventListener('keydown', function(e) {
+      if (e.repeat) return;
+      var key = e.key.toLowerCase();
+
+      var isHowOpen = !modalHowToPlay.classList.contains('hidden');
+      var isEndOpen = !modalEndRound.classList.contains('hidden');
+
+      if (e.key === 'Escape') {
+        if (isHowOpen) {
+          closeHowModal();
+          return;
+        }
+        if (isEndOpen) {
+          closeEndModal();
+          return;
+        }
+      }
+
+      if (isHowOpen || isEndOpen) {
+        return;
+      }
+
+      if (key === ' ' && !isRunning) {
+        e.preventDefault();
+        startDrill();
+      } else if (key === 'v') {
+        handleAnswer(true);
+      } else if (key === 'i') {
+        handleAnswer(false);
+      }
+    });
+  })();
+</script>

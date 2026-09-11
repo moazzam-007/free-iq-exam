@@ -1,0 +1,153 @@
+---
+import '../../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalUrl?: string;
+  enPath?: string;
+  idPath?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  schema?: Record<string, any> | Record<string, any>[];
+}
+
+const {
+  title = "Бесплатный тест на IQ 2026: Мгновенные результаты без Email",
+  description = "Пройдите наш быстрый и бесплатный тест на IQ с мгновенными результатами. 24 вопроса, стандартизированная шкала IQ и процентиль. 100% бесплатно, без смс, без регистрации, без оплаты.",
+  canonicalUrl,
+  enPath,
+  idPath,
+  ogImage = "/og-image.png",
+  noindex = false,
+  schema,
+} = Astro.props;
+
+const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
+// Guard against double /ru/ru/ if caller passes canonicalUrl with duplicated prefix
+const sanitizeCanonical = (u: string) => u.replace(/\/ru\/ru\//g, '/ru/');
+const resolvedCanonical = sanitizeCanonical(canonicalUrl || new URL(Astro.url.pathname, siteOrigin).href);
+const resolvedOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteOrigin).href;
+
+const publicGaId = import.meta.env.PUBLIC_GA_ID;
+const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
+
+// Hreflang helpers — explicit enPath/idPath take precedence (per-page reciprocity),
+// fallback to 1:1 slug mapping by stripping /ru prefix.
+const pathWithoutLang = Astro.url.pathname.replace(/^\/ru\//, '/').replace(/^\/ru$/, '/');
+const effectiveEnPath = enPath ?? (pathWithoutLang === '/' ? '/' : pathWithoutLang);
+const effectiveIdPath = idPath ?? (pathWithoutLang === '/' ? '/' : pathWithoutLang);
+const enHref = effectiveEnPath === '/' ? siteOrigin + '/' : siteOrigin + effectiveEnPath;
+const idHref = effectiveIdPath === '/' ? siteOrigin + '/id/' : siteOrigin + '/id' + effectiveIdPath;
+---
+
+<!doctype html>
+<html lang="ru" class="scroll-smooth no-transitions">
+  <head>
+    <!-- Theme Initialization Script: Executed immediately before rendering to eliminate FOUC -->
+    <script is:inline>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+        window.addEventListener('DOMContentLoaded', function() {
+          requestAnimationFrame(function() {
+            document.documentElement.classList.remove('no-transitions');
+          });
+        });
+      })();
+    </script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={resolvedCanonical} />
+    
+    <!-- Hreflang Tags -->
+    <link rel="alternate" hreflang="en" href={enHref} />
+    <link rel="alternate" hreflang="id" href={idHref} />
+    <link rel="alternate" hreflang="ru" href={resolvedCanonical} />
+    <link rel="alternate" hreflang="x-default" href={enHref} />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FreeIQExam" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:url" content={resolvedCanonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={resolvedCanonical} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={resolvedOgImage} />
+    <meta property="twitter:image:alt" content={title} />
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Analytics: Google Analytics 4 (guarded by PUBLIC_GA_ID) -->
+    {publicGaId && publicGaId !== 'G-XXXXXXXXXX' && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${publicGaId}`}></script>
+        <script is:inline define:vars={{ gaId: publicGaId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
+
+    <!-- Google AdSense (guarded by PUBLIC_ADSENSE_PUB_ID) -->
+    {publicAdsensePubId && (
+      <script
+        is:inline
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publicAdsensePubId}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
+  </head>
+  <body class="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-zinc-50 font-sans antialiased flex flex-col selection:bg-blue-600 selection:text-white">
+    <!-- Accessible Skip Link (WCAG 2.4.1) -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white text-sm font-semibold"
+    >
+      Перейти к основному контенту
+    </a>
+
+    <div id="main-content" tabindex="-1" class="outline-none flex-1 flex flex-col">
+      <slot />
+    </div>
+  </body>
+</html>

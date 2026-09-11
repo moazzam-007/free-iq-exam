@@ -1,0 +1,1317 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+
+const title = "Hasil Tes IQ: Skor, Persentil & Arti Nilai IQ | FreeIQExam";
+const description = "Lihat hasil tes IQ berupa estimasi skor, persentil, kelangkaan populasi, dan uraian kemampuan kognitif. Pelajari arti nilai IQ normal, cara membaca skor, dan batas interpretasinya.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Berapa tingkat IQ yang dianggap normal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pada skala dengan rerata 100 dan SD 15, rentang 90-109 biasanya berada di area rata-rata statistik. Interpretasi tetap bergantung pada instrumen dan norma yang digunakan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana membaca skor dan persentil hasil tes IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Skor IQ menunjukkan posisi pada skala standar, sedangkan persentil menunjukkan posisi relatif pada distribusi populasi. Gunakan keduanya bersama-sama untuk memahami hasil, bukan menganggap skor sebagai persentase nilai ujian."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/results">
+  <!-- Print-Only Official Document Header -->
+  <div class="hidden print:block mb-8 pb-4 border-b-2 border-zinc-900">
+    <div class="flex items-center justify-between">
+      <div>
+        <span class="text-2xl font-bold font-heading text-zinc-950 block">FreeIQExam.com</span>
+        <p class="text-xs text-zinc-500 font-mono">Laporan Asesmen Kognitif Multi-Domain Terstandarisasi (SD 15, 4 Domain CHC)</p>
+      </div>
+      <div class="text-right text-xs font-mono text-zinc-500">
+        <p id="print-date">Diterbitkan: 2026</p>
+        <p>Model: Teori Respons Butir 2PL (IRT)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header (Screen Only) -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200 print:hidden">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+      <a href="/id" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+          </svg>
+        </div>
+        <span class="font-heading font-bold text-lg tracking-tight text-zinc-950 dark:text-white">
+          FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
+        </span>
+      </a>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a
+          href="/id/tes-singkat"
+          id="btn-quick-test-top"
+          class="hidden sm:inline-flex px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+        >
+          Tes Singkat (10 mnt)
+        </a>
+        <a
+          href="/id/tes"
+          id="btn-retake-top"
+          class="px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+        >
+          <span class="hidden sm:inline">Ulangi Tes Lengkap</span>
+          <span class="sm:hidden">Ulangi</span>
+        </a>
+        <button
+          id="btn-print"
+          type="button"
+          class="px-3 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+          <span>Simpan PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Demo Notice Banner -->
+  <div id="demo-banner" class="hidden max-w-5xl mx-auto px-4 sm:px-6 pt-6 print:hidden">
+    <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-amber-200 dark:bg-amber-900 flex items-center justify-center text-amber-800 dark:text-amber-200 shrink-0">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <p class="text-xs sm:text-sm text-amber-900 dark:text-amber-200 font-medium">
+          <strong>Laporan Demo:</strong> Menampilkan contoh laporan skor. Ikuti tes resmi untuk mendapatkan estimasi psikometri pribadi Anda.
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/id/tes-singkat" class="px-4 py-2 rounded-full text-xs font-semibold text-white bg-zinc-700 hover:bg-zinc-600 whitespace-nowrap shadow-xs">Tes Singkat (10 mnt)</a>
+        <a href="/id/tes" class="px-4 py-2 rounded-full text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 whitespace-nowrap shadow-xs">Tes Lengkap (20 mnt)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Type Badge -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-4 print:hidden">
+    <span id="test-type-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 uppercase tracking-wider"></span>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-10">
+    <h1 class="sr-only">Laporan Hasil Skor Asesmen Kognitif Terstandarisasi</h1>
+
+    <!-- Hero Score Card -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs text-center relative overflow-hidden">
+      <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-tr from-blue-500/10 via-indigo-500/10 to-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col items-center">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono text-zinc-600 dark:text-zinc-300 mb-6 shadow-2xs">
+          <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+          <span>ESTIMASI SKOR IQ TERSTANDARISASI (SD 15, MODEL CHC)</span>
+        </div>
+
+        <div class="flex items-baseline justify-center gap-2 my-2">
+          <span id="score-display" class="font-heading font-extrabold text-6xl sm:text-7xl lg:text-8xl tracking-tight text-zinc-950 dark:text-white leading-none min-h-[1em]" aria-busy="true">
+            &mdash;
+          </span>
+          <span class="text-xl sm:text-2xl font-mono text-zinc-500 dark:text-zinc-400 font-semibold">IQ</span>
+        </div>
+
+        <div class="mt-3 mb-2">
+          <span id="classification-badge" class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+            Menghitung...
+          </span>
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-6 text-center leading-relaxed">
+          Skala psikometri terstandarisasi dengan <strong>Rerata Populasi 100 IQ</strong> dan simpangan baku &sigma; = 15. Rentang skala klinis berkisar dari 40 hingga 160+; ini adalah distribusi kognitif relatif, bukan nilai persentase dari 100.
+        </p>
+
+        <div class="w-full max-w-lg p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 shadow-2xs">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span class="font-mono font-medium">
+              95% Interval Kredibel Posterior:
+              <strong id="ci-display" class="text-zinc-950 dark:text-white font-bold ml-1">&mdash;</strong>
+            </span>
+            <span class="text-zinc-500 dark:text-zinc-400 font-mono text-xs">
+              SEM: &plusmn;<span id="sem-display">&mdash;</span> poin
+            </span>
+          </div>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 text-left mt-2 border-t border-zinc-100 dark:border-zinc-800/80 pt-2 leading-relaxed">
+            Interval estimasi Bayesian EAP memperhitungkan varians pengukuran dan parameter diskriminasi butir soal.
+          </p>
+        </div>
+
+        <!-- Percentile / Rarity / Theta Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl mt-6">
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase">Peringkat Persentil</span>
+            <span id="percentile-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">&mdash;</span>
+            <span id="percentile-subtext" class="text-xs text-zinc-600 dark:text-zinc-400 text-center mt-1">Menghitung persentil...</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase">Kelangkaan Populasi</span>
+            <span id="rarity-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">&mdash;</span>
+            <span class="text-xs text-zinc-600 dark:text-zinc-400 text-center mt-1">Frekuensi populasi umum</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase">Kemampuan Laten (&theta;)</span>
+            <span id="theta-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">&mdash;</span>
+            <span class="text-xs text-zinc-600 dark:text-zinc-400 text-center mt-1">Metrik distribusi normal baku</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Guide: IQ Scale vs. Percentile vs. Percentage -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs print:break-inside-avoid">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </span>
+        <h2 class="font-heading text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
+          Memahami Skor Anda: Skala IQ vs. Persentil vs. Persentase
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col justify-between">
+          <div>
+            <div class="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">1. Skala IQ (Rerata = 100)</div>
+            <h3 class="font-bold text-zinc-900 dark:text-white mb-1.5">Bukan Nilai dari 100</h3>
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Berbeda dari ujian sekolah, tes IQ <strong>tidak dinilai berdasarkan skala persentase 0-100</strong>. Angka <strong>100 merepresentasikan titik tengah (rata-rata) populasi global</strong>. Kurva lonceng klinis terbentang dari 40 hingga 160+. Skor antara <strong>90 dan 109</strong> mencerminkan kemampuan kognitif dewasa rata-rata normal.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-zinc-200/60 dark:border-zinc-800 text-[11px] font-mono text-zinc-500">
+            Titik Acuan: 100 IQ = Persentil ke-50
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col justify-between">
+          <div>
+            <div class="font-mono text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">2. Peringkat Persentil (Titik Tengah = 50%)</div>
+            <h3 class="font-bold text-zinc-900 dark:text-white mb-1.5">Peringkat Relatif Manusia</h3>
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Peringkat persentil menunjukkan persentase populasi manusia yang memperoleh skor lebih rendah dari Anda. <strong>Persentil 50% adalah median global</strong>. Dengan persentil Anda <strong id="guide-dynamic-pct">50.0%</strong>, performa kognitif Anda melampaui sekitar <strong id="guide-dynamic-count">50</strong> dari setiap 100 orang di seluruh dunia.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-zinc-200/60 dark:border-zinc-800 text-[11px] font-mono text-zinc-500">
+            Rumus: &Phi;(Z) pada kurva normal populasi
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col justify-between">
+          <div>
+            <div class="font-mono text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-1">3. Kurva Lonceng Normal Gauss</div>
+            <h3 class="font-bold text-zinc-900 dark:text-white mb-1.5">Distribusi Normal Baku (SD = 15)</h3>
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Lebih dari <strong>68% populasi manusia</strong> berada pada rentang 85 hingga 115 IQ (dalam rentang &plusmn;1 simpangan baku). Skor di atas 130 mewakili 2,2% teratas (ambang Mensa), sedangkan skor di bawah 70 menunjukkan divergensi klinis.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-zinc-200/60 dark:border-zinc-800 text-[11px] font-mono text-zinc-500">
+            Distribusi: &mu; = 100, &sigma; = 15
+          </div>
+        </div>
+      </div>
+
+      <!-- Stable Educational Interpretation Guide -->
+      <div class="mt-6 p-5 sm:p-6 rounded-2xl bg-zinc-50/70 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/70">
+        <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-3">
+          Bagaimana membaca tingkat kecerdasan IQ?
+        </h3>
+        <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Nilai IQ adalah skor terstandardisasi, bukan nilai ujian sekolah dari 0 sampai 100. Pada skala dengan rerata 100 dan simpangan baku 15, skor sekitar 90-109 berada di rentang rata-rata. Persentil memberi konteks tambahan dengan menunjukkan posisi relatif terhadap distribusi yang digunakan untuk standardisasi.
+        </p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3">
+          Pertanyaan seperti “IQ normal berapa?” sebaiknya dijawab dengan melihat skala, usia saat norma dibuat, jenis instrumen, dan tujuan pengukuran. Karena itu, satu angka tidak cukup untuk menggambarkan seluruh kemampuan kognitif seseorang.
+        </p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3">
+          Pertanyaan “berapa rata-rata IQ orang Indonesia?” juga perlu dibaca hati-hati. Halaman hasil ini menggunakan skala terstandardisasi dengan titik tengah 100; itu tidak berarti halaman ini menetapkan satu angka khusus sebagai rata-rata nasional Indonesia. Estimasi antarpenelitian dapat berbeda karena sampel, norma, dan instrumen yang digunakan.
+        </p>
+      </div>
+    </section>
+
+    <!-- Certificate Generator Card -->
+    <section id="certificate-section" class="p-6 sm:p-8 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs print:hidden">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+            <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+            SERTIFIKAT RESMI
+          </div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Klaim Sertifikat Resmi Anda
+          </h2>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            Buat sertifikat resolusi tinggi hasil asesmen kemampuan kognitif Anda. Masukkan nama lengkap Anda seperti yang ingin ditampilkan pada sertifikat.
+          </p>
+        </div>
+        <div class="shrink-0 w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-900 dark:text-zinc-100">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+        </div>
+      </div>
+
+      <!-- Name input + generate -->
+      <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <label for="cert-name-input" class="sr-only">Nama lengkap untuk sertifikat</label>
+        <input
+          id="cert-name-input"
+          type="text"
+          placeholder="Nama Lengkap (seperti yang akan tercantum di sertifikat)"
+          aria-label="Nama lengkap untuk sertifikat"
+          maxlength="60"
+          class="flex-1 px-4 py-3 min-h-[44px] rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors"
+        />
+        <button
+          id="btn-generate-cert"
+          type="button"
+          class="min-h-[44px] px-6 py-3 rounded-2xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center justify-center gap-2 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+          Buat Sertifikat
+        </button>
+      </div>
+
+      <!-- Canvas preview (hidden until generated) -->
+      <div id="cert-preview-wrap" class="hidden flex-col gap-4">
+        <canvas
+          id="cert-canvas"
+          width="3200"
+          height="2260"
+          class="w-full max-w-full h-auto block rounded-xl border border-zinc-800 shadow-2xl"
+        ></canvas>
+
+        <!-- Mirror for print stylesheet -->
+        <img id="print-cert-img" class="hidden print:block w-full max-w-2xl mx-auto my-6 rounded-xl border border-zinc-300" alt="Sertifikat Resmi Asesmen Kognitif" />
+
+        <!-- Download / Print actions -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button
+            id="btn-download-cert"
+            type="button"
+            class="min-h-[44px] flex-1 px-5 py-3 rounded-2xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            Unduh Sertifikat Resolusi Tinggi (PNG)
+          </button>
+          <button
+            id="btn-print-cert"
+            type="button"
+            class="min-h-[44px] flex-1 px-5 py-3 rounded-2xl text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            Cetak / Simpan sebagai PDF
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global Cognitive Leaderboard Preview -->
+    <section class="rounded-3xl overflow-hidden border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs print:hidden">
+      <!-- Section Header -->
+      <div class="px-6 sm:px-8 py-6 bg-zinc-900 border-b border-zinc-800 text-white">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 text-xs font-mono font-semibold text-zinc-300 uppercase tracking-wider mb-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" aria-hidden="true"></span>
+              TOLOK UKUR KOHOR GLOBAL
+            </span>
+            <h2 class="font-heading text-xl sm:text-2xl font-bold text-white">
+              Peringkat Ilustratif Global
+            </h2>
+            <p class="text-sm text-zinc-400 mt-1">
+              Tolok ukur kohor persentil sampel yang mengilustrasikan distribusi populasi terstandarisasi.
+            </p>
+          </div>
+          <div class="px-3 py-1.5 rounded-full bg-zinc-800 border border-zinc-700 text-xs font-mono font-semibold text-zinc-300 whitespace-nowrap">
+            Segera Hadir <span aria-hidden="true">&bull;</span> Tolok Ukur Referensi
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Table -->
+      <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm">
+        <!-- Header Row -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-500 uppercase tracking-wider">
+          <span>#</span>
+          <span>Kohor Referensi</span>
+          <span class="text-right">Skor</span>
+          <span class="text-right">Persentil</span>
+          <span class="hidden sm:block">Domain Terkuat</span>
+        </div>
+
+        <!-- Row 1 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-bold text-sm text-amber-500">#1</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127482;&#127480;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">Alex_V.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">146 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">99.9th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Penalaran Fluida (FRI: 148)</span>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-bold text-sm text-zinc-500 dark:text-zinc-400">#2</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127471;&#127477;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">Hana_K.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">142 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">99.7th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Spasial & Visual (VSI: 145)</span>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-bold text-sm text-amber-700">#3</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127465;&#127466;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">Marcus_S.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">138 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">99.4th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Penalaran Kuantitatif (QRI: 141)</span>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-semibold text-sm text-zinc-500">#4</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127464;&#127462;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">Elena_R.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">135 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">99.0th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Logika Verbal (VCI: 137)</span>
+        </div>
+
+        <!-- Row 5 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-semibold text-sm text-zinc-500">#5</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127468;&#127463;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">David_L.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">132 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">98.3th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Penalaran Fluida (FRI: 134)</span>
+        </div>
+      </div>
+
+      <!-- Callout Banner -->
+      <div class="px-6 sm:px-8 py-5 bg-zinc-50 dark:bg-zinc-900/60 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+          </div>
+          <p class="text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200">
+            <strong>Sinkronisasi Papan Peringkat Komunitas Global</strong> - Dalam Pengembangan Aktif! Skor publik mengilustrasikan kohor persentil normatif.
+          </p>
+        </div>
+        <button
+          id="btn-share-result"
+          type="button"
+          class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors flex items-center gap-1.5 cursor-pointer"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+          Bagikan Skor Saya
+        </button>
+      </div>
+    </section>
+
+    <!-- Detailed Question Review Section -->
+    <section id="review-section" class="space-y-6 print:break-inside-avoid">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+            ANALISIS BUTIR SOAL IRT
+          </span>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Tinjauan Lengkap Butir Soal &amp; Pola Jawaban
+          </h2>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            Pelajari analisis terperinci untuk setiap butir soal di 4 domain CHC, termasuk parameter tingkat kesulitan IRT (b) dan daya pembeda (a).
+          </p>
+        </div>
+        <button
+          id="btn-expand-all"
+          type="button"
+          class="min-h-[44px] px-4 py-2 rounded-xl text-xs font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 transition-colors whitespace-nowrap cursor-pointer"
+        >
+          Buka Semua
+        </button>
+      </div>
+
+      <div id="review-accordion" class="space-y-3">
+        <!-- Injected dynamically by client JS -->
+      </div>
+    </section>
+
+    <!-- Retake & Alternate Tests Callout -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 print:hidden">
+      <div>
+        <h3 class="font-heading text-xl font-bold mb-1">
+          Ingin Menguji Kembali Kemampuan Anda?
+        </h3>
+        <p class="text-sm text-zinc-400 max-w-xl">
+          Setiap sesi menghasilkan set butir soal terstratifikasi yang baru dari bank soal terkalibrasi kami. Anda juga dapat mencoba tes skrining 10 menit.
+        </p>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+        <a
+          href="/id/tes-singkat"
+          class="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 text-center transition-colors border border-zinc-700"
+        >
+          Skrining Cepat (10 mnt)
+        </a>
+        <a
+          href="/id/tes"
+          id="btn-retake-bottom"
+          class="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 text-center transition-colors shadow-xs"
+        >
+          Ulangi Tes Lengkap
+        </a>
+      </div>
+    </section>
+
+    <!-- Educational Disclaimer -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+      <h4 class="font-heading font-bold text-sm text-zinc-900 dark:text-zinc-200 uppercase tracking-wider mb-2">
+        Kerangka Kerja Psikometri &amp; Batasan Ilmiah
+      </h4>
+      <p class="mb-3">
+        1. <strong>Instrumen Skrining:</strong> Asesmen online ini mengukur komponen spesifik dari Penalaran Fluida (Gf), Pemrosesan Spasial & Visual (Gv), Penalaran Kuantitatif (Gq), dan Pemahaman Verbal (Gc) menggunakan kerangka Teori Respons Butir 2-Parameter (2PL IRT). Ini memberikan estimasi statistik mandiri dan tidak menggantikan baterai neuropsikologis klinis komprehensif (seperti WAIS-IV atau SB5) yang diadministrasikan oleh psikolog berlisensi.
+      </p>
+      <p class="mb-3">
+        2. <strong>Kalibrasi Parameter Butir:</strong> Parameter butir soal (daya beda a dan kesulitan b) dijangkarkan pada literatur psikometri terulas sejawat sebagai benih pengembangan awal. Kalibrasi empiris berkala terus diperbarui seiring pertambahan sampel normatif.
+      </p>
+      <p>
+        3. <strong>Privasi Penuh Tanpa Retensi Data:</strong> Semua kalkulasi skor dijalankan sepenuhnya di sisi klien (browser) Anda. Respons butir soal dan skor Anda tidak pernah disimpan di basis data pusat ataupun diteruskan ke pihak ketiga komersial.
+      </p>
+    </section>
+
+    <!-- Frequently Asked Questions -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
+      <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white mb-4">
+        Pertanyaan tentang hasil tes IQ
+      </h2>
+
+      <div class="space-y-3">
+        <details class="group p-4 rounded-2xl bg-zinc-50/70 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white cursor-pointer list-none">
+            Berapa tingkat IQ yang dianggap normal?
+          </summary>
+          <p class="mt-3 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Pada skala dengan rerata 100 dan SD 15, rentang 90-109 biasanya berada di area rata-rata statistik. Interpretasi tetap bergantung pada instrumen dan norma yang digunakan.
+          </p>
+        </details>
+
+        <details class="group p-4 rounded-2xl bg-zinc-50/70 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white cursor-pointer list-none">
+            Bagaimana membaca skor dan persentil hasil tes IQ?
+          </summary>
+          <p class="mt-3 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Skor IQ menunjukkan posisi pada skala standar, sedangkan persentil menunjukkan posisi relatif pada distribusi populasi. Gunakan keduanya bersama-sama untuk memahami hasil, bukan menganggap skor sebagai persentase nilai ujian.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Explore Supporting SEO Tools -->
+    <section class="print:hidden">
+      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-4">
+        Jelajahi Alat &amp; Referensi Kognitif
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <a href="/id/tabel-skor-iq" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold block mb-1">Referensi Visual</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-blue-600 transition-colors">Tabel Skor IQ &rarr;</h4>
+          <p class="text-xs text-zinc-500 mt-1">Rentang distribusi normal, batas SD, dan proporsi populasi.</p>
+        </a>
+        <a href="/id/kalkulator-persentil-iq" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-semibold block mb-1">Alat Interaktif</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-indigo-600 transition-colors">Kalkulator Persentil IQ &rarr;</h4>
+          <p class="text-xs text-zinc-500 mt-1">Konversi dua arah instan antara skor terstandarisasi dan persentil eksak.</p>
+        </a>
+        <a href="/id/tes-singkat" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block mb-1">Skrining Cepat</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-emerald-600 transition-colors">Tes Singkat (10 mnt) &rarr;</h4>
+          <p class="text-xs text-zinc-500 mt-1">Skrining cepat 12 soal di 4 domain CHC dalam waktu kurang dari 10 menit.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Client-Side Evaluation and Hydration Script -->
+  <script>
+    import type { AssessmentResult } from '../../utils/scoring';
+
+    interface ReviewOption {
+      id: number;
+      text?: string;
+      svgContent?: string | null;
+      isCorrect: boolean;
+    }
+
+    interface ReviewItem {
+      id: number;
+      domain: 'fluid' | 'spatial' | 'quantitative' | 'verbal';
+      subType: string;
+      promptType: 'text' | 'svg';
+      promptText: string;
+      promptSvg?: string | null;
+      a: number;
+      b: number;
+      explanation: string;
+      options: ReviewOption[];
+      selectedOptionId?: number;
+      isCorrect: boolean;
+    }
+
+    // Static Demo Fixture
+    const DEMO_RESULT: AssessmentResult = {
+      theta: 1.60,
+      sem: 0.28,
+      iqEstimate: 124,
+      confidenceInterval: [118, 130],
+      percentile: 94.5,
+      rawScore: 19,
+      totalQuestions: 24,
+      testType: 'standard',
+      domainBreakdown: {
+        fluid:        { rawScore: 5, total: 6, theta: 1.55, standardScore: 123, percentile: 94.0 },
+        spatial:      { rawScore: 5, total: 6, theta: 1.62, standardScore: 124, percentile: 94.8 },
+        quantitative: { rawScore: 5, total: 6, theta: 1.68, standardScore: 125, percentile: 95.3 },
+        verbal:       { rawScore: 4, total: 6, theta: 1.45, standardScore: 122, percentile: 92.7 },
+      },
+    };
+
+    const DEMO_REVIEW_ITEMS: ReviewItem[] = [
+      {
+        id: 1,
+        domain: 'fluid',
+        subType: 'matrix_reasoning',
+        promptType: 'text',
+        promptText: 'Pilihlah ubin yang secara logis melengkapi pola matriks 3x3 berikut.',
+        a: 1.45,
+        b: -0.42,
+        explanation: 'Setiap baris memutar elemen sebesar 90 derajat searah jarum jam sambil membalikkan polaritas warna di kolom akhir.',
+        selectedOptionId: 3,
+        isCorrect: true,
+        options: [
+          { id: 1, text: 'Opsi A: Rotasi searah jarum jam tanpa pembalikan', isCorrect: false },
+          { id: 2, text: 'Opsi B: Pencerminan vertikal dengan pembalikan', isCorrect: false },
+          { id: 3, text: 'Opsi C: Rotasi 90 derajat dengan inversi warna', isCorrect: true },
+          { id: 4, text: 'Opsi D: Inversi statis 180 derajat', isCorrect: false },
+        ],
+      },
+      {
+        id: 2,
+        domain: 'spatial',
+        subType: 'cube_rotation',
+        promptType: 'text',
+        promptText: 'Jika kubus acuan diputar 90 derajat ke depan dan 90 derajat ke kanan, orientasi mana yang ditampilkan?',
+        a: 1.52,
+        b: 0.15,
+        explanation: 'Memutar kubus ke depan membawa muka atas ke depan, dan memutar ke kanan menggeser muka samping ke depan.',
+        selectedOptionId: 2,
+        isCorrect: true,
+        options: [
+          { id: 1, text: 'Opsi A: Muka persegi dengan lingkaran', isCorrect: false },
+          { id: 2, text: 'Opsi B: Tanda silang di depan dengan segitiga di atas', isCorrect: true },
+          { id: 3, text: 'Opsi C: Muka segitiga terbalik', isCorrect: false },
+          { id: 4, text: 'Opsi D: Muka lingkaran dengan garis diagonal', isCorrect: false },
+        ],
+      },
+      {
+        id: 3,
+        domain: 'quantitative',
+        subType: 'arithmetic_proportional_deduction',
+        promptType: 'text',
+        promptText: 'Tentukan suku yang hilang dalam deret berikut: 3, 7, 16, 35, ?',
+        a: 1.38,
+        b: 0.78,
+        explanation: 'Aturan perkalian bertingkat: x_(n+1) = (x_n * 2) + n. Untuk 35: (35 * 2) + 4 = 70 + 4 = 74.',
+        selectedOptionId: 1,
+        isCorrect: true,
+        options: [
+          { id: 1, text: '74', isCorrect: true },
+          { id: 2, text: '72', isCorrect: false },
+          { id: 3, text: '70', isCorrect: false },
+          { id: 4, text: '68', isCorrect: false },
+        ],
+      },
+      {
+        id: 4,
+        domain: 'verbal',
+        subType: 'lexical_analogy_deductive_logic',
+        promptType: 'text',
+        promptText: 'EFEMERAL berhubungan dengan PERMANEN sebagaimana RAGU-RAGU berhubungan dengan:',
+        a: 1.65,
+        b: 1.12,
+        explanation: 'Efemeral berarti tidak permanen (antonim). Ragu-ragu (vacillating) adalah lawan kata dari teguh / berpendirian mantap (Resolution).',
+        selectedOptionId: 2,
+        isCorrect: false,
+        options: [
+          { id: 1, text: 'Bimbang', isCorrect: false },
+          { id: 2, text: 'Ambigu', isCorrect: false },
+          { id: 3, text: 'Teguh / Mantap', isCorrect: true },
+          { id: 4, text: 'Cepat', isCorrect: false },
+        ],
+      },
+    ];
+
+    let currentCertResult: AssessmentResult | null = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Stamp print date
+      const printDateEl = document.getElementById('print-date');
+      if (printDateEl) printDateEl.textContent = 'Diterbitkan: ' + new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      // --- Read localStorage ---
+      const savedResultStr  = localStorage.getItem('iq_assessment_result');
+      const savedReviewStr  = localStorage.getItem('iq_review_data');
+      const demoBanner      = document.getElementById('demo-banner');
+      const testTypeBadge   = document.getElementById('test-type-badge');
+
+      let result: AssessmentResult | null = null;
+      let reviewItems: ReviewItem[] = [];
+
+      if (savedResultStr) {
+        try { result = JSON.parse(savedResultStr); } catch (e) {}
+      }
+      if (savedReviewStr) {
+        try { reviewItems = JSON.parse(savedReviewStr); } catch (e) {}
+      }
+
+      const isDemo = !result;
+
+      if (isDemo) {
+        if (demoBanner) demoBanner.classList.remove('hidden');
+        result = DEMO_RESULT;
+        reviewItems = DEMO_REVIEW_ITEMS;
+      }
+
+      currentCertResult = result;
+
+      // Update badge
+      if (testTypeBadge) {
+        testTypeBadge.textContent = result.testType === 'quick' ? 'Skrining Cepat (12 Soal)' : 'Asesmen Standar (24 Soal)';
+      }
+
+      // Update Displays
+      const scoreDisplay = document.getElementById('score-display');
+      const ciDisplay    = document.getElementById('ci-display');
+      const semDisplay   = document.getElementById('sem-display');
+      const pctDisplay   = document.getElementById('percentile-display');
+      const rarityDisplay= document.getElementById('rarity-display');
+      const thetaDisplay = document.getElementById('theta-display');
+      const pctSubtext   = document.getElementById('percentile-subtext');
+      const guideDynamicPct = document.getElementById('guide-dynamic-pct');
+      const guideDynamicCount = document.getElementById('guide-dynamic-count');
+
+      if (scoreDisplay) {
+        scoreDisplay.textContent = String(result.iqEstimate);
+        scoreDisplay.removeAttribute('aria-busy');
+      }
+      if (ciDisplay) ciDisplay.textContent = `${result.confidenceInterval[0]} - ${result.confidenceInterval[1]}`;
+      if (semDisplay) semDisplay.textContent = (result.sem * 15).toFixed(1);
+      if (pctDisplay) pctDisplay.textContent = `${result.percentile.toFixed(1)}%`;
+      if (pctSubtext) pctSubtext.textContent = `Lebih tinggi dari ${result.percentile.toFixed(1)}% populasi`;
+      if (thetaDisplay) thetaDisplay.textContent = `${(result.theta >= 0 ? '+' : '')}${result.theta.toFixed(2)} SD`;
+
+      if (guideDynamicPct) guideDynamicPct.textContent = `${result.percentile.toFixed(1)}%`;
+      if (guideDynamicCount) guideDynamicCount.textContent = `${Math.round(result.percentile)}`;
+
+      // Rarity
+      let rarityText = '1 dari 2 orang';
+      const p = result.percentile;
+      if (p >= 99.9) rarityText = '1 dari 1.000 orang';
+      else if (p >= 99.0) rarityText = '1 dari 100 orang';
+      else if (p >= 97.7) rarityText = '1 dari 44 orang';
+      else if (p >= 95.0) rarityText = '1 dari 20 orang';
+      else if (p >= 90.0) rarityText = '1 dari 10 orang';
+      else if (p >= 75.0) rarityText = '1 dari 4 orang';
+      else if (p >= 50.0) rarityText = '1 dari 2 orang';
+      else rarityText = 'Dalam rentang normal';
+      if (rarityDisplay) rarityDisplay.textContent = rarityText;
+
+      // Classification
+      const classificationBadge = document.getElementById('classification-badge');
+      if (classificationBadge) {
+        const iq = result.iqEstimate;
+        let label = 'Rata-rata Normal';
+        let cls = 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700';
+        if (iq >= 145)      { label = 'Sangat Istimewa (Profoundly Superior)'; cls = 'bg-purple-100 text-purple-900 dark:bg-zinc-900 dark:text-purple-300 border-purple-300 dark:border-zinc-700'; }
+        else if (iq >= 130) { label = 'Sangat Unggul (Very Superior)'; cls = 'bg-indigo-100 text-indigo-900 dark:bg-zinc-900 dark:text-indigo-300 border-indigo-300 dark:border-zinc-700'; }
+        else if (iq >= 120) { label = 'Unggul (Superior)'; cls = 'bg-blue-100 text-blue-900 dark:bg-zinc-900 dark:text-blue-300 border-blue-300 dark:border-zinc-700'; }
+        else if (iq >= 110) { label = 'Rata-rata Atas (High Average)'; cls = 'bg-emerald-100 text-emerald-900 dark:bg-zinc-900 dark:text-emerald-300 border-emerald-300 dark:border-zinc-700'; }
+        else if (iq >= 90)  { label = 'Rata-rata Normal (Average)'; cls = 'bg-zinc-100 text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700'; }
+        else if (iq >= 80)  { label = 'Rata-rata Bawah (Low Average)'; cls = 'bg-amber-100 text-amber-900 dark:bg-zinc-900 dark:text-amber-300 border-amber-300 dark:border-zinc-700'; }
+        else                { label = 'Rentang Batas (Borderline Range)'; cls = 'bg-rose-100 text-rose-900 dark:bg-zinc-900 dark:text-rose-300 border-rose-300 dark:border-zinc-700'; }
+        classificationBadge.textContent = label;
+        classificationBadge.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border ' + cls;
+      }
+
+      // --- Bell Curve ---
+      renderBellCurve(result.iqEstimate);
+
+      // --- Question Review Accordion ---
+      renderReviewAccordion(reviewItems);
+
+      // --- Print Button ---
+      const btnPrint = document.getElementById('btn-print');
+      if (btnPrint) btnPrint.addEventListener('click', () => window.print());
+
+      // --- Clear session on Retake ---
+      function handleUlangi(e: Event) {
+        e.preventDefault();
+        localStorage.removeItem('iq_assessment_answers');
+        localStorage.removeItem('iq_active_questions');
+        localStorage.removeItem('iq_test_type');
+        localStorage.removeItem('iq_assessment_result');
+        localStorage.removeItem('iq_review_data');
+        localStorage.removeItem('freeiq_active_session');
+        localStorage.removeItem('freeiq_quick_session');
+        window.location.href = (e.currentTarget as HTMLAnchorElement).href;
+      }
+      document.getElementById('btn-retake-top')?.addEventListener('click', handleUlangi);
+      document.getElementById('btn-retake-bottom')?.addEventListener('click', handleUlangi);
+      document.getElementById('btn-quick-test-top')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('iq_assessment_answers');
+        localStorage.removeItem('iq_active_questions');
+        localStorage.removeItem('iq_test_type');
+        localStorage.removeItem('iq_assessment_result');
+        localStorage.removeItem('iq_review_data');
+        localStorage.removeItem('freeiq_active_session');
+        localStorage.removeItem('freeiq_quick_session');
+        window.location.href = '/id/tes-singkat';
+      });
+
+      // --- Expand All accordion ---
+      const btnExpandAll = document.getElementById('btn-expand-all');
+      let allExpanded = false;
+      if (btnExpandAll) {
+        btnExpandAll.addEventListener('click', () => {
+          allExpanded = !allExpanded;
+          document.querySelectorAll('.review-panel').forEach((el) => {
+            (el as HTMLElement).style.display = allExpanded ? 'block' : 'none';
+          });
+          btnExpandAll.textContent = allExpanded ? 'Tutup Semua' : 'Buka Semua';
+        });
+      }
+    });
+
+    // --- SubType label formatter ---
+    function formatSubType(subType: string): string {
+      const map: Record<string, string> = {
+        matrix_reasoning:                 'Penalaran Matriks',
+        topological_series:               'Seri Pola Topologi',
+        cube_rotation:                    'Rotasi Kubus 3D',
+        cube_nets:                        'Jaring-Jaring Kubus',
+        abstract_rule_induction:          'Induksi Aturan Abstrak',
+        spatial_visualization:            'Visualisasi Spasial',
+        arithmetic_proportional_deduction:'Penalaran Kuantitatif',
+        lexical_analogy_deductive_logic:  'Logika Verbal & Silogisme',
+      };
+      return map[subType] || subType.replace(/_/g, ' ').replace(/\w/g, (c) => c.toUpperCase());
+    }
+
+    // --- Bell Curve Render ---
+    function renderBellCurve(userIq: number) {
+      const minIq = 55; const maxIq = 145;
+      const baselineY = 190; const peakHeight = 155;
+      const mean = 100; const sd = 15;
+      const xForIq = (iq: number) => 50 + ((iq - minIq) / (maxIq - minIq)) * 500;
+      const yForIq = (iq: number) => baselineY - peakHeight * Math.exp(-0.5 * Math.pow((iq - mean) / sd, 2));
+      let outlineD = `M 50 ${baselineY}`;
+      for (let iq = minIq; iq <= maxIq; iq++) {
+        outlineD += ` L ${xForIq(iq).toFixed(1)} ${yForIq(iq).toFixed(1)}`;
+      }
+      document.getElementById('curve-outline')?.setAttribute('d', outlineD);
+      const clamped = Math.max(55, Math.min(145, userIq));
+      let shadedD = `M 50 ${baselineY}`;
+      for (let iq = minIq; iq <= clamped; iq++) {
+        shadedD += ` L ${xForIq(iq).toFixed(1)} ${yForIq(iq).toFixed(1)}`;
+      }
+      shadedD += ` L ${xForIq(clamped).toFixed(1)} ${baselineY} Z`;
+      document.getElementById('curve-shaded-area')?.setAttribute('d', shadedD);
+      const curvePin = document.getElementById('curve-pin');
+      if (curvePin) {
+        curvePin.setAttribute('transform', `translate(${xForIq(clamped).toFixed(1)}, ${yForIq(clamped).toFixed(1)})`);
+        const pinText = document.getElementById('curve-pin-text');
+        if (pinText) pinText.textContent = `Anda: ${userIq}`;
+      }
+    }
+
+    // --- Question Review Accordion ---
+    function renderReviewAccordion(items: ReviewItem[]) {
+      const accordion = document.getElementById('review-accordion');
+      if (!accordion) return;
+      accordion.innerHTML = '';
+
+      const domainColors: Record<string, string> = {
+        fluid:        'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 font-mono',
+        spatial:      'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 font-mono',
+        quantitative: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 font-mono',
+        verbal:       'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 font-mono',
+      };
+      const domainLabels: Record<string, string> = {
+        fluid: 'Penalaran Fluida (FRI)',
+        spatial: 'Spasial & Visual (VSI)',
+        quantitative: 'Kuantitatif (QRI)',
+        verbal: 'Verbal (VCI)',
+      };
+
+      items.forEach((q, idx) => {
+        const selectedId = q.selectedOptionId;
+        const selectedOpt = q.options.find((o) => o.id === selectedId);
+        const correctOpt  = q.options.find((o) => o.isCorrect);
+        const isCorrect   = q.isCorrect;
+        const wasAnswered = selectedId !== undefined;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden';
+
+        // Header button
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'w-full flex items-center gap-3 p-4 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-inset cursor-pointer';
+
+        // Result icon
+        const icon = document.createElement('span');
+        icon.className = 'shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ' + (isCorrect ? 'bg-emerald-500' : wasAnswered ? 'bg-rose-500' : 'bg-zinc-400');
+        icon.innerHTML = isCorrect
+          ? '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>'
+          : '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>';
+
+        const meta = document.createElement('div');
+        meta.className = 'flex-1 min-w-0';
+        const topRow = document.createElement('div');
+        topRow.className = 'flex items-center gap-2 flex-wrap';
+        const qNum = document.createElement('span');
+        qNum.className = 'font-mono text-sm font-semibold text-zinc-700 dark:text-zinc-300';
+        qNum.textContent = `Soal #${idx + 1}`;
+        const domainBadge = document.createElement('span');
+        const dc = domainColors[q.domain] || '';
+        domainBadge.className = `inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono font-semibold border ${dc}`;
+        domainBadge.textContent = domainLabels[q.domain] || q.domain;
+        const resultText = document.createElement('span');
+        resultText.className = 'text-xs font-mono ' + (isCorrect ? 'text-emerald-600 dark:text-emerald-400' : wasAnswered ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-400');
+        resultText.textContent = isCorrect ? 'Benar' : wasAnswered ? 'Salah' : 'Dilewati';
+        topRow.append(qNum, domainBadge, resultText);
+
+        const questionSummary = document.createElement('p');
+        questionSummary.className = 'text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 truncate pr-8';
+        questionSummary.textContent = q.promptType === 'svg' ? `[Visual: ${formatSubType(q.subType)}]` : q.promptText.slice(0, 80) + (q.promptText.length > 80 ? '...' : '');
+        meta.append(topRow, questionSummary);
+
+        const chevron = document.createElement('span');
+        chevron.className = 'shrink-0 text-zinc-400 transition-transform duration-200';
+        chevron.innerHTML = '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>';
+
+        header.append(icon, meta, chevron);
+
+        // Expandable panel
+        const panel = document.createElement('div');
+        panel.className = 'review-panel border-t border-zinc-100 dark:border-zinc-800 p-4 sm:p-5 text-sm text-zinc-700 dark:text-zinc-300';
+        panel.style.display = 'none';
+
+        // Show prompt if text
+        if (q.promptType !== 'svg' && q.promptText) {
+          const promptEl = document.createElement('p');
+          promptEl.className = 'text-sm font-medium text-zinc-800 dark:text-zinc-200 mb-3 leading-relaxed p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800';
+          promptEl.textContent = q.promptText;
+          panel.appendChild(promptEl);
+        }
+
+        // Selected vs correct answer display
+        const answerRow = document.createElement('div');
+        answerRow.className = 'flex flex-col sm:flex-row gap-3 mb-4';
+
+        const makeAnswerCard = (label: string, opt: typeof correctOpt, highlight: 'correct' | 'wrong' | 'neutral') => {
+          const card = document.createElement('div');
+          const bg = highlight === 'correct' ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800' :
+                     highlight === 'wrong'   ? 'bg-rose-50 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800' :
+                                              'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700';
+          card.className = `flex-1 p-3 rounded-xl border ${bg}`;
+          const labelEl = document.createElement('span');
+          labelEl.className = 'block text-xs font-mono font-semibold mb-1 ' + (highlight === 'correct' ? 'text-emerald-700 dark:text-emerald-400' : highlight === 'wrong' ? 'text-rose-700 dark:text-rose-400' : 'text-zinc-500');
+          labelEl.textContent = label;
+          card.appendChild(labelEl);
+          if (opt) {
+            if (opt.text) {
+              const t = document.createElement('p');
+              t.className = 'text-xs text-zinc-800 dark:text-zinc-200';
+              t.textContent = opt.text;
+              card.appendChild(t);
+            } else {
+              const svgWrap = document.createElement('div');
+              svgWrap.className = 'max-w-[80px] mx-auto';
+              svgWrap.innerHTML = opt.svgContent ?? '';
+              card.appendChild(svgWrap);
+            }
+          } else {
+            const t = document.createElement('p');
+            t.className = 'text-xs text-zinc-400 italic';
+            t.textContent = 'Tidak dijawab';
+            card.appendChild(t);
+          }
+          return card;
+        };
+
+        if (!isCorrect) {
+          answerRow.appendChild(makeAnswerCard('Jawaban Anda', selectedOpt, wasAnswered ? 'wrong' : 'neutral'));
+          answerRow.appendChild(makeAnswerCard('Jawaban Benar', correctOpt, 'correct'));
+        } else {
+          answerRow.appendChild(makeAnswerCard('Jawaban Anda (Benar)', selectedOpt, 'correct'));
+        }
+        panel.appendChild(answerRow);
+
+        // Explanation
+        const explainLabel = document.createElement('p');
+        explainLabel.className = 'text-xs font-mono font-semibold text-zinc-500 uppercase tracking-wider mb-2';
+        explainLabel.textContent = 'Penjelasan Solusi';
+        const explainText = document.createElement('p');
+        explainText.className = 'text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80';
+        explainText.textContent = q.explanation;
+        panel.append(explainLabel, explainText);
+
+        // IRT params
+        const params = document.createElement('p');
+        params.className = 'text-xs font-mono text-zinc-400 mt-3';
+        params.textContent = `Parameter IRT: a = ${q.a} (daya beda), b = ${q.b} (tingkat kesulitan)`;
+        panel.appendChild(params);
+
+        // Toggle
+        header.addEventListener('click', () => {
+          const isOpen = panel.style.display !== 'none';
+          panel.style.display = isOpen ? 'none' : 'block';
+          chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+        });
+      });
+    }
+
+    // --- Certificate Generator ---
+    (function () {
+      function getCertResult(): AssessmentResult | null {
+        if (currentCertResult) return currentCertResult;
+        const savedResultStr = localStorage.getItem('iq_assessment_result');
+        if (savedResultStr) {
+          try {
+            return JSON.parse(savedResultStr);
+          } catch (e) {}
+        }
+        return DEMO_RESULT;
+      }
+
+      function drawCertificate(canvas: HTMLCanvasElement, recipientName: string, result: AssessmentResult) {
+        const W = 1600, H = 1130;
+        // High-DPI retina canvas buffer
+        canvas.width = 3200;
+        canvas.height = 2260;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.setTransform(2, 0, 0, 2, 0, 0);
+
+        function drawRoundRect(x: number, y: number, w: number, h: number, r: number) {
+          if (!ctx) return;
+          if (typeof (ctx as any).roundRect === 'function') {
+            (ctx as any).roundRect(x, y, w, h, r);
+          } else {
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+          }
+        }
+
+        // Background gradient
+        const bg = ctx.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, '#ffffff');
+        bg.addColorStop(1, '#f8fafc');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Outer double border
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 12;
+        ctx.strokeRect(24, 24, W - 48, H - 48);
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(40, 40, W - 80, H - 80);
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(52, 52, W - 104, H - 104);
+
+        // Corner ornament dots
+        const corners = [[68, 68], [W - 68, 68], [68, H - 68], [W - 68, H - 68]];
+        corners.forEach(([cx, cy]) => {
+          ctx.beginPath();
+          ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+          ctx.fillStyle = '#d97706';
+          ctx.fill();
+        });
+
+        // Header registry line
+        ctx.font = 'bold 26px "Georgia", serif';
+        ctx.fillStyle = '#374151';
+        ctx.textAlign = 'center';
+        ctx.fillText('REGISTRI PSIKOMETRI FREEIQEXAM.COM', W / 2, 140);
+
+        // Gold separator
+        ctx.fillStyle = '#d97706';
+        ctx.fillRect(W / 2 - 300, 158, 600, 3);
+
+        // Monumental title
+        ctx.font = 'bold 44px "Georgia", serif';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText('SERTIFIKAT EVALUASI KOGNITIF MANDIRI', W / 2, 240);
+
+        // Presentation text
+        ctx.font = '28px "Georgia", serif';
+        ctx.fillStyle = '#6b7280';
+        ctx.fillText('Dengan ini menerangkan bahwa', W / 2, 320);
+
+        // Recipient name
+        const displayName = recipientName.trim() || 'Peserta Terverifikasi';
+        let nameFontSize = 70;
+        ctx.font = `bold ${nameFontSize}px "Georgia", serif`;
+        while (ctx.measureText(displayName).width > 1200 && nameFontSize > 26) {
+          nameFontSize -= 4;
+          ctx.font = `bold ${nameFontSize}px "Georgia", serif`;
+        }
+        ctx.fillStyle = '#1e40af';
+        ctx.fillText(displayName, W / 2, 420);
+
+        // Name underline
+        const nameWidth = Math.min(ctx.measureText(displayName).width, 1200);
+        ctx.fillStyle = '#1e40af';
+        ctx.fillRect(W / 2 - nameWidth / 2, 432, nameWidth, 2);
+
+        // Performance paragraph
+        const dateStr = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+        ctx.font = '22px "Georgia", serif';
+        ctx.fillStyle = '#374151';
+        ctx.fillText('telah berhasil menyelesaikan Asesmen Terstandarisasi 4-Domain Kemampuan Kognitif pada ' + dateStr + '.', W / 2, 490);
+        ctx.fillText('Dievaluasi berdasarkan model Teori Respons Butir 2-Parameter (2PL IRT) pada Skala Psikometri Baku (Rerata 100, SD 15).', W / 2, 526);
+
+        // Central score box
+        const boxX = W / 2 - 280, boxY = 566, boxW = 560, boxH = 200;
+        ctx.fillStyle = '#f0f9ff';
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        drawRoundRect(boxX, boxY, boxW, boxH, 16);
+        ctx.fill();
+        ctx.stroke();
+
+        // Score + IQ label
+        ctx.font = 'bold 80px "Georgia", serif';
+        ctx.fillStyle = '#0f172a';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(result.iqEstimate) + ' IQ', W / 2, boxY + 82);
+
+        ctx.font = '22px "Georgia", serif';
+        ctx.fillStyle = '#374151';
+        ctx.fillText(
+          '95% Interval Kredibel: [' + result.confidenceInterval[0] + ' - ' + result.confidenceInterval[1] + ']   |   ' +
+          'Persentil ke-' + result.percentile.toFixed(1),
+          W / 2, boxY + 126
+        );
+
+        // Classification
+        let classification = 'Kemampuan Kognitif Rata-rata Normal';
+        const iq = result.iqEstimate;
+        if (iq >= 145) classification = 'Kemampuan Kognitif Sangat Istimewa (Profoundly Superior)';
+        else if (iq >= 130) classification = 'Kemampuan Kognitif Sangat Unggul (Very Superior)';
+        else if (iq >= 120) classification = 'Kemampuan Kognitif Unggul (Superior)';
+        else if (iq >= 110) classification = 'Rata-rata Atas (High Average)';
+        else if (iq >= 90)  classification = 'Rata-rata Normal (Average)';
+        else if (iq >= 80)  classification = 'Rata-rata Bawah (Low Average)';
+        else                classification = 'Rentang Batas (Borderline)';
+
+        ctx.font = 'bold 22px "Georgia", serif';
+        ctx.fillStyle = '#1e40af';
+        ctx.fillText(classification, W / 2, boxY + 168);
+
+        // 4 CHC Domain sub-indices
+        const domainLabels = [
+          { key: 'fluid',        label: 'Penalaran Fluida (FRI)' },
+          { key: 'spatial',      label: 'Spasial & Visual (VSI)' },
+          { key: 'quantitative', label: 'Kuantitatif (QRI)' },
+          { key: 'verbal',       label: 'Pemahaman Verbal (VCI)' },
+        ] as const;
+
+        const colW = (W - 160) / 4;
+        const domY = 810;
+        ctx.font = '20px "Georgia", serif';
+        domainLabels.forEach((d, i) => {
+          const cx         = 80 + colW * i + colW / 2;
+          const dd         = result.domainBreakdown[d.key];
+          const accPct     = dd.total > 0 ? Math.round((dd.rawScore / dd.total) * 100) : 0;
+          const tierLabel  = accPct >= 83 ? 'Area Kekuatan' : accPct >= 67 ? 'Rata-rata Atas' : accPct >= 50 ? 'Rata-rata Normal' : 'Pengembangan';
+          ctx.fillStyle = '#374151';
+          ctx.textAlign = 'center';
+          ctx.fillText(d.label, cx, domY);
+          ctx.font = 'bold 34px "Georgia", serif';
+          ctx.fillStyle = '#0f172a';
+          ctx.fillText(dd.rawScore + '/' + dd.total + ' Benar', cx, domY + 46);
+          ctx.font = '18px "Georgia", serif';
+          ctx.fillStyle = '#374151';
+          ctx.fillText('(' + tierLabel + ')', cx, domY + 74);
+          ctx.font = '20px "Georgia", serif';
+        });
+
+        // Gold separator above footer
+        ctx.fillStyle = '#d97706';
+        ctx.fillRect(80, 900, W - 160, 2);
+
+        // Footer: Reference ID | Seal text | Date
+        const hashInput = `${result.iqEstimate}-${result.theta.toFixed(2)}-${result.rawScore}-${result.totalQuestions}`;
+        let hashVal = 5381;
+        for (let i = 0; i < hashInput.length; i++) {
+          hashVal = ((hashVal << 5) + hashVal) + hashInput.charCodeAt(i);
+          hashVal |= 0;
+        }
+        const hexCode = Math.abs(hashVal).toString(16).padStart(6, '0').slice(-6).toUpperCase();
+        const dateYear = new Date().getFullYear().toString();
+        const referenceId = `FIQ-${dateYear}-${hexCode}`;
+        ctx.font = '18px monospace';
+        ctx.fillStyle = '#6b7280';
+        ctx.textAlign = 'left';
+        ctx.fillText('ID Referensi: ' + referenceId, 100, 950);
+
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 18px "Georgia", serif';
+        ctx.fillStyle = '#d97706';
+        ctx.fillText('LAPORAN KEMAMPUAN IRT 2PL | PENILAIAN MANDIRI', W / 2, 950);
+
+        ctx.textAlign = 'right';
+        ctx.font = '18px "Georgia", serif';
+        ctx.fillStyle = '#6b7280';
+        ctx.fillText('FreeIQExam Psychometrics Engine', W - 100, 950);
+        ctx.fillText(dateStr, W - 100, 978);
+
+        // Signature line
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(W - 400, 940);
+        ctx.lineTo(W - 100, 940);
+        ctx.stroke();
+
+        // Mirror canvas to print certificate image
+        const printCertImg = document.getElementById('print-cert-img') as HTMLImageElement | null;
+        if (printCertImg) {
+          printCertImg.src = canvas.toDataURL('image/png');
+        }
+      }
+
+      // Button wiring
+      document.addEventListener('DOMContentLoaded', function () {
+        const btnGenerate   = document.getElementById('btn-generate-cert');
+        const btnDownload   = document.getElementById('btn-download-cert');
+        const btnPrintCert  = document.getElementById('btn-print-cert');
+        const btnShare      = document.getElementById('btn-share-result');
+        const nameInput     = document.getElementById('cert-name-input') as HTMLInputElement | null;
+        const previewWrap   = document.getElementById('cert-preview-wrap');
+        const canvas        = document.getElementById('cert-canvas') as HTMLCanvasElement | null;
+
+        if (btnGenerate && canvas && previewWrap) {
+          btnGenerate.addEventListener('click', () => {
+            const r = getCertResult();
+            if (!r) return;
+            const name = nameInput ? nameInput.value.trim() : '';
+            drawCertificate(canvas, name, r);
+            previewWrap.classList.remove('hidden');
+            previewWrap.classList.add('flex');
+            canvas.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+        }
+
+        if (btnDownload && canvas) {
+          btnDownload.addEventListener('click', () => {
+            const name = (nameInput ? nameInput.value.trim() : '') || 'Peserta_Terverifikasi';
+            const safeName = name.replace(/[^a-zA-Z0-9_]/g, '_');
+            const filename = 'FreeIQExam_Sertifikat_' + safeName + '.png';
+
+            if (canvas.toBlob) {
+              canvas.toBlob((blob) => {
+                if (!blob) return;
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+                if (isIOS) {
+                  const url = URL.createObjectURL(blob);
+                  window.open(url, '_blank');
+                  setTimeout(() => URL.revokeObjectURL(url), 30000);
+                } else {
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.download = filename;
+                  link.href = url;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  setTimeout(() => URL.revokeObjectURL(url), 1000);
+                }
+              }, 'image/png');
+            } else {
+              const link = document.createElement('a');
+              link.download = filename;
+              link.href = canvas.toDataURL('image/png');
+              link.click();
+            }
+          });
+        }
+
+        if (btnPrintCert) {
+          btnPrintCert.addEventListener('click', () => window.print());
+        }
+
+        if (btnShare) {
+          btnShare.addEventListener('click', () => {
+            const r = getCertResult();
+            const shareText = r
+              ? 'Saya memperoleh skor ' + r.iqEstimate + ' IQ (Persentil ke-' + r.percentile.toFixed(1) + ') pada Asesmen 4-Domain Kognitif FreeIQExam. Ikuti tes gratis di https://freeiqexam.com/id'
+              : 'Ikuti Asesmen 4-Domain IQ Gratis di https://freeiqexam.com/id';
+            if (navigator.share) {
+              navigator.share({ title: 'Skor FreeIQExam Saya', text: shareText, url: 'https://freeiqexam.com/id/hasil' }).catch(() => {});
+            } else {
+              navigator.clipboard.writeText(shareText).then(() => {
+                if (btnShare) btnShare.textContent = 'Tautan Disalin!';
+                setTimeout(() => { if (btnShare) btnShare.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg> Bagikan Skor Saya'; }, 2500);
+              }).catch(() => { window.prompt('Salin tautan skor Anda:', shareText); });
+            }
+          });
+        }
+      });
+    })();
+  </script>
+</Layout>

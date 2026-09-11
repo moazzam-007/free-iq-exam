@@ -1,0 +1,889 @@
+---
+import Layout from '../../../components/id/LayoutId.astro';
+import Header from '../../../components/id/HeaderId.astro';
+import Footer from '../../../components/id/FooterId.astro';
+
+const title = "Tes Stroop Online Gratis - Latihan Efek Stroop & Kontrol Inhibisi | FreeIQExam";
+const description = "Ikuti tes efek Stroop klasik online gratis. Ukur kontrol kognitif inhibisi, atensi selektif, dan resolusi konflik interferensi warna font (J. Ridley Stroop, 1935).";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Stroop Color Clash Cognitive Drill",
+    "url": "https://freeiqexam.com/id/permainan/stroop-clash",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Uji Efek Stroop ilmiah untuk mengukur kontrol inhibisi eksekutif, interferensi kognitif, dan kecepatan atensi selektif."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan Kognitif",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Stroop Color Clash",
+        "item": "https://freeiqexam.com/id/permainan/stroop-clash"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/games/stroop-clash">
+  <Header currentPath="/id/permainan/stroop-clash" enPath="/games/stroop-clash" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <a href="/id/permainan" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Permainan Kognitif</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Stroop Color Clash</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-coral mb-1.5">
+          Gf / Gs &bull; Kontrol Inhibisi
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            Stroop Color Clash: Kontrol Inhibisi
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 text-xs font-mono font-medium gap-1.5 cursor-pointer"
+            aria-label="Petunjuk cara bermain"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+            <span>Cara Bermain</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat HUD (4 rounded cards) -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Percobaan</div>
+          <div id="hud-trial" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 25</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Skor</div>
+          <div id="hud-score" class="font-bold text-rose-600 dark:text-rose-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[64px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Median RT</div>
+          <div id="hud-speed" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0ms</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Terbaik</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center min-h-[440px] justify-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-coral flex items-center justify-center mb-5 shadow-lg shadow-rose-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Tantangan Stroop Color Clash
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Tentukan warna <strong>TINTA FONT</strong> dari setiap kata yang dicetak secepat mungkin.
+          </p>
+          <p>
+            Tekan refleks otomatis Anda untuk membaca kata. Jika kata <strong>MERAH</strong> dicetak dengan <span class="text-blue-600 dark:text-blue-400 font-bold">TINTA BIRU</span>, tekan <strong>BIRU</strong>.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            25 percobaan (40% kongruen, 60% inkongruen konflik). Kecepatan respons dan ketahanan inhibisi menentukan skor Anda.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 cursor-pointer"
+        >
+          <span>Mulai Permainan (Spasi)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- Trial Progress Bar -->
+        <div class="w-full max-w-xl mb-8">
+          <div class="flex items-center justify-between text-xs font-mono font-semibold mb-2">
+            <span class="text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Kemajuan Sesi</span>
+            <span id="trial-counter-text" class="text-xs font-bold text-rose-600 dark:text-rose-400 font-mono">Percobaan 1 dari 25</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700/60">
+            <div id="trial-progress-bar" class="h-full bg-rose-500 rounded-full transition-all duration-200" style="width: 4%;"></div>
+          </div>
+        </div>
+
+        <!-- Stimulus Word Card -->
+        <div class="w-full max-w-lg mb-8 flex flex-col items-center">
+          <div class="w-full py-12 px-6 rounded-3xl bg-zinc-50 dark:bg-zinc-800/50 border-2 border-zinc-200 dark:border-zinc-700 flex flex-col items-center justify-center min-h-[180px] shadow-inner transition-all">
+            <span id="stimulus-fixation" class="text-4xl sm:text-5xl font-mono font-bold text-zinc-400 dark:text-zinc-600 hidden select-none">+</span>
+            <span id="stimulus-word" class="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-wider transition-all select-none font-heading">
+              SIAP
+            </span>
+          </div>
+        </div>
+
+        <!-- Color Response Controls -->
+        <div class="w-full max-w-lg grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4">
+          <!-- Red -->
+          <button
+            id="btn-color-red"
+            type="button"
+            data-color="red"
+            class="min-h-[52px] group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60 border-2 border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 shadow-sm transition-all duration-150 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 cursor-pointer"
+          >
+            <div class="flex items-center gap-1.5 font-heading font-bold text-base sm:text-lg">
+              <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              <span>Merah</span>
+            </div>
+            <span class="text-[11px] font-mono font-semibold text-red-600/80 dark:text-red-400/80 mt-0.5">[M / 1]</span>
+          </button>
+
+          <!-- Blue -->
+          <button
+            id="btn-color-blue"
+            type="button"
+            data-color="blue"
+            class="min-h-[52px] group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 border-2 border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 shadow-sm transition-all duration-150 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+          >
+            <div class="flex items-center gap-1.5 font-heading font-bold text-base sm:text-lg">
+              <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+              <span>Biru</span>
+            </div>
+            <span class="text-[11px] font-mono font-semibold text-blue-600/80 dark:text-blue-400/80 mt-0.5">[B / 2]</span>
+          </button>
+
+          <!-- Green -->
+          <button
+            id="btn-color-green"
+            type="button"
+            data-color="green"
+            class="min-h-[52px] group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 border-2 border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 shadow-sm transition-all duration-150 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
+          >
+            <div class="flex items-center gap-1.5 font-heading font-bold text-base sm:text-lg">
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <span>Hijau</span>
+            </div>
+            <span class="text-[11px] font-mono font-semibold text-emerald-600/80 dark:text-emerald-400/80 mt-0.5">[H / 3]</span>
+          </button>
+
+          <!-- Yellow -->
+          <button
+            id="btn-color-yellow"
+            type="button"
+            data-color="yellow"
+            class="min-h-[52px] group relative flex flex-col items-center justify-center p-3 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 border-2 border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-300 shadow-sm transition-all duration-150 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
+          >
+            <div class="flex items-center gap-1.5 font-heading font-bold text-base sm:text-lg">
+              <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+              <span>Kuning</span>
+            </div>
+            <span class="text-[11px] font-mono font-semibold text-amber-600/80 dark:text-amber-400/80 mt-0.5">[K / 4]</span>
+          </button>
+        </div>
+
+        <!-- Feedback Toast -->
+        <div id="feedback-toast" role="status" aria-live="polite" class="h-6 mt-1 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+          Status
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessible How to Play Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4"
+    >
+      <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 cursor-pointer"
+          aria-label="Tutup petunjuk"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+            </svg>
+          </div>
+          <div>
+            <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+              Cara Bermain Stroop Color Clash
+            </h2>
+            <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Kontrol Inhibisi &amp; Atensi Selektif</p>
+          </div>
+        </div>
+
+        <div class="space-y-3.5 text-sm text-zinc-600 dark:text-zinc-300 mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-1">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">1. Aturan Emas</h4>
+            <p class="text-xs sm:text-sm">Identifikasi <strong>warna tinta fisik</strong> dari kata yang muncul. ABAIKAN arti teks yang tertulis.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-1">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">2. Mekanisme Konflik</h4>
+            <p class="text-xs sm:text-sm">Kondisi kongruen cocok antara kata dan warna tinta. Kondisi inkongruen menciptakan interferensi Stroop yang menuntut kontrol inhibisi eksekutif.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-1">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">3. Pintasan Keyboard</h4>
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
+              <div class="flex items-center gap-1.5"><span class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-bold">1 / M</span> Merah</div>
+              <div class="flex items-center gap-1.5"><span class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-bold">2 / B</span> Biru</div>
+              <div class="flex items-center gap-1.5"><span class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-bold">3 / H</span> Hijau</div>
+              <div class="flex items-center gap-1.5"><span class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-bold">4 / K</span> Kuning</div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          id="btn-confirm-how"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-heading font-bold text-sm shadow-md transition-all hover:scale-102 active:scale-98 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+        >
+          Mengerti, Mulai Latihan
+        </button>
+      </div>
+    </div>
+
+    <!-- End of Round Performance Modal -->
+    <div
+      id="modal-end-round"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-end-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4"
+    >
+      <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 cursor-pointer"
+          aria-label="Tutup ringkasan"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-coral flex items-center justify-center mb-4 mx-auto shadow-lg shadow-rose-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <h2 id="modal-end-title" class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-2">
+          Sesi Selesai!
+        </h2>
+        <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6">Evaluasi Kontrol Inhibisi Stroop</p>
+
+        <!-- Standardized Task Performance Score -->
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 mb-6">
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+            Skor Performa Tugas
+          </div>
+          <div class="flex items-baseline justify-center gap-1.5">
+            <span id="modal-score" class="text-4xl sm:text-5xl font-extrabold font-heading text-rose-600 dark:text-rose-400">0</span>
+            <span class="text-sm font-mono text-zinc-400">/ 100</span>
+          </div>
+          <div id="modal-tier-badge" class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+            <span id="modal-tier-name">Fondasi Solid</span>
+          </div>
+          <p id="modal-tier-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 max-w-xs mx-auto"></p>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6 text-center font-mono">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-[10px] text-zinc-400 uppercase">Akurasi</div>
+            <div id="modal-acc" class="text-base font-bold text-zinc-900 dark:text-white">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-[10px] text-zinc-400 uppercase">Median RT</div>
+            <div id="modal-rt" class="text-base font-bold text-zinc-900 dark:text-white">0ms</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-[10px] text-zinc-400 uppercase">Biaya Interferensi</div>
+            <div id="modal-cost" class="text-base font-bold text-zinc-900 dark:text-white">0ms</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-[10px] text-zinc-400 uppercase">Runtunan Terbaik</div>
+            <div id="modal-streak" class="text-base font-bold text-zinc-900 dark:text-white">0</div>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-6">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Landasan Ilmiah
+          </div>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400">
+            Efek Interferensi Stroop (J. Ridley Stroop, 1935). Kontrol Inhibisi &amp; Atensi Selektif (Gs/Gf).
+          </p>
+        </div>
+
+        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic mb-5 leading-normal">
+          Catatan Efek Latihan: Skor performa mencerminkan kelancaran operasional spesifik tugas dan kecepatan respons di bawah efek latihan, bukan kecerdasan umum bawaan (g). Latihan berulang mengasah ketangkasan kognitif.
+        </p>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-play-again"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-sm shadow-sm transition-all hover:scale-102 active:scale-98 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+          >
+            Main Lagi
+          </button>
+          <a
+            href="/id/permainan"
+            class="min-h-[44px] px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+          >
+            Pusat Permainan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Guide & Cognitive Science Section -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-coral mb-2">
+          CHC Broad Ability: Kontrol Inhibisi (Gf/Gs)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Efek Interferensi Stroop: Kontrol Inhibisi &amp; Atensi Selektif
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Fenomena Stroop adalah salah satu tolok ukur paling kokoh dalam neuropsikologi eksperimental. Tugas ini mengukur kapasitas sistem eksekutif otak untuk menekan respons otomatis membaca teks demi memproses atribut persepsi sekunder (warna tinta font).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. Cara Bermain &amp; Kontrol
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Fokuskan pandangan pada kata di tengah layar. Identifikasi warna tinta font dan pilih tombol warna yang sesuai secepat mungkin menggunakan klik mouse atau tombol angka 1-4.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Penilaian &amp; Biaya Interferensi
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Performa dihitung berdasarkan akurasi keputusan dan median waktu reaksi (RT). Biaya interferensi Stroop diukur dari selisih waktu respons milidetik antara kondisi inkongruen dan kondisi kongruen.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Landasan Neurosains
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Pertama kali dipublikasikan oleh J. Ridley Stroop (1935, <em>Journal of Experimental Psychology</em>), efek ini melibatkan aktivasi anterior cingulate cortex (ACC) dan dorsolateral prefrontal cortex (DLPFC).
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Catatan Psikometrik Penting:</strong> Skor Stroop Clash mengukur kecepatan reaksi, resolusi konflik persepsi, dan atensi selektif di bawah efek latihan. Skor ini tidak mewakili kecerdasan umum bawaan (<em>g</em>) atau menggantikan asesmen IQ formal.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Ingin Evaluasi Kognitif Menyeluruh?
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Uji kemampuan Penalaran Fluida, Visual-Spasial, Kuantitatif, dan Verbal Anda dengan asesmen 24 soal terstandar kami.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/id/tes-singkat" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Tes Singkat 10m</a>
+          <a href="/id/tes" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Ujian Lengkap 20m</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord } from '../../../utils/profileStore';
+
+  function getLocalizedTier(score: number) {
+    if (score >= 90) {
+      return {
+        tier: 'Tingkat Ahli (Master)',
+        description: 'Trade-off kecepatan-akurasi hampir optimal; penguasaan strategi tugas dan kelancaran kognitif tingkat tinggi.',
+        badgeClass: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+      };
+    }
+    if (score >= 75) {
+      return {
+        tier: 'Tingkat Mahir (Advanced)',
+        description: 'Throughput informasi tinggi; resolusi konflik cepat dan minim distractor drift.',
+        badgeClass: 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+      };
+    }
+    if (score >= 60) {
+      return {
+        tier: 'Fondasi Solid (Solid Baseline)',
+        description: 'Akurasi konsisten; fokus perhatian stabil dengan sedikit kesalahan acak.',
+        badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+      };
+    }
+    if (score >= 40) {
+      return {
+        tier: 'Berkembang (Developing)',
+        description: 'Akurasi respons stabil; ritme operasional dasar di bawah batasan waktu.',
+        badgeClass: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+      };
+    }
+    return {
+      tier: 'Tahap Awal (Getting Started)',
+      description: 'Refleks operasional mulai terbangun; pembiasaan dengan aturan dan ritme respons.',
+      badgeClass: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
+    };
+  }
+
+  interface ColorItem {
+    name: string;
+    label: string;
+    textClass: string;
+  }
+
+  interface TrialStimulus {
+    word: string;
+    inkName: string;
+    inkClass: string;
+    isCongruent: boolean;
+  }
+
+  const COLORS: ColorItem[] = [
+    { name: 'red', label: 'MERAH', textClass: 'text-red-600 dark:text-red-400' },
+    { name: 'blue', label: 'BIRU', textClass: 'text-blue-600 dark:text-blue-400' },
+    { name: 'green', label: 'HIJAU', textClass: 'text-emerald-600 dark:text-emerald-400' },
+    { name: 'yellow', label: 'KUNING', textClass: 'text-amber-500 dark:text-amber-400' },
+  ];
+
+  const TOTAL_TRIALS = 25;
+  const CONGRUENT_COUNT = 10;
+  const INCONGRUENT_COUNT = 15;
+  const STORAGE_KEY = 'fiq_game_stroopclash_best';
+
+  let currentTrialIndex = 0;
+  let trialDeck: TrialStimulus[] = [];
+  let isRunning = false;
+  let isAcceptingInput = false;
+  let trialStartTime = 0;
+  let sessionStartTime = 0;
+
+  let correctCount = 0;
+  let errorCount = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
+
+  let allRTs: number[] = [];
+  let congruentRTs: number[] = [];
+  let incongruentRTs: number[] = [];
+
+  const hudTrial = document.getElementById('hud-trial') as HTMLElement;
+  const hudScore = document.getElementById('hud-score') as HTMLElement;
+  const hudSpeed = document.getElementById('hud-speed') as HTMLElement;
+  const hudBest = document.getElementById('hud-best') as HTMLElement;
+
+  const startOverlay = document.getElementById('start-overlay') as HTMLElement;
+  const btnStartGame = document.getElementById('btn-start-game') as HTMLButtonElement;
+  const gameArenaContent = document.getElementById('game-arena-content') as HTMLElement;
+
+  const trialCounterText = document.getElementById('trial-counter-text') as HTMLElement;
+  const trialProgressBar = document.getElementById('trial-progress-bar') as HTMLElement;
+  const stimulusFixation = document.getElementById('stimulus-fixation') as HTMLElement;
+  const stimulusWord = document.getElementById('stimulus-word') as HTMLElement;
+  const feedbackToast = document.getElementById('feedback-toast') as HTMLElement;
+
+  const btnHowToPlay = document.getElementById('btn-how-to-play') as HTMLButtonElement;
+  const modalHowToPlay = document.getElementById('modal-how-to-play') as HTMLElement;
+  const btnCloseHowModal = document.getElementById('btn-close-how-modal') as HTMLButtonElement;
+  const btnConfirmHow = document.getElementById('btn-confirm-how') as HTMLButtonElement;
+
+  const modalEndRound = document.getElementById('modal-end-round') as HTMLElement;
+  const btnCloseEndModal = document.getElementById('btn-close-end-modal') as HTMLButtonElement;
+  const modalScore = document.getElementById('modal-score') as HTMLElement;
+  const modalTierBadge = document.getElementById('modal-tier-badge') as HTMLElement;
+  const modalTierName = document.getElementById('modal-tier-name') as HTMLElement;
+  const modalTierDesc = document.getElementById('modal-tier-desc') as HTMLElement;
+  const modalAcc = document.getElementById('modal-acc') as HTMLElement;
+  const modalRt = document.getElementById('modal-rt') as HTMLElement;
+  const modalCost = document.getElementById('modal-cost') as HTMLElement;
+  const modalStreak = document.getElementById('modal-streak') as HTMLElement;
+  const btnPlayAgain = document.getElementById('btn-play-again') as HTMLButtonElement;
+
+  const btnRed = document.getElementById('btn-color-red') as HTMLButtonElement;
+  const btnBlue = document.getElementById('btn-color-blue') as HTMLButtonElement;
+  const btnGreen = document.getElementById('btn-color-green') as HTMLButtonElement;
+  const btnYellow = document.getElementById('btn-color-yellow') as HTMLButtonElement;
+
+  if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+  function loadBestScore() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && hudBest) {
+        hudBest.textContent = saved;
+      }
+    } catch {}
+  }
+  loadBestScore();
+
+  function buildTrialDeck() {
+    trialDeck = [];
+    for (let i = 0; i < CONGRUENT_COUNT; i++) {
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      trialDeck.push({
+        word: color.label,
+        inkName: color.name,
+        inkClass: color.textClass,
+        isCongruent: true,
+      });
+    }
+
+    for (let i = 0; i < INCONGRUENT_COUNT; i++) {
+      const wordColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+      let inkColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+      while (inkColor.name === wordColor.name) {
+        inkColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+      }
+      trialDeck.push({
+        word: wordColor.label,
+        inkName: inkColor.name,
+        inkClass: inkColor.textClass,
+        isCongruent: false,
+      });
+    }
+
+    for (let i = trialDeck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [trialDeck[i], trialDeck[j]] = [trialDeck[j], trialDeck[i]];
+    }
+  }
+
+  function calculateMedian(arr: number[]): number {
+    if (arr.length === 0) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 !== 0 ? sorted[mid] : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+  }
+
+  function showToast(text: string, isPositive: boolean) {
+    if (!feedbackToast) return;
+    feedbackToast.textContent = (isPositive ? '✓ ' : '✗ ') + text;
+    feedbackToast.className =
+      'h-6 mt-1 text-xs font-mono font-semibold transition-opacity duration-150 ' +
+      (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+    feedbackToast.style.opacity = '1';
+    setTimeout(() => {
+      if (feedbackToast) feedbackToast.style.opacity = '0';
+    }, 400);
+  }
+
+  function startNextTrial() {
+    if (currentTrialIndex >= TOTAL_TRIALS) {
+      endGameSession();
+      return;
+    }
+
+    isAcceptingInput = false;
+    const trial = trialDeck[currentTrialIndex];
+
+    if (trialCounterText) trialCounterText.textContent = `Percobaan ${currentTrialIndex + 1} dari ${TOTAL_TRIALS}`;
+    if (trialProgressBar) {
+      const pct = Math.round(((currentTrialIndex + 1) / TOTAL_TRIALS) * 100);
+      trialProgressBar.style.width = `${pct}%`;
+    }
+    if (hudTrial) hudTrial.textContent = `${currentTrialIndex + 1} / ${TOTAL_TRIALS}`;
+
+    if (stimulusWord) stimulusWord.classList.add('hidden');
+    if (stimulusFixation) stimulusFixation.classList.remove('hidden');
+
+    setTimeout(() => {
+      if (!isRunning) return;
+      if (stimulusFixation) stimulusFixation.classList.add('hidden');
+      if (stimulusWord) {
+        stimulusWord.textContent = trial.word;
+        stimulusWord.className = `text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-wider transition-all select-none font-heading ${trial.inkClass}`;
+        stimulusWord.classList.remove('hidden');
+      }
+      trialStartTime = performance.now();
+      isAcceptingInput = true;
+    }, 250);
+  }
+
+  function handleColorResponse(chosenColorName: string) {
+    if (!isRunning || !isAcceptingInput) return;
+    isAcceptingInput = false;
+
+    const responseRT = Math.round(performance.now() - trialStartTime);
+    const trial = trialDeck[currentTrialIndex];
+    const isCorrect = chosenColorName === trial.inkName;
+
+    allRTs.push(responseRT);
+    if (trial.isCongruent) {
+      congruentRTs.push(responseRT);
+    } else {
+      incongruentRTs.push(responseRT);
+    }
+
+    if (isCorrect) {
+      correctCount++;
+      currentStreak++;
+      if (currentStreak > longestStreak) longestStreak = currentStreak;
+      showToast(`+10 Tepat! (${responseRT}ms)`, true);
+    } else {
+      errorCount++;
+      currentStreak = 0;
+      showToast(`-5 Kurang Tepat! (${responseRT}ms)`, false);
+    }
+
+    if (hudScore) {
+      const runningScore = Math.max(0, correctCount * 10 - errorCount * 5);
+      hudScore.textContent = runningScore.toString();
+    }
+    if (hudSpeed) {
+      const currentMedian = calculateMedian(allRTs);
+      hudSpeed.textContent = `${currentMedian}ms`;
+    }
+
+    currentTrialIndex++;
+    setTimeout(() => {
+      if (isRunning) startNextTrial();
+    }, 350);
+  }
+
+  function startSession() {
+    if (isRunning) return;
+    isRunning = true;
+    currentTrialIndex = 0;
+    correctCount = 0;
+    errorCount = 0;
+    currentStreak = 0;
+    longestStreak = 0;
+    allRTs = [];
+    congruentRTs = [];
+    incongruentRTs = [];
+    sessionStartTime = performance.now();
+
+    buildTrialDeck();
+
+    if (startOverlay) startOverlay.classList.add('hidden');
+    if (modalEndRound) {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+    }
+    if (modalHowToPlay) {
+      modalHowToPlay.classList.add('hidden');
+      modalHowToPlay.classList.remove('flex');
+    }
+    if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+
+    if (hudTrial) hudTrial.textContent = `1 / ${TOTAL_TRIALS}`;
+    if (hudScore) hudScore.textContent = '0';
+    if (hudSpeed) hudSpeed.textContent = '0ms';
+
+    startNextTrial();
+  }
+
+  function endGameSession() {
+    isRunning = false;
+    isAcceptingInput = false;
+    if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+    const durationSec = Math.max(1, Math.round((performance.now() - sessionStartTime) / 1000));
+    const accuracyDecimal = correctCount / TOTAL_TRIALS;
+    const accuracyPct = Math.round(accuracyDecimal * 100);
+
+    const medianRT = calculateMedian(allRTs);
+    const medianCongruent = calculateMedian(congruentRTs);
+    const medianIncongruent = calculateMedian(incongruentRTs);
+    const interferenceCost = Math.max(0, medianIncongruent - medianCongruent);
+
+    let speedScore = 0;
+    if (medianRT > 0) {
+      speedScore = Math.max(0, Math.min(1, (1100 - medianRT) / 600));
+    }
+
+    const accuracyWeight = 0.50;
+    const speedWeight = 0.35;
+    const conflictWeight = 0.15;
+    const conflictScore = Math.max(0, Math.min(1, (300 - interferenceCost) / 250));
+
+    const compositeScore = Math.round(
+      (accuracyDecimal * accuracyWeight + speedScore * speedWeight + conflictScore * conflictWeight) * 100
+    );
+    const finalScore = Math.max(5, Math.min(100, compositeScore));
+
+    try {
+      saveGameRecord({
+        gameId: 'stroop-clash',
+        durationSeconds: durationSec,
+        mode: 'standard',
+        metrics: {
+          performanceScore: finalScore,
+          accuracy: parseFloat(accuracyDecimal.toFixed(4)),
+          trialsCompleted: TOTAL_TRIALS,
+          correctCount,
+          errorCount,
+          medianRT,
+          bestStreak: longestStreak,
+          interferenceCostMs: interferenceCost,
+        },
+      });
+    } catch (err) {
+      console.error('Failed to save game record:', err);
+    }
+
+    try {
+      const saved = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      if (finalScore > saved) {
+        localStorage.setItem(STORAGE_KEY, finalScore.toString());
+        loadBestScore();
+      }
+    } catch {}
+
+    if (modalScore) modalScore.textContent = finalScore.toString();
+    if (modalAcc) modalAcc.textContent = `${accuracyPct}%`;
+    if (modalRt) modalRt.textContent = `${medianRT}ms`;
+    if (modalCost) modalCost.textContent = `${interferenceCost}ms`;
+    if (modalStreak) modalStreak.textContent = longestStreak.toString();
+
+    const tier = getLocalizedTier(finalScore);
+    if (modalTierBadge) {
+      modalTierBadge.className = `mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${tier.badgeClass}`;
+    }
+    if (modalTierName) modalTierName.textContent = tier.tier;
+    if (modalTierDesc) modalTierDesc.textContent = tier.description;
+
+    if (modalEndRound) {
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+    }
+  }
+
+  btnStartGame?.addEventListener('click', startSession);
+  btnPlayAgain?.addEventListener('click', startSession);
+
+  btnRed?.addEventListener('click', () => handleColorResponse('red'));
+  btnBlue?.addEventListener('click', () => handleColorResponse('blue'));
+  btnGreen?.addEventListener('click', () => handleColorResponse('green'));
+  btnYellow?.addEventListener('click', () => handleColorResponse('yellow'));
+
+  btnHowToPlay?.addEventListener('click', () => {
+    modalHowToPlay?.classList.remove('hidden');
+    modalHowToPlay?.classList.add('flex');
+  });
+  btnCloseHowModal?.addEventListener('click', () => {
+    modalHowToPlay?.classList.add('hidden');
+    modalHowToPlay?.classList.remove('flex');
+  });
+  btnConfirmHow?.addEventListener('click', () => {
+    modalHowToPlay?.classList.add('hidden');
+    modalHowToPlay?.classList.remove('flex');
+  });
+
+  btnCloseEndModal?.addEventListener('click', () => {
+    modalEndRound?.classList.add('hidden');
+    modalEndRound?.classList.remove('flex');
+    startOverlay?.classList.remove('hidden');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.code === 'Space') {
+      if (!isRunning) {
+        e.preventDefault();
+        startSession();
+      }
+    } else if (isRunning && isAcceptingInput) {
+      const k = e.key.toLowerCase();
+      if (k === '1' || k === 'r' || k === 'm') {
+        e.preventDefault();
+        handleColorResponse('red');
+      } else if (k === '2' || k === 'b') {
+        e.preventDefault();
+        handleColorResponse('blue');
+      } else if (k === '3' || k === 'g' || k === 'h') {
+        e.preventDefault();
+        handleColorResponse('green');
+      } else if (k === '4' || k === 'y' || k === 'k') {
+        e.preventDefault();
+        handleColorResponse('yellow');
+      }
+    } else if (e.key === 'Escape') {
+      if (modalHowToPlay && !modalHowToPlay.classList.contains('hidden')) {
+        modalHowToPlay.classList.add('hidden');
+        modalHowToPlay.classList.remove('flex');
+      }
+      if (modalEndRound && !modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+        modalEndRound.classList.remove('flex');
+        startOverlay?.classList.remove('hidden');
+      }
+    }
+  });
+</script>

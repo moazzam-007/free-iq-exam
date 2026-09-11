@@ -1,0 +1,410 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const title = "Klasifikasi IQ: IQ 110, IQ 120 & Skala Nilai IQ | FreeIQExam";
+const description = "Pelajari klasifikasi IQ, arti IQ 110 dan IQ 120, rentang IQ normal, serta hubungan skor, persentil, dan simpangan baku pada skala IQ standar.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Skala Klasifikasi Skor IQ: Standar Wechsler, Stanford-Binet, dan Rentang Kognitif",
+    "description": "Analisis komparatif komprehensif sistem klasifikasi IQ psikologis standar, sifat distribusi Gauss, dan persentil populasi.",
+    "url": "https://freeiqexam.com/id/skala-klasifikasi-iq/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "FreeIQExam",
+      "url": "https://freeiqexam.com/id/"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Skala Klasifikasi IQ",
+        "item": "https://freeiqexam.com/id/skala-klasifikasi-iq/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "IQ 110 apakah pintar?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pada skala dengan rerata 100 dan SD 15, IQ 110 berada di atas titik tengah populasi dan biasanya disebut Rata-rata Tinggi. Label tersebut tidak berarti bahwa satu skor saja menentukan kecerdasan seseorang secara menyeluruh."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "IQ 120 artinya apa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pada skala dengan rerata 100 dan SD 15, IQ 120 berada sekitar 1,33 simpangan baku di atas rerata dan termasuk rentang di atas rata-rata. Persentil memberi konteks tambahan tentang posisi relatif skor tersebut."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah IQ 72 tergolong pintar, dan apa yang dimaksud dengan fungsi intelektual garis batas (borderline)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Skor IQ 72 berada pada rentang Fungsi Intelektual Garis Batas (Borderline, rentang 70 hingga 79, 7% terbawah populasi). Kategori ini berbeda dari disabilitas intelektual klinis (yang membutuhkan skor di bawah 70 disertai gangguan fungsi adaptif yang terdiagnosis). Skor dalam rentang ini sering kali dipengaruhi oleh kecemasan saat ujian, kendala bahasa, atau kesenjangan akses pendidikan daripada batas kognitif tetap."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa saja tanda-tanda nyata dari IQ tinggi dalam kehidupan sehari-hari?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Psikometri empiris mengidentifikasi beberapa sifat utama yang berhubungan dengan kecerdasan umum (faktor g) yang tinggi: rekognisi pola induktif yang cepat, kapasitas memori kerja yang unggul, rasa ingin tahu kognitif yang tinggi, kecepatan pemrosesan informasi, dan kemampuan membongkar masalah abstrak baru tanpa instruksi sebelumnya."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa penyebab skor IQ rendah, dan apakah ADHD menunjukkan kecerdasan rendah?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ADHD sama sekali tidak menunjukkan kecerdasan rendah. Individu dengan ADHD menunjukkan distribusi skor IQ penuh dari rata-rata hingga sangat berbakat. Namun, hambatan fungsi eksekutif, gangguan fokus pada memori kerja, dan keterbatasan kecepatan pemrosesan terwaktu dapat menekan skor ujian berbatas waktu. Skor IQ yang rendah juga dapat mencerminkan kurang tidur, stres kronis, kesenjangan pendidikan, atau faktor lingkungan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu istilah 'God IQ' dan berapa skor IQ tertinggi yang secara teoritis mungkin dicapai?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "'God IQ' adalah istilah slang internet untuk menggambarkan skor di atas 160 atau 180. Pada instrumen klinis terstandardisasi seperti WAIS-IV, batas pengukuran tertinggi (plafon) adalah 160 (mencerminkan deviasi standar +4,00, atau kelangkaan 1 dari 31.560 orang). Klaim skor IQ dewasa 200+ adalah ekstrapolasi statistik tanpa norma terstandarisasi atau rasio usia mental masa kanak-kanak yang sudah usang."
+        }
+      }
+    ]
+  }
+];
+
+const classificationRows = [
+  { range: "130 ke atas", wais: "Sangat Unggul (Very Superior)", sb5: "Berbakat / Sangat Maju", wj: "Sangat Unggul", pct: "2,2% Teratas", rarity: "1 dari 44", desc: "Tingkat intelektual teratas. Pemecahan masalah abstrak tingkat lanjut dan induksi pola cepat." },
+  { range: "120 - 129", wais: "Unggul (Superior)", sb5: "Unggul", wj: "Unggul", pct: "6,7%", rarity: "1 dari 15", desc: "Jauh di atas rata-rata. Deduksi analitis tinggi, kelancaran verbal, dan penalaran spasial kuat." },
+  { range: "110 - 119", wais: "Rata-rata Tinggi", sb5: "Rata-rata Tinggi", wj: "Rata-rata Tinggi", pct: "16,1%", rarity: "1 dari 6,2", desc: "Di atas median populasi. Performa akademik kuat dan fleksibilitas kognitif yang baik." },
+  { range: "90 - 109", wais: "Rata-rata (Normal)", sb5: "Rata-rata", wj: "Rata-rata", pct: "50,0%", rarity: "1 dari 2", desc: "Median populasi umum. Kemampuan standar di seluruh domain kognitif utama CHC." },
+  { range: "80 - 89", wais: "Rata-rata Rendah", sb5: "Rata-rata Rendah", wj: "Rata-rata Rendah", pct: "16,1%", rarity: "1 dari 6,2", desc: "Sedikit di bawah median populasi. Memperoleh manfaat besar dari instruksi terstruktur dan bertahap." },
+  { range: "70 - 79", wais: "Garis Batas (Borderline)", sb5: "Keterbatasan Garis Batas", wj: "Garis Batas", pct: "6,7%", rarity: "1 dari 15", desc: "Kesulitan signifikan dengan abstraksi kompleks dan beban memori kerja yang tinggi." },
+  { range: "Di bawah 70", wais: "Sangat Rendah (Extremely Low)", sb5: "Sangat Terbatas", wj: "Sangat Rendah", pct: "2,2% Terbawah", rarity: "1 dari 44", desc: "Batas klinis untuk evaluasi disabilitas intelektual bersamaan dengan pengujian perilaku adaptif." }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/iq-classification-scale">
+  <Header currentPath="/id/skala-klasifikasi-iq" enPath="/iq-classification-scale" />
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 -mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-white font-medium">Skala Klasifikasi IQ</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-medium uppercase tracking-wider mb-4">
+        <span>Standar Psikometrik Klinis &bull; Model Simpangan Baku 15</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Klasifikasi IQ: IQ 110, IQ 120 &amp; Rentang Nilai IQ
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Panduan ini membantu membaca klasifikasi IQ menurut skala yang digunakan. Jangan menilai sebuah skor hanya dari label “pintar” atau “rendah”; lihat juga persentil, norma usia, dan instrumen pengukurannya.
+      </p>
+    </header>
+
+    <!-- Interactive Quick Lookup Widget -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs max-w-2xl mx-auto w-full">
+      <div class="text-center mb-6">
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-1">
+          Kalkulator Pencarian Cepat Skor IQ
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Masukkan skor IQ terstandardisasi (SD 15) untuk melihat klasifikasi resmi dan persentil populasi.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+        <label for="iq-input" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+          Masukkan skor IQ Anda (40-160):
+        </label>
+        <div class="relative">
+          <input
+            id="iq-input"
+            type="number"
+            min="40"
+            max="160"
+            value="100"
+            class="w-32 px-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-xl font-bold font-mono text-center text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+        </div>
+      </div>
+
+      <!-- Result Card Container -->
+      <div id="lookup-result" class="p-5 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/60 pb-2.5">
+          <span class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-medium">Klasifikasi Klinis:</span>
+          <span id="res-classification" class="text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 font-heading">Rata-rata (Normal)</span>
+        </div>
+        <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/60 pb-2.5">
+          <span class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-medium">Peringkat Persentil:</span>
+          <span id="res-percentile" class="text-sm sm:text-base font-bold font-mono text-zinc-900 dark:text-zinc-100">Persentil ke-50,0</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-medium">Kelangkaan Populasi:</span>
+          <span id="res-rarity" class="text-sm sm:text-base font-bold font-mono text-zinc-900 dark:text-zinc-100">1 dari 2 orang</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Master Comparative Table -->
+    <section>
+      <div class="mb-4">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Tabel Perbandingan Klasifikasi Skor IQ (SD 15)
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Perbandingan standar diagnostik skala Wechsler (WAIS-IV), Stanford-Binet 5 (SB5), dan Woodcock-Johnson IV (WJ IV).
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table class="w-full min-w-[700px] text-left text-xs sm:text-sm">
+          <thead class="sticky top-0 bg-zinc-100/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10 border-b border-zinc-200 dark:border-zinc-800 font-mono uppercase text-zinc-600 dark:text-zinc-400 text-[11px]">
+            <tr>
+              <th class="py-3.5 px-4">Rentang Skor</th>
+              <th class="py-3.5 px-4">WAIS-IV (Wechsler)</th>
+              <th class="py-3.5 px-4">Stanford-Binet 5</th>
+              <th class="py-3.5 px-4">Porsi Populasi</th>
+              <th class="py-3.5 px-4">Rasio Kelangkaan</th>
+              <th class="py-3.5 px-4">Karakteristik Kognitif</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200/80 dark:divide-zinc-800 bg-white dark:bg-black font-mono">
+            {classificationRows.map((row) => (
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                <td class="py-3.5 px-4 font-bold text-zinc-950 dark:text-white">{row.range}</td>
+                <td class="py-3.5 px-4 font-sans font-semibold text-zinc-900 dark:text-white">{row.wais}</td>
+                <td class="py-3.5 px-4 font-sans text-zinc-700 dark:text-zinc-300">{row.sb5}</td>
+                <td class="py-3.5 px-4">{row.pct}</td>
+                <td class="py-3.5 px-4 text-zinc-500">{row.rarity}</td>
+                <td class="py-3.5 px-4 font-sans text-zinc-600 dark:text-zinc-400 text-xs">{row.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Deep-Dive Editorial Breakdown -->
+    <section class="space-y-8 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base">
+      <div>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-3">
+          Memahami Sifat Matematis Distribusi IQ Gauss
+        </h2>
+        <p class="mb-3">
+          Sistem pengukuran inteligensi modern tidak lagi memakai perbandingan usia mental warisan Binet awal abad ke-20, melainkan menggunakan konsep <em>Deviation IQ</em> (IQ Simpangan) yang dipelopori oleh David Wechsler. Dalam model ini, skor mentah distandardisasi sedemikian rupa sehingga skor populasi umum mengikuti kurva lonceng normal (distribusi Gauss) dengan nilai rata-rata (&mu;) sebesar 100 dan simpangan baku (&sigma;) sebesar 15 poin.
+        </p>
+        <p>
+          Akibat dari sifat kurva lonceng simetris ini, tepat 68,26% dari seluruh populasi manusia berada dalam rentang satu simpangan baku dari nilai rata-rata (skor IQ 85 hingga 115). Sekitar 95,44% populasi berada dalam rentang dua simpangan baku (skor IQ 70 hingga 130), dan 99,74% populasi berada dalam rentang tiga simpangan baku (skor IQ 55 hingga 145).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+            IQ 130+ dan Syarat Masuk Mensa
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+            Skor IQ 130 mewakili persis dua simpangan baku di atas rata-rata (+2&sigma;), yang menempatkan seseorang di persentil ke-97,72 atau 2,27% teratas dari populasi umum (sekitar 1 dari 44 orang). Batas ini merupakan kriteria kualifikasi standar internasional untuk keanggotaan Mensa International pada instrumen berbasis SD 15.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+            Efek Flynn dan Standardisasi Berkala
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+            Peneliti psikometri James Flynn menemukan bahwa skor tes mentah populasi cenderung meningkat sekitar 3 poin IQ per dekade di banyak negara sepanjang abad ke-20. Oleh karena itu, penerbit tes klinis seperti Pearson dan Riverside Insights secara rutin merestandardisasi norma instrumen mereka setiap 10-15 tahun agar nilai rata-rata populasi tetap terkunci pada angka 100.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-3">
+          Diferensiasi Klinis antara IQ Simpangan dan Perilaku Adaptif
+        </h2>
+        <p class="mb-3">
+          Dalam praktik neuropsikologi modern, skor klasifikasi IQ tidak pernah dianalisis secara terisolasi. Penilaian diagnostik formal, terutama pada kedua ujung spektrum kurva lonceng (rentang Sangat Unggul maupun batas klinis Disabilitas Intelektual), selalu mengintegrasikan evaluasi fungsi perilaku adaptif (seperti skala Vineland Adaptive Behavior Scales).
+        </p>
+        <p>
+          Individu dengan kapasitas penalaran fluida yang sangat tinggi mungkin tetap menghadapi tantangan dalam regulasi fungsi eksekutif atau keterampilan sosial, sementara individu dengan skor IQ pada kategori Rata-rata sering kali menunjukkan ketahanan emosional, kreativitas praktis, dan keahlian kepemimpinan yang jauh melampaui metrik tes terstandardisasi. Klasifikasi kognitif hanyalah gambaran performa psikometrik pada saat pengujian berlangsung.
+        </p>
+      </div>
+    </section>
+
+    <!-- Klasifikasi IQ Menurut Ahli Section -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+      <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-3">
+        Klasifikasi IQ menurut ahli: cara membaca label skor
+      </h2>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Klasifikasi IQ adalah sistem deskriptif yang menghubungkan skor terstandardisasi dengan posisi relatif pada populasi. Karena instrumen dapat menggunakan simpangan baku berbeda, angka pada satu skala tidak selalu dapat dibandingkan langsung dengan angka pada skala lain tanpa konversi persentil. Gunakan tabel, persentil, dan nama instrumen bersama-sama.
+      </p>
+    </div>
+
+    <!-- FAQ Accordion Section -->
+    <section class="space-y-4">
+      <div class="border-b border-zinc-200 dark:border-zinc-800 pb-4">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Pertanyaan yang Sering Diajukan (FAQ)
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Pertanyaan umum mengenai skala klasifikasi IQ, arti skor, dan interpretasi klinis.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>IQ 110 apakah pintar?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Pada skala dengan rerata 100 dan SD 15, IQ 110 berada di atas titik tengah populasi dan biasanya disebut Rata-rata Tinggi. Label tersebut tidak berarti bahwa satu skor saja menentukan kecerdasan seseorang secara menyeluruh.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>IQ 120 artinya apa?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Pada skala dengan rerata 100 dan SD 15, IQ 120 berada sekitar 1,33 simpangan baku di atas rerata dan termasuk rentang di atas rata-rata. Persentil memberi konteks tambahan tentang posisi relatif skor tersebut.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apakah IQ 72 tergolong pintar, dan apa yang dimaksud dengan fungsi intelektual garis batas (borderline)?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Skor IQ 72 berada pada rentang Fungsi Intelektual Garis Batas (Borderline, rentang 70 hingga 79, 7% terbawah populasi). Kategori ini berbeda dari disabilitas intelektual klinis (yang membutuhkan skor di bawah 70 disertai gangguan fungsi adaptif yang terdiagnosis). Skor dalam rentang ini sering kali dipengaruhi oleh kecemasan saat ujian, kendala bahasa, atau kesenjangan akses pendidikan daripada batas kognitif tetap.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa saja tanda-tanda nyata dari IQ tinggi dalam kehidupan sehari-hari?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Psikometri empiris mengidentifikasi beberapa sifat utama yang berhubungan dengan kecerdasan umum (faktor g) yang tinggi: rekognisi pola induktif yang cepat, kapasitas memori kerja yang unggul, rasa ingin tahu kognitif yang tinggi, kecepatan pemrosesan informasi, dan kemampuan membongkar masalah abstrak baru tanpa instruksi sebelumnya.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa penyebab skor IQ rendah, dan apakah ADHD menunjukkan kecerdasan rendah?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            ADHD sama sekali tidak menunjukkan kecerdasan rendah. Individu dengan ADHD menunjukkan distribusi skor IQ penuh dari rata-rata hingga sangat berbakat. Namun, hambatan fungsi eksekutif, gangguan fokus pada memori kerja, dan keterbatasan kecepatan pemrosesan terwaktu dapat menekan skor ujian berbatas waktu. Skor IQ yang rendah juga dapat mencerminkan kurang tidur, stres kronis, kesenjangan pendidikan, atau faktor lingkungan.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa itu istilah 'God IQ' dan berapa skor IQ tertinggi yang secara teoritis mungkin dicapai?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            'God IQ' adalah istilah slang internet untuk menggambarkan skor di atas 160 atau 180. Pada instrumen klinis terstandardisasi seperti WAIS-IV, batas pengukuran tertinggi (plafon) adalah 160 (mencerminkan deviasi standar +4,00, atau kelangkaan 1 dari 31.560 orang). Klaim skor IQ dewasa 200+ adalah ekstrapolasi statistik tanpa norma terstandarisasi atau rasio usia mental masa kanak-kanak yang sudah usang.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="p-8 rounded-3xl bg-blue-600 text-white text-center space-y-4">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-3xl">
+        Ketahui Posisi Anda pada Kurva Distribusi Kognitif
+      </h2>
+      <p class="max-w-xl mx-auto text-blue-100 text-sm sm:text-base">
+        Uji kemampuan penalaran matriks dan rotasi spasial Anda dengan penilaian berbasis teori respons butir (IRT 2PL) kami yang terkalibrasi secara ilmiah.
+      </p>
+      <div class="pt-2">
+        <a
+          href="/id/tes"
+          class="inline-flex items-center justify-center px-6 py-3 rounded-2xl bg-white text-blue-600 font-bold hover:bg-blue-50 transition-colors shadow-sm"
+        >
+          Mulai Tes IQ Lengkap &rarr;
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script is:inline>
+    function calculatePercentile(iq) {
+      const z = (iq - 100) / 15;
+      const t = 1.0 / (1.0 + 0.2316419 * Math.abs(z));
+      const d = 0.3989423 * Math.exp(-z * z / 2.0);
+      let p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+      if (z > 0) p = 1.0 - p;
+      return p * 100;
+    }
+
+    function getClassification(iq) {
+      if (iq >= 130) return { label: "Sangat Unggul / Berbakat (Sangat Superior)", rarity: "1 dari " + Math.round(100 / (100 - calculatePercentile(iq))) + " orang" };
+      if (iq >= 120) return { label: "Unggul (Superior)", rarity: "1 dari " + Math.round(100 / (100 - calculatePercentile(iq))) + " orang" };
+      if (iq >= 110) return { label: "Rata-rata Tinggi", rarity: "1 dari " + (100 / (100 - calculatePercentile(iq))).toFixed(1) + " orang" };
+      if (iq >= 90) return { label: "Rata-rata (Normal)", rarity: "1 dari 2 orang" };
+      if (iq >= 80) return { label: "Rata-rata Rendah", rarity: "1 dari " + (100 / calculatePercentile(iq)).toFixed(1) + " orang" };
+      if (iq >= 70) return { label: "Garis Batas (Borderline)", rarity: "1 dari " + Math.round(100 / calculatePercentile(iq)) + " orang" };
+      return { label: "Sangat Rendah (Extremely Low)", rarity: "1 dari " + Math.round(100 / calculatePercentile(iq)) + " orang" };
+    }
+
+    const input = document.getElementById('iq-input');
+    const resClass = document.getElementById('res-classification');
+    const resPct = document.getElementById('res-percentile');
+    const resRarity = document.getElementById('res-rarity');
+
+    function update() {
+      let val = parseInt(input.value, 10);
+      if (isNaN(val)) return;
+      if (val < 40) val = 40;
+      if (val > 160) val = 160;
+
+      const pct = calculatePercentile(val);
+      const info = getClassification(val);
+
+      resClass.textContent = info.label;
+      resPct.textContent = "Persentil ke-" + pct.toFixed(1).replace('.', ',');
+      resRarity.textContent = info.rarity;
+    }
+
+    if (input) {
+      input.addEventListener('input', update);
+      update();
+    }
+  </script>
+</Layout>

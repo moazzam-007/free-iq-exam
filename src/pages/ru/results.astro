@@ -1,0 +1,1621 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+
+const title = "Результаты теста на IQ: балл, процентиль и сертификат | FreeIQExam";
+const description = "Ваш результат теста на IQ: балл по шкале SD 15, процентиль, 95% доверительный интервал и когнитивный профиль. Сертификат бесплатно.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Какой результат теста на IQ считается нормальным?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "На стандартной шкале со средним значением 100 и SD 15 диапазон 90–109 обычно считается среднестатистической нормой. Окончательная интерпретация всегда зависит от используемой методики и стандартизированных норм."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как правильно читать балл и процентиль теста на IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Балл IQ показывает положение результата на стандартизированной шкале, а процентиль отражает его относительную позицию в популяции. Их следует анализировать вместе, помня, что IQ не является школьной оценкой в процентах от 100."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/results" idPath="/hasil" canonicalUrl="https://freeiqexam.com/ru/results">
+  <!-- Print-Only Official Document Header -->
+  <div class="hidden print:block mb-8 pb-4 border-b-2 border-zinc-900">
+    <div class="flex items-center justify-between">
+      <div>
+        <span class="text-2xl font-bold font-heading text-zinc-950 block">FreeIQExam.com</span>
+        <p class="text-xs text-zinc-500 font-mono">Отчёт о стандартизированной многодоменной когнитивной оценке (SD 15, 4 домена CHC)</p>
+      </div>
+      <div class="text-right text-xs font-mono text-zinc-500">
+        <p id="print-date">Сформировано: 2026</p>
+        <p>Модель: 2PL IRT</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header (Screen Only) -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200 print:hidden">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+      <a href="/ru/" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+          </svg>
+        </div>
+        <span class="font-heading font-bold text-lg tracking-tight text-zinc-950 dark:text-white">
+          FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
+        </span>
+      </a>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a
+          href="/ru/quick-test"
+          id="btn-quick-test-top"
+          class="hidden sm:inline-flex px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+        >
+          Экспресс-тест (10 мин)
+        </a>
+        <a
+          href="/ru/test"
+          id="btn-retake-top"
+          class="px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+        >
+          <span class="hidden sm:inline">Пройти заново</span>
+          <span class="sm:hidden">Заново</span>
+        </a>
+        <button
+          id="btn-print"
+          type="button"
+          class="px-3 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+          <span>Сохранить PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Demo Notice Banner -->
+  <div id="demo-banner" class="hidden max-w-5xl mx-auto px-4 sm:px-6 pt-6 print:hidden">
+    <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-amber-200 dark:bg-amber-900 flex items-center justify-center text-amber-800 dark:text-amber-200 shrink-0">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <p class="text-xs sm:text-sm text-amber-900 dark:text-amber-200 font-medium">
+          <strong>Демо-отчёт:</strong> Пример отчёта. Пройдите оценку, чтобы получить персональную психометрическую оценку.
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/ru/quick-test" class="px-4 py-2 rounded-full text-xs font-semibold text-white bg-zinc-700 hover:bg-zinc-600 whitespace-nowrap shadow-xs">Quick (10 min)</a>
+        <a href="/ru/test" class="px-4 py-2 rounded-full text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 whitespace-nowrap shadow-xs">Полный тест (20 min)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Type Badge -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-4 print:hidden">
+    <span id="test-type-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 uppercase tracking-wider"></span>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-10">
+
+    <!-- Accessible Landmark Heading (WCAG 2.4.6) -->
+    <h1 class="sr-only">Результаты теста на IQ: балл, процентиль и уровень</h1>
+
+    <!-- Hero Score Card -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs text-center relative overflow-hidden">
+      <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-tr from-blue-500/10 via-indigo-500/10 to-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col items-center">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono text-zinc-600 dark:text-zinc-300 mb-6 shadow-2xs">
+          <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+          <span>СТАНДАРТИЗИРОВАННАЯ ОЦЕНКА IQ (SD 15, МОДЕЛЬ CHC)</span>
+        </div>
+
+        <div class="flex items-baseline justify-center gap-2 my-2">
+          <span id="score-display" class="font-heading font-extrabold text-6xl sm:text-7xl lg:text-8xl tracking-tight text-zinc-950 dark:text-white leading-none min-h-[1em]" aria-busy="true">
+            &mdash;
+          </span>
+          <span class="text-xl sm:text-2xl font-mono text-zinc-500 dark:text-zinc-400 font-semibold">IQ</span>
+        </div>
+
+        <div class="mt-3 mb-2">
+          <span id="classification-badge" class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+            Обработка...
+          </span>
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-6 text-center leading-relaxed">
+          Результат представлен на стандартизированной шкале со средним значением <strong>100 IQ</strong> и стандартным отклонением &sigma; = 15. Это относительная шкала когнитивного распределения, а не процентная оценка из 100 баллов.
+        </p>
+
+        <div class="w-full max-w-lg p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 shadow-2xs">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span class="font-mono font-medium">
+              95% доверительный интервал:
+              <strong id="ci-display" class="text-zinc-950 dark:text-white font-bold ml-1">&mdash;</strong>
+            </span>
+            <span class="text-zinc-500 dark:text-zinc-400 font-mono text-xs">
+              СОШ: &plusmn;<span id="sem-display">&mdash;</span> балла
+            </span>
+          </div>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 text-left mt-2 border-t border-zinc-100 dark:border-zinc-800/80 pt-2 leading-relaxed">
+            Байесовский интервал (EAP) с учётом предварительных параметров заданий и апостериорной дисперсии измерения.
+          </p>
+        </div>
+
+        <!-- Процентиль / Rarity / Theta Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl mt-6">
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase">Процентиль</span>
+            <span id="percentile-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">&mdash;</span>
+            <span id="percentile-subtext" class="text-xs text-zinc-600 dark:text-zinc-400 text-center mt-1">Расчёт процентиля...</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase">Редкость в популяции</span>
+            <span id="rarity-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">&mdash;</span>
+            <span class="text-xs text-zinc-600 dark:text-zinc-400 text-center mt-1">Частота в общей когорте</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col items-center">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase">Латентная способность (&theta;)</span>
+            <span id="theta-display" class="text-xl sm:text-2xl font-bold font-heading text-zinc-900 dark:text-white mt-1">&mdash;</span>
+            <span class="text-xs text-zinc-600 dark:text-zinc-400 text-center mt-1">Метрика стандартного нормального распределения</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Guide: IQ Scale vs. Процентиль vs. Percentage -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs print:break-inside-avoid">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </span>
+        <h2 class="font-heading text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
+          Understanding Your Score: IQ Scale vs. Процентиль vs. Percentage
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col justify-between">
+          <div>
+            <div class="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">1. Шкала IQ (среднее = 100)</div>
+            <h3 class="font-bold text-zinc-900 dark:text-white mb-1.5">Не из 100 баллов</h3>
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              В отличие от школьных экзаменов, результат теста на IQ <strong>не измеряется процентом из 100</strong>. Значение <strong>100 представляет среднестатистическую норму</strong>. Клиническое нормальное распределение охватывает диапазон от 40 до 160+. Диапазон от <strong>90 до 109</strong> отражает средний уровень когнитивных способностей.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-zinc-200/60 dark:border-zinc-800 text-[11px] font-mono text-zinc-500">
+            Baseline: 100 IQ = 50th Процентиль
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col justify-between">
+          <div>
+            <div class="font-mono text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">2. Процентиль Rank (Midpoint = 50%)</div>
+            <h3 class="font-bold text-zinc-900 dark:text-white mb-1.5">Относительный ранг среди людей</h3>
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Процентиль показывает, какой доле значений в используемом распределении соответствует результат ниже вашего. <strong>50-й процентиль</strong> является центральной точкой распределения.
+            </p>
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed mt-2">
+              Ваш текущий результат находится на уровне <strong><span id="guide-dynamic-pct">27.1%</span></strong> процентиля (выше приблизительно <strong id="guide-dynamic-count">27</strong> человек из 100).
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-zinc-200/60 dark:border-zinc-800 text-[11px] font-mono text-zinc-500">
+            Formula: &Phi;(Z) across normal population
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/70 flex flex-col justify-between">
+          <div>
+            <div class="font-mono text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-1">3. Нормальная колоколообразная кривая</div>
+            <h3 class="font-bold text-zinc-900 dark:text-white mb-1.5">Гауссово распределение в популяции</h3>
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Over <strong>68% из humanity</strong> falls between 85 and 115 IQ (within &plusmn;1 standard deviation). Scores above 130 represent the top 2% (Mensa threshold), while scores below 70 indicate clinical cognitive divergence.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-zinc-200/60 dark:border-zinc-800 text-[11px] font-mono text-zinc-500">
+            Distribution: &mu; = 100, &sigma; = 15
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Interpretation Card -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs print:break-inside-avoid">
+      <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-3">
+        Как читать результат теста на IQ
+      </h2>
+      <div class="space-y-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        <p>
+          Балл IQ и процентиль отвечают на разные вопросы. IQ показывает положение результата на стандартизированной шкале, а процентиль помогает понять его относительное место в распределении.
+        </p>
+        <p>
+          При среднем значении 100 и SD 15 один шаг стандартного отклонения составляет 15 пунктов. Поэтому 115 соответствует примерно +1 SD, а 130 — примерно +2 SD. IQ при этом не является процентом от 100.
+        </p>
+        <p>
+          Онлайн-результат не следует использовать как самостоятельный медицинский диагноз. На него могут влиять формат заданий, знакомство с типом задач, внимание, усталость и условия прохождения.
+        </p>
+      </div>
+    </section>
+
+    <!-- Certificate Generator Card -->
+    <section id="certificate-section" class="p-6 sm:p-8 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs print:hidden">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+            <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+            ОФИЦИАЛЬНЫЙ СЕРТИФИКАТ
+          </div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Получите официальный сертификат
+          </h2>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            Создайте сертификат высокого разрешения по итогам оценки когнитивных способностей. Введите полное имя так, как оно должно быть указано в сертификате.
+          </p>
+        </div>
+        <div class="shrink-0 w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-900 dark:text-zinc-100">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+        </div>
+      </div>
+
+      <!-- Name input + generate -->
+      <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <label for="cert-name-input" class="sr-only">Полное имя для сертификата</label>
+        <input
+          id="cert-name-input"
+          type="text"
+          placeholder="ФИО (как будет указано в сертификате)"
+          aria-label="Полное имя для сертификата"
+          maxlength="60"
+          class="flex-1 px-4 py-3 min-h-[44px] rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors"
+        />
+        <button
+          id="btn-generate-cert"
+          type="button"
+          class="min-h-[44px] px-6 py-3 rounded-2xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center justify-center gap-2 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+          Создать сертификат
+        </button>
+      </div>
+
+      <!-- Canvas preview (hidden until generated) -->
+      <div id="cert-preview-wrap" class="hidden flex-col gap-4">
+        <canvas
+          id="cert-canvas"
+          width="3200"
+          height="2260"
+          class="w-full max-w-full h-auto block rounded-xl border border-zinc-800 shadow-2xl"
+        ></canvas>
+
+        <!-- Mirror for print stylesheet -->
+        <img id="print-cert-img" class="hidden print:block w-full max-w-2xl mx-auto my-6 rounded-xl border border-zinc-300" alt="Официальный сертификат когнитивной оценки" />
+
+        <!-- Download / Print actions -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button
+            id="btn-download-cert"
+            type="button"
+            class="min-h-[44px] flex-1 px-5 py-3 rounded-2xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            Скачать сертификат (PNG)
+          </button>
+          <button
+            id="btn-print-cert"
+            type="button"
+            class="min-h-[44px] flex-1 px-5 py-3 rounded-2xl text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            Печать / Сохранить PDF
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global Cognitive Таблица лидеров Preview -->
+    <section class="rounded-3xl overflow-hidden border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs print:hidden">
+      <!-- Section Header -->
+      <div class="px-6 sm:px-8 py-6 bg-zinc-900 border-b border-zinc-800 text-white">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 text-xs font-mono font-semibold text-zinc-300 uppercase tracking-wider mb-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" aria-hidden="true"></span>
+              GLOBAL COHORT BENCHMARKS
+            </span>
+            <h2 class="font-heading text-xl sm:text-2xl font-bold text-white">
+              Illustrative Global Standings
+            </h2>
+            <p class="text-sm text-zinc-400 mt-1">
+              Sample percentile cohort benchmarks illustrating standard population distributions.
+            </p>
+          </div>
+          <div class="px-3 py-1.5 rounded-full bg-zinc-800 border border-zinc-700 text-xs font-mono font-semibold text-zinc-300 whitespace-nowrap">
+            Launching Soon <span aria-hidden="true">&bull;</span> Reference Benchmarks
+          </div>
+        </div>
+      </div>
+
+      <!-- Таблица лидеров Table -->
+      <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm">
+        <!-- Header Row -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-500 uppercase tracking-wider">
+          <span>#</span>
+          <span>Референтная когорта</span>
+          <span class="text-right">Счёт</span>
+          <span class="text-right">Pctile</span>
+          <span class="hidden sm:block">Strongest Domain</span>
+        </div>
+
+        <!-- Row 1 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-bold text-sm text-amber-500">#1</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127482;&#127480;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">Alex_V.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">146 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">99.9th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Подвижный интеллект (Gf) (FRI: 148)</span>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-bold text-sm text-zinc-500 dark:text-zinc-400">#2</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127471;&#127477;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">Hana_K.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">142 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">99.7th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Пространственное мышление (Gv) (VSI: 145)</span>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-bold text-sm text-amber-700">#3</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127465;&#127466;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">Marcus_S.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">138 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">99.4th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Количественное мышление (Gq) (QRI: 141)</span>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-semibold text-sm text-zinc-500">#4</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127464;&#127462;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">Elena_R.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">135 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">99.0th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Verbal Logic (VCI: 137)</span>
+        </div>
+
+        <!-- Row 5 -->
+        <div class="grid grid-cols-[40px_1fr_90px_80px_1fr] gap-3 items-center px-6 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+          <span class="font-mono font-semibold text-sm text-zinc-500">#5</span>
+          <div class="flex items-center gap-2">
+            <span class="text-lg leading-none">&#127468;&#127463;</span>
+            <span class="font-medium text-sm text-zinc-900 dark:text-white">David_L.</span>
+          </div>
+          <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">132 IQ</span>
+          <span class="font-mono text-xs text-zinc-500 text-right">98.3th</span>
+          <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Подвижный интеллект (Gf) (FRI: 134)</span>
+        </div>
+      </div>
+
+      <!-- Callout Banner -->
+      <div class="px-6 sm:px-8 py-5 bg-zinc-50 dark:bg-zinc-900/60 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+          </div>
+          <p class="text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200">
+            <strong>Global Community Таблица лидеров Sync</strong> - In Active Development! Public scores illustrate normative percentile cohorts.
+          </p>
+        </div>
+        <button
+          id="btn-share-result"
+          type="button"
+          class="shrink-0 px-4 py-2 rounded-full text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors flex items-center gap-1.5"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+          Share My Score
+        </button>
+      </div>
+    </section>
+
+    <!-- Interactive SVG Normal Distribution Bell Curve -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
+        <div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Population Bell Curve Placement
+          </h2>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">
+            Standard normal distribution (&mu; = 100, &sigma; = 15). The shaded area illustrates your cumulative percentile rank.
+          </p>
+        </div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-xs font-mono text-zinc-600 dark:text-zinc-400">
+          <span>Wechsler &amp; Stanford-Binet Metric</span>
+        </div>
+      </div>
+
+      <div class="w-full overflow-x-auto pb-2">
+        <div class="min-w-[580px] max-w-3xl mx-auto">
+          <svg id="bell-curve-svg" viewBox="0 0 600 240" class="w-full h-auto select-none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="percentileGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.1" />
+                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.4" />
+              </linearGradient>
+            </defs>
+            <line x1="50" y1="190" x2="550" y2="190" stroke="#d4d4d8" class="dark:stroke-zinc-800" stroke-width="2" />
+            <line x1="50" y1="185" x2="50" y2="195" stroke="#a1a1aa" class="dark:stroke-zinc-700" stroke-width="1.5" /><text x="50" y="210" font-family="monospace" font-size="11" fill="#71717a" class="fill-zinc-500 dark:fill-zinc-400" text-anchor="middle">55</text><text x="50" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" class="fill-zinc-400 dark:fill-zinc-500" text-anchor="middle">-3 SD</text>
+            <line x1="133.3" y1="185" x2="133.3" y2="195" stroke="#a1a1aa" class="dark:stroke-zinc-700" stroke-width="1.5" /><text x="133.3" y="210" font-family="monospace" font-size="11" fill="#71717a" class="fill-zinc-500 dark:fill-zinc-400" text-anchor="middle">70</text><text x="133.3" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" class="fill-zinc-400 dark:fill-zinc-500" text-anchor="middle">-2 SD</text>
+            <line x1="216.6" y1="185" x2="216.6" y2="195" stroke="#a1a1aa" class="dark:stroke-zinc-700" stroke-width="1.5" /><text x="216.6" y="210" font-family="monospace" font-size="11" fill="#71717a" class="fill-zinc-500 dark:fill-zinc-400" text-anchor="middle">85</text><text x="216.6" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" class="fill-zinc-400 dark:fill-zinc-500" text-anchor="middle">-1 SD</text>
+            <line x1="300" y1="35" x2="300" y2="195" stroke="#d4d4d8" class="dark:stroke-zinc-800" stroke-width="1" stroke-dasharray="3 3" /><text x="300" y="210" font-family="monospace" font-size="12" font-weight="bold" fill="#2563eb" text-anchor="middle">100</text><text x="300" y="224" font-family="sans-serif" font-size="9" font-weight="bold" fill="#2563eb" text-anchor="middle">Mean</text>
+            <line x1="383.3" y1="185" x2="383.3" y2="195" stroke="#a1a1aa" class="dark:stroke-zinc-700" stroke-width="1.5" /><text x="383.3" y="210" font-family="monospace" font-size="11" fill="#71717a" class="fill-zinc-500 dark:fill-zinc-400" text-anchor="middle">115</text><text x="383.3" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" class="fill-zinc-400 dark:fill-zinc-500" text-anchor="middle">+1 SD</text>
+            <line x1="466.6" y1="185" x2="466.6" y2="195" stroke="#a1a1aa" class="dark:stroke-zinc-700" stroke-width="1.5" /><text x="466.6" y="210" font-family="monospace" font-size="11" fill="#71717a" class="fill-zinc-500 dark:fill-zinc-400" text-anchor="middle">130</text><text x="466.6" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" class="fill-zinc-400 dark:fill-zinc-500" text-anchor="middle">+2 SD</text>
+            <line x1="550" y1="185" x2="550" y2="195" stroke="#a1a1aa" class="dark:stroke-zinc-700" stroke-width="1.5" /><text x="550" y="210" font-family="monospace" font-size="11" fill="#71717a" class="fill-zinc-500 dark:fill-zinc-400" text-anchor="middle">145</text><text x="550" y="224" font-family="sans-serif" font-size="9" fill="#a1a1aa" class="fill-zinc-400 dark:fill-zinc-500" text-anchor="middle">+3 SD</text>
+            <path id="curve-shaded-area" d="" fill="url(#percentileGradient)" />
+            <path id="curve-outline" d="" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            <g id="curve-pin" transform="translate(300, 40)">
+              <line x1="0" y1="0" x2="0" y2="150" stroke="#18181b" class="dark:stroke-white" stroke-width="2" stroke-dasharray="2 2" />
+              <circle cx="0" cy="0" r="5" fill="#2563eb" stroke="#ffffff" stroke-width="2" />
+              <rect x="-32" y="-30" width="64" height="22" rx="11" fill="#18181b" class="dark:fill-white" />
+              <text id="curve-pin-text" x="0" y="-15" font-family="monospace" font-size="11" font-weight="bold" fill="#ffffff" class="dark:fill-black" text-anchor="middle">You: -</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 CHC Domain Index Cards -->
+    <section>
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
+        <div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Результаты по доменам CHC
+          </h2>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">
+            Exploratory domain indicators based on 6 items each. Accuracy and qualitative tier shown; continuous IQ sub-scores are not reported at this sample size.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+
+        <!-- Fluid Reasoning Index (FRI) -->
+        <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex flex-col justify-between print:break-inside-avoid">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-1">
+              <div>
+                <span class="text-xs font-mono font-semibold text-zinc-950 dark:text-white uppercase tracking-wider">Подвижный интеллект (Gf) <span class="text-blue-600 dark:text-blue-400">(Gf)</span></span>
+                <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 block mt-0.5">Exploratory domain indicator (lower precision than composite score)</span>
+              </div>
+              <span id="domain-fluid-raw" class="font-mono text-sm font-bold text-zinc-900 dark:text-white shrink-0">-</span>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2 mb-1">
+              <span id="domain-fluid-accuracy" class="font-heading font-extrabold text-3xl text-zinc-950 dark:text-white">- / 6</span>
+              <span id="domain-fluid-pct-badge" class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-semibold">(-%)</span>
+            </div>
+            <div class="mb-3">
+              <span id="domain-fluid-tier" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">-</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              Measures abstract inductive reasoning, matrix pattern rules, and novel problem solving (Gf).
+            </p>
+          </div>
+          <div>
+            <div class="w-full h-2.5 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+              <div id="domain-fluid-bar" class="h-full bg-blue-600 rounded-full transition-all duration-700" style="width: 50%;"></div>
+            </div>
+            <div class="flex justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+              <span id="domain-fluid-pct">-</span>
+              <span id="domain-fluid-theta"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual-Spatial Index (VSI) -->
+        <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex flex-col justify-between print:break-inside-avoid">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-1">
+              <div>
+                <span class="text-xs font-mono font-semibold text-zinc-950 dark:text-white uppercase tracking-wider">Пространственное мышление (Gv) <span class="text-blue-600 dark:text-blue-400">(Gv)</span></span>
+                <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 block mt-0.5">Exploratory domain indicator (lower precision than composite score)</span>
+              </div>
+              <span id="domain-spatial-raw" class="font-mono text-sm font-bold text-zinc-900 dark:text-white shrink-0">-</span>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2 mb-1">
+              <span id="domain-spatial-accuracy" class="font-heading font-extrabold text-3xl text-zinc-950 dark:text-white">- / 6</span>
+              <span id="domain-spatial-pct-badge" class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-semibold">(-%)</span>
+            </div>
+            <div class="mb-3">
+              <span id="domain-spatial-tier" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">-</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              Assesses mental rotation, 3D visualization, spatial orientation, and figural reasoning (Gv).
+            </p>
+          </div>
+          <div>
+            <div class="w-full h-2.5 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+              <div id="domain-spatial-bar" class="h-full bg-blue-600 rounded-full transition-all duration-700" style="width: 50%;"></div>
+            </div>
+            <div class="flex justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+              <span id="domain-spatial-pct">-</span>
+              <span id="domain-spatial-theta"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quantitative Reasoning Index (QRI) -->
+        <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex flex-col justify-between print:break-inside-avoid">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-1">
+              <div>
+                <span class="text-xs font-mono font-semibold text-zinc-950 dark:text-white uppercase tracking-wider">Количественное мышление (Gq) Reasoning <span class="text-blue-600 dark:text-blue-400">(Gq)</span></span>
+                <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 block mt-0.5">Exploratory domain indicator (lower precision than composite score)</span>
+              </div>
+              <span id="domain-quantitative-raw" class="font-mono text-sm font-bold text-zinc-900 dark:text-white shrink-0">-</span>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2 mb-1">
+              <span id="domain-quantitative-accuracy" class="font-heading font-extrabold text-3xl text-zinc-950 dark:text-white">- / 6</span>
+              <span id="domain-quantitative-pct-badge" class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-semibold">(-%)</span>
+            </div>
+            <div class="mb-3">
+              <span id="domain-quantitative-tier" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">-</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              Evaluates numerical reasoning, mathematical knowledge application, and quantitative inference (Gq).
+            </p>
+          </div>
+          <div>
+            <div class="w-full h-2.5 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+              <div id="domain-quantitative-bar" class="h-full bg-blue-600 rounded-full transition-all duration-700" style="width: 50%;"></div>
+            </div>
+            <div class="flex justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+              <span id="domain-quantitative-pct">-</span>
+              <span id="domain-quantitative-theta"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verbal Comprehension Index (VCI) -->
+        <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs flex flex-col justify-between print:break-inside-avoid">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-1">
+              <div>
+                <span class="text-xs font-mono font-semibold text-zinc-950 dark:text-white uppercase tracking-wider">Вербальное понимание (Gc) <span class="text-blue-600 dark:text-blue-400">(Gc)</span></span>
+                <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 block mt-0.5">Exploratory domain indicator (lower precision than composite score)</span>
+              </div>
+              <span id="domain-verbal-raw" class="font-mono text-sm font-bold text-zinc-900 dark:text-white shrink-0">-</span>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2 mb-1">
+              <span id="domain-verbal-accuracy" class="font-heading font-extrabold text-3xl text-zinc-950 dark:text-white">- / 6</span>
+              <span id="domain-verbal-pct-badge" class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-semibold">(-%)</span>
+            </div>
+            <div class="mb-3">
+              <span id="domain-verbal-tier" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">-</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              Measures language comprehension, verbal analogies, vocabulary, and reading-based reasoning (Gc).
+            </p>
+          </div>
+          <div>
+            <div class="w-full h-2.5 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+              <div id="domain-verbal-bar" class="h-full bg-blue-600 rounded-full transition-all duration-700" style="width: 50%;"></div>
+            </div>
+            <div class="flex justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+              <span id="domain-verbal-pct">-</span>
+              <span id="domain-verbal-theta"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Разбор по вопросам -->
+    <section class="print:hidden">
+      <div class="mb-6 flex items-center justify-between gap-4">
+        <div>
+          <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+            Вопрос Review
+          </h2>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">
+            Your response vs. correct answer for each item, with full step-by-step explanations.
+          </p>
+        </div>
+        <button
+          id="btn-expand-all"
+          type="button"
+          class="px-4 py-2 rounded-full text-xs font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors whitespace-nowrap"
+        >
+          Expand All
+        </button>
+      </div>
+
+      <div id="review-accordion" class="flex flex-col gap-3">
+        <!-- Accordion items injected by script -->
+        <div class="text-center py-8 text-zinc-500 dark:text-zinc-400 font-mono text-sm">Loading review...</div>
+      </div>
+    </section>
+
+    <!-- Share and Action Hub -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-100 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden">
+      <div>
+        <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white">
+          Share Your Assessment Summary
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Copy a Markdown summary snippet or print an archival copy of your cognitive profile.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <button
+          id="btn-copy-share"
+          type="button"
+          class="flex-1 sm:flex-initial px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-800 dark:text-zinc-200 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all flex items-center justify-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+          </svg>
+          <span id="btn-copy-text">Copy Summary</span>
+        </button>
+
+        <a
+          href="/ru/test"
+          id="btn-retake-bottom"
+          class="flex-1 sm:flex-initial px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 text-center transition-colors shadow-xs"
+        >
+          Пройти заново
+        </a>
+      </div>
+    </section>
+
+    <!-- Educational Disclaimer -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+      <h4 class="font-heading font-bold text-sm text-zinc-900 dark:text-zinc-200 uppercase tracking-wider mb-2">
+        Psychometric Framework &amp; Scientific Limitations
+      </h4>
+      <p class="mb-3">
+        1. <strong>Screening Instrument:</strong> This online assessment measures specific components of Fluid Reasoning (Gf), Visual-Spatial Processing (Gv), Quantitative Reasoning (Gq), and Verbal Comprehension (Gc) using a 2-Parameter Logistic Item Response Theory framework. It provides an unproctored statistical estimate and cannot substitute for comprehensive, proctored clinical neuropsychological batteries (such as the WAIS-IV or SB5) administered by licensed psychologists.
+      </p>
+      <p class="mb-3">
+        2. <strong>Provisional Вопрос Seeding:</strong> Item parameters (discrimination a and difficulty b) are anchored to peer-reviewed psychometric literature as provisional development seeds. Live empirical calibration and item re-weighting are conducted continuously as normative sample sizes scale.
+      </p>
+      <p>
+        3. <strong>Zero Data Retention:</strong> All scoring computations execute client-side in your web browser. Your individual item responses and calculated scores are never stored on central databases or transmitted to commercial third parties.
+      </p>
+    </section>
+
+    <!-- Results Interpretation FAQ Section -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs print:hidden space-y-4">
+      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-4">
+        Часто задаваемые вопросы по результатам теста на IQ
+      </h3>
+      <div class="space-y-3">
+        <details class="group p-4 rounded-2xl bg-zinc-50/70 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white cursor-pointer list-none">
+            Какой результат теста на IQ считается нормальным?
+          </summary>
+          <p class="mt-3 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            На стандартной шкале со средним значением 100 и SD 15 диапазон 90–109 обычно считается среднестатистической нормой. Окончательная интерпретация всегда зависит от используемой методики и стандартизированных норм.
+          </p>
+        </details>
+
+        <details class="group p-4 rounded-2xl bg-zinc-50/70 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white cursor-pointer list-none">
+            Как правильно читать балл и процентиль теста на IQ?
+          </summary>
+          <p class="mt-3 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Балл IQ показывает положение результата на стандартизированной шкале, а процентиль отражает его относительную позицию в популяции. Их следует анализировать вместе, помня, что IQ не является школьной оценкой в процентах от 100.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Explore Supporting SEO Tools -->
+    <section class="print:hidden">
+      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-4">
+        Справочные материалы и инструменты
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <a href="/ru/iq-score-chart" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold block mb-1">Справочник</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-blue-600 transition-colors">Таблица баллов IQ &rarr;</h4>
+          <p class="text-xs text-zinc-500 mt-1">График нормального распределения, диапазоны SD и классификация.</p>
+        </a>
+        <a href="/ru/iq-percentile-calculator" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-semibold block mb-1">Калькулятор</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-indigo-600 transition-colors">Калькулятор процентиля &rarr;</h4>
+          <p class="text-xs text-zinc-500 mt-1">Быстрый перевод баллов IQ в процентили и редкость результата.</p>
+        </a>
+        <a href="/ru/iq-classification-scale" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-purple-600 dark:text-purple-400 font-semibold block mb-1">Классификация</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-purple-600 transition-colors">Шкала классификации &rarr;</h4>
+          <p class="text-xs text-zinc-500 mt-1">Официальные уровни интеллекта по Векслеру и другим шкалам.</p>
+        </a>
+        <a href="/ru/methodology" class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all group">
+          <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block mb-1">Психометрия</span>
+          <h4 class="font-heading font-bold text-base text-zinc-900 dark:text-white group-hover:text-emerald-600 transition-colors">Методология расчёта &rarr;</h4>
+          <p class="text-xs text-zinc-500 mt-1">Модель 2PL IRT, параметры заданий и Байесовская EAP-оценка.</p>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Client-Side Evaluation and Hydration Script -->
+  <script>
+    import type { AssessmentResult } from '../../utils/scoring';
+
+    interface ReviewOption {
+      id: number;
+      text?: string;
+      svgContent?: string | null;
+      isCorrect: boolean;
+    }
+
+    interface ReviewItem {
+      id: number;
+      domain: 'fluid' | 'spatial' | 'quantitative' | 'verbal';
+      subType: string;
+      promptType: 'text' | 'svg';
+      promptText: string;
+      promptSvg?: string | null;
+      a: number;
+      b: number;
+      explanation: string;
+      options: ReviewOption[];
+      selectedOptionId?: number;
+      isCorrect: boolean;
+    }
+
+    // Static Demo Fixture (Zero Вопрос Bank bundle import required)
+    const DEMO_RESULT: AssessmentResult = {
+      theta: 1.60,
+      sem: 0.28,
+      iqEstimate: 124,
+      confidenceInterval: [118, 130],
+      percentile: 94.5,
+      rawScore: 19,
+      totalQuestions: 24,
+      testType: 'standard',
+      domainBreakdown: {
+        fluid:        { rawScore: 5, total: 6, theta: 1.55, standardScore: 123, percentile: 94.0 },
+        spatial:      { rawScore: 5, total: 6, theta: 1.62, standardScore: 124, percentile: 94.8 },
+        quantitative: { rawScore: 5, total: 6, theta: 1.68, standardScore: 125, percentile: 95.3 },
+        verbal:       { rawScore: 4, total: 6, theta: 1.45, standardScore: 122, percentile: 92.7 },
+      },
+    };
+
+    const DEMO_REVIEW_ITEMS: ReviewItem[] = [
+      {
+        id: 1,
+        domain: 'fluid',
+        subType: 'matrix_reasoning',
+        promptType: 'text',
+        promptText: 'Which pattern logically completes the 3x3 matrix following the horizontal clockwise rotation rule?',
+        a: 1.45,
+        b: -0.42,
+        explanation: 'Each row shifts elements by 90 degrees clockwise while inverting color polarity in the final column.',
+        selectedOptionId: 3,
+        isCorrect: true,
+        options: [
+          { id: 1, text: 'Option A: Clockwise rotation without inversion', isCorrect: false },
+          { id: 2, text: 'Option B: Vertical flip with inversion', isCorrect: false },
+          { id: 3, text: 'Option C: 90-degree clockwise rotation with color inversion', isCorrect: true },
+          { id: 4, text: 'Option D: 180-degree static inversion', isCorrect: false },
+        ],
+      },
+      {
+        id: 2,
+        domain: 'spatial',
+        subType: 'cube_rotation',
+        promptType: 'text',
+        promptText: 'If the reference cube is rotated 90 degrees pitch forward and 90 degrees yaw clockwise, which view is displayed?',
+        a: 1.52,
+        b: 0.15,
+        explanation: 'Rotating the cube forward brings the top face to the front, and rotating clockwise shifts the right face to the front.',
+        selectedOptionId: 2,
+        isCorrect: true,
+        options: [
+          { id: 1, text: 'Option A: Front square with circle face', isCorrect: false },
+          { id: 2, text: 'Option B: Cross on front with triangle on top', isCorrect: true },
+          { id: 3, text: 'Option C: Inverted triangle face', isCorrect: false },
+          { id: 4, text: 'Option D: Circle face with diagonal cross', isCorrect: false },
+        ],
+      },
+      {
+        id: 3,
+        domain: 'quantitative',
+        subType: 'arithmetic_proportional_deduction',
+        promptType: 'text',
+        promptText: 'Determine the missing term in the sequence: 3, 7, 16, 35, ?',
+        a: 1.38,
+        b: 0.78,
+        explanation: 'The progression rule is: x_(n+1) = (x_n * 2) + n. For 35: (35 * 2) + 4 = 70 + 4 = 74.',
+        selectedOptionId: 1,
+        isCorrect: true,
+        options: [
+          { id: 1, text: '74', isCorrect: true },
+          { id: 2, text: '72', isCorrect: false },
+          { id: 3, text: '70', isCorrect: false },
+          { id: 4, text: '68', isCorrect: false },
+        ],
+      },
+      {
+        id: 4,
+        domain: 'verbal',
+        subType: 'lexical_analogy_deductive_logic',
+        promptType: 'text',
+        promptText: 'EPHEMERAL is to PERMANENCE as VACILLATING is to:',
+        a: 1.65,
+        b: 1.12,
+        explanation: 'Ephemeral denotes lack of permanence (antonym). Vacillating denotes lack of resolute steadfastness (antonym: Resolution).',
+        selectedOptionId: 2,
+        isCorrect: false,
+        options: [
+          { id: 1, text: 'Hesitant', isCorrect: false },
+          { id: 2, text: 'Ambiguous', isCorrect: false },
+          { id: 3, text: 'Resolution', isCorrect: true },
+          { id: 4, text: 'Velocity', isCorrect: false },
+        ],
+      },
+    ];
+
+    let currentCertResult: AssessmentResult | null = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Stamp print date
+      const printDateEl = document.getElementById('print-date');
+      if (printDateEl) printDateEl.textContent = 'Сформировано: ' + new Date().toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      // --- Read localStorage ---
+      const savedResultStr  = localStorage.getItem('iq_assessment_result');
+      const savedReviewStr  = localStorage.getItem('iq_review_data');
+      const savedTestType   = localStorage.getItem('iq_test_type') as 'quick' | 'standard' | null;
+      const demoBanner      = document.getElementById('demo-banner');
+      const testTypeBadge   = document.getElementById('test-type-badge');
+
+      let result: AssessmentResult | null = null;
+      let reviewItems: ReviewItem[] = [];
+
+      if (savedResultStr) {
+        try { result = JSON.parse(savedResultStr); } catch (e) {}
+      }
+      if (savedReviewStr) {
+        try { reviewItems = JSON.parse(savedReviewStr); } catch (e) {}
+      }
+
+      const isDemo = !result;
+
+      if (isDemo) {
+        if (demoBanner) demoBanner.classList.remove('hidden');
+        result = DEMO_RESULT;
+        reviewItems = DEMO_REVIEW_ITEMS;
+      }
+
+      currentCertResult = result;
+
+      const testType: 'quick' | 'standard' = result.testType ?? savedTestType ?? 'standard';
+
+      // Test type badge
+      if (testTypeBadge) {
+        testTypeBadge.textContent = testType === 'quick'
+          ? 'Quick Screening - 12 Items (CHC Multi-Domain)'
+          : 'Full Assessment - 24 Items (CHC Multi-Domain)';
+      }
+
+      // --- DOM Hydration: Primary Score ---
+      const scoreDisplay        = document.getElementById('score-display');
+      const ciDisplay           = document.getElementById('ci-display');
+      const semDisplay          = document.getElementById('sem-display');
+      const percentileDisplay   = document.getElementById('percentile-display');
+      const rarityDisplay       = document.getElementById('rarity-display');
+      const thetaDisplay        = document.getElementById('theta-display');
+      const classificationBadge = document.getElementById('classification-badge');
+
+      // Animate score and percentile reveal
+      const targetIq = result.iqEstimate;
+      const targetПроцентиль = result.percentile;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!prefersReducedMotion && scoreDisplay) {
+        const duration = 1200;
+        const startTime = performance.now();
+        const startIq = Math.max(60, targetIq - 25);
+
+        function animateScore(now: number) {
+          const elapsed = now - startTime;
+          const progress = Math.min(1, elapsed / duration);
+          // easeOutCubic
+          const ease = 1 - Math.pow(1 - progress, 3);
+          const currentIq = Math.round(startIq + (targetIq - startIq) * ease);
+          if (scoreDisplay) scoreDisplay.textContent = String(currentIq);
+
+          if (percentileDisplay) {
+            const currentPct = (targetПроцентиль * ease).toFixed(1);
+            percentileDisplay.textContent = `${currentPct}%`;
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(animateScore);
+          } else {
+            if (scoreDisplay) scoreDisplay.textContent = String(targetIq);
+            if (percentileDisplay) percentileDisplay.textContent = `${targetПроцентиль.toFixed(1)}%`;
+          }
+        }
+        requestAnimationFrame(animateScore);
+      } else {
+        if (scoreDisplay) scoreDisplay.textContent = String(targetIq);
+        if (percentileDisplay) percentileDisplay.textContent = `${targetПроцентиль.toFixed(1)}%`;
+      }
+
+      if (ciDisplay) ciDisplay.textContent = `${result.confidenceInterval[0]} - ${result.confidenceInterval[1]}`;
+      if (semDisplay) semDisplay.textContent = String((result.sem * 15).toFixed(1));
+      const percentileSubtext = document.getElementById('percentile-subtext');
+      if (percentileSubtext) percentileSubtext.textContent = 'Опережает ' + result.percentile.toFixed(1) + '% участников (средний уровень — 50%)';
+      const guidePct = document.getElementById('guide-dynamic-pct');
+      const guideCount = document.getElementById('guide-dynamic-count');
+      if (guidePct) guidePct.textContent = result.percentile.toFixed(1) + '%';
+      if (guideCount) guideCount.textContent = String(Math.max(1, Math.round(result.percentile)));
+      if (thetaDisplay) thetaDisplay.textContent = (result.theta >= 0 ? '+' : '') + result.theta.toFixed(2);
+
+      if (rarityDisplay) {
+        const z = (result.iqEstimate - 100) / 15;
+        // Standard normal CDF helper for the client script
+        function calcNormalCdf(val: number): number {
+          const sign = val < 0 ? -1 : 1;
+          const x = Math.abs(val) / Math.SQRT2;
+          const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
+          const p = 0.3275911;
+          const t = 1.0 / (1.0 + p * x);
+          const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+          return 0.5 * (1.0 + sign * y);
+        }
+
+        if (z >= 0) {
+          const p = Math.max(1e-6, 1.0 - calcNormalCdf(z));
+          const rarity = Math.max(2, Math.round(1.0 / p));
+          rarityDisplay.textContent = '1 из ' + (rarity >= 10000 ? '10 000+' : rarity.toLocaleString('ru-RU'));
+        } else {
+          const p = Math.max(1e-6, calcNormalCdf(z));
+          const rarity = Math.max(2, Math.round(1.0 / p));
+          rarityDisplay.textContent = '1 из ' + (rarity >= 10000 ? '10 000+' : rarity.toLocaleString('ru-RU'));
+        }
+      }
+
+      if (classificationBadge) {
+        let label = 'Средний уровень';
+        let cls   = 'bg-zinc-100 text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 border-zinc-300 dark:border-zinc-700';
+        const iq  = result.iqEstimate;
+        if (iq >= 145)      { label = 'Исключительно высокий (топ 0,1%)'; cls = 'bg-purple-100 text-purple-900 dark:bg-zinc-900 dark:text-purple-300 border-purple-300 dark:border-zinc-700'; }
+        else if (iq >= 130) { label = 'Очень высокий (порог Mensa / топ 2%)'; cls = 'bg-indigo-100 text-indigo-900 dark:bg-zinc-900 dark:text-blue-400 border-indigo-300 dark:border-zinc-700'; }
+        else if (iq >= 120) { label = 'Высокие когнитивные способности'; cls = 'bg-blue-100 text-blue-900 dark:bg-zinc-900 dark:text-blue-400 border-blue-300 dark:border-zinc-700'; }
+        else if (iq >= 110) { label = 'Уровень выше среднего'; cls = 'bg-teal-100 text-teal-900 dark:bg-zinc-900 dark:text-teal-300 border-teal-300 dark:border-zinc-700'; }
+        else if (iq >= 90)  { label = 'Средние когнитивные способности'; cls = 'bg-zinc-100 text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700'; }
+        else if (iq >= 80)  { label = 'Уровень ниже среднего'; cls = 'bg-amber-100 text-amber-900 dark:bg-zinc-900 dark:text-amber-300 border-amber-300 dark:border-zinc-700'; }
+        else                { label = 'Пограничный уровень'; cls = 'bg-rose-100 text-rose-900 dark:bg-zinc-900 dark:text-rose-300 border-rose-300 dark:border-zinc-700'; }
+        classificationBadge.textContent = label;
+        classificationBadge.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border ' + cls;
+      }
+
+      // --- Domain Performance Cards ---
+      function getDomainTier(pct: number): { label: string; cls: string } {
+        if (pct >= 83) return { label: 'Сильная сторона',  cls: 'bg-emerald-100 text-emerald-800 dark:bg-zinc-900 dark:text-emerald-300 border-emerald-200 dark:border-zinc-700' };
+        if (pct >= 67) return { label: 'Выше среднего',   cls: 'bg-blue-100 text-blue-800 dark:bg-zinc-900 dark:text-blue-300 border-blue-200 dark:border-zinc-700' };
+        if (pct >= 50) return { label: 'Средний уровень',  cls: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700' };
+        return              { label: 'Зона роста', cls: 'bg-amber-100 text-amber-800 dark:bg-zinc-900 dark:text-amber-300 border-amber-200 dark:border-zinc-700' };
+      }
+
+      const domainConfig = [
+        { key: 'fluid',        prefix: 'fluid' },
+        { key: 'spatial',      prefix: 'spatial' },
+        { key: 'quantitative', prefix: 'quantitative' },
+        { key: 'verbal',       prefix: 'verbal' },
+      ] as const;
+
+      for (const { key, prefix } of domainConfig) {
+        const d        = result.domainBreakdown[key];
+        const accuracy = d.total > 0 ? (d.rawScore / d.total) * 100 : 0;
+        const tier     = getDomainTier(accuracy);
+
+        const rawEl      = document.getElementById(`domain-${prefix}-raw`);
+        const accEl      = document.getElementById(`domain-${prefix}-accuracy`);
+        const pctBadge   = document.getElementById(`domain-${prefix}-pct-badge`);
+        const tierEl     = document.getElementById(`domain-${prefix}-tier`);
+        const barEl      = document.getElementById(`domain-${prefix}-bar`);
+        const pctEl      = document.getElementById(`domain-${prefix}-pct`);
+        const thetaEl    = document.getElementById(`domain-${prefix}-theta`);
+
+        if (rawEl)    rawEl.textContent    = `${d.rawScore} / ${d.total}`;
+        if (accEl)    accEl.textContent    = `${d.rawScore} / ${d.total}`;
+        if (pctBadge) pctBadge.textContent = `(${accuracy.toFixed(0)}%)`;
+        if (tierEl)   { tierEl.textContent = tier.label; tierEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ' + tier.cls; }
+        if (barEl)    { barEl.style.width  = `${accuracy}%`; }
+        if (pctEl)    pctEl.textContent    = `${accuracy.toFixed(0)}% · точность`;
+        if (thetaEl)  thetaEl.textContent  = `theta: ${(d.theta >= 0 ? '+' : '') + d.theta.toFixed(2)}`;
+      }
+
+      // --- Bell Curve ---
+      renderBellCurve(result.iqEstimate);
+
+      // --- Вопрос Review Accordion ---
+      renderReviewAccordion(reviewItems);
+
+      // --- Print Button ---
+      const btnPrint = document.getElementById('btn-print');
+      if (btnPrint) btnPrint.addEventListener('click', () => window.print());
+
+      // --- Copy Summary ---
+      const btnCopy     = document.getElementById('btn-copy-share');
+      const btnCopyText = document.getElementById('btn-copy-text');
+      if (btnCopy && btnCopyText) {
+        btnCopy.addEventListener('click', () => {
+          const shareText = `Выжимка результата FreeIQExam\nОценка: ${result.iqEstimate} IQ (SD 15)\n95% доверительный интервал: ${result.confidenceInterval[0]} - ${result.confidenceInterval[1]}\nПроцентиль: ${result.percentile.toFixed(1)}th\nTest Type: ${result.testType === 'quick' ? 'Quick Screening (12 items)' : 'Full Assessment (24 items)'}\nFRI: ${result.domainBreakdown.fluid.rawScore}/${result.domainBreakdown.fluid.total} | VSI: ${result.domainBreakdown.spatial.rawScore}/${result.domainBreakdown.spatial.total} | QRI: ${result.domainBreakdown.quantitative.rawScore}/${result.domainBreakdown.quantitative.total} | VCI: ${result.domainBreakdown.verbal.rawScore}/${result.domainBreakdown.verbal.total}\nScored via 2PL Item Response Theory at https://freeiqexam.com`;
+          navigator.clipboard.writeText(shareText)
+            .then(() => {
+              btnCopyText.textContent = 'Скопировано!';
+              setTimeout(() => { btnCopyText.textContent = 'Скопировать выжимку'; }, 2500);
+            })
+            .catch(() => { window.prompt('Скопируйте выжимку результата:', shareText); });
+        });
+      }
+
+      // --- Clear session on Retake ---
+      function handleRetake(e: Event) {
+        e.preventDefault();
+        localStorage.removeItem('iq_assessment_answers');
+        localStorage.removeItem('iq_active_questions');
+        localStorage.removeItem('iq_test_type');
+        localStorage.removeItem('iq_assessment_result');
+        localStorage.removeItem('iq_review_data');
+        localStorage.removeItem('freeiq_active_session');
+        localStorage.removeItem('freeiq_quick_session');
+        window.location.href = (e.currentTarget as HTMLAnchorElement).href;
+      }
+      document.getElementById('btn-retake-top')?.addEventListener('click', handleRetake);
+      document.getElementById('btn-retake-bottom')?.addEventListener('click', handleRetake);
+      document.getElementById('btn-quick-test-top')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('iq_assessment_answers');
+        localStorage.removeItem('iq_active_questions');
+        localStorage.removeItem('iq_test_type');
+        localStorage.removeItem('iq_assessment_result');
+        localStorage.removeItem('iq_review_data');
+        localStorage.removeItem('freeiq_active_session');
+        localStorage.removeItem('freeiq_quick_session');
+        window.location.href = '/ru/quick-test';
+      });
+
+      // --- Expand All accordion ---
+      const btnExpandAll = document.getElementById('btn-expand-all');
+      let allExpanded = false;
+      if (btnExpandAll) {
+        btnExpandAll.addEventListener('click', () => {
+          allExpanded = !allExpanded;
+          document.querySelectorAll('.review-panel').forEach((el) => {
+            (el as HTMLElement).style.display = allExpanded ? 'block' : 'none';
+          });
+          btnExpandAll.textContent = allExpanded ? 'Свернуть всё' : 'Развернуть всё';
+        });
+      }
+    });
+
+    // --- SubType label formatter (Bug 3 fix) ---
+    function formatSubType(subType: string): string {
+      const map: Record<string, string> = {
+        matrix_reasoning:                 'Matrix Reasoning',
+        topological_series:               'Pattern Series',
+        cube_rotation:                    '3D Cube Вращение',
+        cube_nets:                        'Cube Folding Nets',
+        abstract_rule_induction:          'Abstract Induction',
+        spatial_visualization:            'Spatial Transformation',
+        arithmetic_proportional_deduction:'Количественное мышление (Gq) Reasoning',
+        lexical_analogy_deductive_logic:  'Verbal Logic',
+      };
+      return map[subType] || subType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+
+    // --- Bell Curve Render ---
+    function renderBellCurve(userIq: number) {
+      const minIq = 55; const maxIq = 145;
+      const baselineY = 190; const peakHeight = 155;
+      const mean = 100; const sd = 15;
+      const xForIq = (iq: number) => 50 + ((iq - minIq) / (maxIq - minIq)) * 500;
+      const yForIq = (iq: number) => baselineY - peakHeight * Math.exp(-0.5 * Math.pow((iq - mean) / sd, 2));
+      let outlineD = `M 50 ${baselineY}`;
+      for (let iq = minIq; iq <= maxIq; iq++) {
+        outlineD += ` L ${xForIq(iq).toFixed(1)} ${yForIq(iq).toFixed(1)}`;
+      }
+      document.getElementById('curve-outline')?.setAttribute('d', outlineD);
+      const clamped = Math.max(55, Math.min(145, userIq));
+      let shadedD = `M 50 ${baselineY}`;
+      for (let iq = minIq; iq <= clamped; iq++) {
+        shadedD += ` L ${xForIq(iq).toFixed(1)} ${yForIq(iq).toFixed(1)}`;
+      }
+      shadedD += ` L ${xForIq(clamped).toFixed(1)} ${baselineY} Z`;
+      document.getElementById('curve-shaded-area')?.setAttribute('d', shadedD);
+      const curvePin = document.getElementById('curve-pin');
+      if (curvePin) {
+        curvePin.setAttribute('transform', `translate(${xForIq(clamped).toFixed(1)}, ${yForIq(clamped).toFixed(1)})`);
+        const pinText = document.getElementById('curve-pin-text');
+        if (pinText) pinText.textContent = `You: ${userIq}`;
+      }
+    }
+
+    // --- Вопрос Review Accordion ---
+    function renderReviewAccordion(items: ReviewItem[]) {
+      const accordion = document.getElementById('review-accordion');
+      if (!accordion) return;
+      accordion.innerHTML = '';
+
+      const domainColors: Record<string, string> = {
+        fluid:        'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 font-mono',
+        spatial:      'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 font-mono',
+        quantitative: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 font-mono',
+        verbal:       'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 font-mono',
+      };
+      const domainLabels: Record<string, string> = {
+        fluid: 'FRI', spatial: 'VSI', quantitative: 'QRI', verbal: 'VCI',
+      };
+
+      items.forEach((q, idx) => {
+        const selectedId = q.selectedOptionId;
+        const selectedOpt = q.options.find((o) => o.id === selectedId);
+        const correctOpt  = q.options.find((o) => o.isCorrect);
+        const isCorrect   = q.isCorrect;
+        const wasAnswered = selectedId !== undefined;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden';
+
+        // Header button
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'w-full flex items-center gap-3 p-4 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-inset';
+
+        // Result icon
+        const icon = document.createElement('span');
+        icon.className = 'shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ' + (isCorrect ? 'bg-emerald-500' : wasAnswered ? 'bg-rose-500' : 'bg-zinc-400');
+        icon.innerHTML = isCorrect
+          ? '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>'
+          : '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>';
+
+        const meta = document.createElement('div');
+        meta.className = 'flex-1 min-w-0';
+        const topRow = document.createElement('div');
+        topRow.className = 'flex items-center gap-2 flex-wrap';
+        const qNum = document.createElement('span');
+        qNum.className = 'font-mono text-sm font-semibold text-zinc-700 dark:text-zinc-300';
+        qNum.textContent = `Q${idx + 1}`;
+        const domainBadge = document.createElement('span');
+        const dc = domainColors[q.domain] || '';
+        domainBadge.className = `inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono font-semibold border ${dc}`;
+        domainBadge.textContent = domainLabels[q.domain] || q.domain;
+        const resultText = document.createElement('span');
+        resultText.className = 'text-xs font-mono ' + (isCorrect ? 'text-emerald-600 dark:text-emerald-400' : wasAnswered ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-400');
+        resultText.textContent = isCorrect ? 'Верно' : wasAnswered ? 'Неверно' : 'Skipped';
+        topRow.append(qNum, domainBadge, resultText);
+
+        const questionSummary = document.createElement('p');
+        questionSummary.className = 'text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 truncate pr-8';
+        questionSummary.textContent = q.promptType === 'svg' ? `[Visual: ${formatSubType(q.subType)}]` : q.promptText.slice(0, 80) + (q.promptText.length > 80 ? '...' : '');
+        meta.append(topRow, questionSummary);
+
+        const chevron = document.createElement('span');
+        chevron.className = 'shrink-0 text-zinc-400 transition-transform duration-200';
+        chevron.innerHTML = '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>';
+
+        header.append(icon, meta, chevron);
+
+        // Expandable panel
+        const panel = document.createElement('div');
+        panel.className = 'review-panel border-t border-zinc-100 dark:border-zinc-800 p-4 sm:p-5 text-sm text-zinc-700 dark:text-zinc-300';
+        panel.style.display = 'none';
+
+        // Show prompt if text
+        if (q.promptType !== 'svg' && q.promptText) {
+          const promptEl = document.createElement('p');
+          promptEl.className = 'text-sm font-medium text-zinc-800 dark:text-zinc-200 mb-3 leading-relaxed p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800';
+          promptEl.textContent = q.promptText;
+          panel.appendChild(promptEl);
+        }
+
+        // Selected vs correct answer display
+        const answerRow = document.createElement('div');
+        answerRow.className = 'flex flex-col sm:flex-row gap-3 mb-4';
+
+        const makeAnswerCard = (label: string, opt: typeof correctOpt, highlight: 'correct' | 'wrong' | 'neutral') => {
+          const card = document.createElement('div');
+          const bg = highlight === 'correct' ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800' :
+                     highlight === 'wrong'   ? 'bg-rose-50 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800' :
+                                              'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700';
+          card.className = `flex-1 p-3 rounded-xl border ${bg}`;
+          const labelEl = document.createElement('span');
+          labelEl.className = 'block text-xs font-mono font-semibold mb-1 ' + (highlight === 'correct' ? 'text-emerald-700 dark:text-emerald-400' : highlight === 'wrong' ? 'text-rose-700 dark:text-rose-400' : 'text-zinc-500');
+          labelEl.textContent = label;
+          card.appendChild(labelEl);
+          if (opt) {
+            if (opt.text) {
+              const t = document.createElement('p');
+              t.className = 'text-xs text-zinc-800 dark:text-zinc-200';
+              t.textContent = opt.text;
+              card.appendChild(t);
+            } else {
+              const svgWrap = document.createElement('div');
+              svgWrap.className = 'max-w-[80px] mx-auto';
+              svgWrap.innerHTML = opt.svgContent ?? '';
+              card.appendChild(svgWrap);
+            }
+          } else {
+            const t = document.createElement('p');
+            t.className = 'text-xs text-zinc-400 italic';
+            t.textContent = 'Not answered';
+            card.appendChild(t);
+          }
+          return card;
+        };
+
+        if (!isCorrect) {
+          answerRow.appendChild(makeAnswerCard('Ваш ответ', selectedOpt, wasAnswered ? 'wrong' : 'neutral'));
+          answerRow.appendChild(makeAnswerCard('Правильный ответ', correctOpt, 'correct'));
+        } else {
+          answerRow.appendChild(makeAnswerCard('Ваш ответ (верно)', selectedOpt, 'correct'));
+        }
+        panel.appendChild(answerRow);
+
+        // Explanation
+        const explainLabel = document.createElement('p');
+        explainLabel.className = 'text-xs font-mono font-semibold text-zinc-500 uppercase tracking-wider mb-2';
+        explainLabel.textContent = 'Пошаговое объяснение';
+        const explainText = document.createElement('p');
+        explainText.className = 'text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80';
+        explainText.textContent = q.explanation;
+        panel.append(explainLabel, explainText);
+
+        // IRT params
+        const params = document.createElement('p');
+        params.className = 'text-xs font-mono text-zinc-400 mt-3';
+        params.textContent = `IRT: a = ${q.a} (discrimination), b = ${q.b} (difficulty)`;
+        panel.appendChild(params);
+
+        // Toggle
+        header.addEventListener('click', () => {
+          const isOpen = panel.style.display !== 'none';
+          panel.style.display = isOpen ? 'none' : 'block';
+          chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+        });
+      });
+    }
+
+    // --- Certificate Generator ---
+    (function () {
+      function getCertResult(): AssessmentResult | null {
+        if (currentCertResult) return currentCertResult;
+        const savedResultStr = localStorage.getItem('iq_assessment_result');
+        if (savedResultStr) {
+          try {
+            return JSON.parse(savedResultStr);
+          } catch (e) {}
+        }
+        return DEMO_RESULT;
+      }
+
+      function drawCertificate(canvas: HTMLCanvasElement, recipientName: string, result: AssessmentResult) {
+        const W = 1600, H = 1130;
+        // High-DPI retina canvas buffer
+        canvas.width = 3200;
+        canvas.height = 2260;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.setTransform(2, 0, 0, 2, 0, 0);
+
+        // Helper for rounded rectangle with fallback
+        function drawRoundRect(x: number, y: number, w: number, h: number, r: number) {
+          if (!ctx) return;
+          if (typeof (ctx as any).roundRect === 'function') {
+            (ctx as any).roundRect(x, y, w, h, r);
+          } else {
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+          }
+        }
+
+        // Background gradient (cream)
+        const bg = ctx.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, '#ffffff');
+        bg.addColorStop(1, '#f8fafc');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Outer double border
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 12;
+        ctx.strokeRect(24, 24, W - 48, H - 48);
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(40, 40, W - 80, H - 80);
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(52, 52, W - 104, H - 104);
+
+        // Corner ornament dots
+        const corners = [[68, 68], [W - 68, 68], [68, H - 68], [W - 68, H - 68]];
+        corners.forEach(([cx, cy]) => {
+          ctx.beginPath();
+          ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+          ctx.fillStyle = '#d97706';
+          ctx.fill();
+        });
+
+        // Header registry line
+        ctx.font = 'bold 26px "Georgia", serif';
+        ctx.fillStyle = '#374151';
+        ctx.textAlign = 'center';
+        ctx.fillText('РЕЕСТР ПСИХОМЕТРИЧЕСКИХ ОЦЕНОК FREEIQEXAM', W / 2, 140);
+
+        // Gold separator
+        ctx.fillStyle = '#d97706';
+        ctx.fillRect(W / 2 - 300, 158, 600, 3);
+
+        // Monumental title
+        ctx.font = 'bold 50px "Georgia", serif';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText('СЕРТИФИКАТ САМОСТОЯТЕЛЬНОЙ КОГНИТИВНОЙ ОЦЕНКИ', W / 2, 240);
+
+        // Presentation text
+        ctx.font = '30px "Georgia", serif';
+        ctx.fillStyle = '#6b7280';
+        ctx.fillText('Настоящим удостоверяется, что', W / 2, 320);
+
+        // Recipient name (prominent with dynamic font sizing)
+        const displayName = recipientName.trim() || 'Участник оценки';
+        let nameFontSize = 70;
+        ctx.font = `bold ${nameFontSize}px "Georgia", serif`;
+        while (ctx.measureText(displayName).width > 1200 && nameFontSize > 26) {
+          nameFontSize -= 4;
+          ctx.font = `bold ${nameFontSize}px "Georgia", serif`;
+        }
+        ctx.fillStyle = '#1e40af';
+        ctx.fillText(displayName, W / 2, 420);
+
+        // Name underline
+        const nameWidth = Math.min(ctx.measureText(displayName).width, 1200);
+        ctx.fillStyle = '#1e40af';
+        ctx.fillRect(W / 2 - nameWidth / 2, 432, nameWidth, 2);
+
+        // Performance paragraph
+        const dateStr = new Date().toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' });
+        ctx.font = '24px "Georgia", serif';
+        ctx.fillStyle = '#374151';
+        ctx.fillText('успешно прошёл(ла) стандартизированную оценку когнитивных способностей (4 домена CHC, ' + dateStr + ').', W / 2, 490);
+        ctx.fillText('Шкала SD15 (среднее 100) по психометрической модели 2PL IRT.', W / 2, 526);
+
+        // Central score box
+        const boxX = W / 2 - 280, boxY = 566, boxW = 560, boxH = 200;
+        ctx.fillStyle = '#f0f9ff';
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        drawRoundRect(boxX, boxY, boxW, boxH, 16);
+        ctx.fill();
+        ctx.stroke();
+
+        // Score + IQ label
+        ctx.font = 'bold 80px "Georgia", serif';
+        ctx.fillStyle = '#0f172a';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(result.iqEstimate) + ' IQ', W / 2, boxY + 82);
+
+        ctx.font = '24px "Georgia", serif';
+        ctx.fillStyle = '#374151';
+        ctx.fillText(
+          '95% интервал: [' + result.confidenceInterval[0] + ' - ' + result.confidenceInterval[1] + ']   |   ' +
+          result.percentile.toFixed(1) + '-й процентиль',
+          W / 2, boxY + 126
+        );
+
+        // Classification
+        let classification = 'Средние когнитивные способности';
+        const iq = result.iqEstimate;
+        if (iq >= 145) classification = 'Исключительно высокие когнитивные способности';
+        else if (iq >= 130) classification = 'Очень высокие когнитивные способности';
+        else if (iq >= 120) classification = 'Высокие когнитивные способности';
+        else if (iq >= 110) classification = 'Способности выше среднего';
+        else if (iq >= 90)  classification = 'Средний Cognitive Ability';
+        else if (iq >= 80)  classification = 'Уровень ниже среднего';
+        else                classification = 'Пограничный уровень';
+
+        ctx.font = 'bold 26px "Georgia", serif';
+        ctx.fillStyle = '#1e40af';
+        ctx.fillText(classification, W / 2, boxY + 168);
+
+        // 4 CHC Domain sub-indices
+        const domainLabels = [
+          { key: 'fluid',        label: 'Подвижный интеллект (Gf)' },
+          { key: 'spatial',      label: 'Пространственное мышление (Gv)' },
+          { key: 'quantitative', label: 'Количественное мышление (Gq)' },
+          { key: 'verbal',       label: 'Вербальное понимание (Gc)' },
+        ] as const;
+
+        const colW = (W - 160) / 4;
+        const domY = 810;
+        ctx.font = '22px "Georgia", serif';
+        domainLabels.forEach((d, i) => {
+          const cx         = 80 + colW * i + colW / 2;
+          const dd         = result.domainBreakdown[d.key];
+          const accPct     = dd.total > 0 ? Math.round((dd.rawScore / dd.total) * 100) : 0;
+          const tierLabel  = accPct >= 83 ? 'Сильная сторона' : accPct >= 67 ? 'Выше среднего' : accPct >= 50 ? 'Средний уровень' : 'Зона роста';
+          ctx.fillStyle = '#374151';
+          ctx.textAlign = 'center';
+          ctx.fillText(d.label, cx, domY);
+          ctx.font = 'bold 36px "Georgia", serif';
+          ctx.fillStyle = '#0f172a';
+          ctx.fillText(dd.rawScore + '/' + dd.total + ' верно', cx, domY + 46);
+          ctx.font = '20px "Georgia", serif';
+          ctx.fillStyle = '#374151';
+          ctx.fillText('(' + tierLabel + ')', cx, domY + 74);
+          ctx.font = '22px "Georgia", serif';
+        });
+
+        // Gold separator above footer
+        ctx.fillStyle = '#d97706';
+        ctx.fillRect(80, 900, W - 160, 2);
+
+        // Footer: Reference ID | Seal text | Date
+        const hashInput = `${result.iqEstimate}-${result.theta.toFixed(2)}-${result.rawScore}-${result.totalQuestions}`;
+        let hashVal = 5381;
+        for (let i = 0; i < hashInput.length; i++) {
+          hashVal = ((hashVal << 5) + hashVal) + hashInput.charCodeAt(i);
+          hashVal |= 0;
+        }
+        const hexCode = Math.abs(hashVal).toString(16).padStart(6, '0').slice(-6).toUpperCase();
+        const dateYear = new Date().getFullYear().toString();
+        const referenceId = `FIQ-${dateYear}-${hexCode}`;
+        ctx.font = '20px monospace';
+        ctx.fillStyle = '#6b7280';
+        ctx.textAlign = 'left';
+        ctx.fillText('ID Справки: ' + referenceId, 100, 950);
+
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 20px "Georgia", serif';
+        ctx.fillStyle = '#d97706';
+        ctx.fillText('ОЦЕНКА ПО 2PL IRT | САМООЦЕНКА', W / 2, 950);
+
+        ctx.textAlign = 'right';
+        ctx.font = '20px "Georgia", serif';
+        ctx.fillStyle = '#6b7280';
+        ctx.fillText('Движок психометрии FreeIQExam', W - 100, 950);
+        ctx.fillText(dateStr, W - 100, 978);
+
+        // Signature line
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(W - 400, 940);
+        ctx.lineTo(W - 100, 940);
+        ctx.stroke();
+
+        // Mirror canvas to print certificate image
+        const printCertImg = document.getElementById('print-cert-img') as HTMLImageElement | null;
+        if (printCertImg) {
+          printCertImg.src = canvas.toDataURL('image/png');
+        }
+      }
+
+      // Button wiring (runs after DOM is ready)
+      document.addEventListener('DOMContentLoaded', function () {
+        const btnGenerate   = document.getElementById('btn-generate-cert');
+        const btnDownload   = document.getElementById('btn-download-cert');
+        const btnPrintCert  = document.getElementById('btn-print-cert');
+        const btnShare      = document.getElementById('btn-share-result');
+        const nameInput     = document.getElementById('cert-name-input') as HTMLInputElement | null;
+        const previewWrap   = document.getElementById('cert-preview-wrap');
+        const canvas        = document.getElementById('cert-canvas') as HTMLCanvasElement | null;
+
+        if (btnGenerate && canvas && previewWrap) {
+          btnGenerate.addEventListener('click', () => {
+            const r = getCertResult();
+            if (!r) return;
+            const name = nameInput ? nameInput.value.trim() : '';
+            drawCertificate(canvas, name, r);
+            previewWrap.classList.remove('hidden');
+            previewWrap.classList.add('flex');
+            canvas.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+        }
+
+        if (btnDownload && canvas) {
+          btnDownload.addEventListener('click', () => {
+            const name = (nameInput ? nameInput.value.trim() : '') || 'Verified_Candidate';
+            const safeName = name.replace(/[^\p{L}\p{N}\s_-]/gu, '');
+            const filename = 'FreeIQExam_Certificate_' + safeName + '.png';
+
+            if (canvas.toBlob) {
+              canvas.toBlob((blob) => {
+                if (!blob) return;
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+                if (isIOS) {
+                  const url = URL.createObjectURL(blob);
+                  window.open(url, '_blank');
+                  setTimeout(() => URL.revokeObjectURL(url), 30000);
+                } else {
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.download = filename;
+                  link.href = url;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  setTimeout(() => URL.revokeObjectURL(url), 1000);
+                }
+              }, 'image/png');
+            } else {
+              const link = document.createElement('a');
+              link.download = filename;
+              link.href = canvas.toDataURL('image/png');
+              link.click();
+            }
+          });
+        }
+
+        if (btnPrintCert) {
+          btnPrintCert.addEventListener('click', () => window.print());
+        }
+
+        if (btnShare) {
+          btnShare.addEventListener('click', () => {
+            const r = getCertResult();
+            const shareText = r
+              ? 'I scored ' + r.iqEstimate + ' IQ (' + r.percentile.toFixed(1) + 'th percentile) on the FreeIQExam 4-Domain Cognitive Assessment. Take the free test at https://freeiqexam.com'
+              : 'Take the free FreeIQExam 4-Domain IQ Assessment at https://freeiqexam.com';
+            if (navigator.share) {
+              navigator.share({ title: 'My FreeIQExam Счёт', text: shareText, url: 'https://freeiqexam.com/ru/results' }).catch(() => {});
+            } else {
+              navigator.clipboard.writeText(shareText).then(() => {
+                if (btnShare) btnShare.textContent = 'Link Copied!';
+                setTimeout(() => { if (btnShare) btnShare.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg> Share My Score'; }, 2500);
+              }).catch(() => { window.prompt('Copy your score link:', shareText); });
+            }
+          });
+        }
+      });
+    })();
+  </script>
+</Layout>

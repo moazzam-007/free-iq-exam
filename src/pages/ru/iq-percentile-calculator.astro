@@ -1,0 +1,784 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = "Калькулятор процентилей IQ: балл в процентиль онлайн";
+const description = "Переведите балл IQ в процентиль, z-оценку и редкость в популяции. Формула z=(IQ−100)/15, бесплатно.";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Калькулятор процентилей IQ",
+    "url": "https://freeiqexam.com/ru/iq-percentile-calculator/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "description": "Мгновенный двусторонний пересчёт между стандартными баллами IQ (SD 15) и процентильными рангами нормального распределения.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Калькулятор процентилей IQ",
+        "item": "https://freeiqexam.com/ru/iq-percentile-calculator/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Что такое процентиль IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Процентиль IQ показывает, какой процент общей популяции набирает балл не выше данного результата по стандартизированному нормальному распределению (среднее 100, стандартное отклонение (SD 15))."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Какому процентилю соответствует IQ 100?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "IQ 100 — это точная медиана популяции, соответствующая 50-му процентилю."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Какой балл IQ нужен для вступления в Mensa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mensa требует результата на уровне 98-го процентиля и выше, что соответствует IQ 130 и выше по шкале Векслера (SD 15) либо 132 по шкале Стэнфорд–Бине (SD 16)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как математически вычисляется процентиль IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Процентили IQ выводятся через функцию стандартного нормального кумулятивного распределения (CDF). Сначала вычисляется z-оценка по формуле z = (IQ − 100) / 15, затем она интегрируется через гауссову функцию ошибок."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/iq-percentile-calculator" idPath="/kalkulator-persentil-iq" canonicalUrl="https://freeiqexam.com/ru/iq-percentile-calculator">
+  <Header currentPath="/iq-percentile-calculator"  enPath="/iq-percentile-calculator" idPath="/kalkulator-persentil-iq"/>
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-medium uppercase tracking-wider mb-4">
+        <span>Интерактивный инструмент &bull; Модель Векслера SD 15</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Калькулятор процентилей IQ
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Преобразуйте любой балл IQ в теоретический процентильный ранг нормального распределения либо вычислите ориентировочный балл IQ, необходимый для достижения заданного процентильного уровня.
+      </p>
+    </header>
+
+    <!-- Interactive 2-Way Calculator Component Card -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs max-w-2xl mx-auto w-full">
+      
+      <!-- Mode Toggle Buttons -->
+      <div class="flex items-center p-1 rounded-2xl bg-zinc-200/70 dark:bg-zinc-800/70 mb-8 max-w-md mx-auto">
+        <button
+          id="tab-iq-to-pct"
+          type="button"
+          class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs"
+        >
+          Балл в процентиль
+        </button>
+        <button
+          id="tab-pct-to-iq"
+          type="button"
+          class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+        >
+          Процентиль в балл
+        </button>
+      </div>
+
+      <!-- Mode 1: IQ -> Процентиль Panel -->
+      <div id="panel-iq-to-pct" class="space-y-6">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="iq-input" class="text-sm font-semibold text-zinc-900 dark:text-white">
+              Введите балл IQ (SD 15)
+            </label>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Диапазон: от 55 до 160</span>
+          </div>
+          <div class="relative">
+            <input
+              id="iq-input"
+              type="number"
+              min="55"
+              max="160"
+              value="120"
+              class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-2xl font-bold font-mono text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-500 dark:text-zinc-400 font-semibold">IQ</span>
+          </div>
+          <!-- Range Slider -->
+          <input
+            id="iq-slider"
+            type="range"
+            min="55"
+            max="160"
+            value="120"
+            aria-label="Ползунок балла IQ"
+            class="w-full mt-4 accent-blue-600 cursor-pointer min-h-[44px]"
+          />
+        </div>
+
+        <!-- Calculated Metrics Output Card -->
+        <div class="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4" role="status" aria-live="polite">
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Процентиль</span>
+            <span id="output-percentile" class="text-2xl font-heading font-extrabold text-blue-600 dark:text-blue-400">
+              90,9%
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Редкость в популяции</span>
+            <span id="output-rarity" class="text-base font-mono font-bold text-zinc-900 dark:text-white">
+              Верхние 9,1% (1 из 11)
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Отклонение z-оценки</span>
+            <span id="output-zscore" class="text-base font-mono font-semibold text-zinc-900 dark:text-white">
+              +1.33 &sigma;
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Классификация</span>
+            <span id="output-classification" class="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
+              Выше среднего
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode 2: Процентиль -> IQ Panel -->
+      <div id="panel-pct-to-iq" class="hidden space-y-6">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="pct-input" class="text-sm font-semibold text-zinc-900 dark:text-white">
+              Введите желаемый процентиль
+            </label>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Диапазон: от 0,1% до 99,9%</span>
+          </div>
+          <div class="relative">
+            <input
+              id="pct-input"
+              type="number"
+              min="0.1"
+              max="99.9"
+              step="0.1"
+              value="98.0"
+              class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-2xl font-bold font-mono text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-500 dark:text-zinc-400 font-semibold">%</span>
+          </div>
+          <input
+            id="pct-slider"
+            type="range"
+            min="0.1"
+            max="99.9"
+            step="0.1"
+            value="98.0"
+            aria-label="Ползунок процентиля"
+            class="w-full mt-4 accent-blue-600 cursor-pointer min-h-[44px]"
+          />
+        </div>
+
+        <div class="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4" role="status" aria-live="polite">
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Эквивалентный балл IQ</span>
+            <span id="output-iq-from-pct" class="text-2xl font-heading font-extrabold text-blue-600 dark:text-blue-400">
+              131 IQ
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Уровень стандартного отклонения</span>
+            <span id="output-sd-from-pct" class="text-base font-mono font-semibold text-zinc-900 dark:text-white">
+              +2.05 &sigma; (Wechsler SD 15)
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Статус Mensa</span>
+            <span id="output-mensa-status" class="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
+              Подходит для Mensa (верхние 2%)
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Quick Reference Benchmark Table -->
+    <section>
+      <div class="mb-4 text-center sm:text-left">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Справочная таблица ориентировочных баллов и процентилей
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Справочные значения для стандартного отклонения 15 и процентили накопленного нормального распределения.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table class="w-full min-w-[560px] text-left text-xs sm:text-sm font-mono">
+          <thead class="sticky top-0 bg-zinc-100/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10 border-b border-zinc-200 dark:border-zinc-800 uppercase text-[11px] text-zinc-600 dark:text-zinc-400">
+            <tr>
+              <th class="py-3 px-4">Балл IQ (SD 15)</th>
+              <th class="py-3 px-4">Процентиль</th>
+              <th class="py-3 px-4">Z-оценка (&sigma;)</th>
+              <th class="py-3 px-4">Частота в популяции</th>
+              <th class="py-3 px-4">Психометрический уровень</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200/80 dark:divide-zinc-800 bg-white dark:bg-black">
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">145</td>
+              <td class="py-3 px-4">99,87%</td>
+              <td class="py-3 px-4">+3,00 &sigma;</td>
+              <td class="py-3 px-4">1 из 741</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Очень высокий интеллект/Гениальность</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">130</td>
+              <td class="py-3 px-4">97,72%</td>
+              <td class="py-3 px-4">+2,00 &sigma;</td>
+              <td class="py-3 px-4">1 из 44</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Одарённость/Высокий интеллект (Mensa)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">120</td>
+              <td class="py-3 px-4">90,88%</td>
+              <td class="py-3 px-4">+1,33 &sigma;</td>
+              <td class="py-3 px-4">1 из 11</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Выше среднего</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">115</td>
+              <td class="py-3 px-4">84,13%</td>
+              <td class="py-3 px-4">+1,00 &sigma;</td>
+              <td class="py-3 px-4">1 из 6</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Высокая норма (+1 SD)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">100</td>
+              <td class="py-3 px-4">50,00%</td>
+              <td class="py-3 px-4">0,00 &sigma;</td>
+              <td class="py-3 px-4">1 из 2</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Среднее популяции</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">85</td>
+              <td class="py-3 px-4">15,87%</td>
+              <td class="py-3 px-4">-1,00 &sigma;</td>
+              <td class="py-3 px-4">1 из 6</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Низкая норма (−1 SD)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">70</td>
+              <td class="py-3 px-4">2,28%</td>
+              <td class="py-3 px-4">-2,00 &sigma;</td>
+              <td class="py-3 px-4">1 из 44</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Пограничный уровень (−2 SD)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Mathematical Formula Breakdown -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+      <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-3">
+        Математическая формулировка: z-оценки и интегрирование CDF
+      </h3>
+      <p class="mb-3">
+        Переход от стандартного балла к процентилю выполняется через стандартизацию нормального распределения:
+      </p>
+      <div class="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 font-mono text-xs mb-3">
+        z = (IQ - 100) / 15<br />
+        Процентиль = &Phi;(z) &times; 100 = 0.5 &times; [1 + erf(z / &radic;2)] &times; 100
+      </div>
+      <p>
+        Где &Phi; — функция кумулятивного распределения стандартного нормального закона, а erf — гауссова функция ошибок.
+      </p>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- LAYMAN PERCENTILE EXPLAINER: THE 100-PERSON LINE & NORMAL CURVE   -->
+    <!-- ================================================================= -->
+    <section class="space-y-8 border-t border-zinc-200 dark:border-zinc-800 pt-10" aria-labelledby="heading-layman-guide">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-medium uppercase tracking-wider mb-2">
+          Руководство простым языком
+        </div>
+        <h2 id="heading-layman-guide" class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+          Как понимать процентили IQ: руководство для каждого
+        </h2>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1 max-w-3xl">
+          Всё, что нужно знать о значении процентилей, об их отличии от тестовых баллов и о том, почему важно колоколообразное распределение.
+        </p>
+      </div>
+
+      <!-- 1. The 100-Person Line Analogy -->
+      <div class="rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 p-6 sm:p-8 shadow-xs">
+        <div class="flex items-center gap-3.5 mb-4">
+          <div class="w-11 h-11 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+              Наглядная аналогия «шеренга из 100 человек»
+            </h3>
+            <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              Визуализация относительного места в популяции
+            </p>
+          </div>
+        </div>
+
+        <blockquote class="text-sm sm:text-base text-zinc-800 dark:text-zinc-200 font-medium leading-relaxed mb-6 pl-4 border-l-4 border-blue-500 dark:border-blue-400 italic">
+          «Представьте 100 случайно выбранных людей, выстроенных от наименьшего балла к наибольшему. Если ваш IQ находится на 98-м процентиле, вы стоите впереди 98 человек из этой сотни, и лишь 2 человека — впереди вас».
+        </blockquote>
+
+        <!-- 10x10 Cohort Visualization Grid -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <div class="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-3">
+            <span>Нижний 1% (позади)</span>
+            <span class="font-bold text-blue-600 dark:text-blue-400">98-й процентиль (порог Mensa)</span>
+            <span>Верхние 100%</span>
+          </div>
+          <!-- Visual Dot Cohort Row -->
+          <div class="grid grid-cols-10 gap-1.5 sm:gap-2">
+            <!-- 98 People Ahead / Cohort Blocks -->
+            <div class="col-span-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300">
+              98 человек позади вас (98%)
+            </div>
+            <!-- Top 2 Elite -->
+            <div class="col-span-2 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-mono font-bold shadow-xs">
+              Топ-2 (IQ 130+)
+            </div>
+          </div>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-2.5">
+            По стандартизированной шкале ранг 50-го процентиля помещает вас ровно в медиану (50 позади, 50 впереди), а ранг 99,9-го процентиля означает, что вы впереди 999 человек из 1 000.
+          </p>
+        </div>
+      </div>
+
+      <!-- 2. Percentage vs. Процентиль Comparison -->
+      <div>
+        <h3 class="font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white mb-4">
+          Проценты и процентили: принципиальное различие
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Percentage Card -->
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
+            <div>
+              <div class="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-200/70 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-mono font-bold mb-3">
+                Проценты (%) — точность сырых ответов
+              </div>
+              <h4 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+                Какую долю заданий вы решили верно
+              </h4>
+              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+                80% на тесте означает, что вы верно ответили на 80 вопросов из 100. Это отражает абсолютный результат на конкретном наборе заданий — вне зависимости от того, как выступили другие и насколько трудными были вопросы.
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs font-mono text-zinc-600 dark:text-zinc-400">
+              Формула: (верные ответы / всего вопросов) &times; 100
+            </div>
+          </div>
+
+          <!-- Процентиль Card -->
+          <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
+            <div>
+              <div class="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-200/70 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-mono font-bold mb-3">
+                Процентиль — относительное место в популяции
+              </div>
+              <h4 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+                Какая доля населения выступила хуже вас
+              </h4>
+              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+                Ранг 80-го процентиля означает, что вы выступили лучше 80% всей стандартизированной нормативной группы — независимо от того, верно ли вы решили 15, 20 или 24 задания. Он измеряет относительную когнитивную редкость.
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs font-mono text-zinc-700 dark:text-zinc-300">
+              Метрика: кумулятивный нормальный интеграл &Phi;(z) &times; 100
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. How the Two Conversion Tools Work -->
+      <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+        <h3 class="font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white mb-4">
+          Как работают два инструмента пересчёта
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+              <h4 class="font-heading font-bold text-sm sm:text-base text-zinc-950 dark:text-white">
+                Балл в процентильный ранг
+              </h4>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Берёт ваш стандартизированный балл IQ и применяет кривую гауссова нормального распределения (калиброванную на среднее популяции 100 и стандартное отклонение 15), чтобы вычислить точный процентильный ранг через кумулятивную функцию ошибок.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+              <h4 class="font-heading font-bold text-sm sm:text-base text-zinc-950 dark:text-white">
+                Процентиль в необходимый балл IQ
+              </h4>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Обращает кумулятивную колоколообразную кривую Гаусса, вычисляя точный пороговый балл, необходимый для попадания в конкретные сообщества высокого IQ и когнитивные интервалы (например, 98-й процентиль для членства в Mensa соответствует IQ 130+).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Why IQ Scores Cluster: The Bell Curve Distribution -->
+      <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+        <h3 class="font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white mb-2">
+          Почему баллы IQ группируются (стандартная нормальная кривая)
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+          Когнитивные способности человека подчиняются симметричному колоколообразному гауссову распределению. Большинство людей плотно группируются вокруг среднего значения популяции 100:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- 1 SD -->
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <div class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white">
+              68,2%
+            </div>
+            <div class="text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200 mt-1">
+              В пределах &plusmn;1 SD (IQ 85–115)
+            </div>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+              Более двух третей населения находятся в этом среднем диапазоне способностей.
+            </p>
+          </div>
+
+          <!-- 2 SD -->
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <div class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white">
+              95,4%
+            </div>
+            <div class="text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200 mt-1">
+              В пределах &plusmn;2 SD (IQ 70–130)
+            </div>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+              Подавляющее большинство взрослых находятся между пограничным и высоким диапазонами.
+            </p>
+          </div>
+
+          <!-- Top 2.3% -->
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <div class="text-2xl sm:text-3xl font-heading font-extrabold text-blue-600 dark:text-blue-400">
+              Лишь 2,3%
+            </div>
+            <div class="text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200 mt-1">
+              Выше +2 SD (IQ 130+)
+            </div>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+              Достигают 98-го процентиля и выше, необходимых для сообществ высокого IQ.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Connection to Cognitive Mini-Игры Notice -->
+      <div class="p-5 sm:p-6 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 flex items-start gap-3.5">
+        <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0 mt-0.5">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div class="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+          <span class="font-heading font-bold text-zinc-950 dark:text-white">Когнитивные мини-игры и формальная психометрия:</span>
+          Наши тренировочные мини-игры дают <strong>баллы выполнения заданий от 0 до 100</strong>, отражающие скорость, объём рабочей памяти и точность оперативных реакций. Хотя эти упражнения обеспечивают адресную тренировку когнитивной гибкости, истинные популяционные процентили IQ требуют психометрически калиброванных оценок на основе теории тестовых заданий (таких как <a href="/ru/test" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">официальный полный тест IQ</a>).
+        </div>
+      </div>
+    </section>
+
+    <!-- Frequently Asked Questions Section -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-2">
+          Частые вопросы о процентилях и нормальном распределении
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Ключевые понятия о гауссовом распределении, z-оценках и интерпретации процентилей.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Что такое процентиль IQ?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Процентиль IQ показывает, какой процент общей популяции набирает балл не выше данного результата по стандартизированному нормальному распределению (среднее 100, стандартное отклонение (SD 15)).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Какому процентилю соответствует IQ 100?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            IQ 100 — это точная медиана популяции, соответствующая 50-му процентилю.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Какой балл IQ нужен для вступления в Mensa?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Mensa требует результата на уровне 98-го процентиля и выше, что соответствует IQ 130 и выше по шкале Векслера (SD 15) либо 132 по шкале Стэнфорд–Бине (SD 16).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Как математически вычисляется процентиль IQ?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Процентили IQ выводятся через функцию стандартного нормального кумулятивного распределения (CDF). Сначала вычисляется z-оценка по формуле z = (IQ − 100) / 15, затем она интегрируется через гауссову функцию ошибок.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- High-Conversion Assessment CTA Banner -->
+    <section class="p-8 sm:p-12 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-center shadow-lg relative overflow-hidden">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight">
+        Вычислите свой процентиль прямо сейчас
+      </h2>
+      <p class="text-blue-100 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+        Пройдите нашу невербальную оценку подвижного интеллекта из 24 заданий и за 20 минут получите ориентировочный стандартный балл и процентильный ранг.
+      </p>
+      <a 
+        href="/ru/test" 
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold text-zinc-950 bg-white hover:bg-zinc-100 transition-all shadow-md hover:scale-102 active:scale-98"
+      >
+        <span>Пройти бесплатный тест</span>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // Mathematical functions
+  function erf(x: number): number {
+    const sign = x >= 0 ? 1 : -1;
+    const absX = Math.abs(x);
+    const a1 = 0.254829592;
+    const a2 = -0.284496736;
+    const a3 = 1.421413741;
+    const a4 = -1.453152027;
+    const a5 = 1.061405429;
+    const p = 0.3275911;
+    const t = 1.0 / (1.0 + p * absX);
+    const y = 1.0 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t) * Math.exp(-absX * absX);
+    return sign * y;
+  }
+
+  function normalCdf(z: number): number {
+    return 0.5 * (1.0 + erf(z / Math.SQRT2));
+  }
+
+  // Inverse normal approximation (Beasley-Springer-Moro)
+  function rationalApproximation(t: number): number {
+    const c = [2.515517, 0.802853, 0.010328];
+    const d = [1.432788, 0.189269, 0.001308];
+    return t - ((c[2] * t + c[1]) * t + c[0]) / (((d[2] * t + d[1]) * t + d[0]) * t + 1.0);
+  }
+
+  function invNormalCdf(p: number): number {
+    if (p <= 0) return -4.0;
+    if (p >= 1) return 4.0;
+    if (p < 0.5) {
+      return -rationalApproximation(Math.sqrt(-2.0 * Math.log(p)));
+    } else {
+      return rationalApproximation(Math.sqrt(-2.0 * Math.log(1.0 - p)));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Mode Switching
+    const tabIqToPct = document.getElementById('tab-iq-to-pct');
+    const tabPctToIq = document.getElementById('tab-pct-to-iq');
+    const panelIqToPct = document.getElementById('panel-iq-to-pct');
+    const panelPctToIq = document.getElementById('panel-pct-to-iq');
+
+    if (tabIqToPct && tabPctToIq && panelIqToPct && panelPctToIq) {
+      tabIqToPct.addEventListener('click', () => {
+        panelIqToPct.classList.remove('hidden');
+        panelPctToIq.classList.add('hidden');
+        tabIqToPct.className = 'flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs';
+        tabPctToIq.className = 'flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white';
+      });
+
+      tabPctToIq.addEventListener('click', () => {
+        panelPctToIq.classList.remove('hidden');
+        panelIqToPct.classList.add('hidden');
+        tabPctToIq.className = 'flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs';
+        tabIqToPct.className = 'flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white';
+      });
+    }
+
+    // Panel 1: IQ -> Процентиль
+    const iqInput = document.getElementById('iq-input') as HTMLInputElement;
+    const iqSlider = document.getElementById('iq-slider') as HTMLInputElement;
+    const outputПроцентиль = document.getElementById('output-percentile');
+    const outputRarity = document.getElementById('output-rarity');
+    const outputZscore = document.getElementById('output-zscore');
+    const outputClassification = document.getElementById('output-classification');
+
+    function updateFromIq(iq: number) {
+      const z = (iq - 100) / 15;
+      const pct = Math.min(99.99, Math.max(0.01, normalCdf(z) * 100));
+
+      if (outputПроцентиль) outputПроцентиль.textContent = `${pct.toFixed(1).replace('.', ',')}%`;
+      if (outputZscore) outputZscore.textContent = `${z >= 0 ? '+' : ''}${z.toFixed(2).replace('.', ',')} σ`;
+
+      // Rarity
+      if (outputRarity) {
+        if (pct >= 50) {
+          const rem = 100 - pct;
+          const ratio = rem > 0.05 ? Math.round(100 / rem) : 1000;
+          outputRarity.textContent = `Верхние ${(rem).toFixed(1).replace('.', ',')}% (1 из ${ratio >= 1000 ? '1 000+' : ratio})`;
+        } else {
+          const ratio = pct > 0.05 ? Math.round(100 / pct) : 1000;
+          outputRarity.textContent = `Нижние ${pct.toFixed(1).replace('.', ',')}% (1 из ${ratio})`;
+        }
+      }
+
+      // Classification
+      if (outputClassification) {
+        if (iq >= 145) outputClassification.textContent = 'Очень высокий интеллект/Гениальность';
+        else if (iq >= 130) outputClassification.textContent = 'Одарённость/Высокий интеллект (Mensa)';
+        else if (iq >= 120) outputClassification.textContent = 'Выше среднего';
+        else if (iq >= 110) outputClassification.textContent = 'Высокая норма';
+        else if (iq >= 90) outputClassification.textContent = 'Средний уровень интеллекта';
+        else if (iq >= 80) outputClassification.textContent = 'Низкая норма';
+        else if (iq >= 70) outputClassification.textContent = 'Пограничный уровень';
+        else outputClassification.textContent = 'Крайне низкий уровень';
+      }
+    }
+
+    if (iqInput && iqSlider) {
+      iqInput.addEventListener('input', () => {
+        const val = parseInt(iqInput.value, 10) || 100;
+        iqSlider.value = String(val);
+        updateFromIq(val);
+      });
+      iqSlider.addEventListener('input', () => {
+        const val = parseInt(iqSlider.value, 10);
+        iqInput.value = String(val);
+        updateFromIq(val);
+      });
+    }
+
+    // Panel 2: Процентиль -> IQ
+    const pctInput = document.getElementById('pct-input') as HTMLInputElement;
+    const pctSlider = document.getElementById('pct-slider') as HTMLInputElement;
+    const outputIqFromPct = document.getElementById('output-iq-from-pct');
+    const outputSdFromPct = document.getElementById('output-sd-from-pct');
+    const outputMensaStatus = document.getElementById('output-mensa-status');
+
+    function updateFromPct(pct: number) {
+      const p = pct / 100;
+      const z = invNormalCdf(p);
+      const iq = Math.round(100 + 15 * z);
+
+      if (outputIqFromPct) outputIqFromPct.textContent = `${iq} IQ`;
+      if (outputSdFromPct) outputSdFromPct.textContent = `${z >= 0 ? '+' : ''}${z.toFixed(2).replace('.', ',')} σ (Векслер SD 15)`;
+
+      if (outputMensaStatus) {
+        if (pct >= 98.0) {
+          outputMensaStatus.textContent = 'Подходит для Mensa (верхние 2%)';
+          outputMensaStatus.className = 'text-xs font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700';
+        } else {
+          const ptsNeeded = Math.max(1, 130 - iq);
+          outputMensaStatus.textContent = `Ниже 98-го процентиля (нужно +${ptsNeeded} балла)`;
+          outputMensaStatus.className = 'text-xs font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800/60 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700';
+        }
+      }
+    }
+
+    if (pctInput && pctSlider) {
+      pctInput.addEventListener('input', () => {
+        const val = parseFloat(pctInput.value) || 50;
+        pctSlider.value = String(val);
+        updateFromPct(val);
+      });
+      pctSlider.addEventListener('input', () => {
+        const val = parseFloat(pctSlider.value);
+        pctInput.value = String(val);
+        updateFromPct(val);
+      });
+    }
+
+    // Initial run
+    updateFromIq(120);
+    updateFromPct(98.0);
+  });
+</script>

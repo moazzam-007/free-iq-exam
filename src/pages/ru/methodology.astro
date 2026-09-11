@@ -1,0 +1,892 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = "Методология теста IQ: 2PL IRT, EAP и шкала SD 15 | FreeIQExam";
+const description = "Как рассчитывается результат теста IQ: модель 2PL IRT, параметры трудности и дискриминативности, байесовская EAP-оценка, преобразование в IQ и процентиль.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Психометрические основания и скоринговая методология 2-параметрической логистической IRT",
+    "description": "Комплексный психометрический документ: движок теории тестовых заданий с 2-параметрической логистической моделью (2PL), байесовская оценка ожидаемого апостериорного значения (EAP) методом квадратур, конструктная валидность по Кеттеллу–Хорну–Кэрроллу и дорожная карта эмпирической калибровки.",
+    "proficiencyLevel": "Expert",
+    "inLanguage": "ru",
+    "url": "https://freeiqexam.com/ru/methodology/",
+    "author": {
+      "@type": "Organization",
+      "name": "FreeIQExam Psychometrics Committee",
+      "url": "https://freeiqexam.com/ru/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "FreeIQExam.com",
+      "url": "https://freeiqexam.com/ru/"
+    },
+    "about": [
+      { "@type": "Thing", "name": "Item Response Theory" },
+      { "@type": "Thing", "name": "Psychometrics" },
+      { "@type": "Thing", "name": "Cattell-Horn-Carroll Theory" },
+      { "@type": "Thing", "name": "Bayesian Expected A Posteriori Estimation" }
+    ],
+    "citation": [
+      "https://doi.org/10.1016/j.intell.2014.01.004",
+      "https://doi.org/10.7910/DVN/PDI7Y1",
+      "https://doi.org/10.1007/BF02293801",
+      "https://doi.org/10.3758/BRM.42.2.525"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Психометрическая методология",
+        "item": "https://freeiqexam.com/ru/methodology/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Чем 2PL-теория тестовых заданий (IRT) отличается от классической теории тестов (CTT)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "В классической теории тестов (CTT) оценка строится на сырых процентных суммах (подсчёт верных ответов), при этом каждый вопрос считается равным по трудности и диагностическому весу. Напротив, 2-параметрическая логистическая теория тестовых заданий (2PL IRT) математически моделирует каждое задание двумя отдельными параметрами: трудностью задания (b) и дискриминативностью задания (a). Благодаря этому верное решение трудной, высокодискриминативной матричной головоломки даёт куда более веское свидетельство высокого латентного уровня (тета), чем решение базового вводного задания."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Почему FreeIQExam использует байесовскую EAP-оценку, а не метод максимального правдоподобия (MLE)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Метод максимального правдоподобия (MLE) отказывает либо даёт бесконечные оценки, когда испытуемый набирает 0% (все неверно) или 100% (идеальный результат). Байесовская оценка ожидаемого апостериорного значения (EAP) решает эту проблему, интегрируя апостериорное распределение латентной черты со стандартным нормальным априорным распределением (N(0, 1)). Это даёт устойчивые, конечные, несмещённые оценки теты и строгие значения стандартных ошибок по всему спектру распределения — от крайних нижних границ до высших потолков теста."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как невербальный матричный тест соотносится с клиническими батареями вроде WAIS-IV?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Комплексные клинические батареи вроде WAIS-IV или SB5 оценивают полный IQ (FSIQ) по нескольким широким доменам CHC, включая вербальное понимание (Gc), рабочую память (Gwm) и скорость обработки (Gs). FreeIQExam изолированно измеряет невербальные подвижный интеллект (Gf) и пространственное мышление (Gv) с помощью прогрессивных матриц рассуждения, топологических рядов и головоломок на мысленное складывание. Будучи культурно редуцированным и языково независимым инструментом, он остаётся образовательным когнитивным скринингом, а не диагностической медицинской либо нейропсихологической экспертизой."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как СДВГ или нейроотличия влияют на результат этого теста?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Такие состояния, как СДВГ, влияют прежде всего на управляющие функции, устойчивый контроль внимания и кратковременную рабочую память, а не на фундаментальный подвижный интеллект (Gf). Поскольку FreeIQExam ограничен по времени, испытуемые с провалами внимания или импульсивностью при выборе дистракторов могут показать нисходящую вариативность баллов, отражающую исполнение теста, а не латентную аналитическую способность. Спокойная обстановка без ограничения времени и отвлекающих факторов помогает убедиться, что баллы отражают подлинное выявление закономерностей."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Почему отклоняющийся IQ стандартизирован со средним 100 и стандартным отклонением (SD 15)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Современная психометрия отказалась от коэффициентов умственного возраста в пользу метрики отклоняющегося IQ Дэвида Векслера. Преобразуя оценки латентной черты (тета) по формуле IQ = 100 + 15 × тета, баллы напрямую соотносятся с процентилями гауссовой популяции. Балл 100 представляет точную медиану популяции (50-й процентиль), а баллы 115 (+1 SD), 130 (+2 SD) и 145 (+3 SD) обозначают соответственно 84,1-й, 97,7-й и 99,87-й процентили."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Что такое 2PL IRT в тесте на IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "2PL IRT - это двухпараметрическая логистическая модель теории тестовых заданий. Параметры a и b описывают дискриминативность и трудность задания, а вероятность правильного ответа зависит от уровня латентной способности."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как EAP рассчитывает оценку способности?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "EAP оценивает латентный параметр по вероятностному распределению после наблюдения ответов. Такой подход позволяет получить устойчивую итоговую оценку и не сводится к простому проценту правильных ответов."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/methodology" idPath="/metodologi" canonicalUrl="https://freeiqexam.com/ru/methodology">
+  <Header  enPath="/methodology" idPath="/metodologi"/>
+
+  <main class="flex-1 py-10 md:py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-12">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400" aria-label="Breadcrumb">
+      <a href="/ru/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Главная</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Методология</span>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="space-y-4 border-b border-zinc-200 dark:border-zinc-800 pb-8">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wider uppercase bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80">
+        Технический психометрический документ
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight">
+        Психометрические основания и скоринговый движок 2PL IRT
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-4xl">
+        Рецензированный психометрический обзор 2-параметрической логистической (2PL) модели теории тестовых заданий FreeIQExam, байесовской оценки латентной черты методом ожидаемого апостериорного значения (EAP), конструктной валидности по Кеттеллу–Хорну–Кэрроллу и дорожной карты эмпирической калибровки.
+      </p>
+
+      <!-- Meta Pill Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 text-xs font-mono">
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-zinc-500 dark:text-zinc-400 block text-[10px] uppercase">Издание</span>
+          <span class="font-semibold text-zinc-800 dark:text-zinc-200">Документ v2.4 (2026)</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-zinc-500 dark:text-zinc-400 block text-[10px] uppercase">Конструктная рамка</span>
+          <span class="font-semibold text-zinc-800 dark:text-zinc-200">CHC, страта II</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-zinc-500 dark:text-zinc-400 block text-[10px] uppercase">Скоринговый движок</span>
+          <span class="font-semibold text-zinc-800 dark:text-zinc-200">2PL IRT + байесовская EAP</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-zinc-500 dark:text-zinc-400 block text-[10px] uppercase">Стандартизированная метрика</span>
+          <span class="font-semibold text-zinc-800 dark:text-zinc-200">Среднее = 100, SD = 15</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Eysenck Comparison Block -->
+    <section class="p-5 sm:p-7 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-3">
+      <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white">
+        Какой метод используется для оценки IQ?
+      </h2>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Запрос «тест на интеллект Айзенка онлайн» относится к отдельной традиции тестирования интеллекта. FreeIQExam использует описанную ниже модель 2PL IRT и не должен представляться как официальный тест Айзенка только потому, что оба инструмента оценивают интеллект.
+      </p>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        На этой странице показано, как параметры задания участвуют в вероятностной модели, почему применяется EAP-оценка и каким образом латентный параметр переводится в шкалу IQ со средним 100 и SD 15.
+      </p>
+    </section>
+
+    <!-- Quick Table of Contents -->
+    <nav class="p-5 rounded-2xl bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm">
+      <span class="font-heading font-bold text-zinc-950 dark:text-white uppercase tracking-wider text-xs block mb-3">
+        Содержание документа
+      </span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-zinc-600 dark:text-zinc-300">
+        <a href="#section-1-chc" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">01.</span> Резюме и конструктная рамка CHC
+        </a>
+        <a href="#section-2-2pl" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">02.</span> Формулировка 2-параметрической логистической модели (2PL) и ICC
+        </a>
+        <a href="#section-3-eap" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">03.</span> Байесовский движок ожидаемого апостериорного значения (EAP)
+        </a>
+        <a href="#section-4-standardization" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">04.</span> Стандартизация шкалы и популяционные нормы
+        </a>
+        <a href="#section-5-subdomains" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">05.</span> Обоснование отчётности по субдоменам
+        </a>
+        <a href="#section-6-roadmap" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">06.</span> Дорожная карта калибровки и открытой науки (N=500, N=1000)
+        </a>
+        <a href="#section-7-citations" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 sm:col-span-2">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">07.</span> Рецензированные источники и DOI Dataverse
+        </a>
+      </div>
+    </nav>
+
+    <!-- Section 1: Executive Summary & Theoretical Foundations (CHC) -->
+    <section id="section-1-chc" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Раздел 01
+        </span>
+        <h2 id="chc-framework" class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Резюме и теоретические основания (рамка CHC)
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Современная психометрическая наука опирает оценку когнитивных способностей человека на трёхстратную теорию Кеттелла–Хорна–Кэрролла (CHC). Согласно теории CHC, общая когнитивная способность (страта III, g) складывается из отдельных широких когнитивных доменов (страта II), каждый из которых опирается на специализированные узкие операциональные способности (страта I).
+        </p>
+      </div>
+
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        FreeIQExam изолированно измеряет четыре ключевых широких домена страты II, демонстрирующих наиболее сильные эмпирические нагрузки на общий интеллект при минимальном культурном и языковом смещении:
+      </p>
+
+      <!-- 4 Core Domains Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"></span>
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              1. Подвижный интеллект (Gf)
+            </h3>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+            Способность выделять абстрактные правила, решать новые невербальные задачи и применять логические операции в незнакомой среде. Измеряется индуктивными матрицами 3×3, топологическими преобразованиями «исключающее ИЛИ» (XOR) и завершением фигуральных рядов.
+          </p>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium">
+            Основной банк: 27 калиброванных заданий
+          </span>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"></span>
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              2. Пространственное мышление (Gv)
+            </h3>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+            Способность воспринимать, порождать, хранить, извлекать и мысленно вращать зрительные паттерны и трёхмерные объекты в ментальном пространстве. Измеряется жёсткими вращениями 3D-кубов, синтезом развёрток 2D-в-3D и ортографическими проекциями.
+          </p>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium">
+            Основной банк: 25 калиброванных заданий
+          </span>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"></span>
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              3. Количественное мышление (Gq)
+            </h3>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+            Способность понимать количественные свойства, выявлять вложенные математические отношения и решать реляционные числовые структуры. Измеряется перемежающимися индуктивными прогрессиями и реляционными алгебраическими задачами на скорости.
+          </p>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium">
+            Основной банк: 24 калиброванных задания
+          </span>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"></span>
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              4. Вербальное понимание (Gc)
+            </h3>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+            Широта и глубина знаний, усвоенных в языковых системах: абстрактные реляционные лексические аналогии, семантические иерархии и формальная аристотелевская категорическая силлогистика.
+          </p>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium">
+            Основной банк: 24 калиброванных задания
+          </span>
+        </div>
+      </div>
+
+      <!-- Master Bank Composition Table -->
+      <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+        <h4 class="font-heading font-bold text-sm text-zinc-950 dark:text-white uppercase tracking-wider mb-3">
+          Архитектура основного банка из 100 заданий
+        </h4>
+        <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table class="w-full min-w-[560px] text-left text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-mono">
+                <th class="pb-2">Широкий домен CHC</th>
+                <th class="pb-2">Заданий в банке</th>
+                <th class="pb-2">Распределение в полном тесте</th>
+                <th class="pb-2">Отдельный доменный тест</th>
+                <th class="pb-2">Калиброванный диапазон трудности (b_i)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200/70 dark:divide-zinc-800/70 font-mono">
+              <tr>
+                <td class="py-2.5 font-sans font-semibold text-zinc-900 dark:text-zinc-100">Подвижный интеллект (Gf)</td>
+                <td class="py-2.5">27 заданий</td>
+                <td class="py-2.5">6 заданий (25%)</td>
+                <td class="py-2.5">20 заданий</td>
+                <td class="py-2.5">-2,10 — +2,55</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 font-sans font-semibold text-zinc-900 dark:text-zinc-100">Пространственное мышление (Gv)</td>
+                <td class="py-2.5">25 заданий</td>
+                <td class="py-2.5">6 заданий (25%)</td>
+                <td class="py-2.5">20 заданий</td>
+                <td class="py-2.5">-1,90 — +2,40</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 font-sans font-semibold text-zinc-900 dark:text-zinc-100">Количественное мышление (Gq)</td>
+                <td class="py-2.5">24 задания</td>
+                <td class="py-2.5">6 заданий (25%)</td>
+                <td class="py-2.5">20 заданий</td>
+                <td class="py-2.5">-1,80 — +2,50</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 font-sans font-semibold text-zinc-900 dark:text-zinc-100">Вербальное понимание (Gc)</td>
+                <td class="py-2.5">24 задания</td>
+                <td class="py-2.5">6 заданий (25%)</td>
+                <td class="py-2.5">20 заданий</td>
+                <td class="py-2.5">-2,00 — +2,35</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Раздел 2: Математическая формулировка модели 2PL IRT -->
+    <section id="section-2-2pl" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Раздел 02
+        </span>
+        <h2 id="2pl-irt" class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Математическая формулировка 2-параметрической логистической модели (2PL)
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Классическая теория тестов (CTT) рассматривает каждое задание теста одинаково, оценивая способность как невзвешенную сумму верных ответов. Это порождает жёсткую зависимость от выборки: сырые баллы не различают, преуспел ли испытуемый в тривиальных или в исключительно трудных заданиях. FreeIQExam преодолевает это ограничение, применяя 2-параметрическую логистическую модель (2PL) теории тестовых заданий.
+        </p>
+      </div>
+
+      <!-- Formula Block -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Стандартное уравнение 2PL IRT</div>
+        <div class="font-mono text-base sm:text-lg text-blue-600 dark:text-blue-400 font-bold overflow-x-auto py-1">
+          P_i(&theta;) = 1 / [ 1 + exp( -1.702 &times; a_i &times; (&theta; - b_i) ) ]
+        </div>
+        <div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed space-y-1.5 pt-2">
+          <p>Где:</p>
+          <ul class="list-disc list-inside space-y-1 pl-1">
+            <li><strong>&theta; (тета):</strong> латентная когнитивная черта испытуемого на континууме стандартного нормального распределения N(0, 1).</li>
+            <li><strong>a_i (дискриминативность задания (a)):</strong> наклон характеристической кривой задания (ICC) в точке перегиба, характеризующий, насколько резко задание различает испытуемых выше и ниже порога.</li>
+            <li><strong>b_i (трудность задания (b)):</strong> уровень латентной способности, при котором вероятность верного ответа составляет ровно 50% (P_i(&theta;) = 0,50).</li>
+            <li><strong>D = 1,702:</strong> нормировочная константа нормальной огивы, обеспечивающая математическое согласование логистической метрики с функцией кумулятивного нормального распределения &Phi;(z).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Interactive / Responsive SVG Item Characteristic Curves (ICC) -->
+      <div>
+        <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+          Характеристические кривые заданий (ICC) и динамика дискриминативности
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+          Диаграмма ниже визуализирует математические характеристические кривые трёх калиброванных эталонных заданий: лёгкого (b = -1,5, a = 1,2), среднего (b = 0,0, a = 1,4) и трудного (b = +1,5, a = 1,7).
+        </p>
+
+        <div class="p-4 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 overflow-x-auto">
+          <svg viewBox="0 0 640 260" class="w-full min-w-[560px] h-auto select-none font-mono text-xs" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid lines -->
+            <line x1="70" y1="40" x2="600" y2="40" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="70" y1="120" x2="600" y2="120" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="70" y1="200" x2="600" y2="200" stroke="#71717a" stroke-width="1.5" />
+            <line x1="70" y1="30" x2="70" y2="200" stroke="#71717a" stroke-width="1.5" />
+
+            <!-- Y-Axis Ticks -->
+            <text x="60" y="44" fill="#a1a1aa" text-anchor="end">1.0</text>
+            <text x="60" y="124" fill="#2563eb" font-weight="bold" text-anchor="end">0.5</text>
+            <text x="60" y="204" fill="#a1a1aa" text-anchor="end">0.0</text>
+
+            <!-- X-Axis Ticks & Values (-3 to +3 Theta) -->
+            <line x1="114" y1="200" x2="114" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="114" y="222" fill="#71717a" text-anchor="middle">-3.0</text>
+
+            <line x1="202" y1="200" x2="202" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="202" y="222" fill="#71717a" text-anchor="middle">-1.5</text>
+
+            <line x1="291" y1="200" x2="291" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="291" y="222" fill="#71717a" text-anchor="middle">-0.5</text>
+
+            <line x1="335" y1="200" x2="335" y2="206" stroke="#2563eb" stroke-width="2" />
+            <text x="335" y="222" fill="#2563eb" font-weight="bold" text-anchor="middle">0.0</text>
+
+            <line x1="379" y1="200" x2="379" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="379" y="222" fill="#71717a" text-anchor="middle">+0.5</text>
+
+            <line x1="468" y1="200" x2="468" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="468" y="222" fill="#71717a" text-anchor="middle">+1.5</text>
+
+            <line x1="556" y1="200" x2="556" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="556" y="222" fill="#71717a" text-anchor="middle">+3.0</text>
+
+            <!-- Horizontal 50% Inflection Guideline -->
+            <line x1="70" y1="120" x2="600" y2="120" stroke="#3b82f6" stroke-width="1" stroke-dasharray="2 4" opacity="0.6" />
+
+            <!-- ICC Curve 1: Easy Item (b = -1.5, a = 1.2) centered at x = 202 -->
+            <path d="M 70 197 C 120 196, 160 185, 202 120 C 244 55, 300 42, 600 40" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- ICC Curve 2: Medium Item (b = 0.0, a = 1.4) centered at x = 335 -->
+            <path d="M 70 199 C 230 199, 280 185, 335 120 C 390 55, 440 41, 600 40" stroke="#4f46e5" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- ICC Curve 3: Hard Item (b = +1.5, a = 1.7) centered at x = 468 -->
+            <path d="M 70 200 C 350 200, 415 190, 468 120 C 515 48, 545 40, 600 40" stroke="#9333ea" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- Inflection Markers at P=0.50 -->
+            <circle cx="202" cy="120" r="5" fill="#3b82f6" stroke="#ffffff" stroke-width="2" />
+            <circle cx="335" cy="120" r="5" fill="#4f46e5" stroke="#ffffff" stroke-width="2" />
+            <circle cx="468" cy="120" r="5" fill="#9333ea" stroke="#ffffff" stroke-width="2" />
+
+            <!-- Labels / Legend -->
+            <rect x="75" y="238" width="12" height="6" rx="3" fill="#3b82f6" />
+            <text x="92" y="244" fill="#3b82f6" font-size="11">Easy (b = -1.5, a = 1.2)</text>
+
+            <rect x="250" y="238" width="12" height="6" rx="3" fill="#4f46e5" />
+            <text x="267" y="244" fill="#4f46e5" font-size="11">Medium (b = 0.0, a = 1.4)</text>
+
+            <rect x="430" y="238" width="12" height="6" rx="3" fill="#9333ea" />
+            <text x="447" y="244" fill="#9333ea" font-size="11">Hard (b = +1.5, a = 1.7)</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Bayesian Expected A Posteriori (EAP) Estimation Engine -->
+    <section id="section-3-eap" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Раздел 03
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Байесовский движок оценки ожидаемого апостериорного значения (EAP)
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Хотя оценка методом максимального правдоподобия (MLE) широко применяется в длинных академических экзаменах, на коротких тестах она страдает катастрофическим математическим отказом: когда испытуемый набирает 0 из 24 (либо 24 из 24), функция правдоподобия строго монотонна, и MLE расходится к отрицательной либо положительной бесконечности.
+        </p>
+      </div>
+
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        FreeIQExam решает эту проблему, применяя байесовскую оценку ожидаемого апостериорного значения (EAP) со стандартизированным гауссовым информативным априорным распределением g(&theta;) ~ N(0, 1). Это гарантирует конечные, устойчивые и регуляризированные оценки способностей независимо от экстремальности вектора ответов.
+      </p>
+
+      <!-- Numerical Quadrature Equation -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Численная квадратура Гаусса–Эрмита (81 узел)</div>
+        <div class="font-mono text-sm sm:text-base text-blue-600 dark:text-blue-400 font-bold overflow-x-auto py-1">
+          &theta;_hat_EAP = [ &Sigma;<sub>k=1..Q</sub> [ &theta;_k &times; L(&theta;_k | u) &times; W(&theta;_k) ] / &Sigma;<sub>k=1..Q</sub> [ L(&theta;_k | u) &times; W(&theta;_k) ]
+        </div>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Движок вычисляет интеграл методом оценки EAP по 81 узлу квадратуры на Q = 81 равноотстоящем узле оценивания в диапазоне &theta;_k &isin; [-4,0, +4,0] с шагом узлов &Delta;&theta; = 0,10. Для любого вектора бинарных ответов u = (u_1, u_2, ..., u_n) правдоподобие паттерна ответов составляет:
+        </p>
+        <div class="font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 py-1">
+          L(&theta;_k | u) = &prod;<sub>i=1..n</sub> [ P_i(&theta;_k)<sup>u_i</sup> &times; (1 - P_i(&theta;_k))<sup>1 - u_i</sup> ]
+        </div>
+        <p class="text-xs text-zinc-500 font-mono">
+          Where prior weighting W(&theta;_k) = (1 / &radic;(2&pi;)) &times; exp(-&theta;_k^2 / 2) &times; &Delta;&theta;.
+        </p>
+      </div>
+
+      <!-- Posterior Variance & 95% Credible Interval -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Условная SEM и 95%-й кредибильный интервал</div>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          В отличие от классической теории тестов, предполагающей неизменную стандартную ошибку для всех кандидатов, IRT моделирует условную ошибку измерения вдоль континуума черты. Апостериорная дисперсия вычисляется напрямую из второго момента апостериорного распределения:
+        </p>
+        <div class="font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 py-1">
+          Var(&theta; | u) = &Sigma;<sub>k=1..Q</sub> [ (&theta;_k - &theta;_hat_EAP)<sup>2</sup> &times; L(&theta;_k | u) &times; W(&theta;_k) ] / &Sigma;<sub>k=1..Q</sub> [ L(&theta;_k | u) &times; W(&theta;_k) ]
+        </div>
+        <div class="font-mono text-xs sm:text-sm text-indigo-600 dark:text-indigo-400 font-semibold py-1">
+          SEM(&theta;) = &radic;Var(&theta; | u)
+        </div>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          95%-й апостериорный кредибильный интервал, указываемый в сертификатах кандидатов, формально выводится как:
+        </p>
+        <div class="font-mono text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-bold py-1">
+          Interval<sub>95%</sub> = [ IQ - 1.96 &times; 15 &times; SEM(&theta;), &nbsp; IQ + 1.96 &times; 15 &times; SEM(&theta;) ]
+        </div>
+      </div>
+
+      <!-- Plain-Language EAP Explanation -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+        <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+          Что такое EAP-оценка простыми словами?
+        </h3>
+        <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          EAP, или Expected A Posteriori, - байесовский способ получить оценку латентной способности после наблюдения ответов. Модель использует информацию от каждого задания и заданное априорное распределение. Результат является оценкой параметра &theta;, а не прямым измерением «количества интеллекта».
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 4: Scale Standardization vs. Population Norming -->
+    <section id="section-4-standardization" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Раздел 04
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Стандартизация шкалы и нормирование по популяции
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Фундаментальное научное требование Стандартов образовательного и психологического тестирования (AERA, APA, NCME, 2014) — абсолютная прозрачность в том, как сырые метрики способностей переводятся в стандартизированные баллы.
+        </p>
+      </div>
+
+      <!-- Linear Transformation Formula -->
+      <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+        <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-1">Стандартизированное линейное преобразование</span>
+        <div class="font-mono text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400 mb-2">
+          Standardized Score = round( 100 + 15 &times; &theta;_hat_EAP )
+        </div>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Процентили вычисляются через функцию стандартного нормального кумулятивного распределения &Phi;(z):
+        </p>
+        <div class="font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 mt-1">
+          Процентиль = &Phi;( (Standardized Score - 100) / 15 ) &times; 100%
+        </div>
+      </div>
+
+      <!-- Critical Distinction Card -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50/80 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-3">
+        <h3 class="font-heading font-bold text-base uppercase tracking-wider text-zinc-950 dark:text-white">
+          Научное уточнение: метрика шкалы и клинические популяционные нормы
+        </h3>
+        <p>
+          1. <strong>Преобразование шкалы:</strong> FreeIQExam проецирует латентную черту тета (&theta;) на классическую метрику Векслера/Стэнфорд–Бине (среднее = 100, SD = 15). Это даёт общепризнанную референтную шкалу относительной когнитивной успешности.
+        </p>
+        <p>
+          2. <strong>Эмпирические популяционные нормы:</strong> установление формальных демографических норм популяции требует стратифицированных выборок из тысяч клинических испытуемых с сегментацией по возрасту, региону и образованию. FreeIQExam не претендует на клиническую диагностику; наши баллы отражают математически строгие оценки 2PL IRT, привязанные к верифицированным открытым научным эталонам.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 5: Sub-Domain Reporting Rationale -->
+    <section id="section-5-subdomains" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-2">
+          Раздел 05
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Обоснование отчётности по субдоменам
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          В полном тесте из 24 заданий испытуемые выполняют по 6 заданий на каждый когнитивный домен (подвижный интеллект, пространственное мышление, количественное мышление, вербальное понимание). Распространённая ошибка коммерческих онлайн-тестов — сообщать непрерывные суббаллы IQ для коротких субтестов (например, заявлять «Пространственный IQ = 138» на основе 6 заданий).
+        </p>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+          Проблема широких условных стандартных ошибок на коротких векторах
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          На 6-задачном доменном векторе условная стандартная ошибка измерения широка (SEM &approx; 0,45–0,65 &theta;, что эквивалентно &plusmn;7–&plusmn;10 баллам IQ). Выпуск непрерывных псевдоточных суббаллов создаёт ложную точность, вводящую кандидатов в заблуждение и нарушающую стандарты психометрической отчётности.
+        </p>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          FreeIQExam принимает консервативное, научно обоснованное решение:
+        </p>
+        <ul class="list-disc list-inside text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 space-y-1 pl-1">
+          <li><strong>Доли точности по доменам:</strong> мы сообщаем сырую успешность (например, «5 из 6 верно, 83%»).</li>
+          <li><strong>Качественные уровни успешности:</strong> успешность отображается в описательные интервалы:
+            <span class="font-mono text-xs font-semibold text-zinc-900 dark:text-white">Сильная сторона (&ge;83%)</span>,
+            <span class="font-mono text-xs font-semibold text-zinc-900 dark:text-white">Высокая норма (67–82%)</span>,
+            <span class="font-mono text-xs font-semibold text-zinc-700 dark:text-zinc-300">Средний диапазон (50–66%)</span>, и
+            <span class="font-mono text-xs font-semibold text-zinc-900 dark:text-white">Зона развития (&lt;50%)</span>.
+          </li>
+          <li><strong>Специализированные тесты из 20 заданий:</strong> кандидатам, которым нужна непрерывная психометрическая точность субшкал, FreeIQExam предоставляет четыре специализированных однодоменных батареи по 20 заданий, где ошибка измерения удерживается в допустимых пределах.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Section 6: Transparent Calibration & Open-Science Roadmap -->
+    <section id="section-6-roadmap" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Раздел 06
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Прозрачная калибровка и дорожная карта валидизации открытой науки
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Открытая наука требует честного раскрытия происхождения заданий и структурированной дорожной карты повторной калибровки. FreeIQExam работает в рамках двухфазного конвейера развивающей валидизации:
+        </p>
+      </div>
+
+      <!-- Roadmap Milestones -->
+      <div class="space-y-4">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              Фаза 0: исследовательские стартовые значения (текущая)
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">Активна</span>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Параметры трудности (b_i &isin; [-2,20, +2,60]) и дискриминативности (a_i &isin; [0,95, 2,00]), заложенные в банк из 100 заданий, представляют исследовательские стартовые значения, синтезированные из рецензированных психометрических эталонов Международного ресурса когнитивных способностей (Condon &amp; Revelle, 2014; Dworak et al., 2021) и матричных банков Сандийских национальных лабораторий (Matzen et al., 2010).
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              Веха фазы 1 (цель: N = 500 завершённых сессий)
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">План</span>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            По достижении 500 завершённых тестирований будут вычислены индексы трудности заданий CTT (p-значения) и скорректированные точечно-бисериальные коэффициенты дискриминативности (r_pb). Анализ дистракторов проверит, что неверные альтернативы пропорционально притягивают респондентов с более низкими способностями и не содержат двусмысленности.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              Веха фазы 2 (цель: N = 1 000 завершённых сессий)
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">План</span>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Полная повторная калибровка заданий методом маргинального максимального правдоподобия (MML) с оцениванием через алгоритм ожидания-максимизации (EM) в стандартном психометрическом пакете mirt (Bock &amp; Aitkin, 1981). Соответствие заданий будет формально проверено статистиками S-&chi;^2 Орландо–Тиссена.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              Проверка справедливости и дифференциального функционирования заданий (DIF)
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">Непрерывно</span>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Для защиты от культурных, языковых и субгрупповых смещений задания проходят непрерывный скрининг дифференциального функционирования (DIF) по процедуре Мантеля–Хензеля и логистической регрессии. Задания со значимым униформным либо неуниформным DIF снимаются или пересматриваются.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Formal Academic Citations & Dataverse DOIs -->
+    <section id="section-7-citations" class="p-6 sm:p-8 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Раздел 07
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Рецензированные источники и DOI Dataverse
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Научная архитектура FreeIQExam опирается на следующие рецензированные публикации, открытые ресурсы заданий и психометрические стандарты:
+        </p>
+      </div>
+
+      <div class="divide-y divide-zinc-200 dark:divide-zinc-800 text-xs sm:text-sm leading-relaxed">
+        <div class="py-4 space-y-1">
+          <p class="font-semibold text-zinc-900 dark:text-zinc-100">
+            Condon, D. M., & Revelle, W. (2014).
+          </p>
+          <p class="text-zinc-600 dark:text-zinc-300 italic">
+            The International Cognitive Ability Resource: Development and initial validation of a public-domain measure.
+          </p>
+          <p class="text-zinc-500 font-mono text-xs">
+            Intelligence, 43, 52-64. DOI: <a href="https://doi.org/10.1016/j.intell.2014.01.004" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">10.1016/j.intell.2014.01.004</a>
+          </p>
+        </div>
+
+        <div class="py-4 space-y-1">
+          <p class="font-semibold text-zinc-900 dark:text-zinc-100">
+            Dworak, E. M., Revelle, W., & Condon, D. M. (2021).
+          </p>
+          <p class="text-zinc-600 dark:text-zinc-300 italic">
+            International Cognitive Ability Resource (ICAR) Open Science validation.
+          </p>
+          <p class="text-zinc-500 font-mono text-xs">
+            Harvard Dataverse. DOI: <a href="https://doi.org/10.7910/DVN/PDI7Y1" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">10.7910/DVN/PDI7Y1</a>
+          </p>
+        </div>
+
+        <div class="py-4 space-y-1">
+          <p class="font-semibold text-zinc-900 dark:text-zinc-100">
+            Baker, F. B., & Kim, S. H. (2004).
+          </p>
+          <p class="text-zinc-600 dark:text-zinc-300 italic">
+            Item Response Theory: Parameter Estimation Techniques (2nd ed.).
+          </p>
+          <p class="text-zinc-500 font-mono text-xs">
+            New York: Marcel Dekker. ISBN: 978-0824758257.
+          </p>
+        </div>
+
+        <div class="py-4 space-y-1">
+          <p class="font-semibold text-zinc-900 dark:text-zinc-100">
+            Bock, R. D., & Aitkin, M. (1981).
+          </p>
+          <p class="text-zinc-600 dark:text-zinc-300 italic">
+            Marginal maximum likelihood estimation of item parameters: Application of an EM algorithm.
+          </p>
+          <p class="text-zinc-500 font-mono text-xs">
+            Psychometrika, 46(4), 443-459. DOI: <a href="https://doi.org/10.1007/BF02293801" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">10.1007/BF02293801</a>
+          </p>
+        </div>
+
+        <div class="py-4 space-y-1">
+          <p class="font-semibold text-zinc-900 dark:text-zinc-100">
+            Matzen, L. E., Benz, Z. O., Dixon, K. R., Posey, J., Kroger, J. K., & Speed, A. E. (2010).
+          </p>
+          <p class="text-zinc-600 dark:text-zinc-300 italic">
+            Re-creating Raven's: Software for systematically generating matrix reasoning tests.
+          </p>
+          <p class="text-zinc-500 font-mono text-xs">
+            Behavior Research Methods, 42(2), 525-541. DOI: <a href="https://doi.org/10.3758/BRM.42.2.525" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">10.3758/BRM.42.2.525</a>
+          </p>
+        </div>
+
+        <div class="py-4 space-y-1">
+          <p class="font-semibold text-zinc-900 dark:text-zinc-100">
+            American Educational Research Association, APA, & NCME (2014).
+          </p>
+          <p class="text-zinc-600 dark:text-zinc-300 italic">
+            Standards for Educational and Psychological Testing.
+          </p>
+          <p class="text-zinc-500 font-mono text-xs">
+            Washington, DC: American Educational Research Association. ISBN: 978-0935302356.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Frequently Asked Questions -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wider uppercase bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80">
+          Частые вопросы о психометрической науке
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Частые вопросы
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-3xl">
+          Технические ответы о калибровке теории тестовых заданий, байесовской оценке латентной черты, клинических различиях и нейроразнообразии.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs" open>
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+            <span>Чем 2PL-теория тестовых заданий (IRT) отличается от классической теории тестов (CTT)?</span>
+            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            В классической теории тестов (CTT) оценка строится на сырых процентных суммах (подсчёт верных ответов), при этом каждый вопрос считается равным по трудности и диагностическому весу. Напротив, 2-параметрическая логистическая теория тестовых заданий (2PL IRT) математически моделирует каждое задание двумя отдельными параметрами: трудностью задания (b) и дискриминативностью задания (a). Благодаря этому верное решение трудной, высокодискриминативной матричной головоломки даёт куда более веское свидетельство высокого латентного уровня (тета), чем решение базового вводного задания.
+          </p>
+        </details>
+
+        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+            <span>Почему FreeIQExam использует байесовскую EAP-оценку, а не метод максимального правдоподобия (MLE)?</span>
+            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            Метод максимального правдоподобия (MLE) отказывает либо даёт бесконечные оценки, когда испытуемый набирает 0% (все неверно) или 100% (идеальный результат). Байесовская оценка ожидаемого апостериорного значения (EAP) решает эту проблему, интегрируя апостериорное распределение латентной черты со стандартным нормальным априорным распределением (N(0, 1)). Это даёт устойчивые, конечные, несмещённые оценки теты и строгие значения стандартных ошибок по всему спектру распределения — от крайних нижних границ до высших потолков теста.
+          </p>
+        </details>
+
+        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+            <span>Как невербальный матричный тест соотносится с клиническими батареями вроде WAIS-IV?</span>
+            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            Комплексные клинические батареи вроде WAIS-IV или SB5 оценивают полный IQ (FSIQ) по нескольким широким доменам CHC, включая вербальное понимание (Gc), рабочую память (Gwm) и скорость обработки (Gs). FreeIQExam изолированно измеряет невербальные подвижный интеллект (Gf) и пространственное мышление (Gv) с помощью прогрессивных матриц рассуждения, топологических рядов и головоломок на мысленное складывание. Будучи культурно редуцированным и языково независимым инструментом, он остаётся образовательным когнитивным скринингом, а не диагностической медицинской либо нейропсихологической экспертизой.
+          </p>
+        </details>
+
+        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+            <span>Как СДВГ или нейроотличия влияют на результат этого теста?</span>
+            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            Такие состояния, как СДВГ, влияют прежде всего на управляющие функции, устойчивый контроль внимания и кратковременную рабочую память, а не на фундаментальный подвижный интеллект (Gf). Поскольку FreeIQExam ограничен по времени, испытуемые с провалами внимания или импульсивностью при выборе дистракторов могут показать нисходящую вариативность баллов, отражающую исполнение теста, а не латентную аналитическую способность. Спокойная обстановка без ограничения времени и отвлекающих факторов помогает убедиться, что баллы отражают подлинное выявление закономерностей.
+          </p>
+        </details>
+
+        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+            <span>Почему отклоняющийся IQ стандартизирован со средним 100 и стандартным отклонением (SD 15)?</span>
+            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            Современная психометрия отказалась от коэффициентов умственного возраста в пользу метрики отклоняющегося IQ Дэвида Векслера. Преобразуя оценки латентной черты (тета) по формуле IQ = 100 + 15 × тета, баллы напрямую соотносятся с процентилями гауссовой популяции. Балл 100 представляет точную медиану популяции (50-й процентиль), а баллы 115 (+1 SD), 130 (+2 SD) и 145 (+3 SD) обозначают соответственно 84,1-й, 97,7-й и 99,87-й процентили. Полную разбивку баллов см. в наших <a href="/ru/iq-classification-scale" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-500">шкале классификации IQ</a> и <a href="/ru/iq-percentile-calculator" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-500">калькуляторе процентилей</a>.
+          </p>
+        </details>
+
+        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+            <span>Что такое 2PL IRT в тесте на IQ?</span>
+            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            2PL IRT - это двухпараметрическая логистическая модель теории тестовых заданий. Параметры a и b описывают дискриминативность и трудность задания, а вероятность правильного ответа зависит от уровня латентной способности.
+          </p>
+        </details>
+
+        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+            <span>Как EAP рассчитывает оценку способности?</span>
+            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            EAP оценивает латентный параметр по вероятностному распределению после наблюдения ответов. Такой подход позволяет получить устойчивую итоговую оценку и не сводится к простому проценту правильных ответов.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Assessment CTA -->
+    <section class="p-8 sm:p-12 rounded-3xl bg-zinc-900 border border-zinc-800 text-white text-center shadow-lg relative overflow-hidden">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight text-white">
+        Испытайте скоринг 2PL IRT в действии
+      </h2>
+      <p class="text-zinc-300 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+        Пройдите полное 20-минутное тестирование, чтобы получить персонализированную оценку латентной способности (&theta;), балл IQ по шкале стандартного отклонения и 95%-й апостериорный кредибильный интервал.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a 
+          href="/ru/test" 
+          class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-500/20 transition-all hover:scale-102 active:scale-98"
+        >
+          <span>Пройти полный тест (20 минут)</span>
+          <span class="font-mono text-lg">&rarr;</span>
+        </a>
+        <a 
+          href="/ru/practice" 
+          class="inline-flex items-center gap-2 px-6 py-4 rounded-full text-base font-semibold text-zinc-100 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 transition-all hover:scale-102 active:scale-98"
+        >
+          <span>Практический центр</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>

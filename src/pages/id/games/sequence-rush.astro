@@ -1,0 +1,810 @@
+---
+import LayoutId from '../../../components/id/LayoutId.astro';
+import HeaderId from '../../../components/id/HeaderId.astro';
+import FooterId from '../../../components/id/FooterId.astro';
+
+const title = "Tes Deret Angka Online Gratis - Latihan Penalaran Induktif | FreeIQExam";
+const description = "Ikuti tes deret angka online gratis. Ukur penalaran fluida (Gf) dan logika induktif melalui pola numerik dan alfanumerik bertingkat.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Latihan Deret Angka Induktif Cepat",
+    "url": "https://freeiqexam.com/id/permainan/sequence-rush",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Latihan penalaran deret angka induktif terstandarisasi untuk menguji pengenalan pola algoritmik dan ekstrapolasi aturan matematis."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan Kognitif",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Deret Cepat (Sequence Rush)",
+        "item": "https://freeiqexam.com/id/permainan/sequence-rush"
+      }
+    ]
+  }
+];
+---
+
+<LayoutId title={title} description={description} schema={schema} enPath="/games/sequence-rush">
+  <HeaderId enPath="/games/sequence-rush" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <a href="/id/permainan" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Permainan Kognitif</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Deret Cepat (Sequence Rush)</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-peach mb-1.5">
+          Gf &bull; Penalaran Fluida
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            Deret Cepat (Sequence Rush)
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 text-xs font-mono font-medium gap-1.5 cursor-pointer"
+            aria-label="Petunjuk cara bermain"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+            <span>Cara Bermain</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat HUD (4 rounded cards) -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[64px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Soal</div>
+          <div id="hud-item" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 15</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Skor</div>
+          <div id="hud-score" class="font-bold text-indigo-600 dark:text-indigo-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[64px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Kecepatan</div>
+          <div id="hud-pace" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">-- s</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Terbaik</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center min-h-[440px] justify-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-peach flex items-center justify-center mb-5 shadow-lg shadow-indigo-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Deret Cepat (Sequence Rush)
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Temukan aturan logis yang mendasari deret angka atau huruf, lalu pilih elemen yang hilang untuk menggantikan tanda <span class="font-bold text-indigo-600 dark:text-indigo-400">[ ? ]</span>.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            15 teka-teki penalaran induktif yang mencakup deret aritmatika, berseling, rekursif, dan alfabetik.
+          </p>
+        </div>
+
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+        >
+          <span>Mulai Sesi (Spasi)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" inert class="w-full flex flex-col items-center">
+        <!-- Top Status & Pattern Family Badge -->
+        <div class="w-full max-w-md flex items-center justify-between gap-4 mb-4 font-mono text-xs">
+          <div id="family-badge" class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold">
+            Kategori: Deret Aritmatika
+          </div>
+          <div id="timer-indicator" class="text-zinc-500 dark:text-zinc-400">
+            Waktu Soal: <span id="item-timer" class="font-bold text-zinc-800 dark:text-zinc-200">0.0s</span>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="w-full max-w-md h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full mb-6 overflow-hidden">
+          <div id="series-progress" class="h-full bg-indigo-500 transition-all duration-150 w-0"></div>
+        </div>
+
+        <!-- Sequence Display Box -->
+        <div class="w-full max-w-lg min-h-[140px] rounded-3xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 flex flex-col items-center justify-center p-6 mb-6 shadow-inner">
+          <div id="sequence-container" class="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+            <!-- Rendered sequence pill cards -->
+          </div>
+          <div id="feedback-message" class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 mt-4 h-4">
+            Identifikasi aturan yang berlaku
+          </div>
+        </div>
+
+        <!-- 2x2 Multiple Choice Options Grid -->
+        <div id="options-grid" class="w-full max-w-lg grid grid-cols-2 gap-3 sm:gap-4 mb-3">
+          <!-- 4 option buttons dynamically populated -->
+        </div>
+
+        <p class="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 mt-2 text-center">
+          Pintasan keyboard: Tekan 1, 2, 3, 4 atau A, B, C, D untuk memilih jawaban.
+        </p>
+      </div>
+    </div>
+
+    <!-- Accessible "How to Play" Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm hidden"
+    >
+      <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
+          aria-label="Tutup petunjuk"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+            Cara Bermain: Deret Cepat (Sequence Rush)
+          </h2>
+        </div>
+
+        <div class="space-y-3 text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+          <p>
+            <strong>1. Induksi Pola:</strong> Setiap teka-teki menyajikan deret terurut angka atau huruf dengan satu elemen hilang bertanda <code class="font-mono font-bold text-indigo-600 dark:text-indigo-400">[ ? ]</code>.
+          </p>
+          <p>
+            <strong>2. Kelompok Pola:</strong>
+            <br />- <em>Aritmatika &amp; Polinomial:</em> Selisih konstan (+5), pengali bertahap (*2), atau deret kuadrat (n^2).
+            <br />- <em>Deret Berseling:</em> Dua pola terjalin atau penambahan selisih (+1, +2, +3).
+            <br />- <em>Rekursif &amp; Fibonacci:</em> Angka dihasilkan dari penjumlahan angka sebelumnya.
+            <br />- <em>Lompatan Huruf:</em> Pergeseran koordinat abjad (+2, +3 langkah).
+          </p>
+          <p>
+            <strong>3. Respons:</strong> Klik salah satu dari 4 opsi jawaban atau gunakan tombol pintasan <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">1-4</kbd> atau <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">A-D</kbd>.
+          </p>
+          <p>
+            <strong>4. Penilaian:</strong> Terdiri dari 15 soal. Akurasi menyumbang 75 poin, dan kecepatan penalaran memberikan bonus hingga 25 poin.
+          </p>
+        </div>
+
+        <button
+          id="btn-confirm-how"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 cursor-pointer"
+        >
+          Paham, Mulai Bermain
+        </button>
+      </div>
+    </div>
+
+    <!-- Accessible End of Round Modal -->
+    <div
+      id="modal-end-round"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-end-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm hidden"
+    >
+      <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
+          aria-label="Tutup ringkasan sesi"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="modal-end-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Sesi Selesai!
+        </h2>
+        <p class="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-5">
+          Ringkasan Penalaran Fluida &amp; Kelengkapan Deret
+        </p>
+
+        <!-- Performance Score (0 - 100) -->
+        <div class="mb-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+            Skor Kinerja Tugas
+          </div>
+          <div id="modal-score" class="text-4xl sm:text-5xl font-extrabold text-indigo-600 dark:text-indigo-400 font-heading">
+            0
+          </div>
+          <div class="mt-2.5 flex items-center justify-center gap-2">
+            <span id="modal-tier-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">
+              Berkembang
+            </span>
+          </div>
+          <p id="modal-tier-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm mx-auto">
+            Performa mencerminkan akurasi induksi aturan dan kelancaran deduksi pola.
+          </p>
+        </div>
+
+        <!-- Paradigm Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Terpecahkan</div>
+            <div id="modal-solved" class="font-bold text-base text-indigo-600 dark:text-indigo-400">0 / 15</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Akurasi</div>
+            <div id="modal-acc" class="font-bold text-base text-zinc-900 dark:text-white">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Median Waktu</div>
+            <div id="modal-pace" class="font-bold text-base text-zinc-900 dark:text-white">0 ms</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Runtutan Terbaik</div>
+            <div id="modal-streak" class="font-bold text-base text-zinc-900 dark:text-white">0</div>
+          </div>
+        </div>
+
+        <!-- Personal Best Alert -->
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          Rekor Pribadi Baru Tercapai!
+        </div>
+
+        <!-- Scientific Attribution Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-heading">Fondasi Ilmiah:</span>
+          Berdasarkan paradigma Klasik Penyelesaian Deret Induktif (Spearman, 1923; Cattell, 1971). Mengukur penalaran fluida (Gf), induksi aturan matematis, dan ekstrapolasi pola abstrak.
+        </div>
+
+        <!-- Scoring Formula Breakdown Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-mono">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-sans">Formula Penilaian:</span>
+          Skor = (Akurasi Induktif * 75) + Bonus Kecepatan Deduksi (hingga 25 poin untuk median waktu &lt; 2 detik)
+        </div>
+
+        <!-- Practice Effects Disclaimer -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-5 text-[11px] text-zinc-500 dark:text-zinc-400 italic leading-relaxed">
+          Skor kinerja mencerminkan kefasihan operasional tugas dan kecepatan respons di bawah efek latihan, bukan kecerdasan umum bawaan (g). Latihan berulang mengasah ketangkasan kognitif.
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          >
+            Main Lagi
+          </button>
+          <a
+            href="/id/permainan"
+            class="px-5 min-h-[44px] flex items-center justify-center rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors"
+          >
+            Pusat Permainan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Guide & Cognitive Science Section -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-peach mb-2">
+          Kemampuan Luas CHC: Penalaran Fluida (Gf) &amp; Induksi Kuantitatif (Gq)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Deret Angka: Logika Induktif &amp; Ekstrapolasi Pola
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Penyelesaian deret angka adalah salah satu subtes psikometrik klasik yang digunakan untuk mengukur kecerdasan fluida non-verbal (Gf) dan penalaran induktif. Peserta tes harus menyimpulkan aturan transformasi implisit yang mengatur urutan elemen dan menentukan kelanjutan yang hilang secara akurat.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. Aturan Dasar Deret
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Deret mencakup selisih konstan, rasio geometrik, pola ganda berseling, deret penjumlahan rekursif Fibonacci, serta selisih bertingkat dua lapis.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Cara Bermain &amp; Penilaian
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Perhatikan deret yang ditampilkan, temukan aturan pembentuknya, dan pilih jawaban benar dari 4 opsi yang tersedia. Bangun runtutan jawaban benar untuk memperoleh bonus skor.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Fondasi Psikometrik
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Penyelesaian deret induktif telah menjadi pilar utama psikometri sejak Charles Spearman (1904) dan Primary Mental Abilities L.L. Thurstone (1938), menunjukkan korelasi sangat tinggi dengan faktor kecerdasan umum (<em>g</em>).
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Catatan Psikometrik Penting:</strong> Deret Cepat mengevaluasi kecepatan pemecahan deret induktif dan penemuan pola di bawah kondisi latihan. Latihan ini tidak memberikan skor IQ klinis resmi atau menggantikan evaluasi psikometrik lengkap.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Ingin Mengikuti Evaluasi Penalaran Induktif Lengkap?
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Uji kemampuan Penalaran Fluida, Visual-Spasial, Kuantitatif, dan Verbal Anda dengan tes 24 soal kami.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/id/tes-kuantitatif" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Subtes Kuantitatif</a>
+          <a href="/id/tes-iq-cepat" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Ujian Lengkap 20 Menit</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <FooterId />
+</LayoutId>
+
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../../utils/profileStore';
+
+  const STORAGE_KEY = 'fiq_game_sequencerush_best';
+  const TOTAL_ITEMS = 15;
+
+  interface SequencePuzzle {
+    category: string;
+    sequence: string[];
+    correct: string;
+    options: string[];
+    rule: string;
+  }
+
+  const PUZZLE_BANK: SequencePuzzle[] = [
+    // Family 1: Arithmetic & Polynomial Progressions
+    { category: 'Aritmatika (+5)', sequence: ['4', '9', '14', '19'], correct: '24', options: ['23', '24', '25', '29'], rule: 'Tambah 5 di setiap langkah (+5)' },
+    { category: 'Geometri (*2)', sequence: ['3', '6', '12', '24'], correct: '48', options: ['36', '46', '48', '52'], rule: 'Kalikan 2 nilai sebelumnya (*2)' },
+    { category: 'Kuadratik (n^2)', sequence: ['1', '4', '9', '16', '25'], correct: '36', options: ['32', '35', '36', '49'], rule: 'Bilangan kuadrat berurutan (1^2, 2^2, 3^2...)' },
+    { category: 'Aritmatika (+7)', sequence: ['5', '12', '19', '26'], correct: '33', options: ['31', '33', '35', '37'], rule: 'Tambah 7 di setiap langkah (+7)' },
+    { category: 'Geometri (/3)', sequence: ['81', '27', '9', '3'], correct: '1', options: ['0', '1', '2', '3'], rule: 'Bagi 3 di setiap langkah (/3)' },
+    { category: 'Selisih Bertingkat', sequence: ['5', '11', '18', '26'], correct: '35', options: ['33', '34', '35', '36'], rule: 'Selisih bertambah: +6, +7, +8, +9' },
+    { category: 'Aritmatika (-6)', sequence: ['48', '42', '36', '30'], correct: '24', options: ['22', '24', '26', '28'], rule: 'Kurang 6 di setiap langkah (-6)' },
+    { category: 'Bilangan Kubik', sequence: ['1', '8', '27', '64'], correct: '125', options: ['100', '112', '125', '216'], rule: 'Bilangan pangkat tiga berurutan (1^3, 2^3, 3^3, 4^3, 5^3)' },
+    { category: 'Bilangan Segitiga', sequence: ['1', '3', '6', '10', '15'], correct: '21', options: ['18', '20', '21', '25'], rule: 'Tambah bilangan bulat bertingkat (+2, +3, +4, +5, +6)' },
+
+    // Family 2: Alternating & Interleaved Series
+    { category: 'Deret Berseling', sequence: ['2', '10', '4', '12', '6'], correct: '14', options: ['10', '12', '14', '16'], rule: 'Dua deret berseling: 2,4,6... dan 10,12,14...' },
+    { category: 'Pengurangan Bertingkat', sequence: ['20', '19', '17', '14', '10'], correct: '5', options: ['4', '5', '6', '7'], rule: 'Pengurangan bertingkat: -1, -2, -3, -4, -5' },
+    { category: 'Operasi Berseling', sequence: ['3', '6', '9', '18', '21'], correct: '42', options: ['24', '36', '42', '45'], rule: 'Operasi berseling (*2) dan (+3): 3*2=6, 6+3=9, 9*2=18, 18+3=21, 21*2=42' },
+    { category: 'Pergeseran Berseling', sequence: ['50', '45', '48', '43', '46'], correct: '41', options: ['39', '40', '41', '44'], rule: 'Berseling -5 lalu +3' },
+    { category: 'Pengurangan Teratur', sequence: ['100', '90', '81', '73', '66'], correct: '60', options: ['58', '59', '60', '61'], rule: 'Selisih: -10, -9, -8, -7, -6' },
+    { category: 'Deret Pangkat Berseling', sequence: ['1', '10', '2', '20', '4', '40'], correct: '8', options: ['6', '8', '16', '50'], rule: 'Deret 1 berlipat ganda (1,2,4,8); Deret 2 berskala (10,20,40)' },
+    { category: 'Polaritas Berseling', sequence: ['10', '14', '8', '16', '6'], correct: '18', options: ['14', '16', '18', '20'], rule: 'Selisih +/- berseling: +4, -6, +8, -10, +12' },
+    { category: 'Langkah Bergantian', sequence: ['12', '24', '20', '40', '36'], correct: '72', options: ['64', '68', '72', '80'], rule: 'Pola: *2, -4, *2, -4, *2' },
+    { category: 'Interval Ganda', sequence: ['1', '5', '2', '6', '3', '7'], correct: '4', options: ['3', '4', '8', '9'], rule: 'Deret berseling +1: 1, 2, 3, 4' },
+
+    // Family 3: Fibonacci & Recursive Patterns
+    { category: 'Deret Fibonacci', sequence: ['1', '2', '3', '5', '8', '13'], correct: '21', options: ['18', '20', '21', '24'], rule: 'Jumlah dari dua angka sebelumnya (8 + 13 = 21)' },
+    { category: 'Fibonacci Bergeser', sequence: ['2', '3', '5', '8', '13', '21'], correct: '34', options: ['29', '32', '34', '36'], rule: 'Jumlah dari dua angka sebelumnya (13 + 21 = 34)' },
+    { category: 'Rantai Perkalian', sequence: ['2', '3', '6', '18'], correct: '108', options: ['72', '96', '108', '124'], rule: 'Hasil kali dua angka sebelumnya (6 * 18 = 108)' },
+    { category: 'Deret Lucas', sequence: ['1', '3', '4', '7', '11', '18'], correct: '29', options: ['25', '27', '29', '31'], rule: 'Jumlah dua angka sebelumnya (11 + 18 = 29)' },
+    { category: 'Penjumlahan Pasangan', sequence: ['3', '4', '7', '11', '18'], correct: '29', options: ['26', '28', '29', '32'], rule: 'Jumlah dua angka sebelumnya (11 + 18 = 29)' },
+    { category: 'Jumlah Tambah Satu', sequence: ['1', '2', '4', '7', '12', '20'], correct: '33', options: ['29', '31', '33', '35'], rule: 'Jumlah dua angka sebelumnya ditambah 1: 12 + 20 + 1 = 33' },
+    { category: 'Akumulasi Berlipat', sequence: ['2', '4', '8', '16', '32'], correct: '64', options: ['48', '56', '64', '72'], rule: 'Kalikan 2 setiap suku' },
+    { category: 'Pengali Selisih', sequence: ['1', '2', '5', '14', '41'], correct: '122', options: ['82', '108', '122', '135'], rule: 'Selisih dikalikan 3: +1, +3, +9, +27, +81' },
+    { category: 'Trio Rekursif', sequence: ['1', '1', '2', '4', '7', '13'], correct: '24', options: ['20', '22', '24', '26'], rule: 'Jumlah dari tiga angka sebelumnya (4 + 7 + 13 = 24)' },
+
+    // Family 4: Alphabetical Coordinate Jumps
+    { category: 'Lompatan Huruf Bertingkat', sequence: ['A', 'C', 'F', 'J'], correct: 'O', options: ['M', 'N', 'O', 'P'], rule: 'Lompatan huruf bertingkat: +2, +3, +4, +5 langkah (J + 5 = O)' },
+    { category: 'Langkah Huruf (-2)', sequence: ['Z', 'X', 'V', 'T'], correct: 'R', options: ['P', 'Q', 'R', 'S'], rule: 'Mundur 2 huruf abjad setiap langkah' },
+    { category: 'Langkah Huruf (+3)', sequence: ['B', 'E', 'H', 'K'], correct: 'N', options: ['M', 'N', 'O', 'P'], rule: 'Maju 3 huruf (K + 3 = N)' },
+    { category: 'Posisi Kuadrat Abjad', sequence: ['A', 'D', 'I', 'P'], correct: 'Y', options: ['U', 'V', 'W', 'Y'], rule: 'Indeks kuadrat abjad: 1(A), 4(D), 9(I), 16(P), 25(Y)' },
+    { category: 'Langkah Huruf (+3)', sequence: ['C', 'F', 'I', 'L'], correct: 'O', options: ['M', 'N', 'O', 'R'], rule: 'Maju 3 huruf (L + 3 = O)' },
+    { category: 'Langkah Mundur', sequence: ['Y', 'W', 'U', 'S'], correct: 'Q', options: ['P', 'Q', 'R', 'T'], rule: 'Mundur 2 huruf (S - 2 = Q)' },
+    { category: 'Huruf Pola Fibonacci', sequence: ['A', 'A', 'B', 'C', 'E', 'H'], correct: 'M', options: ['K', 'L', 'M', 'N'], rule: 'Posisi abjad mengikuti Fibonacci: 1, 1, 2, 3, 5, 8, 13(M)' },
+    { category: 'Huruf Berseling', sequence: ['A', 'Z', 'B', 'Y', 'C'], correct: 'X', options: ['U', 'V', 'W', 'X'], rule: 'Berseling dari awal dan akhir abjad' },
+    { category: 'Lompatan Bertingkat', sequence: ['D', 'F', 'I', 'M'], correct: 'R', options: ['P', 'Q', 'R', 'S'], rule: 'Selisih bertambah: +2, +3, +4, +5 langkah (M + 5 = R)' },
+  ];
+
+  function selectRandom15(): SequencePuzzle[] {
+    const shuffled = [...PUZZLE_BANK];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, TOTAL_ITEMS);
+  }
+
+  let sessionPuzzles: SequencePuzzle[] = [];
+  let currentIndex = 0;
+  let correctCount = 0;
+  let errorCount = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
+  let sessionStartTime = 0;
+  let itemStartTime = 0;
+  let isAwaitingAnswer = false;
+  let isGameActive = false;
+
+  const latencies: number[] = [];
+  let timerInterval: number = 0;
+
+  let audioCtx: AudioContext | null = null;
+  function playTone(freq: number, duration: number) {
+    try {
+      if (!audioCtx) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      if (audioCtx) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      }
+    } catch {}
+  }
+
+  function calculateMedian(arr: number[]): number {
+    if (arr.length === 0) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 !== 0
+      ? sorted[mid]
+      : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+  }
+
+  const hudItem = document.getElementById('hud-item') as HTMLElement;
+  const hudScore = document.getElementById('hud-score') as HTMLElement;
+  const hudPace = document.getElementById('hud-pace') as HTMLElement;
+  const hudBest = document.getElementById('hud-best') as HTMLElement;
+
+  const startOverlay = document.getElementById('start-overlay') as HTMLElement;
+  const btnStartGame = document.getElementById('btn-start-game') as HTMLButtonElement;
+  const gameArenaContent = document.getElementById('game-arena-content') as HTMLElement;
+
+  const familyBadge = document.getElementById('family-badge') as HTMLElement;
+  const itemTimer = document.getElementById('item-timer') as HTMLElement;
+  const seriesProgress = document.getElementById('series-progress') as HTMLElement;
+  const sequenceContainer = document.getElementById('sequence-container') as HTMLElement;
+  const feedbackMessage = document.getElementById('feedback-message') as HTMLElement;
+  const optionsGrid = document.getElementById('options-grid') as HTMLElement;
+
+  const btnHowToPlay = document.getElementById('btn-how-to-play') as HTMLButtonElement;
+  const modalHowToPlay = document.getElementById('modal-how-to-play') as HTMLElement;
+  const btnCloseHowModal = document.getElementById('btn-close-how-modal') as HTMLButtonElement;
+  const btnConfirmHow = document.getElementById('btn-confirm-how') as HTMLButtonElement;
+
+  const modalEndRound = document.getElementById('modal-end-round') as HTMLElement;
+  const btnCloseEndModal = document.getElementById('btn-close-end-modal') as HTMLButtonElement;
+  const modalScore = document.getElementById('modal-score') as HTMLElement;
+  const modalTierBadge = document.getElementById('modal-tier-badge') as HTMLElement;
+  const modalTierDesc = document.getElementById('modal-tier-desc') as HTMLElement;
+  const modalSolved = document.getElementById('modal-solved') as HTMLElement;
+  const modalAcc = document.getElementById('modal-acc') as HTMLElement;
+  const modalPace = document.getElementById('modal-pace') as HTMLElement;
+  const modalStreak = document.getElementById('modal-streak') as HTMLElement;
+  const modalBestAlert = document.getElementById('modal-best-alert') as HTMLElement;
+  const btnModalRestart = document.getElementById('btn-modal-restart') as HTMLButtonElement;
+
+  function loadBestScore() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && hudBest) {
+        hudBest.textContent = saved;
+      }
+    } catch {}
+  }
+  loadBestScore();
+
+  function updateHUD() {
+    hudItem.textContent = `${currentIndex} / ${TOTAL_ITEMS}`;
+    seriesProgress.style.width = `${Math.round((currentIndex / TOTAL_ITEMS) * 100)}%`;
+
+    const medianRT = calculateMedian(latencies);
+    hudPace.textContent = medianRT > 0 ? `${(medianRT / 1000).toFixed(1)} s` : '-- s';
+
+    const accuracyScore = Math.round((correctCount / TOTAL_ITEMS) * 75);
+    const speedBonus = medianRT > 0 ? Math.max(0, Math.min(25, Math.round((9000 - medianRT) / 280))) : 0;
+    hudScore.textContent = String(accuracyScore + speedBonus);
+  }
+
+  function renderCurrentPuzzle() {
+    if (currentIndex >= TOTAL_ITEMS) {
+      endGame();
+      return;
+    }
+
+    isAwaitingAnswer = true;
+    updateHUD();
+
+    const puzzle = sessionPuzzles[currentIndex];
+    familyBadge.textContent = `Kategori: ${puzzle.category}`;
+    feedbackMessage.textContent = 'Identifikasi aturan yang berlaku dan pilih elemen yang hilang:';
+
+    sequenceContainer.innerHTML = '';
+    puzzle.sequence.forEach((val) => {
+      const pill = document.createElement('div');
+      pill.className = 'px-4 py-2.5 rounded-2xl bg-white dark:bg-zinc-700/80 border border-zinc-200 dark:border-zinc-600 font-mono font-bold text-lg sm:text-2xl text-zinc-900 dark:text-white shadow-xs';
+      pill.textContent = val;
+      sequenceContainer.appendChild(pill);
+    });
+
+    const missingSlot = document.createElement('div');
+    missingSlot.className = 'px-4 py-2.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border-2 border-indigo-500 font-mono font-extrabold text-lg sm:text-2xl text-indigo-600 dark:text-indigo-400 shadow-sm animate-pulse';
+    missingSlot.textContent = '?';
+    sequenceContainer.appendChild(missingSlot);
+
+    const shuffledOptions = [...puzzle.options];
+    for (let i = shuffledOptions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+    }
+
+    const keyLabels = ['1 (A)', '2 (B)', '3 (C)', '4 (D)'];
+    optionsGrid.innerHTML = '';
+
+    shuffledOptions.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'option-btn min-h-[52px] py-3 px-4 rounded-2xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white font-mono font-bold text-base flex items-center justify-between transition-all duration-150 active:scale-98 cursor-pointer';
+      btn.setAttribute('data-val', opt);
+
+      btn.innerHTML = `
+        <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500 uppercase">${keyLabels[idx]}</span>
+        <span class="text-lg font-mono font-extrabold text-zinc-950 dark:text-white">${opt}</span>
+        <span class="w-4"></span>
+      `;
+
+      btn.addEventListener('click', () => handleSelectOption(opt, btn));
+      optionsGrid.appendChild(btn);
+    });
+
+    itemStartTime = performance.now();
+  }
+
+  async function handleSelectOption(chosenVal: string, btnElement?: HTMLElement) {
+    if (!isAwaitingAnswer || !isGameActive) return;
+    isAwaitingAnswer = false;
+
+    const latency = Math.round(performance.now() - itemStartTime);
+    latencies.push(latency);
+
+    const puzzle = sessionPuzzles[currentIndex];
+    const isCorrect = chosenVal === puzzle.correct;
+
+    if (btnElement) {
+      if (isCorrect) {
+        btnElement.classList.remove('bg-zinc-100', 'dark:bg-zinc-800', 'border-zinc-200', 'dark:border-zinc-700');
+        btnElement.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+      } else {
+        btnElement.classList.remove('bg-zinc-100', 'dark:bg-zinc-800', 'border-zinc-200', 'dark:border-zinc-700');
+        btnElement.classList.add('bg-rose-500', 'border-rose-600', 'text-white');
+      }
+    }
+
+    if (isCorrect) {
+      correctCount++;
+      currentStreak++;
+      longestStreak = Math.max(longestStreak, currentStreak);
+      feedbackMessage.textContent = `Benar! ${puzzle.rule}`;
+      playTone(660, 0.08);
+      setTimeout(() => playTone(880, 0.12), 90);
+    } else {
+      errorCount++;
+      currentStreak = 0;
+      feedbackMessage.textContent = `Kurang tepat! Jawaban: ${puzzle.correct} (${puzzle.rule})`;
+      playTone(280, 0.16);
+    }
+
+    currentIndex++;
+    await new Promise((resolve) => setTimeout(resolve, 450));
+    renderCurrentPuzzle();
+  }
+
+  function endGame() {
+    isGameActive = false;
+    clearInterval(timerInterval);
+    const sessionDurationSec = Math.max(1, Math.round((Date.now() - sessionStartTime) / 1000));
+
+    const accuracy = correctCount / TOTAL_ITEMS;
+    const medianRT = calculateMedian(latencies);
+
+    const accuracyScore = Math.round((correctCount / TOTAL_ITEMS) * 75);
+    const speedBonus = Math.max(0, Math.min(25, Math.round((9000 - medianRT) / 280)));
+    const performanceScore = Math.min(100, Math.max(0, accuracyScore + speedBonus));
+
+    saveGameRecord({
+      gameId: 'sequence-rush',
+      durationSeconds: sessionDurationSec,
+      mode: 'standard',
+      metrics: {
+        performanceScore,
+        accuracy: Number(accuracy.toFixed(2)),
+        trialsCompleted: TOTAL_ITEMS,
+        correctCount,
+        errorCount,
+        medianRT: Math.round(medianRT),
+        bestStreak: longestStreak,
+      },
+    });
+
+    let isNewBest = false;
+    try {
+      const saved = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      if (performanceScore > saved) {
+        localStorage.setItem(STORAGE_KEY, String(performanceScore));
+        isNewBest = true;
+      }
+    } catch {}
+    loadBestScore();
+
+    modalScore.textContent = String(performanceScore);
+    const tierInfo = getPerformanceTier(performanceScore);
+    modalTierBadge.textContent = tierInfo.tier;
+    modalTierBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${tierInfo.badgeClass}`;
+    modalTierDesc.textContent = tierInfo.description;
+
+    modalSolved.textContent = `${correctCount} / ${TOTAL_ITEMS}`;
+    modalAcc.textContent = `${Math.round(accuracy * 100)}%`;
+    modalPace.textContent = `${medianRT} ms`;
+    modalStreak.textContent = String(longestStreak);
+
+    if (isNewBest) {
+      modalBestAlert.classList.remove('hidden');
+    } else {
+      modalBestAlert.classList.add('hidden');
+    }
+
+    modalEndRound.classList.remove('hidden');
+  }
+
+  function startGame() {
+    isGameActive = true;
+    sessionStartTime = Date.now();
+    currentIndex = 0;
+    correctCount = 0;
+    errorCount = 0;
+    currentStreak = 0;
+    longestStreak = 0;
+    latencies.length = 0;
+
+    sessionPuzzles = selectRandom15();
+
+    startOverlay.classList.add('hidden');
+    gameArenaContent.removeAttribute('inert');
+    modalEndRound.classList.add('hidden');
+
+    clearInterval(timerInterval);
+    timerInterval = window.setInterval(() => {
+      if (isGameActive && isAwaitingAnswer) {
+        const elapsed = (performance.now() - itemStartTime) / 1000;
+        itemTimer.textContent = `${elapsed.toFixed(1)}s`;
+      }
+    }, 100);
+
+    renderCurrentPuzzle();
+  }
+
+  btnStartGame.addEventListener('click', startGame);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && !isGameActive && modalHowToPlay.classList.contains('hidden') && modalEndRound.classList.contains('hidden')) {
+      e.preventDefault();
+      startGame();
+      return;
+    }
+
+    if (isGameActive && isAwaitingAnswer) {
+      const optionButtons = document.querySelectorAll('.option-btn') as NodeListOf<HTMLButtonElement>;
+      let targetIndex = -1;
+
+      if (e.key === '1' || e.key === 'a' || e.key === 'A') targetIndex = 0;
+      else if (e.key === '2' || e.key === 'b' || e.key === 'B') targetIndex = 1;
+      else if (e.key === '3' || e.key === 'c' || e.key === 'C') targetIndex = 2;
+      else if (e.key === '4' || e.key === 'd' || e.key === 'D') targetIndex = 3;
+
+      if (targetIndex >= 0 && targetIndex < optionButtons.length) {
+        e.preventDefault();
+        const targetBtn = optionButtons[targetIndex];
+        const val = targetBtn.getAttribute('data-val');
+        if (val) handleSelectOption(val, targetBtn);
+      }
+    }
+
+    if (e.key === 'Escape') {
+      if (!modalHowToPlay.classList.contains('hidden')) {
+        modalHowToPlay.classList.add('hidden');
+      }
+      if (!modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+      }
+    }
+  });
+
+  btnHowToPlay.addEventListener('click', () => modalHowToPlay.classList.remove('hidden'));
+  btnCloseHowModal.addEventListener('click', () => modalHowToPlay.classList.add('hidden'));
+  btnConfirmHow.addEventListener('click', () => modalHowToPlay.classList.add('hidden'));
+
+  btnCloseEndModal.addEventListener('click', () => modalEndRound.classList.add('hidden'));
+  btnModalRestart.addEventListener('click', () => {
+    modalEndRound.classList.add('hidden');
+    startGame();
+  });
+</script>

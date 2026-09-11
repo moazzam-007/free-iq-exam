@@ -1,0 +1,576 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = "Игры для тренировки мозга — 10 бесплатных тренажёров | FreeIQExam";
+const description = "10 научных мини-игр: рабочая память, скорость обработки информации, внимание и пространственное мышление. Бесплатно, без регистрации.";
+
+const games = [
+  {
+    id: 'n-back',
+    name: 'Дуал N-назад',
+    route: '/ru/games/n-back',
+    pastelTag: 'pastel-tag-mint',
+    pastelIcon: 'pastel-icon-mint',
+    description: 'Отслеживайте позиции и буквы одновременно на N шагов назад.',
+    skill: 'Рабочая память (Gwm)',
+    domain: 'рабочая память',
+    domains: ['working-memory'],
+    unit: 'оч.',
+    mood: 'Спокойный + сосредоточенный',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.5-7.5h15" />'
+  },
+  {
+    id: 'rotation',
+    name: '3D-вращение',
+    route: '/ru/games/rotation',
+    pastelTag: 'pastel-tag-sky',
+    pastelIcon: 'pastel-icon-sky',
+    description: 'Мысленно вращайте 3D-кубы и находите совпадающие ракурсы.',
+    skill: 'Визуально-пространственная обработка (Gv)',
+    domain: 'пространственное мышление',
+    domains: ['visual-spatial'],
+    unit: 'оч.',
+    mood: 'Хладнокровный + точный',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />'
+  },
+  {
+    id: 'math-sprint',
+    name: 'Математический спринт',
+    route: '/ru/games/math-sprint',
+    pastelTag: 'pastel-tag-yellow',
+    pastelIcon: 'pastel-icon-yellow',
+    description: 'Решайте арифметические примеры на скорость за 60 секунд.',
+    skill: 'Количественное мышление (Gq) и скорость (Gs)',
+    domain: 'количественный',
+    domains: ['quantitative', 'processing-speed'],
+    unit: 'оч.',
+    mood: 'Яркий + энергичный',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.75 6.75h14.5M12 4.75v14.5m4-4l-3-3m3 3l3-3m-14 3h6m-6 3h6" />'
+  },
+  {
+    id: 'symbol-match',
+    name: 'Символьный блиц',
+    route: '/ru/games/symbol-match',
+    pastelTag: 'pastel-tag-lav',
+    pastelIcon: 'pastel-icon-lav',
+    description: 'Быстро сопоставляйте геометрические символы с цифрами на время.',
+    skill: 'Скорость обработки информации (Gs)',
+    domain: 'скорость обработки',
+    domains: ['processing-speed'],
+    unit: 'оч.',
+    mood: 'Мягкий + быстрый',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6" />'
+  },
+  {
+    id: 'syllogism',
+    name: 'Силлогизмы: блиц',
+    route: '/ru/games/syllogism',
+    pastelTag: 'pastel-tag-peach',
+    pastelIcon: 'pastel-icon-peach',
+    description: 'Определяйте логичность выводов из посылок до конца времени.',
+    skill: 'Дедуктивная логика и подвижный интеллект (Gf)',
+    domain: 'подвижный интеллект',
+    domains: ['fluid-reasoning'],
+    unit: 'оч.',
+    mood: 'Тёплый + вдумчивый',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18" />'
+  },
+  {
+    id: 'stroop-clash',
+    name: 'Цветовой конфликт Струпа',
+    route: '/ru/games/stroop-clash',
+    pastelTag: 'pastel-tag-coral',
+    pastelIcon: 'pastel-icon-coral',
+    description: 'Называйте цвет чернил, игнорируя значение слова.',
+    skill: 'Контроль торможения и скорость (Gs)',
+    domain: 'внимание и фокус',
+    domains: ['processing-speed'],
+    unit: 'оч.',
+    mood: 'Дерзкий + сосредоточенный',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.804-2.803a3.75 3.75 0 015.304 0l2.196 2.196a3.75 3.75 0 010 5.304l-2.803 2.804" />'
+  },
+  {
+    id: 'memory-matrix',
+    name: 'Матрица памяти',
+    route: '/ru/games/memory-matrix',
+    pastelTag: 'pastel-tag-cyan',
+    pastelIcon: 'pastel-icon-cyan',
+    description: 'Запоминайте вспыхивающие узоры на поле и воспроизводите их.',
+    skill: 'Зрительно-пространственная рабочая память (Gwm)',
+    domain: 'пространственное мышление',
+    domains: ['visual-spatial', 'working-memory'],
+    unit: 'оч.',
+    mood: 'Свежий + наглядный',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />'
+  },
+  {
+    id: 'digit-span',
+    name: 'Цифровой охват',
+    route: '/ru/games/digit-span',
+    pastelTag: 'pastel-tag-lav',
+    pastelIcon: 'pastel-icon-lav',
+    description: 'Запоминайте числовые ряды в прямом и обратном порядке.',
+    skill: 'Слуховая и последовательная рабочая память (Gwm)',
+    domain: 'рабочая память',
+    domains: ['working-memory'],
+    unit: 'оч.',
+    mood: 'Простой + спокойный',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />'
+  },
+  {
+    id: 'flanker-test',
+    name: 'Тест Фланкера',
+    route: '/ru/games/flanker-test',
+    pastelTag: 'pastel-tag-sky',
+    pastelIcon: 'pastel-icon-sky',
+    description: 'Игнорируйте боковые стрелки и указывайте направление центральной.',
+    skill: 'Избирательное внимание и скорость (Gs)',
+    domain: 'внимание и фокус',
+    domains: ['processing-speed'],
+    unit: 'оч.',
+    mood: 'Чёткий + резкий',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />'
+  },
+  {
+    id: 'sequence-rush',
+    name: 'Гонка последовательностей',
+    route: '/ru/games/sequence-rush',
+    pastelTag: 'pastel-tag-peach',
+    pastelIcon: 'pastel-icon-peach',
+    description: 'Найдите правило и продолжите математические и буквенные ряды.',
+    skill: 'Индуктивные ряды (Gf)',
+    domain: 'подвижный интеллект',
+    domains: ['fluid-reasoning'],
+    unit: 'оч.',
+    mood: 'Игровой + сообразительный',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3" />'
+  }
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Когнитивные тренировочные игры",
+    "url": "https://freeiqexam.com/ru/games/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "description": "10 бесплатных научных мини-игр для тренировки рабочей памяти, скорости обработки информации, пространственного вращения, математической беглости и дедуктивной логики.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Когнитивные игры",
+        "item": "https://freeiqexam.com/ru/games/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Могут ли игры для тренировки мозга повысить IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Игры для тренировки мозга в первую очередь улучшают скорость выполнения конкретных заданий и узкие навыки (так называемый «ближний перенос»). Хотя в некоторых исследованиях (например, Jaeggi et al., 2008 о Дуал N-назад) изучался перенос на подвижный интеллект, метаанализы показывают, что мини-игры улучшают время реакции, стратегии рабочей памяти и эффективность обработки, а не врождённый общий интеллект (фактор g)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Какие когнитивные области измеряют эти игры?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "10 тренажёров соответствуют областям Кеттелла-Хорна-Кэрролла (CHC): рабочая память (Дуал N-назад, Цифровой охват, Матрица памяти), скорость обработки информации (Символьный блиц, Тест Фланкера, Струп-тест), визуально-пространственные способности (3D-вращение), количественная беглость (Математический спринт) и подвижный/дедуктивный интеллект (Силлогизмы: блиц, Гонка последовательностей)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Чем мини-игры отличаются от стандартизированных IQ-тестов?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Стандартизированные IQ-тесты (например, WAIS-IV) — это нормативные психометрические инструменты, проводимые в строгих стандартных условиях для оценки способностей относительно репрезентативной выборки. Мини-игры — это игровые скоростные упражнения для регулярной практики, отслеживания личных рекордов и стимуляции мозга."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Эти игры для тренировки мозга полностью бесплатны?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да. Все 10 когнитивных игр на FreeIQExam полностью бесплатны: без paywall, подписок, регистрации и скрытых платежей. Очки, рекорды и аналитика считаются локально в вашем браузере."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/games" idPath="/permainan" canonicalUrl="https://freeiqexam.com/ru/games">
+  <Header  enPath="/games" idPath="/permainan"/>
+
+  <div class="flex-1 games-pastel-wrap">
+  <main class="games-pastel py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/ru/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Главная</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Когнитивные игры</span>
+    </nav>
+
+    <!-- Hero Section - pastel light, dark monochrome -->
+    <header class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+      <div class="pastel-eyebrow pastel-eyebrow-mint mb-4">
+        Лаборатория тренировки мозга
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Когнитивные тренировочные игры
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+        Десять научных мини-тренировок ключевых способностей, проверяемых в IQ-тестах. Тренируйте мозг и ставьте личные рекорды.
+      </p>
+
+      <!-- Stat Badges - pastel -->
+      <div class="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-medium">
+        <span class="pastel-tag pastel-tag-mint !px-3.5 !py-1.5 !text-xs sm:!text-sm">
+          <span class="w-2 h-2 rounded-full bg-[var(--pastel-mint-ink)] animate-pulse"></span>
+          Доступно 10 игр
+        </span>
+        <span class="pastel-tag pastel-tag-sky !px-3.5 !py-1.5 !text-xs sm:!text-sm">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+          Бесплатно — без регистрации
+        </span>
+      </div>
+    </header>
+
+    <!-- Navigation Callout to Cognitive Profile - pastel light -->
+    <aside class="mb-10 sm:mb-12 p-5 sm:p-6 rounded-3xl bg-white/90 dark:bg-zinc-900 border border-[var(--pastel-line)] dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[var(--pastel-card-shadow)] dark:shadow-none" aria-label="Profile quick navigation">
+      <div class="flex items-center gap-3.5">
+        <div class="pastel-icon pastel-icon-lav w-10 h-10 rounded-2xl shrink-0">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+            Панель когнитивного прогресса
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 mt-0.5">
+            Следите за динамикой: полные журналы сессий, скользящие медианы и результаты по областям в разделе <a href="/ru/profile" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">Мой когнитивный профиль</a> &rarr;
+          </p>
+        </div>
+      </div>
+      <a
+        href="/ru/profile"
+        class="inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-blue-600 hover:bg-blue-500 shadow-xs transition-all hover:scale-102 shrink-0"
+      >
+        <span>Мой когнитивный профиль</span>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </aside>
+
+    <!-- Interactive Category Filter Tabs - pastel -->
+    <div class="mb-8 max-w-4xl mx-auto" role="region" aria-label="Фильтры категорий игр">
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5" id="category-filter-bar">
+        <button
+          type="button"
+          data-filter="all"
+          class="filter-tab pastel-chip active min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          aria-pressed="true"
+        >
+          Все игры (10)
+        </button>
+        <button
+          type="button"
+          data-filter="working-memory"
+          class="filter-tab pastel-chip min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          aria-pressed="false"
+        >
+          Рабочая память (3)
+        </button>
+        <button
+          type="button"
+          data-filter="processing-speed"
+          class="filter-tab pastel-chip min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          aria-pressed="false"
+        >
+          Скорость обработки (3)
+        </button>
+        <button
+          type="button"
+          data-filter="visual-spatial"
+          class="filter-tab pastel-chip min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          aria-pressed="false"
+        >
+          Пространственное мышление (2)
+        </button>
+        <button
+          type="button"
+          data-filter="fluid-reasoning"
+          class="filter-tab pastel-chip min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          aria-pressed="false"
+        >
+          Подвижный интеллект (3)
+        </button>
+        <button
+          type="button"
+          data-filter="quantitative"
+          class="filter-tab pastel-chip min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          aria-pressed="false"
+        >
+          Количественный (1)
+        </button>
+      </div>
+    </div>
+
+    <!-- 10 Game Cards Grid - pastel playful hierarchy -->
+    <section class="games-pastel-grid grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-16" id="games-grid" aria-label="Каталог мини-игр">
+      {games.map((game) => (
+        <article
+          class="game-card games-pastel-card group relative rounded-2xl p-6 sm:p-7 flex flex-col justify-between"
+          data-domains={game.domains.join(' ')}
+        >
+          <div>
+            <div class="flex items-start justify-between gap-4 mb-4">
+              <div class="flex items-center gap-3.5">
+                <div class={`pastel-icon ${game.pastelIcon} w-12 h-12 rounded-xl shadow-sm`}>
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" set:html={game.icon} />
+                </div>
+                <div>
+                  <h2 class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+                    {game.name}
+                  </h2>
+                  <p class="mt-1 text-xs sm:text-[13px] font-medium text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Тренируемый навык: {game.skill}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Best Score Pill - pastel -->
+              <div class="text-right flex-shrink-0">
+                <div id={`best-${game.id}`} class="pastel-tag !bg-white dark:!bg-zinc-800 !text-zinc-700 dark:!text-zinc-300 !border-[var(--pastel-line)] dark:!border-zinc-700 font-mono text-xs">
+                  Рекорд: --
+                </div>
+              </div>
+            </div>
+
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              {game.description}
+            </p>
+            <div class="flex gap-2 mb-2">
+              <span class={`pastel-tag ${game.pastelTag} !text-[11px]`}>{game.mood}</span>
+              <span class="pastel-tag !bg-white dark:!bg-zinc-800 !text-zinc-500 dark:!text-zinc-400 !border-zinc-200 dark:!border-zinc-700 text-[11px]">{game.domain}</span>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+            <span class="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
+              Бесплатно — без регистрации
+            </span>
+            <a
+              href={game.route}
+              class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            >
+              <span>Играть сейчас</span>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <!-- Educational Footer Section - pastel -->
+    <section class="border-t border-[var(--pastel-line)] dark:border-zinc-800 pt-12 pb-6 max-w-4xl mx-auto">
+      <div class="bg-white/90 dark:bg-zinc-900/60 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-4">
+          Зачем нужны когнитивные тренировки?
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+          Согласно теории Кеттелла-Хорна-Кэрролла (CHC), общий интеллект состоит из отдельных узких и широких областей. Объём рабочей памяти (Gwm), скорость обработки информации (Gs), визуально-пространственное вращение (Gv) и количественное мышление (Gq) — это базовые механизмы, поддерживающие подвижный интеллект (Gf).
+        </p>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          Скоростные упражнения создают сфокусированное умственное напряжение: требуют быстрого извлечения из рабочей памяти, подавления отвлекающих факторов и мысленного вращения. Регулярная практика обостряет контроль внимания и скорость ответов в условиях ограниченного времени.
+        </p>
+        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-medium">
+          Примечание: игры измеряют скорость и точность в конкретных заданиях. Это тренажёры, а не IQ-тесты.
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section - pastel -->
+    <section class="mt-12 bg-white/90 dark:bg-zinc-900 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none">
+      <div class="max-w-3xl">
+        <h2 class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-6">
+          Частые вопросы о когнитивных тренировках
+        </h2>
+        <div class="space-y-4">
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Могут ли игры для тренировки мозга повысить IQ?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Игры для тренировки мозга в первую очередь улучшают скорость выполнения конкретных заданий и узкие навыки (так называемый «ближний перенос»). Хотя в некоторых исследованиях (например, Jaeggi et al., 2008 о Дуал N-назад) изучался перенос на подвижный интеллект, метаанализы показывают, что мини-игры улучшают время реакции, стратегии рабочей памяти и эффективность обработки, а не врождённый общий интеллект (<em>g</em> фактор).
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Какие когнитивные области измеряют эти игры?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              10 тренажёров соответствуют областям Кеттелла-Хорна-Кэрролла (CHC): рабочая память (<a href="/ru/games/n-back" class="text-blue-600 dark:text-blue-400 hover:underline">Дуал N-назад</a>, <a href="/ru/games/digit-span" class="text-blue-600 dark:text-blue-400 hover:underline">Цифровой охват</a>, <a href="/ru/games/memory-matrix" class="text-blue-600 dark:text-blue-400 hover:underline">Матрица памяти</a>), скорость обработки информации (<a href="/ru/games/symbol-match" class="text-blue-600 dark:text-blue-400 hover:underline">Символьный блиц</a>, <a href="/ru/games/flanker-test" class="text-blue-600 dark:text-blue-400 hover:underline">Тест Фланкера</a>, <a href="/ru/games/stroop-clash" class="text-blue-600 dark:text-blue-400 hover:underline">Струп-тест</a>), визуально-пространственные способности (<a href="/ru/games/rotation" class="text-blue-600 dark:text-blue-400 hover:underline">3D-вращение</a>), количественная беглость (<a href="/ru/games/math-sprint" class="text-blue-600 dark:text-blue-400 hover:underline">Математический спринт</a>) и подвижный/дедуктивный интеллект (<a href="/ru/games/syllogism" class="text-blue-600 dark:text-blue-400 hover:underline">Силлогизмы: блиц</a>, <a href="/ru/games/sequence-rush" class="text-blue-600 dark:text-blue-400 hover:underline">Гонка последовательностей</a>).
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Чем мини-игры отличаются от стандартизированных IQ-тестов?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Стандартизированные IQ-тесты (например, WAIS-IV) — это нормативные психометрические инструменты, проводимые в строгих стандартных условиях для оценки способностей относительно репрезентативной выборки. Мини-игры — это игровые скоростные упражнения для регулярной практики, отслеживания личных рекордов и стимуляции мозга. Для стандартизированной оценки пройдите наш <a href="/ru/test" class="text-blue-600 dark:text-blue-400 hover:underline">20-минутный полный когнитивный тест</a>.
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Эти игры для тренировки мозга полностью бесплатны?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Да. Все 10 когнитивных игр на FreeIQExam полностью бесплатны: без paywall, подписок, регистрации и скрытых платежей. Очки, рекорды и аналитика считаются локально в вашем браузере.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { getProfile } from '../../utils/profileStore';
+
+  // 1. Personal Best Score Hydration
+  function hydratePersonalBests() {
+    try {
+      const profile = getProfile();
+      const games = profile.games || [];
+
+      // Calculate highest performanceScore per gameId from profile
+      const bestFromProfile: Record<string, number> = {};
+      games.forEach((session) => {
+        const score = session.metrics?.performanceScore ?? 0;
+        if (!bestFromProfile[session.gameId] || score > bestFromProfile[session.gameId]) {
+          bestFromProfile[session.gameId] = score;
+        }
+      });
+
+      // Legacy fallback keys
+      const legacyKeyMap: Record<string, string> = {
+        'n-back': 'fiq_game_nback_best',
+        'rotation': 'fiq_game_rotation_best',
+        'math-sprint': 'fiq_game_math_best',
+        'symbol-match': 'fiq_game_symbol_best',
+        'syllogism': 'fiq_game_syllogism_best',
+      };
+
+      const gameIds = [
+        'n-back',
+        'rotation',
+        'math-sprint',
+        'symbol-match',
+        'syllogism',
+        'stroop-clash',
+        'memory-matrix',
+        'digit-span',
+        'flanker-test',
+        'sequence-rush',
+      ];
+
+      gameIds.forEach((id) => {
+        let best = bestFromProfile[id] || 0;
+        if (!best && legacyKeyMap[id]) {
+          const legacyVal = parseInt(localStorage.getItem(legacyKeyMap[id]) || '0', 10);
+          if (!isNaN(legacyVal) && legacyVal > 0) {
+            best = legacyVal;
+          }
+        }
+
+        const el = document.getElementById(`best-${id}`);
+        if (el && best > 0) {
+          el.textContent = `Рекорд: ${best} оч.`;
+          el.classList.add('font-bold');
+        }
+      });
+    } catch (e) {
+      console.warn('Failed to hydrate personal bests:', e);
+    }
+  }
+
+  // 2. Interactive Category Filter Tabs
+  function initFilterTabs() {
+    const tabs = document.querySelectorAll<HTMLButtonElement>('.filter-tab');
+    const cards = document.querySelectorAll<HTMLElement>('.game-card');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const filter = tab.getAttribute('data-filter') || 'all';
+
+        // Update tab styles and aria-pressed - pastel light, dark monochrome
+        tabs.forEach((t) => {
+          const isActive = t === tab;
+          t.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+          if (isActive) {
+            t.className = 'filter-tab pastel-chip active min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
+          } else {
+            t.className = 'filter-tab pastel-chip min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
+          }
+        });
+
+        // Filter cards smoothly
+        cards.forEach((card) => {
+          const domains = (card.getAttribute('data-domains') || '').split(' ');
+          const matches = filter === 'all' || domains.includes(filter);
+          if (matches) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    hydratePersonalBests();
+    initFilterTabs();
+  });
+</script>

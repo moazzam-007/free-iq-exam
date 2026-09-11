@@ -1,0 +1,434 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const title = "Permainan Latihan Otak Gratis: 10 Game Asah Otak Kognitif | FreeIQExam";
+const description = "Latih memori kerja, kecepatan pemrosesan, rotasi spasial, kelancaran matematika, dan logika deduktif dengan 10 permainan otak gratis berbasis sains kognitif.";
+
+const games = [
+  {
+    id: 'n-back',
+    name: 'Memori Dual N-Back',
+    route: '/id/permainan/n-back',
+    pastelTag: 'pastel-tag-mint',
+    pastelIcon: 'pastel-icon-mint',
+    description: 'Lacak posisi spasial dan huruf vokal/konsonan secara simultan N langkah ke belakang.',
+    skill: 'Memori Kerja (Gwm)',
+    domain: 'working-memory',
+    domains: ['working-memory'],
+    unit: 'poin',
+    mood: 'Tenang & fokus',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.5-7.5h15" />'
+  },
+  {
+    id: 'rotation',
+    name: 'Tantangan Rotasi Mental 3D',
+    route: '/id/permainan/rotasi-mental',
+    pastelTag: 'pastel-tag-sky',
+    pastelIcon: 'pastel-icon-sky',
+    description: 'Putar secara mental kubus isometrik 3D untuk memverifikasi kesesuaian sudut pandang.',
+    skill: 'Pemrosesan Visual-Spasial (Gv)',
+    domain: 'visual-spatial',
+    domains: ['visual-spatial'],
+    unit: 'poin',
+    mood: 'Presisi & spasial',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />'
+  },
+  {
+    id: 'math-sprint',
+    name: 'Sprint Matematika Cepat',
+    route: '/id/permainan/math-sprint',
+    pastelTag: 'pastel-tag-yellow',
+    pastelIcon: 'pastel-icon-yellow',
+    description: 'Selesaikan operasi aritmatika cepat di bawah tekanan batas waktu 60 detik.',
+    skill: 'Penalaran Kuantitatif (Gq) & Kecepatan (Gs)',
+    domain: 'quantitative',
+    domains: ['quantitative', 'processing-speed'],
+    unit: 'poin',
+    mood: 'Enerjik & cepat',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.75 6.75h14.5M12 4.75v14.5m4-4l-3-3m3 3l3-3m-14 3h6m-6 3h6" />'
+  },
+  {
+    id: 'symbol-match',
+    name: 'Cocok Simbol Kilat (SDMT)',
+    route: '/id/permainan/simbol-cocok',
+    pastelTag: 'pastel-tag-lav',
+    pastelIcon: 'pastel-icon-lav',
+    description: 'Penerjemahan simbol geometris ke angka secara cepat di bawah batas waktu ketat.',
+    skill: 'Kecepatan Pemrosesan Persepsi (Gs)',
+    domain: 'processing-speed',
+    domains: ['processing-speed'],
+    unit: 'poin',
+    mood: 'Cepat & tanggap',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6" />'
+  },
+  {
+    id: 'syllogism',
+    name: 'Silogisme Logika Kilat',
+    route: '/id/permainan/silogisme',
+    pastelTag: 'pastel-tag-peach',
+    pastelIcon: 'pastel-icon-peach',
+    description: 'Tentukan keabsahan validitas deduktif premis sebelum waktu habis.',
+    skill: 'Logika Deduktif & Penalaran Fluida (Gf)',
+    domain: 'fluid-reasoning',
+    domains: ['fluid-reasoning'],
+    unit: 'poin',
+    mood: 'Analitis & mendalam',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18" />'
+  },
+  {
+    id: 'stroop-clash',
+    name: 'Stroop Color Clash',
+    route: '/id/permainan/stroop-clash',
+    pastelTag: 'pastel-tag-coral',
+    pastelIcon: 'pastel-icon-coral',
+    description: 'Pilih warna tinta sembari menekan dorongan otomatis membaca arti kata.',
+    skill: 'Kontrol Inhibisi & Kecepatan (Gs)',
+    domain: 'inhibitory-control',
+    domains: ['inhibitory-control', 'processing-speed'],
+    unit: 'poin',
+    mood: 'Fokus tinggi & tajam',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.804-2.803a3.75 3.75 0 015.304 0l2.196 2.196a3.75 3.75 0 010 5.304l-2.803 2.804" />'
+  },
+  {
+    id: 'memory-matrix',
+    name: 'Matriks Memori Spasial (Corsi)',
+    route: '/id/permainan/memory-matrix',
+    pastelTag: 'pastel-tag-cyan',
+    pastelIcon: 'pastel-icon-cyan',
+    description: 'Hafalkan pola kisi petak yang menyala sesaat lalu rekonstruksi ulang polanya.',
+    skill: 'Memori Kerja Visual-Spasial (Gwm)',
+    domain: 'working-memory',
+    domains: ['visual-spatial', 'working-memory'],
+    unit: 'poin',
+    mood: 'Visual & fokus',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />'
+  },
+  {
+    id: 'digit-span',
+    name: 'Rentang Digit Memori',
+    route: '/id/permainan/digit-span',
+    pastelTag: 'pastel-tag-lav',
+    pastelIcon: 'pastel-icon-lav',
+    description: 'Ingat urutan angka berurutan secara maju maupun pembalikan mental mundur.',
+    skill: 'Memori Kerja Serial & Akustik (Gwm)',
+    domain: 'working-memory',
+    domains: ['working-memory'],
+    unit: 'poin',
+    mood: 'Ketenangan konsentrasi',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />'
+  },
+  {
+    id: 'flanker-test',
+    name: 'Uji Arah Flanker Eriksen',
+    route: '/id/permainan/tes-flanker',
+    pastelTag: 'pastel-tag-sky',
+    pastelIcon: 'pastel-icon-sky',
+    description: 'Abaikan gangguan panah tepi dan fokus hanya pada arah panah tengah.',
+    skill: 'Perhatian Selektif & Kontrol Inhibisi (Gs)',
+    domain: 'inhibitory-control',
+    domains: ['inhibitory-control', 'processing-speed'],
+    unit: 'poin',
+    mood: 'Bersih & tajam',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />'
+  },
+  {
+    id: 'sequence-rush',
+    name: 'Sequence Rush',
+    route: '/id/permainan/sequence-rush',
+    pastelTag: 'pastel-tag-peach',
+    pastelIcon: 'pastel-icon-peach',
+    description: 'Deduksikan aturan ekstrapolasi deret simbolik dan matematika abstrak.',
+    skill: 'Penyelesaian Deret Induktif (Gf)',
+    domain: 'fluid-reasoning',
+    domains: ['fluid-reasoning'],
+    unit: 'poin',
+    mood: 'Cerdas & analitis',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3" />'
+  }
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Permainan Latihan Otak Kognitif",
+    "url": "https://freeiqexam.com/id/permainan/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "description": "10 permainan mini kognitif gratis berbasis sains untuk melatih memori kerja, kecepatan pemrosesan, rotasi spasial, kelancaran matematika, dan penalaran deduktif.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan Kognitif",
+        "item": "https://freeiqexam.com/id/permainan/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Bisakah permainan latihan otak meningkatkan skor IQ saya?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Permainan latihan otak terutama meningkatkan kelancaran operasional tugas tertentu dan kemampuan kognitif spesifik (dikenal sebagai transfer dekat). Meskipun beberapa riset (seperti Jaeggi et al., 2008 mengenai Dual N-Back) meneliti transfer ke inteligensi fluida, meta-analisis yang lebih luas menunjukkan bahwa latihan game mini mengasah waktu reaksi, strategi memori kerja, dan efisiensi pemrosesan daripada mengubah inteligensi umum biologis bawaan (faktor g) secara permanen."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Domain kognitif apa saja yang diukur oleh permainan ini?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "10 latihan ini memetakan langsung ke domain kognitif Cattell-Horn-Carroll (CHC): Memori Kerja (Dual N-Back, Digit Span, Matriks Memori), Kecepatan Pemrosesan (Cocok Simbol, Uji Flanker, Stroop Clash), Kemampuan Visual-Spasial (Rotasi Mental 3D), Kelancaran Kuantitatif (Sprint Matematika Cepat), dan Penalaran Fluida/Deduktif (Silogisme Logika, Sequence Rush)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa perbedaan antara permainan mini kognitif dan tes IQ terstandardisasi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tes IQ terstandardisasi (seperti WAIS-IV atau Cattell Culture Fair) adalah instrumen psikometrik normatif yang diadministrasikan di bawah kondisi terstandarisasi ketat untuk mengukur kapasitas kognitif komposit relatif terhadap populasi representatif. Permainan mini kognitif adalah latihan gamifikasi cepat yang dirancang untuk latihan berulang, pelacakan rekor pribadi, dan stimulasi kognitif harian."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah seluruh permainan asah otak ini benar-benar gratis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya. Seluruh 10 permainan kognitif di FreeIQExam 100% gratis tanpa paywall, tanpa langganan, tanpa pembuatan akun, dan tanpa biaya tersembunyi. Skor, rekor terbaik pribadi, dan analitik dihitung sepenuhnya secara lokal di browser Anda."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/games">
+  <Header currentPath="/id/permainan" enPath="/games" />
+
+  <div class="flex-1 games-pastel-wrap">
+  <main class="games-pastel py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Permainan Kognitif</span>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+      <div class="pastel-eyebrow pastel-eyebrow-mint mb-4">
+        Laboratorium Latihan Otak
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        10 Permainan Latihan Otak Kognitif
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+        Sepuluh latihan berbasis sains yang menargetkan kemampuan kognitif inti dalam pengujian IQ formal. Latih otak Anda, lacak rekor pribadi Anda secara lokal.
+      </p>
+
+      <!-- Stat Badges -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-mono">
+        <span class="px-3 py-1 rounded-full pastel-pill pastel-pill-mint">10 Game Berbasis Sains</span>
+        <span class="px-3 py-1 rounded-full pastel-pill pastel-pill-lav">5 Domain Kognitif CHC</span>
+        <span class="px-3 py-1 rounded-full pastel-pill pastel-pill-sky">100% Gratis &amp; Privat</span>
+        <span class="px-3 py-1 rounded-full pastel-pill pastel-pill-yellow">Pelacakan Rekor Lokal</span>
+      </div>
+    </header>
+
+    <!-- Category / Filter Tabs -->
+    <div class="flex flex-wrap items-center justify-center gap-2 mb-10" id="filter-tabs">
+      <button
+        type="button"
+        data-filter="all"
+        class="filter-tab active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer min-h-[44px]"
+      >
+        Semua
+      </button>
+      <button
+        type="button"
+        data-filter="working-memory"
+        class="filter-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer min-h-[44px]"
+      >
+        Memori Kerja (Gwm)
+      </button>
+      <button
+        type="button"
+        data-filter="processing-speed"
+        class="filter-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer min-h-[44px]"
+      >
+        Kecepatan Pemrosesan (Gs)
+      </button>
+      <button
+        type="button"
+        data-filter="fluid-reasoning"
+        class="filter-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer min-h-[44px]"
+      >
+        Penalaran Fluida (Gf)
+      </button>
+      <button
+        type="button"
+        data-filter="inhibitory-control"
+        class="filter-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer min-h-[44px]"
+      >
+        Kontrol Inhibisi
+      </button>
+    </div>
+
+    <!-- Games Grid -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mb-16" id="games-grid">
+      {games.map((game) => (
+        <article
+          class="game-card flex flex-col justify-between p-6 rounded-3xl pastel-card transition-all"
+          data-domains={game.domains.join(' ')}
+          data-game-id={game.id}
+        >
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class={`px-2.5 py-0.5 rounded-full text-xs font-mono font-medium ${game.pastelTag}`}>
+                {game.skill}
+              </span>
+              <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                {game.mood}
+              </span>
+            </div>
+
+            <div class="flex items-start gap-3 mb-3">
+              <div class={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${game.pastelIcon}`}>
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" set:html={game.icon} />
+              </div>
+              <div>
+                <h2 class="text-lg font-heading font-bold text-zinc-950 dark:text-white leading-snug">
+                  <a href={game.route} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    {game.name}
+                  </a>
+                </h2>
+              </div>
+            </div>
+
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+              {game.description}
+            </p>
+          </div>
+
+          <div class="pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400" data-best-for={game.id}>
+              Rekor: <span class="font-bold text-zinc-700 dark:text-zinc-300">--</span>
+            </span>
+            <a
+              href={game.route}
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold pastel-action-btn transition-all"
+            >
+              <span>Mulai Latihan &rarr;</span>
+            </a>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="max-w-3xl mx-auto space-y-4 mb-12">
+      <div class="border-b border-zinc-200 dark:border-zinc-800 pb-4 text-center">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Pertanyaan yang Sering Diajukan (FAQ)
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+          Penjelasan seputar efektivitas latihan otak dan domain kognitif CHC.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Bisakah permainan latihan otak meningkatkan skor IQ saya?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Permainan latihan otak terutama meningkatkan kelancaran operasional tugas tertentu dan kemampuan kognitif spesifik (dikenal sebagai transfer dekat). Meskipun beberapa riset (seperti Jaeggi et al., 2008 mengenai Dual N-Back) meneliti transfer ke inteligensi fluida, meta-analisis yang lebih luas menunjukkan bahwa latihan game mini mengasah waktu reaksi, strategi memori kerja, dan efisiensi pemrosesan daripada mengubah inteligensi umum biologis bawaan (faktor g) secara permanen.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Domain kognitif apa saja yang diukur oleh permainan ini?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            10 latihan ini memetakan langsung ke domain kognitif Cattell-Horn-Carroll (CHC): Memori Kerja (Dual N-Back, Digit Span, Matriks Memori), Kecepatan Pemrosesan (Cocok Simbol, Uji Flanker, Stroop Clash), Kemampuan Visual-Spasial (Rotasi Mental 3D), Kelancaran Kuantitatif (Sprint Matematika Cepat), dan Penalaran Fluida/Deduktif (Silogisme Logika, Sequence Rush).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa perbedaan antara permainan mini kognitif dan tes IQ terstandardisasi?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Tes IQ terstandardisasi (seperti WAIS-IV atau Cattell Culture Fair) adalah instrumen psikometrik normatif yang diadministrasikan di bawah kondisi terstandardisasi ketat untuk mengukur kapasitas kognitif komposit relatif terhadap populasi representatif. Permainan mini kognitif adalah latihan gamifikasi cepat yang dirancang untuk latihan berulang, pelacakan rekor pribadi, dan stimulasi kognitif harian.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apakah seluruh permainan asah otak ini benar-benar gratis?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Ya. Seluruh 10 permainan kognitif di FreeIQExam 100% gratis tanpa paywall, tanpa langganan, tanpa pembuatan akun, dan tanpa biaya tersembunyi. Skor, rekor terbaik pribadi, dan analitik dihitung sepenuhnya secara lokal di browser Anda.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+  </div>
+
+  <Footer />
+
+  <script is:inline>
+    // Tab Filtering
+    const tabs = document.querySelectorAll('.filter-tab');
+    const cards = document.querySelectorAll('.game-card');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const filter = tab.getAttribute('data-filter');
+        cards.forEach(card => {
+          if (filter === 'all') {
+            card.style.display = 'flex';
+          } else {
+            const domains = card.getAttribute('data-domains').split(' ');
+            if (domains.includes(filter)) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          }
+        });
+      });
+    });
+  </script>
+</Layout>

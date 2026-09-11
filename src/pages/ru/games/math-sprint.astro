@@ -1,0 +1,933 @@
+---
+import Layout from '../../../components/ru/LayoutRu.astro';
+import Header from '../../../components/ru/HeaderRu.astro';
+import Footer from '../../../components/ru/FooterRu.astro';
+
+const title = "Математический спринт: скорость счёта за 60 секунд — бесплатно";
+const description = "Тренируйте количественное мышление и скорость обработки информации: решайте примеры на время. Бесплатно.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Математический спринт",
+    "url": "https://freeiqexam.com/ru/games/math-sprint",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Скоростной устный счёт: извлечение арифметических фактов и скорость обработки информации под давлением времени."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Когнитивные игры",
+        "item": "https://freeiqexam.com/ru/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Speed Math Sprint",
+        "item": "https://freeiqexam.com/ru/games/math-sprint"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/games/math-sprint" idPath="/permainan/math-sprint" canonicalUrl="https://freeiqexam.com/ru/games/math-sprint">
+  <Header  enPath="/games/math-sprint" idPath="/permainan/math-sprint"/>
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Хлебные крошки">
+      <a href="/ru/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Главная</a>
+      <span class="mx-2">/</span>
+      <a href="/ru/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Когнитивные игры</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Математический спринт</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-yellow mb-1.5">
+          Gq &amp; Gs &bull; Количественная скорость
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+          Математический спринт
+        </h1>
+      </div>
+
+      <!-- Stat HUD + Help Button -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <button
+          id="btn-how-to-play"
+          type="button"
+          aria-label="Как играть — инструкция"
+          class="min-h-[44px] px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800/90 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-sans font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <span class="font-bold font-mono text-emerald-600 dark:text-emerald-400">(?)</span>
+          <span>Как играть</span>
+        </button>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Уровень</div>
+          <div id="hud-level" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">Этап 1</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Серия</div>
+          <div id="hud-streak" class="font-bold text-amber-500 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Счёт</div>
+          <div id="hud-score" class="font-bold text-zinc-800 dark:text-zinc-100 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[58px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Рекорд</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-yellow flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.75 6.75h14.5M12 4.75v14.5m4-4l-3-3m3 3l3-3m-14 3h6m-6 3h6" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          60-секундный спринт
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Решите как можно больше устных примеров, пока 60-секундный таймер не достиг нуля.
+          </p>
+          <p>
+            Сложность растёт по 4 этапам вместе с серией: однозначные числа, двузначные, смешанные действия, деление и квадраты.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Подсчёт: +10 оч. за верно, −3 оч. за ошибку. Бонус серии каждые 5 верных подряд!
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <span>Начать спринт (Пробел)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- 60-Second Countdown Header -->
+        <div class="w-full max-w-lg mb-6">
+          <div class="flex items-center justify-between text-xs font-mono font-semibold mb-2">
+            <span class="text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Оставшееся время</span>
+            <span id="sprint-timer-text" class="text-lg font-bold text-emerald-600 dark:text-emerald-400">60.0с</span>
+          </div>
+          <div class="w-full h-3 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700/60">
+            <div id="sprint-progress-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-100 ease-linear" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Problem Card -->
+        <div class="w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/80 shadow-inner flex flex-col items-center justify-center mb-8 relative">
+          <div id="streak-bonus-badge" class="hidden absolute top-3 right-4 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 animate-bounce">
+            Серия 5!
+          </div>
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-2">Арифметическое задание</div>
+          <div id="equation-text" class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight text-center">
+            -- + -- = ?
+          </div>
+        </div>
+
+        <!-- 4 Option Response Buttons -->
+        <div class="w-full max-w-lg grid grid-cols-2 gap-4">
+          {[0, 1, 2, 3].map((idx) => (
+            <button
+              id={`btn-opt-${idx}`}
+              type="button"
+              class="min-h-[56px] py-4 px-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500 text-zinc-900 dark:text-zinc-100 font-heading font-bold text-xl sm:text-2xl transition-all duration-100 hover:scale-102 active:scale-95 flex items-center justify-between shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+            >
+              <span id={`opt-text-${idx}`}>-</span>
+              <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500 font-normal">[{idx + 1}]</span>
+            </button>
+          ))}
+        </div>
+
+        <!-- Feedback Toast -->
+        <div id="feedback-toast" role="status" aria-live="polite" class="h-6 mt-4 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+          Результат
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Play Instructions Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4"
+    >
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-left relative max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          aria-label="Закрыть инструкцию"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <div>
+            <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+              Как играть: Математический спринт
+            </h2>
+            <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Количественное мышление и скорость обработки (Gq / Gs)</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Механика игры</h4>
+            <p>1. У вас ровно <strong>60 секунд</strong>, чтобы решить как можно больше примеров.</p>
+            <p>2. Выбирайте правильный ответ из 4 вариантов касанием или клавишами <strong>[1], [2], [3] или [4]</strong>.</p>
+            <p>3. Верные ответы дают очки и наращивают серию; серии подряд дают бонусный множитель.</p>
+            <p>4. Сложность растёт по 4 этапам: от сложения однозначных чисел до деления и квадратов.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Управление с клавиатуры</h4>
+            <ul class="space-y-1 text-xs font-mono">
+              <li>• <span class="font-bold text-zinc-900 dark:text-white">[Пробел]</span> : начать спринт 60 с / заново</li>
+              <li>• <span class="font-bold text-emerald-600 dark:text-emerald-400">[1], [2], [3], [4]</span> : выбрать вариант ответа</li>
+              <li>• <span class="font-bold text-zinc-900 dark:text-white">[Escape]</span> : закрыть окно</li>
+            </ul>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-xs">
+            <span class="font-bold text-emerald-950 dark:text-emerald-200">Научная основа:</span>
+            <span class="text-emerald-900 dark:text-emerald-300 ml-1">Парадигмы беглости счёта и числовой рабочей памяти. Тренируют извлечение математических фактов, количественную беглость (Gq) и скорость обработки (Gs).</span>
+          </div>
+        </div>
+
+        <button
+          id="btn-close-how-got-it"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-heading font-bold text-sm shadow-md transition-all duration-150 hover:scale-101 active:scale-99 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <span>Понятно, начать</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- End of Round Modal -->
+    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center relative max-h-[90vh] overflow-y-auto">
+        <!-- Top Right Dismiss Button -->
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          aria-label="Закрыть итог"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <h2 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Спринт завершён!
+        </h2>
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">
+          Итог: количественная беглость за 60 секунд
+        </p>
+
+        <!-- Standardized 0-100 Task Performance Score -->
+        <div class="mb-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800">
+          <div class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Результат
+          </div>
+          <div class="flex items-baseline justify-center gap-1.5 my-1">
+            <span id="modal-perf-score" class="text-4xl sm:text-5xl font-extrabold font-heading text-zinc-950 dark:text-white">0</span>
+            <span class="text-sm font-mono text-zinc-400">/ 100</span>
+          </div>
+          <div id="modal-tier-badge" class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+            <span id="modal-tier-name">Уверенная база</span>
+          </div>
+          <p id="modal-tier-desc" class="mt-2 text-xs text-zinc-600 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed"></p>
+        </div>
+
+        <!-- Paradigm-Specific Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Решено</div>
+            <div id="modal-attempted" class="font-bold text-base text-zinc-900 dark:text-white">0</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Точность</div>
+            <div id="modal-acc" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Медианный темп</div>
+            <div id="modal-pace" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0.0с</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Лучшая серия</div>
+            <div id="modal-streak" class="font-bold text-base text-amber-500">0</div>
+          </div>
+        </div>
+
+        <!-- Transparent Scoring Formula Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Подсчёт очков
+          </div>
+          <p class="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold mb-1">
+            Счёт = (Решено * 3.0, макс. 75) + Бонус точности (до 25 оч.)
+          </p>
+          <p id="modal-formula-calc" class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400"></p>
+        </div>
+
+        <!-- Scientific Paradigm Attribution Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Научная основа
+          </div>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400">
+            Парадигмы беглости счёта и числовой рабочей памяти. Количественные действия (Gq) и скорость обработки (Gs).
+          </p>
+        </div>
+
+        <!-- Практика Effects Disclaimer -->
+        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic mb-5 leading-normal">
+          Очки отражают скорость и точность в конкретном задании с учётом эффекта практики, а не врождённый общий интеллект (g). Повторные тренировки развивают когнитивную гибкость.
+        </p>
+
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          Новый рекорд!
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer"
+          >
+            Ещё раз
+          </button>
+          <a
+            href="/ru/games"
+            class="min-h-[44px] px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+          >
+            Каталог
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Guide & Cognitive Science Section (Crawler Visible) -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-yellow mb-2">
+          CHC: количественные знания (Gq) и скорость обработки (Gs)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Устный счёт: числовая беглость и когнитивная скорость
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Скоростные арифметические задания измеряют быстрое извлечение математических знаний и операционную гибкость. В условиях жёсткого лимита времени решение требует подавления интерференции, удержания промежуточных переносов в рабочей памяти и быстрых мысленных алгоритмов.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. Как играть и управление
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            У вас 60 секунд, чтобы решить как можно больше примеров. Выбирайте ответы клавишами <strong>[1]–[4]</strong> или касанием кнопок на экране.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Очки и динамика сложности
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Задания усложняются от сложения однозначных чисел до многошагового умножения и деления. Верные ответы подряд наращивают серию-множитель очков за пример.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Когнитивные основы
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Беглость устного счёта отражает эффективность внутритеменной борозды и угловой извилины для автоматизированных числовых фактов, освобождая ресурсы для сложных задач.
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Важное психометрическое примечание:</strong> математический спринт оценивает операционное извлечение и скорость счёта с учётом практики. Он не измеряет общий абстрактный интеллект (<em>g</em>) и не заменяет стандартизированный тест.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Изучите тесты количественного мышления
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Проверьте индукцию числовых рядов, числовую логику и арифметические связи в тесте из 16 заданий.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/ru/quantitative-reasoning-test" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Количественный субтест</a>
+          <a href="/ru/test" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Полный тест 20 мин</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../../utils/profileStore';
+
+  (function() {
+    var TOTAL_DURATION_MS = 60000;
+    var STORAGE_KEY = 'fiq_game_math_best';
+    var STORAGE_KEY_V2 = 'fiq_game_mathsprint_best';
+
+    var score = 0;
+    var streak = 0;
+    var longestStreak = 0;
+    var correctCount = 0;
+    var wrongCount = 0;
+    var isRunning = false;
+    var startTime = 0;
+    var problemStartTime = 0;
+    var responseTimes: number[] = [];
+    var timerAnimFrame: any = null;
+    var currentProblem: any = null;
+    var lastDisplayedTenth = -1;
+
+    // DOM Elements
+    var hudLevel = document.getElementById('hud-level')!;
+    var hudStreak = document.getElementById('hud-streak')!;
+    var hudScore = document.getElementById('hud-score')!;
+    var hudBest = document.getElementById('hud-best')!;
+    var btnHowToPlay = document.getElementById('btn-how-to-play')!;
+    var modalHowToPlay = document.getElementById('modal-how-to-play')!;
+    var btnCloseHowModal = document.getElementById('btn-close-how-modal')!;
+    var btnCloseHowGotIt = document.getElementById('btn-close-how-got-it')!;
+
+    var startOverlay = document.getElementById('start-overlay')!;
+    var btnStartGame = document.getElementById('btn-start-game')!;
+    var gameArenaContent = document.getElementById('game-arena-content')!;
+    var sprintTimerText = document.getElementById('sprint-timer-text')!;
+    var sprintProgressBar = document.getElementById('sprint-progress-bar')!;
+    var equationText = document.getElementById('equation-text')!;
+    var streakBonusBadge = document.getElementById('streak-bonus-badge')!;
+    var feedbackToast = document.getElementById('feedback-toast');
+
+    if (gameArenaContent) {
+      gameArenaContent.setAttribute('inert', '');
+    }
+
+    var optButtons = [
+      document.getElementById('btn-opt-0')!,
+      document.getElementById('btn-opt-1')!,
+      document.getElementById('btn-opt-2')!,
+      document.getElementById('btn-opt-3')!
+    ];
+    var optTexts = [
+      document.getElementById('opt-text-0')!,
+      document.getElementById('opt-text-1')!,
+      document.getElementById('opt-text-2')!,
+      document.getElementById('opt-text-3')!
+    ];
+
+    var modalEndRound = document.getElementById('modal-end-round')!;
+    var btnCloseEndModal = document.getElementById('btn-close-end-modal')!;
+    var modalPerfScore = document.getElementById('modal-perf-score')!;
+    var modalTierBadge = document.getElementById('modal-tier-badge')!;
+    var modalTierName = document.getElementById('modal-tier-name')!;
+    var modalTierDesc = document.getElementById('modal-tier-desc')!;
+    var modalAcc = document.getElementById('modal-acc')!;
+    var modalAttempted = document.getElementById('modal-attempted')!;
+    var modalPace = document.getElementById('modal-pace')!;
+    var modalStreak = document.getElementById('modal-streak')!;
+    var modalFormulaCalc = document.getElementById('modal-formula-calc')!;
+    var modalBestAlert = document.getElementById('modal-best-alert')!;
+    var btnModalRestart = document.getElementById('btn-modal-restart')!;
+
+    function calculateMedian(arr: number[]): number {
+      if (!arr || arr.length === 0) return 0;
+      var sorted = arr.slice().sort(function(a, b) { return a - b; });
+      var mid = Math.floor(sorted.length / 2);
+      return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    function loadBestScore() {
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY_V2) || localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          hudBest.textContent = saved;
+        }
+      } catch (e) {}
+    }
+    loadBestScore();
+
+    function getTier() {
+      if (correctCount < 10) return 1;
+      if (correctCount < 20) return 2;
+      if (correctCount < 30) return 3;
+      return 4;
+    }
+
+    function updateHud() {
+      var tier = getTier();
+      hudLevel.textContent = 'Этап ' + tier;
+      hudStreak.textContent = streak.toString();
+      hudScore.textContent = score.toString();
+    }
+
+    function showFeedback(text: string, isPositive: boolean) {
+      if (!feedbackToast) return;
+      feedbackToast.textContent = (isPositive ? '✓ ' : '✗ ') + text;
+      feedbackToast.className = 'h-6 mt-4 text-xs font-mono font-semibold transition-opacity ' +
+        (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+      feedbackToast.style.opacity = '1';
+      setTimeout(function() {
+        if (feedbackToast) feedbackToast.style.opacity = '0';
+      }, 600);
+    }
+
+    function generateProblem() {
+      var tier = getTier();
+      var expr = '';
+      var ans = 0;
+
+      if (tier === 1) {
+        var op = Math.random() < 0.5 ? '+' : '-';
+        if (op === '+') {
+          var a = Math.floor(Math.random() * 8) + 2;
+          var b = Math.floor(Math.random() * 8) + 2;
+          expr = a + ' + ' + b;
+          ans = a + b;
+        } else {
+          var b = Math.floor(Math.random() * 8) + 2;
+          var res = Math.floor(Math.random() * 8) + 1;
+          var a = b + res;
+          expr = a + ' - ' + b;
+          ans = res;
+        }
+      } else if (tier === 2) {
+        var roll = Math.random();
+        if (roll < 0.4) {
+          var a = Math.floor(Math.random() * 70) + 15;
+          var b = Math.floor(Math.random() * 8) + 2;
+          expr = a + ' + ' + b;
+          ans = a + b;
+        } else if (roll < 0.7) {
+          var a = Math.floor(Math.random() * 70) + 20;
+          var b = Math.floor(Math.random() * 8) + 2;
+          expr = a + ' - ' + b;
+          ans = a - b;
+        } else {
+          var a = Math.floor(Math.random() * 7) + 3;
+          var b = Math.floor(Math.random() * 8) + 2;
+          expr = a + ' × ' + b;
+          ans = a * b;
+        }
+      } else if (tier === 3) {
+        var roll = Math.random();
+        if (roll < 0.4) {
+          var a = Math.floor(Math.random() * 15) + 11;
+          var b = Math.floor(Math.random() * 6) + 3;
+          expr = a + ' × ' + b;
+          ans = a * b;
+        } else if (roll < 0.7) {
+          var a = Math.floor(Math.random() * 6) + 3;
+          var b = Math.floor(Math.random() * 5) + 2;
+          var c = Math.floor(Math.random() * 5) + 2;
+          expr = a + ' × (' + b + ' + ' + c + ')';
+          ans = a * (b + c);
+        } else {
+          var a = Math.floor(Math.random() * 50) + 30;
+          var b = Math.floor(Math.random() * 25) + 15;
+          expr = a + ' - ' + b;
+          ans = a - b;
+        }
+      } else {
+        var roll = Math.random();
+        if (roll < 0.35) {
+          var b = Math.floor(Math.random() * 7) + 3;
+          var res = Math.floor(Math.random() * 12) + 6;
+          var a = b * res;
+          var c = Math.floor(Math.random() * 12) + 3;
+          expr = a + ' ÷ ' + b + ' + ' + c;
+          ans = res + c;
+        } else if (roll < 0.7) {
+          var a = Math.floor(Math.random() * 8) + 11;
+          expr = a + '²';
+          ans = a * a;
+        } else {
+          var b = Math.floor(Math.random() * 7) + 3;
+          var res = Math.floor(Math.random() * 10) + 4;
+          var a = b * res;
+          expr = a + ' ÷ ' + b;
+          ans = res;
+        }
+      }
+
+      var options = [ans];
+      var offsets = [-1, 1, -2, 2, -3, 3, -10, 10, -5, 5, -4, 4];
+      offsets.sort(function() { return 0.5 - Math.random(); });
+
+      for (var i = 0; i < offsets.length; i++) {
+        var cand = ans + offsets[i];
+        if (cand > 0 && options.indexOf(cand) === -1) {
+          options.push(cand);
+        }
+        if (options.length === 4) break;
+      }
+
+      var extra = 1;
+      while (options.length < 4) {
+        var cand = ans + extra;
+        if (options.indexOf(cand) === -1) options.push(cand);
+        extra += 2;
+      }
+
+      options.sort(function() { return 0.5 - Math.random(); });
+
+      return {
+        expr: expr,
+        ans: ans,
+        options: options
+      };
+    }
+
+    function renderProblem() {
+      currentProblem = generateProblem();
+      equationText.textContent = currentProblem.expr + ' = ?';
+      problemStartTime = performance.now();
+
+      for (var i = 0; i < 4; i++) {
+        optTexts[i].textContent = currentProblem.options[i];
+        optButtons[i].className = 'min-h-[56px] py-4 px-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500 text-zinc-900 dark:text-zinc-100 font-heading font-bold text-xl sm:text-2xl transition-all duration-100 hover:scale-102 active:scale-95 flex items-center justify-between shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer';
+      }
+    }
+
+    function handleChoice(optIdx: number) {
+      if (!isRunning || !currentProblem) return;
+      var rt = performance.now() - problemStartTime;
+      responseTimes.push(rt);
+
+      var chosenVal = currentProblem.options[optIdx];
+      var btn = optButtons[optIdx];
+
+      if (chosenVal === currentProblem.ans) {
+        score += 10;
+        correctCount++;
+        streak++;
+        if (streak > longestStreak) longestStreak = streak;
+
+        if (streak % 5 === 0) {
+          score += 5;
+          streakBonusBadge.textContent = streak + 'x Streak (+5 Bonus)';
+          streakBonusBadge.classList.remove('hidden');
+          setTimeout(function() {
+            streakBonusBadge.classList.add('hidden');
+          }, 1200);
+          showFeedback('Бонус серии! +15 pts', true);
+        } else {
+          showFeedback('Верно! +10 pts', true);
+        }
+
+        btn.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/40');
+      } else {
+        score = Math.max(0, score - 3);
+        wrongCount++;
+        streak = 0;
+        showFeedback('Wrong! -3 pts (Answer: ' + currentProblem.ans + ')', false);
+        btn.classList.add('border-rose-500', 'bg-rose-50', 'dark:bg-rose-950/40');
+      }
+
+      updateHud();
+      setTimeout(function() {
+        if (isRunning) renderProblem();
+      }, 120);
+    }
+
+    function timerStep() {
+      if (!isRunning) return;
+      var elapsed = performance.now() - startTime;
+      var remaining = Math.max(0, TOTAL_DURATION_MS - elapsed);
+      var fraction = remaining / TOTAL_DURATION_MS;
+
+      var currentTenth = Math.floor(remaining / 100);
+      if (currentTenth !== lastDisplayedTenth) {
+        lastDisplayedTenth = currentTenth;
+        sprintTimerText.textContent = (remaining / 1000).toFixed(1) + 's';
+      }
+      sprintProgressBar.style.width = (fraction * 100).toFixed(1) + '%';
+
+      if (remaining <= 10000) {
+        sprintTimerText.classList.add('text-rose-600', 'dark:text-rose-400', 'animate-pulse');
+        sprintProgressBar.classList.remove('bg-emerald-500');
+        sprintProgressBar.classList.add('bg-rose-500');
+      } else {
+        sprintTimerText.classList.remove('text-rose-600', 'dark:text-rose-400', 'animate-pulse');
+        sprintProgressBar.classList.add('bg-emerald-500');
+        sprintProgressBar.classList.remove('bg-rose-500');
+      }
+
+      if (remaining > 0) {
+        timerAnimFrame = requestAnimationFrame(timerStep);
+      } else {
+        finishSprint();
+      }
+    }
+
+    function startSprint() {
+      isRunning = true;
+      score = 0;
+      streak = 0;
+      longestStreak = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      responseTimes = [];
+      lastDisplayedTenth = -1;
+      startTime = performance.now();
+
+      if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+      startOverlay.classList.add('hidden');
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      if (modalHowToPlay) {
+        modalHowToPlay.classList.add('hidden');
+        modalHowToPlay.classList.remove('flex');
+      }
+
+      updateHud();
+      renderProblem();
+      timerAnimFrame = requestAnimationFrame(timerStep);
+    }
+
+    function finishSprint() {
+      isRunning = false;
+      cancelAnimationFrame(timerAnimFrame);
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+      var totalAttempted = correctCount + wrongCount;
+      var accuracy = totalAttempted > 0 ? (correctCount / totalAttempted) : 0;
+      var accuracyPct = Math.round(accuracy * 100);
+      var medianRT = calculateMedian(responseTimes);
+
+      // Scoring formula:
+      // throughput = correctCount (in 60 seconds)
+      // accuracy = correctCount / Math.max(1, correctCount + wrongCount)
+      // baseScore = Math.min(75, Math.round(throughput * 3.0))
+      // accuracyBonus = accuracy >= 0.90 ? 25 : Math.round(accuracy * 20)
+      // performanceScore = Math.min(100, Math.max(0, baseScore + accuracyBonus))
+      var baseScore = Math.min(75, Math.round(correctCount * 3.0));
+      var accuracyBonus = accuracy >= 0.90 ? 25 : Math.round(accuracy * 20);
+      var performanceScore = Math.min(100, Math.max(0, baseScore + accuracyBonus));
+
+      // Save to client profile storage
+      try {
+        saveGameRecord({
+          gameId: 'math-sprint',
+          durationSeconds: 60,
+          mode: 'standard',
+          metrics: {
+            performanceScore: performanceScore,
+            accuracy: parseFloat(accuracy.toFixed(4)),
+            trialsCompleted: totalAttempted,
+            correctCount: correctCount,
+            errorCount: wrongCount,
+            medianRT: Math.round(medianRT),
+            bestStreak: longestStreak,
+          },
+        });
+      } catch (err) {
+        console.error('Failed to save game record:', err);
+      }
+
+      // Check legacy and HUD best score
+      var savedBest = 0;
+      try {
+        savedBest = parseInt(localStorage.getItem(STORAGE_KEY_V2) || localStorage.getItem(STORAGE_KEY) || '0', 10);
+      } catch (e) {}
+
+      var isNewBest = performanceScore > savedBest;
+      if (isNewBest) {
+        try {
+          localStorage.setItem(STORAGE_KEY, performanceScore.toString());
+          localStorage.setItem(STORAGE_KEY_V2, performanceScore.toString());
+          loadBestScore();
+        } catch (e) {}
+      }
+
+      // Render Modal Elements
+      modalPerfScore.textContent = performanceScore.toString();
+
+      var tier = getPerformanceTier(performanceScore);
+      modalTierBadge.className = 'mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ' + tier.badgeClass;
+      modalTierName.textContent = tier.tier;
+      modalTierDesc.textContent = tier.description;
+
+      modalAttempted.textContent = correctCount + ' solved';
+      modalAcc.textContent = accuracyPct + '%';
+      modalPace.textContent = (medianRT / 1000).toFixed(1) + 's / item';
+      modalStreak.textContent = longestStreak.toString();
+
+      modalFormulaCalc.textContent = '(' + correctCount + ' Решено * 3.0 = ' + baseScore + ' pts) + (Accuracy Bonus = ' + accuracyBonus + ' pts) = ' + performanceScore + ' pts';
+
+      if (isNewBest && performanceScore > 0) {
+        modalBestAlert.classList.remove('hidden');
+      } else {
+        modalBestAlert.classList.add('hidden');
+      }
+
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+      try {
+        modalEndRound.focus();
+      } catch (e) {}
+    }
+
+    function openHowModal() {
+      modalHowToPlay.classList.remove('hidden');
+      modalHowToPlay.classList.add('flex');
+      modalHowToPlay.focus();
+    }
+
+    function closeHowModal() {
+      modalHowToPlay.classList.add('hidden');
+      modalHowToPlay.classList.remove('flex');
+    }
+
+    function closeEndModal() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startOverlay.classList.remove('hidden');
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+      if (btnStartGame) btnStartGame.focus();
+    }
+
+    // Modal event listeners
+    btnHowToPlay.addEventListener('click', openHowModal);
+    btnCloseHowModal.addEventListener('click', closeHowModal);
+    btnCloseHowGotIt.addEventListener('click', function() {
+      closeHowModal();
+      if (btnStartGame) btnStartGame.focus();
+    });
+
+    modalHowToPlay.addEventListener('click', function(e) {
+      if (e.target === modalHowToPlay) {
+        closeHowModal();
+      }
+    });
+
+    btnCloseEndModal.addEventListener('click', closeEndModal);
+    modalEndRound.addEventListener('click', function(e) {
+      if (e.target === modalEndRound) {
+        closeEndModal();
+      }
+    });
+
+    // Bind option buttons
+    optButtons.forEach(function(btn, idx) {
+      btn.addEventListener('click', function() { handleChoice(idx); });
+    });
+
+    btnStartGame.addEventListener('click', startSprint);
+    btnModalRestart.addEventListener('click', function() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startSprint();
+    });
+
+    // Keyboard controls
+    window.addEventListener('keydown', function(e) {
+      if (e.repeat) return;
+      var key = e.key;
+
+      var isHowOpen = !modalHowToPlay.classList.contains('hidden');
+      var isEndOpen = !modalEndRound.classList.contains('hidden');
+
+      if (key === 'Escape') {
+        if (isHowOpen) {
+          closeHowModal();
+          return;
+        }
+        if (isEndOpen) {
+          closeEndModal();
+          return;
+        }
+      }
+
+      // Suppress game hotkeys while any modal is open
+      if (isHowOpen || isEndOpen) {
+        return;
+      }
+
+      if (key === ' ' && !isRunning) {
+        e.preventDefault();
+        startSprint();
+      } else if (key === '1') {
+        handleChoice(0);
+      } else if (key === '2') {
+        handleChoice(1);
+      } else if (key === '3') {
+        handleChoice(2);
+      } else if (key === '4') {
+        handleChoice(3);
+      }
+    });
+  })();
+</script>

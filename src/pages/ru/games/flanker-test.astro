@@ -1,0 +1,821 @@
+---
+import Layout from '../../../components/ru/LayoutRu.astro';
+import Header from '../../../components/ru/HeaderRu.astro';
+import Footer from '../../../components/ru/FooterRu.astro';
+
+const title = "Тест Фланкера: внимание и скорость обработки — играть бесплатно";
+const description = "Оцените избирательное внимание и контроль интерференции: указывайте направление центральной стрелки. Бесплатно.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Тест Фланкера — блиц направления",
+    "url": "https://freeiqexam.com/ru/games/flanker-test",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Стандартизированная задача Эриксена Фланкера: избирательное внимание, скорость обработки информации и торможение интерференции."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Когнитивные игры",
+        "item": "https://freeiqexam.com/ru/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Тест Фланкера",
+        "item": "https://freeiqexam.com/ru/games/flanker-test"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/games/flanker-test" idPath="/permainan/flanker-test" canonicalUrl="https://freeiqexam.com/ru/games/flanker-test">
+  <Header  enPath="/games/flanker-test" idPath="/permainan/flanker-test"/>
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Хлебные крошки">
+      <a href="/ru/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Главная</a>
+      <span class="mx-2">/</span>
+      <a href="/ru/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Когнитивные игры</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Тест Фланкера</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-sky mb-1.5">
+          Gs &bull; Скорость обработки информации
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            Тест Фланкера
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 text-xs font-mono font-medium gap-1.5 cursor-pointer"
+            aria-label="Как играть — инструкция"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+            <span>Как играть</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat HUD (4 rounded cards) -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[64px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Попытка</div>
+          <div id="hud-trial" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 30</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Счёт</div>
+          <div id="hud-score" class="font-bold text-amber-600 dark:text-amber-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[64px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Медиана ВР</div>
+          <div id="hud-rt" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">-- мс</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Рекорд</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center min-h-[440px] justify-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-sky flex items-center justify-center mb-5 shadow-lg shadow-amber-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Тест Фланкера
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Появится ряд из 5 символов. Как можно быстрее определите направление <strong>ЦЕНТРАЛЬНОЙ СТРЕЛКИ</strong>.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Игнорируйте боковые стрелки, указывающие в другую сторону. 30 скоростных попыток.
+          </p>
+        </div>
+
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 cursor-pointer"
+        >
+          <span>Начать тренировку (Пробел)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content (inert while overlay active) -->
+      <div id="game-arena-content" inert class="w-full flex flex-col items-center">
+        <!-- Progress bar -->
+        <div class="w-full max-w-md h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full mb-6 overflow-hidden">
+          <div id="trial-progress" class="h-full bg-amber-500 transition-all duration-150 w-0"></div>
+        </div>
+
+        <!-- Stimulus Display Box -->
+        <div class="w-full max-w-md h-40 sm:h-48 rounded-3xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 flex flex-col items-center justify-center p-6 mb-8 shadow-inner relative">
+          <!-- Stimulus Row -->
+          <div id="stimulus-row" class="flex items-center justify-center gap-2 sm:gap-4 select-none">
+            <span class="text-4xl sm:text-5xl font-mono text-zinc-400 dark:text-zinc-500">+</span>
+          </div>
+          <!-- Fixation cross / feedback toast -->
+          <div id="feedback-cue" class="absolute bottom-3 text-xs font-mono font-medium text-zinc-400">
+            Смотрите в центр
+          </div>
+        </div>
+
+        <!-- Response Action Controls -->
+        <div class="w-full max-w-md grid grid-cols-2 gap-4">
+          <button
+            id="btn-action-left"
+            type="button"
+            class="min-h-[56px] py-4 px-6 rounded-2xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-950 dark:text-white font-heading font-bold text-lg flex items-center justify-center gap-3 transition-all duration-150 active:scale-95 shadow-sm border border-zinc-200 dark:border-zinc-700 cursor-pointer"
+          >
+            <span class="text-2xl font-mono font-black">&larr;</span>
+            <div class="text-left leading-tight">
+              <div>ВЛЕВО</div>
+              <div class="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 font-normal">Клавиша: &larr; или A</div>
+            </div>
+          </button>
+
+          <button
+            id="btn-action-right"
+            type="button"
+            class="min-h-[56px] py-4 px-6 rounded-2xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-950 dark:text-white font-heading font-bold text-lg flex items-center justify-center gap-3 transition-all duration-150 active:scale-95 shadow-sm border border-zinc-200 dark:border-zinc-700 cursor-pointer"
+          >
+            <div class="text-right leading-tight">
+              <div>ВПРАВО</div>
+              <div class="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 font-normal">Клавиша: &rarr; или D</div>
+            </div>
+            <span class="text-2xl font-mono font-black">&rarr;</span>
+          </button>
+        </div>
+
+        <p class="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 mt-4 text-center">
+          Отвечайте как можно быстрее и точнее. Игнорируйте боковые символы.
+        </p>
+      </div>
+    </div>
+
+    <!-- Accessible "Как играть" Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm hidden"
+    >
+      <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
+          aria-label="Закрыть инструкцию"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+            Как играть: Тест Фланкера
+          </h2>
+        </div>
+
+        <div class="space-y-3 text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+          <p>
+            <strong>1. Определение цели:</strong> в каждой попытке появляется ряд из 5 символов. Смотрите строго на <strong>ЦЕНТРАЛЬНУЮ</strong> стрелку.
+          </p>
+          <p>
+            <strong>2. Условия попыток:</strong>
+            <br />- <em>Конгруэнтный:</em> фланкеры указывают туда же (<code class="font-mono">&larr; &larr; &larr; &larr; &larr;</code> или <code class="font-mono">&rarr; &rarr; &rarr; &rarr; &rarr;</code>).
+            <br />- <em>Неконгруэнтный:</em> фланкеры указывают в другую сторону (<code class="font-mono">&rarr; &rarr; &larr; &rarr; &rarr;</code> или <code class="font-mono">&larr; &larr; &rarr; &larr; &larr;</code>).
+            <br />- <em>Нейтральный:</em> фланкеры — нейтральные чёрточки (<code class="font-mono">- - &larr; - -</code> или <code class="font-mono">- - &rarr; - -</code>).
+          </p>
+          <p>
+            <strong>3. Управление:</strong> нажмите <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">ArrowLeft</kbd> или <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">A</kbd> для «Влево», и <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">ArrowRight</kbd> или <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 font-mono text-xs">D</kbd> для «Вправо».
+          </p>
+          <p>
+            <strong>4. Подсчёт очков:</strong> высокая точность, время реакции менее 400 мс и минимальная задержка на неконгруэнтных пробах дают максимальный результат.
+          </p>
+        </div>
+
+        <button
+          id="btn-confirm-how"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 cursor-pointer"
+        >
+          Понятно, начать
+        </button>
+      </div>
+    </div>
+
+    <!-- Accessible End of Round Modal -->
+    <div
+      id="modal-end-round"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-end-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm hidden"
+    >
+      <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+        <!-- Close Button (X) -->
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
+          aria-label="Закрыть итог"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="modal-end-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Сессия завершена!
+        </h2>
+        <p class="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-5">
+          Итог: внимание и скорость обработки информации
+        </p>
+
+        <!-- Performance Score (0 - 100) -->
+        <div class="mb-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+            Результат
+          </div>
+          <div id="modal-score" class="text-4xl sm:text-5xl font-extrabold text-amber-600 dark:text-amber-400 font-heading">
+            0
+          </div>
+          <div class="mt-2.5 flex items-center justify-center gap-2">
+            <span id="modal-tier-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700">
+              Начальный
+            </span>
+          </div>
+          <p id="modal-tier-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm mx-auto">
+            Результат отражает разрешение визуального конфликта и скорость обработки.
+          </p>
+        </div>
+
+        <!-- Paradigm Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Точность</div>
+            <div id="modal-acc" class="font-bold text-base text-zinc-900 dark:text-white">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Медиана ВР</div>
+            <div id="modal-rt" class="font-bold text-base text-amber-600 dark:text-amber-400">0 мс</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Цена конфликта</div>
+            <div id="modal-conflict" class="font-bold text-base text-zinc-900 dark:text-white">0 мс</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase">Лучшая серия</div>
+            <div id="modal-streak" class="font-bold text-base text-zinc-900 dark:text-white">0</div>
+          </div>
+        </div>
+
+        <!-- RT Breakdown -->
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-5 flex items-center justify-between text-xs font-mono px-4">
+          <div>
+            <span class="text-zinc-500 dark:text-zinc-400 text-[10px] block">КОНГРУЭНТНЫЙ ВР</span>
+            <span id="modal-congruent-rt" class="font-bold text-zinc-900 dark:text-white">0 мс</span>
+          </div>
+          <div>
+            <span class="text-zinc-500 dark:text-zinc-400 text-[10px] block">НЕКОНГРУЭНТНЫЙ ВР</span>
+            <span id="modal-incongruent-rt" class="font-bold text-zinc-900 dark:text-white">0 мс</span>
+          </div>
+        </div>
+
+        <!-- Personal Best Alert -->
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          Новый рекорд!
+        </div>
+
+        <!-- Scientific Attribution Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-heading">Научная основа:</span>
+          Основано на задаче Фланкера Эриксенов (Eriksen & Eriksen, 1974). Измеряет избирательное зрительно-пространственное внимание, разрешение конфликта и подавление периферийного шума.
+        </div>
+
+        <!-- Scoring Formula Breakdown Card -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-3.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-mono">
+          <span class="font-bold text-zinc-900 dark:text-white block mb-1 font-sans">Подсчёт очков:</span>
+          Счёт = (Точность * 50) + Скорость (до 40 оч. за ВР &lt; 400мс) + Бонус устойчивости (до 10 оч. за низкую цену конфликта)
+        </div>
+
+        <!-- Практика Effects Disclaimer -->
+        <div class="text-left p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60 mb-5 text-[11px] text-zinc-500 dark:text-zinc-400 italic leading-relaxed">
+          Очки отражают скорость и точность в конкретном задании с учётом эффекта практики, а не врождённый общий интеллект (g). Повторные тренировки развивают когнитивную гибкость.
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+          >
+            Играть снова
+          </button>
+          <a
+            href="/ru/games"
+            class="px-5 min-h-[44px] flex items-center justify-center rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors"
+          >
+            Каталог
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Guide & Cognitive Science Section (Crawler Visible) -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-sky mb-2">
+          CHC: скорость обработки (Gs) и контроль внимания (Gf)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Задача Фланкера Эриксенов: избирательное внимание и конкуренция ответов
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Задача Фланкера оценивает способность зрительной системы подавлять отвлекающий визуальный шум на ближней периферии. Когда боковые дистракторы указывают противоположное действие, конкуренция ответов замедляет реакцию и повышает число ошибок.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. Как играть и управление
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Появится строка из 5 стрелок (например, &lt;&lt;&gt;&lt;&lt;). Смотрите только на <strong>центральную стрелку</strong> и игнорируйте боковые. Нажмите <strong>[&larr;] / [A]</strong> для «Влево» или <strong>[&rarr;] / [D]</strong> для «Вправо».
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Конгруэнтность и эффект Фланкера
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Попытки делятся на конгруэнтные (все указывают одинаково) и неконгруэнтные (фланкеры указывают в другую сторону). Цена интерференции измеряется задержкой реакции на неконгруэнтных пробах.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Научная основа
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Введена Барбарой Эриксен и Чарльзом Эриксеном (1974, <em>Perception &amp; Psychophysics</em>). Парадигма оценивает пространственный фокус внимания и мониторинг конфликта.
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Важное психометрическое примечание:</strong> задача Фланкера измеряет подавление дистракторов и избирательный фокус в условиях практики. Она не измеряет общий интеллект (<em>g</em>) и не заменяет клиническую оценку.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Пройдите комплексный когнитивный тест
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Оцените подвижный интеллект, визуально-пространственное, количественное и вербальное мышление в тесте из 24 вопросов.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/ru/quick-test" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Экспресс-тест 10 мин</a>
+          <a href="/ru/test" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Полный тест 20 мин</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord, getPerformanceTier } from '../../../utils/profileStore';
+
+  const STORAGE_KEY = 'fiq_game_flankertest_best';
+  const TOTAL_TRIALS = 30;
+
+  type FlankerCondition = 'congruent' | 'incongruent' | 'neutral';
+  type TargetDirection = 'left' | 'right';
+
+  interface TrialSpec {
+    condition: FlankerCondition;
+    target: TargetDirection;
+    symbols: string[];
+  }
+
+  // Pre-generate 30 trials: 12 congruent (40%), 12 incongruent (40%), 6 neutral (20%)
+  function generateTrialList(): TrialSpec[] {
+    const list: TrialSpec[] = [];
+
+    // 12 congruent
+    for (let i = 0; i < 12; i++) {
+      const target: TargetDirection = i % 2 === 0 ? 'left' : 'right';
+      const arrow = target === 'left' ? '←' : '→';
+      list.push({
+        condition: 'congruent',
+        target,
+        symbols: [arrow, arrow, arrow, arrow, arrow],
+      });
+    }
+
+    // 12 incongruent
+    for (let i = 0; i < 12; i++) {
+      const target: TargetDirection = i % 2 === 0 ? 'left' : 'right';
+      const targetArrow = target === 'left' ? '←' : '→';
+      const flankerArrow = target === 'left' ? '→' : '←';
+      list.push({
+        condition: 'incongruent',
+        target,
+        symbols: [flankerArrow, flankerArrow, targetArrow, flankerArrow, flankerArrow],
+      });
+    }
+
+    // 6 neutral
+    for (let i = 0; i < 6; i++) {
+      const target: TargetDirection = i % 2 === 0 ? 'left' : 'right';
+      const targetArrow = target === 'left' ? '←' : '→';
+      list.push({
+        condition: 'neutral',
+        target,
+        symbols: ['-', '-', targetArrow, '-', '-'],
+      });
+    }
+
+    // Fisher-Yates shuffle
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+
+    return list;
+  }
+
+  let trials: TrialSpec[] = [];
+  let currentTrialIndex = 0;
+  let trialStartTime = 0;
+  let sessionStartTime = 0;
+  let isAwaitingResponse = false;
+  let isGameActive = false;
+
+  let correctCount = 0;
+  let errorCount = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
+
+  const latencies: number[] = [];
+  const congruentRTs: number[] = [];
+  const incongruentRTs: number[] = [];
+
+  // Audio Context (pure Web Audio)
+  let audioCtx: AudioContext | null = null;
+  function playTone(freq: number, duration: number) {
+    try {
+      if (!audioCtx) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      if (audioCtx) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      }
+    } catch {}
+  }
+
+  function calculateMedian(arr: number[]): number {
+    if (arr.length === 0) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 !== 0
+      ? sorted[mid]
+      : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+  }
+
+  // DOM Elements
+  const hudTrial = document.getElementById('hud-trial') as HTMLElement;
+  const hudScore = document.getElementById('hud-score') as HTMLElement;
+  const hudRT = document.getElementById('hud-rt') as HTMLElement;
+  const hudBest = document.getElementById('hud-best') as HTMLElement;
+
+  const startOverlay = document.getElementById('start-overlay') as HTMLElement;
+  const btnStartGame = document.getElementById('btn-start-game') as HTMLButtonElement;
+  const gameArenaContent = document.getElementById('game-arena-content') as HTMLElement;
+
+  const trialProgress = document.getElementById('trial-progress') as HTMLElement;
+  const stimulusRow = document.getElementById('stimulus-row') as HTMLElement;
+  const feedbackCue = document.getElementById('feedback-cue') as HTMLElement;
+
+  const btnActionLeft = document.getElementById('btn-action-left') as HTMLButtonElement;
+  const btnActionRight = document.getElementById('btn-action-right') as HTMLButtonElement;
+
+  // Modal elements
+  const btnHowToPlay = document.getElementById('btn-how-to-play') as HTMLButtonElement;
+  const modalHowToPlay = document.getElementById('modal-how-to-play') as HTMLElement;
+  const btnCloseHowModal = document.getElementById('btn-close-how-modal') as HTMLButtonElement;
+  const btnConfirmHow = document.getElementById('btn-confirm-how') as HTMLButtonElement;
+
+  const modalEndRound = document.getElementById('modal-end-round') as HTMLElement;
+  const btnCloseEndModal = document.getElementById('btn-close-end-modal') as HTMLButtonElement;
+  const modalScore = document.getElementById('modal-score') as HTMLElement;
+  const modalTierBadge = document.getElementById('modal-tier-badge') as HTMLElement;
+  const modalTierDesc = document.getElementById('modal-tier-desc') as HTMLElement;
+  const modalAcc = document.getElementById('modal-acc') as HTMLElement;
+  const modalRT = document.getElementById('modal-rt') as HTMLElement;
+  const modalConflict = document.getElementById('modal-conflict') as HTMLElement;
+  const modalStreak = document.getElementById('modal-streak') as HTMLElement;
+  const modalCongruentRT = document.getElementById('modal-congruent-rt') as HTMLElement;
+  const modalIncongruentRT = document.getElementById('modal-incongruent-rt') as HTMLElement;
+  const modalBestAlert = document.getElementById('modal-best-alert') as HTMLElement;
+  const btnModalRestart = document.getElementById('btn-modal-restart') as HTMLButtonElement;
+
+  function loadBestScore() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && hudBest) {
+        hudBest.textContent = saved;
+      }
+    } catch {}
+  }
+  loadBestScore();
+
+  function updateHUD() {
+    hudTrial.textContent = `${currentTrialIndex} / ${TOTAL_TRIALS}`;
+    trialProgress.style.width = `${Math.round((currentTrialIndex / TOTAL_TRIALS) * 100)}%`;
+
+    const medianRT = calculateMedian(latencies);
+    hudRT.textContent = medianRT > 0 ? `${medianRT} мс` : '-- мс';
+
+    const accuracyScore = Math.round((correctCount / TOTAL_TRIALS) * 50);
+    const speedScore = medianRT > 0 ? Math.max(0, Math.min(40, Math.round((900 - medianRT) / 12.5))) : 0;
+    hudScore.textContent = String(accuracyScore + speedScore);
+  }
+
+  async function presentNextTrial() {
+    if (currentTrialIndex >= TOTAL_TRIALS) {
+      endGame();
+      return;
+    }
+
+    isAwaitingResponse = false;
+    updateHUD();
+
+    // Fixation interval: 350-450ms randomized jitter
+    stimulusRow.innerHTML = '<span class="text-4xl sm:text-5xl font-mono text-zinc-400 dark:text-zinc-500 font-bold animate-pulse">+</span>';
+    feedbackCue.textContent = 'Смотрите в центр';
+
+    const jitter = 350 + Math.floor(Math.random() * 150);
+    await new Promise((resolve) => setTimeout(resolve, jitter));
+    if (!isGameActive) return;
+
+    const trial = trials[currentTrialIndex];
+
+    // Render 5 symbols
+    stimulusRow.innerHTML = '';
+    trial.symbols.forEach((sym, idx) => {
+      const span = document.createElement('span');
+      if (idx === 2) {
+        // Target symbol (center)
+        span.className = 'text-5xl sm:text-6xl font-mono font-black text-zinc-950 dark:text-white px-2 py-1 rounded-xl bg-amber-100/70 dark:bg-amber-950/60 border-2 border-amber-500 shadow-sm transition-transform scale-110';
+      } else {
+        // Flanker symbols
+        span.className = 'text-4xl sm:text-5xl font-mono font-bold text-zinc-500 dark:text-zinc-400 px-1';
+      }
+      span.textContent = sym;
+      stimulusRow.appendChild(span);
+    });
+
+    feedbackCue.textContent = 'Укажите направление центра';
+    trialStartTime = performance.now();
+    isAwaitingResponse = true;
+  }
+
+  function handleResponse(choice: TargetDirection) {
+    if (!isAwaitingResponse || !isGameActive) return;
+    isAwaitingResponse = false;
+
+    const latency = Math.round(performance.now() - trialStartTime);
+    const trial = trials[currentTrialIndex];
+    const isCorrect = choice === trial.target;
+
+    latencies.push(latency);
+    if (isCorrect) {
+      correctCount++;
+      currentStreak++;
+      longestStreak = Math.max(longestStreak, currentStreak);
+      playTone(660, 0.08);
+
+      if (trial.condition === 'congruent') {
+        congruentRTs.push(latency);
+      } else if (trial.condition === 'incongruent') {
+        incongruentRTs.push(latency);
+      }
+    } else {
+      errorCount++;
+      currentStreak = 0;
+      playTone(260, 0.12);
+    }
+
+    currentTrialIndex++;
+    presentNextTrial();
+  }
+
+  function endGame() {
+    isGameActive = false;
+    const sessionDurationSec = Math.max(1, Math.round((Date.now() - sessionStartTime) / 1000));
+
+    const medianRT = calculateMedian(latencies);
+    const congruentMedianRT = calculateMedian(congruentRTs);
+    const incongruentMedianRT = calculateMedian(incongruentRTs);
+
+    const interferenceCostMs = incongruentMedianRT > 0 && congruentMedianRT > 0
+      ? Math.max(0, Math.round(incongruentMedianRT - congruentMedianRT))
+      : 0;
+
+    // Formula:
+    // Accuracy baseline (50 pts max)
+    const accuracyScore = Math.round((correctCount / TOTAL_TRIALS) * 50);
+    // Speed throughput factor (up to 40 pts for RT < 400ms, scaling to 0 at 900ms)
+    const speedScore = Math.max(0, Math.min(40, Math.round((900 - medianRT) / 12.5)));
+    // Flanker resistance bonus (up to 10 pts for keeping conflict latency < 75ms)
+    const conflictBonus = Math.max(0, Math.min(10, Math.round((150 - interferenceCostMs) / 15)));
+    const performanceScore = Math.min(100, Math.max(0, accuracyScore + speedScore + conflictBonus));
+
+    // Save record to profileStore
+    saveGameRecord({
+      gameId: 'flanker-test',
+      durationSeconds: sessionDurationSec,
+      mode: 'standard',
+      metrics: {
+        performanceScore,
+        accuracy: Number((correctCount / TOTAL_TRIALS).toFixed(2)),
+        trialsCompleted: TOTAL_TRIALS,
+        correctCount,
+        errorCount,
+        medianRT: Math.round(medianRT),
+        interferenceCostMs: Math.round(interferenceCostMs),
+        bestStreak: longestStreak,
+      },
+    });
+
+    // Check personal best
+    let isNewBest = false;
+    try {
+      const saved = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      if (performanceScore > saved) {
+        localStorage.setItem(STORAGE_KEY, String(performanceScore));
+        isNewBest = true;
+      }
+    } catch {}
+    loadBestScore();
+
+    // Populate End Modal
+    modalScore.textContent = String(performanceScore);
+    const tierInfo = getPerformanceTier(performanceScore);
+    modalTierBadge.textContent = tierInfo.tier;
+    modalTierBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${tierInfo.badgeClass}`;
+    modalTierDesc.textContent = tierInfo.description;
+
+    modalAcc.textContent = `${Math.round((correctCount / TOTAL_TRIALS) * 100)}%`;
+    modalRT.textContent = `${medianRT} мс`;
+    modalConflict.textContent = `${interferenceCostMs} мс`;
+    modalStreak.textContent = String(longestStreak);
+
+    modalCongruentRT.textContent = congruentMedianRT > 0 ? `${congruentMedianRT} мс` : '-- мс';
+    modalIncongruentRT.textContent = incongruentMedianRT > 0 ? `${incongruentMedianRT} мс` : '-- мс';
+
+    if (isNewBest) {
+      modalBestAlert.classList.remove('hidden');
+    } else {
+      modalBestAlert.classList.add('hidden');
+    }
+
+    modalEndRound.classList.remove('hidden');
+  }
+
+  function startGame() {
+    isGameActive = true;
+    sessionStartTime = Date.now();
+    currentTrialIndex = 0;
+    correctCount = 0;
+    errorCount = 0;
+    currentStreak = 0;
+    longestStreak = 0;
+    latencies.length = 0;
+    congruentRTs.length = 0;
+    incongruentRTs.length = 0;
+
+    trials = generateTrialList();
+
+    startOverlay.classList.add('hidden');
+    gameArenaContent.removeAttribute('inert');
+    modalEndRound.classList.add('hidden');
+
+    presentNextTrial();
+  }
+
+  btnStartGame.addEventListener('click', startGame);
+
+  btnActionLeft.addEventListener('click', () => handleResponse('left'));
+  btnActionRight.addEventListener('click', () => handleResponse('right'));
+
+  // Physical Keyboard Listeners
+  window.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && !isGameActive && modalHowToPlay.classList.contains('hidden') && modalEndRound.classList.contains('hidden')) {
+      e.preventDefault();
+      startGame();
+      return;
+    }
+
+    if (isGameActive && isAwaitingResponse) {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        handleResponse('left');
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        handleResponse('right');
+      }
+    }
+
+    if (e.key === 'Escape') {
+      if (!modalHowToPlay.classList.contains('hidden')) {
+        modalHowToPlay.classList.add('hidden');
+      }
+      if (!modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+      }
+    }
+  });
+
+  // How to Play Modal Listeners
+  btnHowToPlay.addEventListener('click', () => modalHowToPlay.classList.remove('hidden'));
+  btnCloseHowModal.addEventListener('click', () => modalHowToPlay.classList.add('hidden'));
+  btnConfirmHow.addEventListener('click', () => modalHowToPlay.classList.add('hidden'));
+
+  // End Modal Listeners
+  btnCloseEndModal.addEventListener('click', () => modalEndRound.classList.add('hidden'));
+  btnModalRestart.addEventListener('click', () => {
+    modalEndRound.classList.add('hidden');
+    startGame();
+  });
+</script>

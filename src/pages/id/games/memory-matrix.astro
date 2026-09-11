@@ -1,0 +1,774 @@
+---
+import Layout from '../../../components/id/LayoutId.astro';
+import Header from '../../../components/id/HeaderId.astro';
+import Footer from '../../../components/id/FooterId.astro';
+
+const title = "Memory Matrix Gratis - Latihan Rentang Visual-Spasial | FreeIQExam";
+const description = "Latih memori kerja visual-spasial online gratis. Hafalkan dan reproduksi matriks ubin spasial yang terus berkembang berdasarkan uji blok Corsi (Corsi, 1972).";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Memory Matrix Span Cognitive Drill",
+    "url": "https://freeiqexam.com/id/permainan/memory-matrix",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Latihan memori kerja visual-spasial yang menantang retensi pola aktif di berbagai ukuran kisi matriks yang meningkat."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan Kognitif",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Memory Matrix",
+        "item": "https://freeiqexam.com/id/permainan/memory-matrix"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/games/memory-matrix">
+  <Header currentPath="/id/permainan/memory-matrix" enPath="/games/memory-matrix" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <a href="/id/permainan" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Permainan Kognitif</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Memory Matrix</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-sky mb-1.5">
+          Gwm / Gv &bull; Rentang Visual-Spasial
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            Memory Matrix: Rentang Spasial
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 text-xs font-mono font-medium gap-1.5 cursor-pointer"
+            aria-label="Petunjuk cara bermain"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+            <span>Cara Bermain</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat HUD (4 rounded cards) -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Tingkat</div>
+          <div id="hud-level" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">3x3</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Skor</div>
+          <div id="hud-score" class="font-bold text-blue-600 dark:text-blue-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[64px] sm:min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Rentang Puncak</div>
+          <div id="hud-span" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">3 Ubin</div>
+        </div>
+        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[60px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs font-mono font-medium uppercase tracking-wider">Terbaik</div>
+          <div id="hud-best" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center min-h-[440px] justify-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-sky flex items-center justify-center mb-5 shadow-lg shadow-blue-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Tantangan Memory Matrix
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Hafalkan pola <strong>ubin biru</strong> yang menyala pada kisi matriks selama 1.2 detik.
+          </p>
+          <p>
+            Setelah ubin disembunyikan, klik kembali semua petak target yang menyala tadi.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Kisi matriks bertambah besar dari 3x3 hingga 6x6. Dua kali kesalahan beruntun pada tingkat yang sama akan mengakhiri sesi.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        >
+          <span>Mulai Permainan (Spasi)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- Target Info & Round Status -->
+        <div class="mb-6 text-center">
+          <div id="matrix-status-text" class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Hafalkan Pola...
+          </div>
+          <div id="matrix-target-count" class="text-sm font-bold text-blue-600 dark:text-blue-400 mt-0.5">
+            Target: 3 Ubin
+          </div>
+        </div>
+
+        <!-- Dynamic Grid Container -->
+        <div id="grid-container" class="p-3.5 sm:p-4 rounded-3xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 shadow-inner max-w-sm w-full aspect-square flex items-center justify-center">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Feedback Toast -->
+        <div id="feedback-toast" role="status" aria-live="polite" class="h-6 mt-4 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+          Status
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessible How to Play Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4"
+    >
+      <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+          aria-label="Tutup petunjuk"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+            </svg>
+          </div>
+          <div>
+            <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+              Cara Bermain Memory Matrix
+            </h2>
+            <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Memori Kerja Visual-Spasial (Gwm/Gv)</p>
+          </div>
+        </div>
+
+        <div class="space-y-3.5 text-sm text-zinc-600 dark:text-zinc-300 mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-1">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">1. Fase Penyandian (1.2s)</h4>
+            <p class="text-xs sm:text-sm">Perhatikan ubin biru yang menyala pada kisi matriks dan simpan peta spasialnya dalam benak Anda.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-1">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">2. Fase Retensi (400ms)</h4>
+            <p class="text-xs sm:text-sm">Pola ubin disembunyikan sementara otak Anda mempertahankan koordinat posisi target.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-1">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">3. Fase Pemanggilan (Recall)</h4>
+            <p class="text-xs sm:text-sm">Klik ubin yang tepat. Jika semua ubin target berhasil dipilih, ukuran kisi dan jumlah target akan bertambah.</p>
+          </div>
+        </div>
+
+        <button
+          id="btn-confirm-how"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-heading font-bold text-sm shadow-md transition-all hover:scale-102 active:scale-98 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        >
+          Mengerti, Mulai Latihan
+        </button>
+      </div>
+    </div>
+
+    <!-- End of Round Performance Modal -->
+    <div
+      id="modal-end-round"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-end-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4"
+    >
+      <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+          aria-label="Tutup ringkasan"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-sky flex items-center justify-center mb-4 mx-auto shadow-lg shadow-blue-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <h2 id="modal-end-title" class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-2">
+          Sesi Selesai!
+        </h2>
+        <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6">Evaluasi Rentang Visual-Spasial</p>
+
+        <!-- Standardized Task Performance Score -->
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 mb-6">
+          <div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+            Skor Performa Tugas
+          </div>
+          <div class="flex items-baseline justify-center gap-1.5">
+            <span id="modal-score" class="text-4xl sm:text-5xl font-extrabold font-heading text-blue-600 dark:text-blue-400">0</span>
+            <span class="text-sm font-mono text-zinc-400">/ 100</span>
+          </div>
+          <div id="modal-tier-badge" class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+            <span id="modal-tier-name">Fondasi Solid</span>
+          </div>
+          <p id="modal-tier-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 max-w-xs mx-auto"></p>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6 text-center font-mono">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-[10px] text-zinc-400 uppercase">Rentang Puncak</div>
+            <div id="modal-peak" class="text-base font-bold text-zinc-900 dark:text-white">0</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-[10px] text-zinc-400 uppercase">Akurasi</div>
+            <div id="modal-acc" class="text-base font-bold text-zinc-900 dark:text-white">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-[10px] text-zinc-400 uppercase">Tingkat Selesai</div>
+            <div id="modal-completed" class="text-base font-bold text-zinc-900 dark:text-white">0</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-[10px] text-zinc-400 uppercase">Runtunan Terbaik</div>
+            <div id="modal-streak" class="text-base font-bold text-zinc-900 dark:text-white">0</div>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-6">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Landasan Ilmiah
+          </div>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400">
+            Uji Blok Corsi (Corsi, 1972). Memori Kerja Visual-Spasial (Gwm/Gv).
+          </p>
+        </div>
+
+        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic mb-5 leading-normal">
+          Catatan Efek Latihan: Skor performa mencerminkan kelancaran operasional spesifik tugas dan kecepatan respons di bawah efek latihan, bukan kecerdasan umum bawaan (g). Latihan berulang mengasah ketangkasan kognitif.
+        </p>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-play-again"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-sm transition-all hover:scale-102 active:scale-98 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          >
+            Main Lagi
+          </button>
+          <a
+            href="/id/permainan"
+            class="min-h-[44px] px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          >
+            Pusat Permainan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Guide & Cognitive Science Section -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-sky mb-2">
+          CHC Broad Ability: Memori Kerja Visual-Spasial (Gwm/Gv)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Memory Matrix: Memori Kerja Visual-Spasial &amp; Uji Blok Corsi
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Memory Matrix menguji dan melatih kapasitas memori kerja visual-spasial, komponen kunci dari model memori kerja Baddeley yang dikenal sebagai <em>visuospatial sketchpad</em>. Tugas ini menantang otak Anda untuk menyandi, mempertahankan, dan merekonstruksi konfigurasi geometris tanpa bantuan petunjuk verbal.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. Cara Bermain &amp; Pola
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Hafalkan ubin biru yang menyala singkat pada kisi matriks. Klik semua petak target yang tepat setelah pola disembunyikan.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Progresi Adaptif &amp; Rentang
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Keberhasilan akan memperbesar ukuran matriks dari 3x3 hingga 6x6 dan meningkatkan jumlah target ubin, menguji batas rentang memori spasial Anda.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Landasan Ilmiah Corsi
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Berdasarkan paradigma uji blok Corsi (Philip Corsi, 1972), instrumen standar emas untuk membedakan memori jangka pendek spasial dari rentang fonologis verbal.
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Catatan Psikometrik Penting:</strong> Performa Memory Matrix mencerminkan kelancaran retensi visual-spasial di bawah efek latihan. Latihan ini tidak mengukur kecerdasan umum bawaan (<em>g</em>) atau menggantikan asesmen psikometrik formal.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Ingin Evaluasi Kognitif Menyeluruh?
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Uji kemampuan Penalaran Fluida, Visual-Spasial, Kuantitatif, dan Verbal Anda dengan asesmen 24 soal terstandar kami.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/id/tes-singkat" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Tes Singkat 10m</a>
+          <a href="/id/tes" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Ujian Lengkap 20m</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord } from '../../../utils/profileStore';
+
+  function getLocalizedTier(score: number) {
+    if (score >= 90) {
+      return {
+        tier: 'Tingkat Ahli (Master)',
+        description: 'Trade-off kecepatan-akurasi hampir optimal; penguasaan strategi tugas dan kelancaran kognitif tingkat tinggi.',
+        badgeClass: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+      };
+    }
+    if (score >= 75) {
+      return {
+        tier: 'Tingkat Mahir (Advanced)',
+        description: 'Throughput informasi tinggi; resolusi konflik cepat dan minim distractor drift.',
+        badgeClass: 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+      };
+    }
+    if (score >= 60) {
+      return {
+        tier: 'Fondasi Solid (Solid Baseline)',
+        description: 'Akurasi konsisten; fokus perhatian stabil dengan sedikit kesalahan acak.',
+        badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+      };
+    }
+    if (score >= 40) {
+      return {
+        tier: 'Berkembang (Developing)',
+        description: 'Akurasi respons stabil; ritme operasional dasar di bawah batasan waktu.',
+        badgeClass: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+      };
+    }
+    return {
+      tier: 'Tahap Awal (Getting Started)',
+      description: 'Refleks operasional mulai terbangun; pembiasaan dengan aturan dan ritme respons.',
+      badgeClass: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
+    };
+  }
+
+  const STORAGE_KEY = 'fiq_game_memorymatrix_best';
+
+  let gridSize = 3;
+  let targetCount = 3;
+  let score = 0;
+  let peakSpan = 3;
+  let consecutiveErrors = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
+  let totalTrials = 0;
+  let correctTrials = 0;
+
+  let activeTargets: number[] = [];
+  let userSelections: number[] = [];
+  let isRunning = false;
+  let isAcceptingClicks = false;
+  let sessionStartTime = 0;
+
+  const hudLevel = document.getElementById('hud-level') as HTMLElement;
+  const hudScore = document.getElementById('hud-score') as HTMLElement;
+  const hudSpan = document.getElementById('hud-span') as HTMLElement;
+  const hudBest = document.getElementById('hud-best') as HTMLElement;
+
+  const startOverlay = document.getElementById('start-overlay') as HTMLElement;
+  const btnStartGame = document.getElementById('btn-start-game') as HTMLButtonElement;
+  const gameArenaContent = document.getElementById('game-arena-content') as HTMLElement;
+  const gridContainer = document.getElementById('grid-container') as HTMLElement;
+
+  const matrixStatusText = document.getElementById('matrix-status-text') as HTMLElement;
+  const matrixTargetCount = document.getElementById('matrix-target-count') as HTMLElement;
+  const feedbackToast = document.getElementById('feedback-toast') as HTMLElement;
+
+  const btnHowToPlay = document.getElementById('btn-how-to-play') as HTMLButtonElement;
+  const modalHowToPlay = document.getElementById('modal-how-to-play') as HTMLElement;
+  const btnCloseHowModal = document.getElementById('btn-close-how-modal') as HTMLButtonElement;
+  const btnConfirmHow = document.getElementById('btn-confirm-how') as HTMLButtonElement;
+
+  const modalEndRound = document.getElementById('modal-end-round') as HTMLElement;
+  const btnCloseEndModal = document.getElementById('btn-close-end-modal') as HTMLButtonElement;
+  const modalScore = document.getElementById('modal-score') as HTMLElement;
+  const modalTierBadge = document.getElementById('modal-tier-badge') as HTMLElement;
+  const modalTierName = document.getElementById('modal-tier-name') as HTMLElement;
+  const modalTierDesc = document.getElementById('modal-tier-desc') as HTMLElement;
+  const modalPeak = document.getElementById('modal-peak') as HTMLElement;
+  const modalAcc = document.getElementById('modal-acc') as HTMLElement;
+  const modalCompleted = document.getElementById('modal-completed') as HTMLElement;
+  const modalStreak = document.getElementById('modal-streak') as HTMLElement;
+  const btnPlayAgain = document.getElementById('btn-play-again') as HTMLButtonElement;
+
+  if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+  function loadBestScore() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && hudBest) {
+        hudBest.textContent = saved;
+      }
+    } catch {}
+  }
+  loadBestScore();
+
+  function showToast(text: string, isPositive: boolean) {
+    if (!feedbackToast) return;
+    feedbackToast.textContent = (isPositive ? '✓ ' : '✗ ') + text;
+    feedbackToast.className =
+      'h-6 mt-4 text-xs font-mono font-semibold transition-opacity duration-150 ' +
+      (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+    feedbackToast.style.opacity = '1';
+    setTimeout(() => {
+      if (feedbackToast) feedbackToast.style.opacity = '0';
+    }, 600);
+  }
+
+  function renderGrid() {
+    if (!gridContainer) return;
+    gridContainer.innerHTML = '';
+    const totalCells = gridSize * gridSize;
+
+    const gridEl = document.createElement('div');
+    gridEl.className = `grid gap-2.5 w-full h-full p-1`;
+    gridEl.style.gridTemplateColumns = `repeat(${gridSize}, minmax(0, 1fr))`;
+    gridEl.style.gridTemplateRows = `repeat(${gridSize}, minmax(0, 1fr))`;
+
+    for (let i = 0; i < totalCells; i++) {
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.dataset.index = i.toString();
+      cell.className =
+        'w-full h-full rounded-2xl border-2 border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 transition-all duration-150 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer shadow-xs';
+      cell.addEventListener('click', () => handleCellClick(i, cell));
+      gridEl.appendChild(cell);
+    }
+    gridContainer.appendChild(gridEl);
+  }
+
+  function generateTargets() {
+    activeTargets = [];
+    userSelections = [];
+    const totalCells = gridSize * gridSize;
+    const indices: number[] = [];
+    for (let i = 0; i < totalCells; i++) indices.push(i);
+
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    activeTargets = indices.slice(0, targetCount);
+  }
+
+  function highlightTargets(show: boolean) {
+    if (!gridContainer) return;
+    const cells = gridContainer.querySelectorAll('button');
+    activeTargets.forEach((idx) => {
+      const cell = cells[idx];
+      if (!cell) return;
+      if (show) {
+        cell.className =
+          'w-full h-full rounded-2xl border-2 border-blue-500 bg-blue-500 shadow-md shadow-blue-500/40 flex items-center justify-center scale-102 transition-all duration-150';
+      } else {
+        cell.className =
+          'w-full h-full rounded-2xl border-2 border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 transition-all duration-150 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer shadow-xs';
+      }
+    });
+  }
+
+  function startTrial() {
+    isAcceptingClicks = false;
+    totalTrials++;
+
+    if (hudLevel) hudLevel.textContent = `${gridSize}x${gridSize}`;
+    if (hudSpan) hudSpan.textContent = `${targetCount} Ubin`;
+    if (matrixTargetCount) matrixTargetCount.textContent = `Target: ${targetCount} Ubin (${userSelections.length}/${targetCount})`;
+    if (matrixStatusText) matrixStatusText.textContent = 'Hafalkan Pola...';
+
+    renderGrid();
+    generateTargets();
+    highlightTargets(true);
+
+    setTimeout(() => {
+      if (!isRunning) return;
+      highlightTargets(false);
+      if (matrixStatusText) matrixStatusText.textContent = 'Pilih Ubin yang Menyala!';
+      isAcceptingClicks = true;
+    }, 1200);
+  }
+
+  function handleCellClick(index: number, cell: HTMLButtonElement) {
+    if (!isRunning || !isAcceptingClicks) return;
+    if (userSelections.includes(index)) return;
+
+    userSelections.push(index);
+    if (matrixTargetCount) matrixTargetCount.textContent = `Target: ${targetCount} Ubin (${userSelections.length}/${targetCount})`;
+
+    const isTarget = activeTargets.includes(index);
+    if (isTarget) {
+      cell.className =
+        'w-full h-full rounded-2xl border-2 border-blue-500 bg-blue-500 shadow-md shadow-blue-500/40 flex items-center justify-center scale-102 transition-all duration-150';
+    } else {
+      cell.className =
+        'w-full h-full rounded-2xl border-2 border-rose-500 bg-rose-500 shadow-md shadow-rose-500/40 flex items-center justify-center scale-102 transition-all duration-150';
+    }
+
+    if (!isTarget) {
+      isAcceptingClicks = false;
+      consecutiveErrors++;
+      currentStreak = 0;
+      showToast('Kurang Tepat!', false);
+
+      highlightTargets(true);
+      setTimeout(() => {
+        if (consecutiveErrors >= 2) {
+          endGame();
+        } else {
+          startTrial();
+        }
+      }, 1000);
+      return;
+    }
+
+    if (userSelections.length === targetCount) {
+      isAcceptingClicks = false;
+      correctTrials++;
+      consecutiveErrors = 0;
+      currentStreak++;
+      if (currentStreak > longestStreak) longestStreak = currentStreak;
+
+      const gainedScore = targetCount * 15 + gridSize * 10;
+      score += gainedScore;
+      if (targetCount > peakSpan) peakSpan = targetCount;
+
+      if (hudScore) hudScore.textContent = score.toString();
+      showToast(`+${gainedScore} Urutan Selesai!`, true);
+
+      if (targetCount >= Math.floor((gridSize * gridSize) / 2.2)) {
+        if (gridSize < 6) {
+          gridSize++;
+          targetCount = Math.max(3, targetCount - 1);
+        } else {
+          targetCount++;
+        }
+      } else {
+        targetCount++;
+      }
+
+      setTimeout(() => {
+        if (isRunning) startTrial();
+      }, 800);
+    }
+  }
+
+  function startSession() {
+    if (isRunning) return;
+    isRunning = true;
+    gridSize = 3;
+    targetCount = 3;
+    score = 0;
+    peakSpan = 3;
+    consecutiveErrors = 0;
+    currentStreak = 0;
+    longestStreak = 0;
+    totalTrials = 0;
+    correctTrials = 0;
+    sessionStartTime = performance.now();
+
+    if (startOverlay) startOverlay.classList.add('hidden');
+    if (modalEndRound) {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+    }
+    if (modalHowToPlay) {
+      modalHowToPlay.classList.add('hidden');
+      modalHowToPlay.classList.remove('flex');
+    }
+    if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+
+    if (hudScore) hudScore.textContent = '0';
+    startTrial();
+  }
+
+  function endGame() {
+    isRunning = false;
+    isAcceptingClicks = false;
+    if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+    const durationSec = Math.max(1, Math.round((performance.now() - sessionStartTime) / 1000));
+    const accuracyDecimal = totalTrials > 0 ? correctTrials / totalTrials : 0;
+    const accuracyPct = Math.round(accuracyDecimal * 100);
+
+    const spanScore = Math.min(60, (peakSpan / 10) * 60);
+    const accScore = accuracyDecimal * 40;
+    const finalScore = Math.max(5, Math.min(100, Math.round(spanScore + accScore)));
+
+    try {
+      saveGameRecord({
+        gameId: 'memory-matrix',
+        durationSeconds: durationSec,
+        mode: 'standard',
+        metrics: {
+          performanceScore: finalScore,
+          accuracy: parseFloat(accuracyDecimal.toFixed(4)),
+          trialsCompleted: totalTrials,
+          correctCount: correctTrials,
+          errorCount: totalTrials - correctTrials,
+          bestStreak: longestStreak,
+          maxSpan: peakSpan,
+        },
+      });
+    } catch (err) {
+      console.error('Failed to save game record:', err);
+    }
+
+    try {
+      const saved = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      if (finalScore > saved) {
+        localStorage.setItem(STORAGE_KEY, finalScore.toString());
+        loadBestScore();
+      }
+    } catch {}
+
+    if (modalScore) modalScore.textContent = finalScore.toString();
+    if (modalPeak) modalPeak.textContent = `${peakSpan} Ubin`;
+    if (modalAcc) modalAcc.textContent = `${accuracyPct}%`;
+    if (modalCompleted) modalCompleted.textContent = correctTrials.toString();
+    if (modalStreak) modalStreak.textContent = longestStreak.toString();
+
+    const tier = getLocalizedTier(finalScore);
+    if (modalTierBadge) {
+      modalTierBadge.className = `mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${tier.badgeClass}`;
+    }
+    if (modalTierName) modalTierName.textContent = tier.tier;
+    if (modalTierDesc) modalTierDesc.textContent = tier.description;
+
+    if (modalEndRound) {
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+    }
+  }
+
+  btnStartGame?.addEventListener('click', startSession);
+  btnPlayAgain?.addEventListener('click', startSession);
+
+  btnHowToPlay?.addEventListener('click', () => {
+    modalHowToPlay?.classList.remove('hidden');
+    modalHowToPlay?.classList.add('flex');
+  });
+  btnCloseHowModal?.addEventListener('click', () => {
+    modalHowToPlay?.classList.add('hidden');
+    modalHowToPlay?.classList.remove('flex');
+  });
+  btnConfirmHow?.addEventListener('click', () => {
+    modalHowToPlay?.classList.add('hidden');
+    modalHowToPlay?.classList.remove('flex');
+  });
+
+  btnCloseEndModal?.addEventListener('click', () => {
+    modalEndRound?.classList.add('hidden');
+    modalEndRound?.classList.remove('flex');
+    startOverlay?.classList.remove('hidden');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.code === 'Space') {
+      if (!isRunning) {
+        e.preventDefault();
+        startSession();
+      }
+    } else if (e.key === 'Escape') {
+      if (modalHowToPlay && !modalHowToPlay.classList.contains('hidden')) {
+        modalHowToPlay.classList.add('hidden');
+        modalHowToPlay.classList.remove('flex');
+      }
+      if (modalEndRound && !modalEndRound.classList.contains('hidden')) {
+        modalEndRound.classList.add('hidden');
+        modalEndRound.classList.remove('flex');
+        startOverlay?.classList.remove('hidden');
+      }
+    }
+  });
+</script>

@@ -1,0 +1,941 @@
+---
+import Layout from '../../../components/id/LayoutId.astro';
+import Header from '../../../components/id/HeaderId.astro';
+import Footer from '../../../components/id/FooterId.astro';
+
+const title = "Dual N-Back Online Gratis - Latihan Memori Kerja & Kontrol Kognitif | FreeIQExam";
+const description = "Mainkan Dual N-Back online gratis. Latihan memori kerja ilmiah yang melacak posisi spasial dan huruf vokal secara simultan N langkah ke belakang (Kirchner, 1958; Jaeggi et al., 2008).";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Dual N-Back Memory Training",
+    "url": "https://freeiqexam.com/id/permainan/n-back",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Latihan kognitif Dual N-Back ilmiah yang menantang pembaruan memori kerja spasial visual dan auditori/fonologis secara simultan."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan Kognitif",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Dual N-Back",
+        "item": "https://freeiqexam.com/id/permainan/n-back"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/games/n-back">
+  <Header currentPath="/id/permainan/n-back" enPath="/games/n-back" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <a href="/id/permainan" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Permainan Kognitif</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Dual N-Back</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-mint mb-1.5">
+          Gwm &bull; Memori Kerja
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+          Dual N-Back: Latihan Memori Kerja
+        </h1>
+      </div>
+
+      <!-- Stat HUD + Help Button -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <button
+          id="btn-how-to-play"
+          type="button"
+          aria-label="Petunjuk cara bermain"
+          class="min-h-[44px] px-3.5 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800/90 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-sans font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        >
+          <span class="font-bold font-mono text-blue-600 dark:text-blue-400">(?)</span>
+          <span>Cara Bermain</span>
+        </button>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Tingkat</div>
+          <div id="hud-n-level" class="font-bold text-blue-600 dark:text-blue-400 text-sm sm:text-base">2-Back</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Percobaan</div>
+          <div id="hud-trial-count" class="font-bold text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">0 / 20</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Skor</div>
+          <div id="hud-score" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">0</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl pastel-hud text-center min-w-[62px] sm:min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 uppercase text-[10px] sm:text-xs font-mono font-medium tracking-wider">Terbaik</div>
+          <div id="hud-best-score" class="font-bold text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative game-pastel-arena rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col items-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl pastel-start-icon-mint flex items-center justify-center mb-5 shadow-lg shadow-blue-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.5-7.5h15" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white mb-3">
+          Tantangan Dual N-Back
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Amati posisi <strong>petak kisi</strong> yang menyala dan huruf <strong>vokal visual</strong> yang muncul bersamaan pada setiap percobaan.
+          </p>
+          <p>
+            Tekan <strong>Cocok Posisi (A)</strong> jika posisi petak sama dengan stimulus <span id="overlay-n-text" class="font-bold text-blue-600 dark:text-blue-400">2 langkah sebelumnya</span>.
+          </p>
+          <p>
+            Tekan <strong>Cocok Huruf (L)</strong> jika huruf sama dengan stimulus <span class="font-bold text-indigo-600 dark:text-indigo-400">2 langkah sebelumnya</span>.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            Penilaian: +10 poin per kecocokan tepat, -5 poin untuk alarm palsu.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-heading font-bold text-base shadow-md transition-all duration-150 hover:scale-105 active:scale-95 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        >
+          <span>Mulai Permainan (Spasi)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Stimulus Area & Response -->
+      <div id="game-arena-content" class="w-full flex flex-col items-center">
+        <!-- Stimulus Area: Grid + Letter Card -->
+        <div class="w-full max-w-sm flex flex-col items-center gap-6 mb-8">
+          <!-- Letter Card Display -->
+          <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 border-2 border-zinc-200 dark:border-zinc-700/80 flex flex-col items-center justify-center shadow-inner relative transition-all">
+            <span class="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400 absolute top-2">Huruf</span>
+            <span id="stimulus-letter" class="font-heading font-extrabold text-4xl sm:text-5xl text-zinc-950 dark:text-white transition-opacity duration-150">-</span>
+          </div>
+
+          <!-- 3x3 Spatial Grid -->
+          <div class="grid grid-cols-3 gap-3 p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 shadow-inner w-full aspect-square max-w-[280px]">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div
+                id={`cell-${i}`}
+                class="rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 transition-all duration-200 flex items-center justify-center"
+              >
+                <div class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Action Response Buttons -->
+        <div class="w-full max-w-md grid grid-cols-2 gap-4">
+          <button
+            id="btn-pos-match"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-500 text-blue-700 dark:text-blue-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-blue-100 dark:hover:bg-blue-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+          >
+            <span>Cocok Posisi</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Tombol [ A ]</span>
+          </button>
+
+          <button
+            id="btn-letter-match"
+            type="button"
+            class="min-h-[56px] py-4 px-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+          >
+            <span>Cocok Huruf</span>
+            <span class="text-xs font-mono font-normal opacity-75 mt-0.5">Tombol [ L ]</span>
+          </button>
+        </div>
+
+        <!-- Feedback Toast -->
+        <div id="feedback-toast" role="status" aria-live="polite" class="h-6 mt-4 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+          Input terdaftar
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Play Instructions Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4"
+    >
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-left relative max-h-[90vh] overflow-y-auto">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          aria-label="Tutup dialog petunjuk"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+          </div>
+          <div>
+            <h2 id="modal-how-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+              Cara Bermain Dual N-Back
+            </h2>
+            <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Aktivitas Memori Kerja (Gwm)</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Mekanisme Permainan</h4>
+            <p>1. Pada setiap percobaan, sebuah petak kisi menyala dan sebuah huruf ditampilkan secara bersamaan selama 500ms.</p>
+            <p>2. Lacak kedua aliran informasi secara bersamaan dan bandingkan stimulus saat ini dengan stimulus <strong>N langkah sebelumnya</strong> (misalnya 2 langkah sebelumnya pada mode 2-Back).</p>
+            <p>3. Jika posisi petak sama dengan posisi N langkah sebelumnya, tekan <strong>Cocok Posisi [A]</strong>.</p>
+            <p>4. Jika huruf sama dengan huruf N langkah sebelumnya, tekan <strong>Cocok Huruf [L]</strong>.</p>
+            <p>5. Jika keduanya cocok, tekan kedua tombol! Jika tidak ada yang cocok, tunggu percobaan berikutnya tanpa menekan tombol apapun.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+            <h4 class="font-bold text-zinc-900 dark:text-white text-xs uppercase tracking-wider font-mono">Kontrol Keyboard</h4>
+            <ul class="space-y-1 text-xs font-mono">
+              <li>&bull; <span class="font-bold text-zinc-900 dark:text-white">[Spasi]</span> : Mulai sesi / Putaran berikutnya</li>
+              <li>&bull; <span class="font-bold text-blue-600 dark:text-blue-400">[A]</span> : Cocok Posisi</li>
+              <li>&bull; <span class="font-bold text-indigo-600 dark:text-indigo-400">[L]</span> : Cocok Huruf</li>
+              <li>&bull; <span class="font-bold text-zinc-900 dark:text-white">[Escape]</span> : Tutup dialog petunjuk</li>
+            </ul>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 text-xs">
+            <span class="font-bold text-blue-950 dark:text-blue-200">Landasan Ilmiah:</span>
+            <span class="text-blue-900 dark:text-blue-300 ml-1">Paradigma Dual N-Back (Kirchner, 1958; Jaeggi et al., 2008). Melatih pembaruan eksekutif pusat, retensi memori kerja simultan, dan resistensi terhadap interferensi proaktif.</span>
+          </div>
+        </div>
+
+        <button
+          id="btn-close-how-got-it"
+          type="button"
+          class="w-full min-h-[44px] py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-heading font-bold text-sm shadow-md transition-all duration-150 hover:scale-101 active:scale-99 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        >
+          <span>Mengerti, Mulai Latihan</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- End of Round Modal -->
+    <div id="modal-end-round" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center relative max-h-[90vh] overflow-y-auto">
+        <!-- Top Right Dismiss Button -->
+        <button
+          id="btn-close-end-modal"
+          type="button"
+          aria-label="Tutup ringkasan modal"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div id="modal-icon-container" class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <h2 id="modal-title" class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-1">
+          Putaran Selesai!
+        </h2>
+        <p id="modal-level-status" class="text-sm font-medium text-blue-600 dark:text-blue-400 mb-4">
+          Evaluasi Tingkat Kognitif
+        </p>
+
+        <!-- Standardized 0-100 Task Performance Score -->
+        <div class="mb-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800">
+          <div class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Skor Performa Tugas
+          </div>
+          <div class="flex items-baseline justify-center gap-1.5 my-1">
+            <span id="modal-perf-score" class="text-4xl sm:text-5xl font-extrabold font-heading text-zinc-950 dark:text-white">0</span>
+            <span class="text-sm font-mono text-zinc-400">/ 100</span>
+          </div>
+          <div id="modal-tier-badge" class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+            <span id="modal-tier-name">Fondasi Solid</span>
+          </div>
+          <p id="modal-tier-desc" class="mt-2 text-xs text-zinc-600 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed"></p>
+        </div>
+
+        <!-- Paradigm-Specific Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5 font-mono text-center">
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Tingkat Akhir</div>
+            <div id="modal-next-n" class="font-bold text-base text-indigo-600 dark:text-indigo-400">2-Back</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Akurasi</div>
+            <div id="modal-accuracy" class="font-bold text-base text-emerald-600 dark:text-emerald-400">0%</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Tepat / Salah</div>
+            <div id="modal-hits-fa" class="font-bold text-base text-zinc-900 dark:text-white">0 / 0</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+            <div class="text-zinc-400 text-[10px] uppercase">Runtunan Terbaik</div>
+            <div id="modal-streak" class="font-bold text-base text-amber-500">0</div>
+          </div>
+        </div>
+
+        <!-- Transparent Scoring Formula Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Rincian Penilaian
+          </div>
+          <p class="text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold mb-1">
+            Skor = (Akurasi Keputusan * 60) + (Bobot Tingkat N * 10)
+          </p>
+          <p id="modal-formula-calc" class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400"></p>
+        </div>
+
+        <!-- Scientific Paradigm Attribution Card -->
+        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 text-left mb-4">
+          <div class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-mono mb-1">
+            Landasan Ilmiah
+          </div>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400">
+            Paradigma N-Back (Kirchner, 1958; Jaeggi et al., 2008). Aktivitas Memori Kerja (Gwm).
+          </p>
+        </div>
+
+        <!-- Practice Effects Disclaimer -->
+        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic mb-5 leading-normal">
+          Catatan Efek Latihan: Skor performa mencerminkan kelancaran operasional dan kecepatan respons spesifik tugas di bawah efek latihan, bukan kecerdasan umum bawaan (g). Latihan berulang mengasah ketangkasan kognitif.
+        </p>
+
+        <div id="modal-best-alert" class="hidden mb-5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+          Rekor Pribadi Terbaik Baru!
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="btn-modal-next-round"
+            type="button"
+            class="flex-1 min-h-[44px] py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-102 active:scale-98 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+          >
+            Lanjut Putaran Berikutnya
+          </button>
+          <a
+            href="/id/permainan"
+            class="min-h-[44px] px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-sm transition-colors flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            Pusat Permainan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Guide & Cognitive Science Section -->
+    <section class="mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 space-y-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-mint mb-2">
+          CHC Broad Ability: Memori Kerja (Gwm)
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+          Memahami Dual N-Back: Memori Kerja &amp; Kontrol Eksekutif
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Dual N-Back adalah salah satu paradigma yang paling banyak diteliti dalam psikologi kognitif untuk menguji kapasitas memori kerja dan pembaruan eksekutif. Berbeda dari tugas sederhana yang hanya melibatkan satu saluran persepsi, Dual N-Back menuntut pemantauan dan pembaruan simultan dari dua aliran informasi independen: posisi spasial visual (visuospatial sketchpad) dan identitas fonologis huruf (phonological loop).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            1. Cara Bermain &amp; Kontrol
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Pada setiap percobaan, sebuah petak pada kisi 3x3 menyala bersamaan dengan huruf yang ditampilkan. Bandingkan kedua stimulus dengan presentasi <strong>N langkah sebelumnya</strong>. Tekan <strong>[A]</strong> untuk kecocokan posisi, <strong>[L]</strong> untuk kecocokan huruf, atau keduanya jika kedua stimulus cocok.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            2. Penilaian &amp; Progresi Adaptif
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Performa dinilai menggunakan akurasi keputusan di seluruh percobaan yang dipadukan dengan bobot tingkat N aktif. Akurasi &ge; 80% meloloskan Anda ke tingkat N-back berikutnya, sedangkan &lt; 60% menurunkan satu tingkat untuk konsolidasi memori.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+            3. Landasan Ilmiah &amp; Neurosains
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Diformalkan pertama kali oleh W. K. Kirchner (1958) dan dipopulerkan oleh Susanne Jaeggi dkk. (2008, PNAS), paradigma N-back mengukur pembaruan eksekutif, resistensi terhadap interferensi proaktif, dan kapasitas retensi memori kerja aktif.
+          </p>
+        </div>
+      </div>
+
+      <!-- Psychometric Disclaimer Callout -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs sm:text-sm text-amber-900 dark:text-amber-300 leading-relaxed">
+        <strong>Catatan Psikometrik Penting:</strong> Performa Dual N-Back mencerminkan kelancaran operasional, pembaruan memori kerja, dan efek adaptasi latihan spesifik tugas. Latihan ini tidak mengukur kecerdasan umum bawaan (<em>g</em>) secara menyeluruh atau menggantikan asesmen IQ klinis terstandar.
+      </div>
+
+      <!-- Cross Links -->
+      <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-center sm:text-left">
+          <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+            Ingin Evaluasi Kognitif Menyeluruh?
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+            Evaluasi kemampuan Penalaran Fluida, Visual-Spasial, Kuantitatif, dan Verbal Anda dengan asesmen 24 soal terstandar kami.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="/id/tes-singkat" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 transition-colors">Tes Singkat 10m</a>
+          <a href="/id/tes" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-xs">Ujian Lengkap 20m</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord } from '../../../utils/profileStore';
+
+  function getLocalizedTier(score: number) {
+    if (score >= 90) {
+      return {
+        tier: 'Tingkat Ahli (Master)',
+        description: 'Trade-off kecepatan-akurasi hampir optimal; penguasaan strategi tugas dan kelancaran kognitif tingkat tinggi.',
+        badgeClass: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+      };
+    }
+    if (score >= 75) {
+      return {
+        tier: 'Tingkat Mahir (Advanced)',
+        description: 'Throughput informasi tinggi; resolusi konflik cepat dan minim distractor drift.',
+        badgeClass: 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+      };
+    }
+    if (score >= 60) {
+      return {
+        tier: 'Fondasi Solid (Solid Baseline)',
+        description: 'Akurasi konsisten; fokus perhatian stabil dengan sedikit kesalahan acak.',
+        badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+      };
+    }
+    if (score >= 40) {
+      return {
+        tier: 'Berkembang (Developing)',
+        description: 'Akurasi respons stabil; ritme operasional dasar di bawah batasan waktu.',
+        badgeClass: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+      };
+    }
+    return {
+      tier: 'Tahap Awal (Getting Started)',
+      description: 'Refleks operasional mulai terbangun; pembiasaan dengan aturan dan ritme respons.',
+      badgeClass: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
+    };
+  }
+
+  (function() {
+    var TOTAL_TRIALS = 20;
+    var STIMULUS_DURATION = 500;
+    var TRIAL_INTERVAL = 2500;
+    var LETTERS = ['C', 'H', 'K', 'L', 'Q', 'R', 'S', 'T'];
+
+    var currentN = 2;
+    var score = 0;
+    var trialIndex = 0;
+    var trials: { pos: number; letter: string }[] = [];
+    var isRunning = false;
+    var trialTimer: any = null;
+    var clearStimulusTimer: any = null;
+    var sessionStartTime = 0;
+
+    var pressedPos = false;
+    var pressedLetter = false;
+
+    var correctPosMatches = 0;
+    var correctLetterMatches = 0;
+    var falsePosMatches = 0;
+    var falseLetterMatches = 0;
+    var missedPosMatches = 0;
+    var missedLetterMatches = 0;
+    var totalDecisions = 0;
+    var correctDecisions = 0;
+    var currentStreak = 0;
+    var longestStreak = 0;
+
+    var hudNLevel = document.getElementById('hud-n-level')!;
+    var hudTrialCount = document.getElementById('hud-trial-count')!;
+    var hudScore = document.getElementById('hud-score')!;
+    var hudBestScore = document.getElementById('hud-best-score')!;
+    var btnHowToPlay = document.getElementById('btn-how-to-play')!;
+    var modalHowToPlay = document.getElementById('modal-how-to-play')!;
+    var btnCloseHowModal = document.getElementById('btn-close-how-modal')!;
+    var btnCloseHowGotIt = document.getElementById('btn-close-how-got-it')!;
+
+    var startOverlay = document.getElementById('start-overlay')!;
+    var overlayNText = document.getElementById('overlay-n-text')!;
+    var btnStartGame = document.getElementById('btn-start-game')!;
+    var stimulusLetter = document.getElementById('stimulus-letter')!;
+    var btnPosMatch = document.getElementById('btn-pos-match')!;
+    var btnLetterMatch = document.getElementById('btn-letter-match')!;
+    var gameArenaContent = document.getElementById('game-arena-content')!;
+    var feedbackToast = document.getElementById('feedback-toast');
+
+    var modalEndRound = document.getElementById('modal-end-round')!;
+    var btnCloseEndModal = document.getElementById('btn-close-end-modal')!;
+    var modalPerfScore = document.getElementById('modal-perf-score')!;
+    var modalTierBadge = document.getElementById('modal-tier-badge')!;
+    var modalTierName = document.getElementById('modal-tier-name')!;
+    var modalTierDesc = document.getElementById('modal-tier-desc')!;
+    var modalAccuracy = document.getElementById('modal-accuracy')!;
+    var modalNextN = document.getElementById('modal-next-n')!;
+    var modalHitsFa = document.getElementById('modal-hits-fa')!;
+    var modalStreak = document.getElementById('modal-streak')!;
+    var modalFormulaCalc = document.getElementById('modal-formula-calc')!;
+    var modalLevelStatus = document.getElementById('modal-level-status')!;
+    var modalBestAlert = document.getElementById('modal-best-alert')!;
+    var btnModalNextRound = document.getElementById('btn-modal-next-round')!;
+
+    if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+    function loadBestScore() {
+      try {
+        var saved = localStorage.getItem('fiq_game_nback_best');
+        if (saved) {
+          hudBestScore.textContent = saved;
+        }
+      } catch (e) {}
+    }
+    loadBestScore();
+
+    function updateHud() {
+      if (hudNLevel) hudNLevel.textContent = currentN + '-Back';
+      if (hudTrialCount) hudTrialCount.textContent = trialIndex + ' / ' + TOTAL_TRIALS;
+      if (hudScore) hudScore.textContent = score.toString();
+      if (overlayNText) overlayNText.textContent = currentN + ' langkah sebelumnya';
+    }
+
+    function showFeedback(text: string, isPositive: boolean) {
+      if (!feedbackToast) return;
+      var icon = isPositive ? '✓ ' : '✗ ';
+      feedbackToast.textContent = icon + text;
+      feedbackToast.className = 'h-6 mt-4 text-xs font-mono font-semibold transition-opacity ' +
+        (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+      feedbackToast.style.opacity = '1';
+      setTimeout(function() {
+        if (feedbackToast) feedbackToast.style.opacity = '0';
+      }, 700);
+    }
+
+    function generateTrialSequence() {
+      trials = [];
+      for (var i = 0; i < TOTAL_TRIALS; i++) {
+        var pos: number;
+        var letter: string;
+
+        if (i >= currentN && Math.random() < 0.35) {
+          pos = trials[i - currentN].pos;
+        } else {
+          var availPos = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+          if (i >= currentN) {
+            availPos = availPos.filter(function(p) { return p !== trials[i - currentN].pos; });
+          }
+          pos = availPos[Math.floor(Math.random() * availPos.length)];
+        }
+
+        if (i >= currentN && Math.random() < 0.35) {
+          letter = trials[i - currentN].letter;
+        } else {
+          var availLetters = LETTERS.slice();
+          if (i >= currentN) {
+            availLetters = availLetters.filter(function(l) { return l !== trials[i - currentN].letter; });
+          }
+          letter = availLetters[Math.floor(Math.random() * availLetters.length)];
+        }
+
+        trials.push({ pos: pos, letter: letter });
+      }
+    }
+
+    function highlightCell(idx: number, active: boolean) {
+      var cell = document.getElementById('cell-' + idx);
+      if (!cell) return;
+      if (active) {
+        cell.className = 'rounded-xl border-2 border-blue-500 bg-blue-500 shadow-lg shadow-blue-500/50 flex items-center justify-center scale-105 transition-all duration-150';
+        cell.innerHTML = '<div class="w-3.5 h-3.5 rounded-full bg-white animate-pulse"></div>';
+      } else {
+        cell.className = 'rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 transition-all duration-200 flex items-center justify-center';
+        cell.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></div>';
+      }
+    }
+
+    function recordPositionInput() {
+      if (!isRunning || pressedPos) return;
+      pressedPos = true;
+      btnPosMatch.classList.add('ring-4', 'ring-blue-400', 'bg-blue-600', 'text-white');
+
+      if (trialIndex > currentN) {
+        var current = trials[trialIndex - 1];
+        var past = trials[trialIndex - 1 - currentN];
+        var isMatch = current.pos === past.pos;
+        if (isMatch) {
+          score += 10;
+          correctPosMatches++;
+          showFeedback('+10 Cocok Posisi!', true);
+        } else {
+          score = Math.max(0, score - 5);
+          falsePosMatches++;
+          showFeedback('-5 Alarm Palsu!', false);
+        }
+        hudScore.textContent = score.toString();
+      }
+    }
+
+    function recordLetterInput() {
+      if (!isRunning || pressedLetter) return;
+      pressedLetter = true;
+      btnLetterMatch.classList.add('ring-4', 'ring-indigo-400', 'bg-indigo-600', 'text-white');
+
+      if (trialIndex > currentN) {
+        var current = trials[trialIndex - 1];
+        var past = trials[trialIndex - 1 - currentN];
+        var isMatch = current.letter === past.letter;
+        if (isMatch) {
+          score += 10;
+          correctLetterMatches++;
+          showFeedback('+10 Cocok Huruf!', true);
+        } else {
+          score = Math.max(0, score - 5);
+          falseLetterMatches++;
+          showFeedback('-5 Alarm Palsu!', false);
+        }
+        hudScore.textContent = score.toString();
+      }
+    }
+
+    function evaluateMisses(evaluatedIndex: number) {
+      if (evaluatedIndex <= currentN) return;
+      var cur = trials[evaluatedIndex - 1];
+      var past = trials[evaluatedIndex - 1 - currentN];
+
+      var posMatched = cur.pos === past.pos;
+      var letterMatched = cur.letter === past.letter;
+
+      totalDecisions += 2;
+
+      if (posMatched) {
+        if (pressedPos) {
+          correctDecisions++;
+          currentStreak++;
+        } else {
+          missedPosMatches++;
+          currentStreak = 0;
+        }
+      } else {
+        if (!pressedPos) {
+          correctDecisions++;
+          if (correctPosMatches + correctLetterMatches > 0) {
+            currentStreak++;
+          }
+        } else {
+          currentStreak = 0;
+        }
+      }
+      if (currentStreak > longestStreak) longestStreak = currentStreak;
+
+      if (letterMatched) {
+        if (pressedLetter) {
+          correctDecisions++;
+          currentStreak++;
+        } else {
+          missedLetterMatches++;
+          currentStreak = 0;
+        }
+      } else {
+        if (!pressedLetter) {
+          correctDecisions++;
+          if (correctPosMatches + correctLetterMatches > 0) {
+            currentStreak++;
+          }
+        } else {
+          currentStreak = 0;
+        }
+      }
+      if (currentStreak > longestStreak) longestStreak = currentStreak;
+    }
+
+    function resetInputButtons() {
+      pressedPos = false;
+      pressedLetter = false;
+      btnPosMatch.className = 'min-h-[56px] py-4 px-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-500 text-blue-700 dark:text-blue-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-blue-100 dark:hover:bg-blue-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer';
+      btnLetterMatch.className = 'min-h-[56px] py-4 px-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-heading font-bold text-sm sm:text-base transition-all duration-100 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 active:scale-95 flex flex-col items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer';
+    }
+
+    function runNextTrial() {
+      if (trialIndex > 0) {
+        evaluateMisses(trialIndex);
+      }
+
+      if (trialIndex >= TOTAL_TRIALS) {
+        finishRound();
+        return;
+      }
+
+      resetInputButtons();
+      var t = trials[trialIndex];
+      trialIndex++;
+      updateHud();
+
+      highlightCell(t.pos, true);
+      stimulusLetter.textContent = t.letter;
+      stimulusLetter.style.opacity = '1';
+
+      clearStimulusTimer = setTimeout(function() {
+        highlightCell(t.pos, false);
+        stimulusLetter.textContent = '-';
+        stimulusLetter.style.opacity = '0.3';
+      }, STIMULUS_DURATION);
+
+      trialTimer = setTimeout(runNextTrial, TRIAL_INTERVAL);
+    }
+
+    function startRound() {
+      if (isRunning) return;
+      isRunning = true;
+      trialIndex = 0;
+      score = 0;
+      correctPosMatches = 0;
+      correctLetterMatches = 0;
+      falsePosMatches = 0;
+      falseLetterMatches = 0;
+      missedPosMatches = 0;
+      missedLetterMatches = 0;
+      totalDecisions = 0;
+      correctDecisions = 0;
+      currentStreak = 0;
+      longestStreak = 0;
+      sessionStartTime = performance.now();
+
+      generateTrialSequence();
+      updateHud();
+
+      startOverlay.classList.add('hidden');
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      if (modalHowToPlay) {
+        modalHowToPlay.classList.add('hidden');
+        modalHowToPlay.classList.remove('flex');
+      }
+      if (gameArenaContent) gameArenaContent.removeAttribute('inert');
+
+      runNextTrial();
+    }
+
+    function finishRound() {
+      isRunning = false;
+      clearTimeout(trialTimer);
+      clearTimeout(clearStimulusTimer);
+      resetInputButtons();
+      if (gameArenaContent) gameArenaContent.setAttribute('inert', '');
+
+      var totalHits = correctPosMatches + correctLetterMatches;
+      var totalMisses = missedPosMatches + missedLetterMatches;
+      var totalFalseAlarms = falsePosMatches + falseLetterMatches;
+      var totalErrors = totalMisses + totalFalseAlarms;
+      var totalTargets = totalHits + totalMisses;
+      var totalNonTargets = Math.max(1, totalDecisions - totalTargets);
+
+      var accuracyDecimal = 0;
+      if (totalHits > 0 && totalTargets > 0) {
+        var hitRate = totalHits / totalTargets;
+        var crRate = Math.max(0, (totalNonTargets - totalFalseAlarms) / totalNonTargets);
+        accuracyDecimal = Math.max(0, Math.min(1, (hitRate + crRate) / 2));
+      }
+      var accuracyPct = Math.round(accuracyDecimal * 100);
+
+      var levelFactor = Math.min(currentN, 4) * 10;
+      var performanceScore = 0;
+      if (totalHits > 0) {
+        performanceScore = Math.min(100, Math.max(0, Math.round((accuracyDecimal * 60) + levelFactor)));
+      }
+      var durationSec = Math.max(1, Math.round((performance.now() - sessionStartTime) / 1000));
+
+      var prevN = currentN;
+      var statusMsg = '';
+      if (accuracyPct >= 80) {
+        currentN++;
+        statusMsg = 'Naik Tingkat! Melaju ke ' + currentN + '-Back berdasarkan akurasi ' + accuracyPct + '%.';
+      } else if (accuracyPct < 60) {
+        currentN = Math.max(1, currentN - 1);
+        statusMsg = 'Turun ke ' + currentN + '-Back untuk memperkuat fondasi memori kerja.';
+      } else {
+        statusMsg = 'Bertahan di ' + currentN + '-Back. Targetkan akurasi 80%+ untuk naik tingkat.';
+      }
+
+      try {
+        saveGameRecord({
+          gameId: 'n-back',
+          durationSeconds: durationSec,
+          mode: 'standard',
+          metrics: {
+            performanceScore: performanceScore,
+            accuracy: parseFloat(accuracyDecimal.toFixed(4)),
+            trialsCompleted: TOTAL_TRIALS,
+            correctCount: totalHits,
+            errorCount: totalErrors,
+            bestStreak: longestStreak,
+            maxLevel: currentN + '-Back',
+          },
+        });
+      } catch (err) {
+        console.error('Failed to save game record:', err);
+      }
+
+      var savedBest = 0;
+      try {
+        savedBest = parseInt(localStorage.getItem('fiq_game_nback_best') || '0', 10);
+      } catch (e) {}
+
+      var isNewBest = performanceScore > savedBest;
+      if (isNewBest) {
+        try {
+          localStorage.setItem('fiq_game_nback_best', performanceScore.toString());
+        } catch (e) {}
+        loadBestScore();
+      }
+
+      modalPerfScore.textContent = performanceScore.toString();
+
+      var tier = getLocalizedTier(performanceScore);
+      modalTierBadge.className = 'mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ' + tier.badgeClass;
+      modalTierName.textContent = tier.tier;
+      modalTierDesc.textContent = tier.description;
+
+      modalAccuracy.textContent = accuracyPct + '%';
+      modalNextN.textContent = currentN + '-Back';
+      modalHitsFa.textContent = totalHits + ' / ' + totalErrors;
+      modalStreak.textContent = longestStreak.toString();
+      modalLevelStatus.textContent = statusMsg;
+
+      if (totalHits > 0) {
+        modalFormulaCalc.textContent = '(' + accuracyPct + '% * 60 = ' + Math.round(accuracyDecimal * 60) + ' poin) + (Bobot Tingkat ' + prevN + ' = ' + levelFactor + ' poin) = ' + performanceScore + ' poin';
+      } else {
+        modalFormulaCalc.textContent = '(0% * 60 = 0 poin) + (Bobot Tingkat ' + prevN + ' = 0 poin [0 kecocokan terdaftar]) = 0 poin';
+      }
+
+      if (isNewBest && performanceScore > 0) {
+        modalBestAlert.classList.remove('hidden');
+      } else {
+        modalBestAlert.classList.add('hidden');
+      }
+
+      modalEndRound.classList.remove('hidden');
+      modalEndRound.classList.add('flex');
+    }
+
+    btnStartGame.addEventListener('click', startRound);
+    btnPosMatch.addEventListener('click', recordPositionInput);
+    btnLetterMatch.addEventListener('click', recordLetterInput);
+
+    btnHowToPlay.addEventListener('click', function() {
+      modalHowToPlay.classList.remove('hidden');
+      modalHowToPlay.classList.add('flex');
+    });
+
+    btnCloseHowModal.addEventListener('click', function() {
+      modalHowToPlay.classList.add('hidden');
+      modalHowToPlay.classList.remove('flex');
+    });
+
+    btnCloseHowGotIt.addEventListener('click', function() {
+      modalHowToPlay.classList.add('hidden');
+      modalHowToPlay.classList.remove('flex');
+    });
+
+    btnCloseEndModal.addEventListener('click', function() {
+      modalEndRound.classList.add('hidden');
+      modalEndRound.classList.remove('flex');
+      startOverlay.classList.remove('hidden');
+    });
+
+    btnModalNextRound.addEventListener('click', function() {
+      startRound();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === ' ' || e.code === 'Space') {
+        if (!isRunning) {
+          e.preventDefault();
+          startRound();
+        }
+      } else if (e.key === 'a' || e.key === 'A') {
+        if (isRunning) {
+          e.preventDefault();
+          recordPositionInput();
+        }
+      } else if (e.key === 'l' || e.key === 'L') {
+        if (isRunning) {
+          e.preventDefault();
+          recordLetterInput();
+        }
+      } else if (e.key === 'Escape') {
+        if (modalHowToPlay && !modalHowToPlay.classList.contains('hidden')) {
+          modalHowToPlay.classList.add('hidden');
+          modalHowToPlay.classList.remove('flex');
+        }
+        if (modalEndRound && !modalEndRound.classList.contains('hidden')) {
+          modalEndRound.classList.add('hidden');
+          modalEndRound.classList.remove('flex');
+          startOverlay.classList.remove('hidden');
+        }
+      }
+    });
+  })();
+</script>

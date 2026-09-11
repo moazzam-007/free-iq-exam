@@ -1,0 +1,775 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const title = "Metode Penilaian Tes IQ & Teori Respons Butir IRT | FreeIQExam";
+const description = "Pelajari metode penilaian tes IQ, teori respons butir IRT 2PL, estimasi Bayesian EAP, standardisasi skor, dan cara parameter soal digunakan untuk memperkirakan kemampuan laten.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Fondasi Psikometrik dan Metodologi Penilaian Teori Respons Butir 2-Parameter Logistik",
+    "description": "Dokumen teknis psikometrik komprehensif mengenai mesin Teori Respons Butir 2-Parameter Logistik (2PL IRT), kuadratur Bayes Expected A Posteriori (EAP), validitas konstruk Cattell-Horn-Carroll, dan peta jalan kalibrasi empiris FreeIQExam.",
+    "proficiencyLevel": "Expert",
+    "inLanguage": "id",
+    "url": "https://freeiqexam.com/id/metodologi/",
+    "author": {
+      "@type": "Organization",
+      "name": "Komite Psikometri FreeIQExam",
+      "url": "https://freeiqexam.com/id/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "FreeIQExam.com",
+      "url": "https://freeiqexam.com/id/"
+    },
+    "about": [
+      { "@type": "Thing", "name": "Item Response Theory" },
+      { "@type": "Thing", "name": "Psikometri" },
+      { "@type": "Thing", "name": "Teori Cattell-Horn-Carroll" },
+      { "@type": "Thing", "name": "Estimasi Bayesian Expected A Posteriori" }
+    ],
+    "citation": [
+      "https://doi.org/10.1016/j.intell.2014.01.004",
+      "https://doi.org/10.7910/DVN/PDI7Y1",
+      "https://doi.org/10.1007/BF02293801",
+      "https://doi.org/10.3758/BRM.42.2.525"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Metodologi Psikometrik",
+        "item": "https://freeiqexam.com/id/metodologi/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Apa perbedaan antara Teori Respons Butir (IRT) 2PL dan Teori Tes Klasik (CTT)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Dalam Teori Tes Klasik (CTT), penilaian bergantung pada persentase skor mentah (menjumlahkan jawaban benar), memperlakukan setiap soal seolah memiliki tingkat kesulitan dan bobot diagnostik yang sama. Sebaliknya, Teori Respons Butir 2-Parameter Logistik (2PL IRT) memodelkan setiap butir soal secara matematis dengan dua parameter terpisah: tingkat kesulitan (b) dan daya diskriminasi (a). Hal ini memastikan bahwa menjawab benar soal matriks yang sulit dan berdaya beda tinggi memberikan bukti kemampuan laten (theta) yang jauh lebih kuat daripada menyelesaikan soal pembuka yang mendasar."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mengapa FreeIQExam menggunakan estimasi Bayes EAP daripada Estimasi Kemungkinan Maksimum (MLE)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Estimasi Kemungkinan Maksimum (Maximum Likelihood Estimation / MLE) gagal atau menghasilkan nilai tak hingga saat peserta memperoleh skor 0% (semua salah) atau 100% (semua benar). Estimasi Bayesian Expected A Posteriori (EAP) mengatasi masalah ini dengan mengintegrasikan fungsi kemungkinan di atas distribusi prior normal standar (N(0, 1)). Ini menghasilkan estimasi theta yang stabil, berhingga, tidak bias, serta nilai kesalahan standar (SEM) yang teratur di seluruh spektrum distribusi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana tes matriks non-verbal dibandingkan dengan baterai klinis komprehensif seperti WAIS-IV?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Baterai klinis komprehensif seperti WAIS-IV atau SB5 mengevaluasi Full Scale IQ (FSIQ) di berbagai domain luas CHC, termasuk Pemahaman Verbal (Gc), Memori Kerja (Gwm), dan Kecepatan Pemrosesan (Gs). FreeIQExam mengisolasi Penalaran Fluida non-verbal (Gf) dan Pemrosesan Visual-Spasial (Gv) menggunakan penalaran matriks progresif, deret topologis, dan pola lipatan mental. Meskipun bebas dari bias budaya dan bahasa, platform ini adalah alat penyaringan kognitif edukatif, bukan diagnosis medis atau evaluasi neuropsikologis resmi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana ADHD atau neurodivergensi memengaruhi performa pada penilaian kognitif ini?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kondisi seperti ADHD terutama memengaruhi fungsi eksekutif, kontrol perhatian berkelanjutan, dan memori kerja sementara daripada penalaran fluida mendasar (Gf). Karena FreeIQExam memiliki batas waktu, peserta yang mengalami kendala fokus atau impulsivitas dalam memilih opsi pengecoh dapat mengalami penurunan skor yang mencerminkan eksekusi tes daripada potensi analitis laten. Pengujian di lingkungan bebas distraksi membantu memastikan hasil mencerminkan kapasitas induksi pola sebenarnya."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mengapa IQ simpangan distandardisasi dengan nilai rata-rata 100 dan simpangan baku 15?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Psikometri modern meninggalkan rasio usia mental dan beralih ke metrik Deviation IQ yang dirumuskan oleh David Wechsler. Dengan mentransformasikan estimasi sifat laten (theta) menggunakan rumus IQ = 100 + 15 * theta, skor berkorespondensi langsung dengan persentil populasi Gauss. Skor 100 mewakili median populasi persis (persentil 50), sementara skor 115 (+1 SD), 130 (+2 SD), dan 145 (+3 SD) masing-masing mewakili persentil ke-84,1, 97,7, dan 99,87."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu teori respons butir IRT?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Teori Respons Butir (IRT) adalah keluarga model psikometri yang menghubungkan karakteristik butir dengan peluang peserta memberikan respons tertentu pada tingkat kemampuan laten. Model 2PL menggunakan parameter kesulitan dan daya diskriminasi untuk menjelaskan perbedaan informatif antarsoal."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana metode penilaian tes IQ berbeda dari persentase jawaban benar?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Persentase jawaban benar hanya menghitung proporsi respons yang benar. Pendekatan IRT mencoba menggunakan informasi tentang karakteristik setiap butir sehingga dua peserta dengan jumlah jawaban benar yang sama dapat memperoleh estimasi kemampuan yang berbeda bila pola respons dan tingkat kesulitan soalnya berbeda."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/methodology">
+  <Header currentPath="/id/metodologi" enPath="/methodology" />
+
+  <main class="flex-1 py-10 md:py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-12">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Metodologi Psikometrik</span>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="space-y-4 border-b border-zinc-200 dark:border-zinc-800 pb-8">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wider uppercase bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80">
+        Dokumen Teknis Psikometrik (Whitepaper)
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight">
+        Metode Penilaian Tes IQ &amp; Teori Respons Butir IRT
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-4xl">
+        Ulasan psikometrik komprehensif mengenai model Teori Respons Butir 2-Parameter Logistik (2PL IRT) FreeIQExam, estimasi sifat laten Bayesian Expected A Posteriori (EAP), validitas konstruk Cattell-Horn-Carroll (CHC), dan peta jalan kalibrasi empiris terbuka.
+      </p>
+
+      <!-- Meta Pill Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 text-xs font-mono">
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-zinc-500 dark:text-zinc-400 block text-[10px] uppercase">Edisi Dokumen</span>
+          <span class="font-semibold text-zinc-800 dark:text-zinc-200">Whitepaper v2.4 (2026)</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-zinc-500 dark:text-zinc-400 block text-[10px] uppercase">Kerangka Konstruk</span>
+          <span class="font-semibold text-zinc-800 dark:text-zinc-200">CHC Stratum II</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-zinc-500 dark:text-zinc-400 block text-[10px] uppercase">Mesin Penilaian</span>
+          <span class="font-semibold text-zinc-800 dark:text-zinc-200">2PL IRT + Bayesian EAP</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-zinc-500 dark:text-zinc-400 block text-[10px] uppercase">Metrik Standar</span>
+          <span class="font-semibold text-zinc-800 dark:text-zinc-200">Rerata = 100, SD = 15</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Plain-Language Explainer Section -->
+    <section class="p-5 sm:p-6 rounded-2xl bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+      <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-3">
+        Apa itu metode penilaian tes IQ?
+      </h2>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Metode penilaian tes IQ adalah aturan yang digunakan untuk mengubah respons peserta menjadi ukuran kemampuan yang dapat dibandingkan. Dalam pendekatan IRT, setiap butir dipandang memiliki karakteristik sendiri, termasuk kesulitan dan daya diskriminasi. Respons peserta kemudian digunakan untuk memperkirakan posisi kemampuan laten pada skala yang telah ditentukan.
+      </p>
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3">
+        Penjelasan ini penting karena istilah “tes IQ akurat” tidak hanya bergantung pada rumus. Kualitas butir, norma, prosedur administrasi, dan validasi empiris semuanya memengaruhi seberapa tepat skor dapat ditafsirkan.
+      </p>
+    </section>
+
+    <!-- Quick Table of Contents -->
+    <nav class="p-5 rounded-2xl bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm">
+      <span class="font-heading font-bold text-zinc-950 dark:text-white uppercase tracking-wider text-xs block mb-3">
+        Daftar Isi Whitepaper
+      </span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-zinc-600 dark:text-zinc-300">
+        <a href="#section-1-chc" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">01.</span> Ringkasan Eksekutif &amp; Kerangka Kerja Konstruk CHC
+        </a>
+        <a href="#section-2-2pl" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">02.</span> Formulasi Matematis 2PL IRT &amp; Kurva Karakteristik Butir (ICC)
+        </a>
+        <a href="#section-3-eap" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">03.</span> Mesin Estimasi Bayesian Expected A Posteriori (EAP)
+        </a>
+        <a href="#section-4-standardization" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">04.</span> Standardisasi Skala vs. Norma Populasi Klinis
+        </a>
+        <a href="#section-5-subdomains" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">05.</span> Rasionalitas Pelaporan Sub-Domain Kognitif
+        </a>
+        <a href="#section-6-roadmap" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">06.</span> Peta Jalan Kalibrasi Sains Terbuka (N=500, N=1000)
+        </a>
+        <a href="#section-7-citations" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 sm:col-span-2">
+          <span class="font-mono text-zinc-500 dark:text-zinc-400">07.</span> Sitasi Jurnal Ilmiah Peer-Reviewed &amp; DOI Dataverse
+        </a>
+      </div>
+    </nav>
+
+    <!-- Section 1: Executive Summary & Theoretical Foundations (CHC) -->
+    <section id="section-1-chc" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Bagian 01
+        </span>
+        <h2 id="chc-framework" class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Ringkasan Eksekutif &amp; Fondasi Teoretis (Kerangka CHC)
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Sains psikometri kontemporer mendasarkan asesmen kemampuan kognitif manusia pada model tiga strata Cattell-Horn-Carroll (CHC). Di bawah teori CHC, kemampuan kecerdasan umum (Stratum III g) tersusun dari domain kognitif luas yang berbeda (Stratum II), yang masing-masing didukung oleh kemampuan operasional spesifik yang sempit (Stratum I).
+        </p>
+      </div>
+
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        FreeIQExam mengisolasi empat domain luas Stratum II utama yang menunjukkan korelasi empiris terkuat terhadap kecerdasan umum seraya meminimalkan bias kultural dan hambatan linguistik:
+      </p>
+
+      <!-- 4 Core Domains Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"></span>
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              1. Penalaran Fluida (Gf)
+            </h3>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+            Kapasitas untuk mengekstrak aturan abstrak, memecahkan masalah non-verbal baru, dan menerapkan operasi logis dalam situasi asing. Diukur melalui penalaran matriks 3x3 induktif, transformasi Boolean XOR topologis, dan kelengkapan deret figural.
+          </p>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium">
+            Bank Induk: 27 Butir Soal Terkalibrasi
+          </span>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"></span>
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              2. Pemrosesan Visual-Spasial (Gv)
+            </h3>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+            Kemampuan untuk mengamati, menyimpan, mengingat kembali, dan memutar secara mental pola visual serta objek 3D dalam ruang imajinasi. Diukur melalui rotasi kubus 3D kaku, sintesis jaring lipatan 2D-ke-3D, dan proyeksi ortografis.
+          </p>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium">
+            Bank Induk: 25 Butir Soal Terkalibrasi
+          </span>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"></span>
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              3. Penalaran Kuantitatif (Gq)
+            </h3>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+            Kemampuan memahami properti kuantitatif, mengidentifikasi hubungan matematis bersarang, dan memecahkan struktur relasional numerik. Diukur melalui progresi induktif bertingkat dan penalaran aljabar proporsional.
+          </p>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium">
+            Bank Induk: 24 Butir Soal Terkalibrasi
+          </span>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"></span>
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              4. Pemahaman Verbal (Gc)
+            </h3>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+            Keluasan dan kedalaman pengetahuan yang diperoleh dalam sistem linguistik, analogi leksikal relasional abstrak, hierarki semantik, dan silogisme logika deduktif kategoris formal.
+          </p>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium">
+            Bank Induk: 24 Butir Soal Terkalibrasi
+          </span>
+        </div>
+      </div>
+
+      <!-- Master Bank Composition Table -->
+      <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+        <h4 class="font-heading font-bold text-sm text-zinc-950 dark:text-white uppercase tracking-wider mb-3">
+          Arsitektur 100 Butir Soal Bank Pengembangan Induk
+        </h4>
+        <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table class="w-full min-w-[560px] text-left text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-mono">
+                <th class="pb-2">Domain Luas CHC</th>
+                <th class="pb-2">Jumlah Soal Bank Induk</th>
+                <th class="pb-2">Alokasi Ujian Lengkap</th>
+                <th class="pb-2">Ujian Khusus Domain</th>
+                <th class="pb-2">Rentang Kesulitan (b_i)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200/70 dark:divide-zinc-800/70 font-mono">
+              <tr>
+                <td class="py-2.5 font-sans font-semibold text-zinc-900 dark:text-zinc-100">Penalaran Fluida (Gf)</td>
+                <td class="py-2.5">27 soal</td>
+                <td class="py-2.5">6 soal (25%)</td>
+                <td class="py-2.5">20 soal</td>
+                <td class="py-2.5">-2,10 hingga +2,55</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 font-sans font-semibold text-zinc-900 dark:text-zinc-100">Visual-Spasial (Gv)</td>
+                <td class="py-2.5">25 soal</td>
+                <td class="py-2.5">6 soal (25%)</td>
+                <td class="py-2.5">20 soal</td>
+                <td class="py-2.5">-1,90 hingga +2,40</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 font-sans font-semibold text-zinc-900 dark:text-zinc-100">Penalaran Kuantitatif (Gq)</td>
+                <td class="py-2.5">24 soal</td>
+                <td class="py-2.5">6 soal (25%)</td>
+                <td class="py-2.5">20 soal</td>
+                <td class="py-2.5">-1,80 hingga +2,50</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 font-sans font-semibold text-zinc-900 dark:text-zinc-100">Pemahaman Verbal (Gc)</td>
+                <td class="py-2.5">24 soal</td>
+                <td class="py-2.5">6 soal (25%)</td>
+                <td class="py-2.5">20 soal</td>
+                <td class="py-2.5">-2,00 hingga +2,35</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Mathematical Formulation of 2PL IRT Model -->
+    <section id="section-2-2pl" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Bagian 02
+        </span>
+        <h2 id="2pl-irt" class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Formulasi Matematis Model Teori Respons Butir 2-Parameter Logistik (2PL)
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Teori Tes Klasik (CTT) memperlakukan setiap soal ujian secara seragam, memberikan skor kemampuan berdasarkan penjumlahan sederhana dari jawaban benar. Ini menghasilkan ketergantungan sampel yang parah: skor mentah tidak dapat membedakan apakah seorang peserta berhasil menyelesaikan soal sepele atau soal komposit yang luar biasa sulit. FreeIQExam mengatasi keterbatasan ini dengan mengimplementasikan model 2-Parameter Logistic (2PL) Item Response Theory.
+        </p>
+      </div>
+
+      <!-- Formula Block -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Persamaan Standar Model 2PL IRT</div>
+        <div class="font-mono text-base sm:text-lg text-blue-600 dark:text-blue-400 font-bold overflow-x-auto py-1">
+          P_i(&theta;) = 1 / [ 1 + exp( -1.702 &times; a_i &times; (&theta; - b_i) ) ]
+        </div>
+        <div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed space-y-1.5 pt-2">
+          <p>Keterangan variabel:</p>
+          <ul class="list-disc list-inside space-y-1 pl-1">
+            <li><strong>&theta; (Theta):</strong> Sifat laten kognitif peserta ujian, terdistribusi di sepanjang kontinum normal standar N(0, 1).</li>
+            <li><strong>a_i (Daya Diskriminasi):</strong> Kemiringan Kurva Karakteristik Butir (ICC) pada titik belok, mengkarakterisasi seberapa tajam soal tersebut membedakan antara peserta di atas versus di bawah ambang batas kemampuan.</li>
+            <li><strong>b_i (Tingkat Kesulitan):</strong> Tingkat kemampuan laten di mana probabilitas respons yang benar tepat 50% (P_i(&theta;) = 0,50).</li>
+            <li><strong>D = 1,702:</strong> Konstanta penskalaan ogive normal yang memastikan kesesuaian matematis antara metrik logistik dan fungsi distribusi normal kumulatif &Phi;(z).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Interactive / Responsive SVG Item Characteristic Curves (ICC) -->
+      <div>
+        <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
+          Kurva Karakteristik Butir (ICC) &amp; Dinamika Diskriminasi
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+          Diagram di bawah memvisualisasikan kurva ICC matematis untuk tiga contoh butir soal terkalibrasi: Soal Mudah (b = -1,5, a = 1,2), Soal Sedang (b = 0,0, a = 1,4), dan Soal Sulit (b = +1,5, a = 1,7).
+        </p>
+
+        <div class="p-4 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 overflow-x-auto">
+          <svg viewBox="0 0 640 260" class="w-full min-w-[560px] h-auto select-none font-mono text-xs" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid lines -->
+            <line x1="70" y1="40" x2="600" y2="40" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="70" y1="120" x2="600" y2="120" stroke="#e4e4e7" class="dark:stroke-zinc-800" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="70" y1="200" x2="600" y2="200" stroke="#71717a" stroke-width="1.5" />
+            <line x1="70" y1="30" x2="70" y2="200" stroke="#71717a" stroke-width="1.5" />
+
+            <!-- Y-Axis Ticks -->
+            <text x="60" y="44" fill="#a1a1aa" text-anchor="end">1.0</text>
+            <text x="60" y="124" fill="#2563eb" font-weight="bold" text-anchor="end">0.5</text>
+            <text x="60" y="204" fill="#a1a1aa" text-anchor="end">0.0</text>
+
+            <!-- X-Axis Ticks & Values (-3 to +3 Theta) -->
+            <line x1="114" y1="200" x2="114" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="114" y="222" fill="#71717a" text-anchor="middle">-3.0</text>
+
+            <line x1="202" y1="200" x2="202" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="202" y="222" fill="#71717a" text-anchor="middle">-1.5</text>
+
+            <line x1="291" y1="200" x2="291" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="291" y="222" fill="#71717a" text-anchor="middle">-0.5</text>
+
+            <line x1="335" y1="200" x2="335" y2="206" stroke="#2563eb" stroke-width="2" />
+            <text x="335" y="222" fill="#2563eb" font-weight="bold" text-anchor="middle">0.0</text>
+
+            <line x1="379" y1="200" x2="379" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="379" y="222" fill="#71717a" text-anchor="middle">+0.5</text>
+
+            <line x1="468" y1="200" x2="468" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="468" y="222" fill="#71717a" text-anchor="middle">+1.5</text>
+
+            <line x1="556" y1="200" x2="556" y2="206" stroke="#71717a" stroke-width="1.5" />
+            <text x="556" y="222" fill="#71717a" text-anchor="middle">+3.0</text>
+
+            <!-- Horizontal 50% Inflection Guideline -->
+            <line x1="70" y1="120" x2="600" y2="120" stroke="#3b82f6" stroke-width="1" stroke-dasharray="2 4" opacity="0.6" />
+
+            <!-- ICC Curve 1: Easy Item (b = -1.5, a = 1.2) centered at x = 202 -->
+            <path d="M 70 197 C 120 196, 160 185, 202 120 C 244 55, 300 42, 600 40" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- ICC Curve 2: Medium Item (b = 0.0, a = 1.4) centered at x = 335 -->
+            <path d="M 70 199 C 230 199, 280 185, 335 120 C 390 55, 440 41, 600 40" stroke="#4f46e5" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- ICC Curve 3: Hard Item (b = +1.5, a = 1.7) centered at x = 468 -->
+            <path d="M 70 200 C 350 200, 415 190, 468 120 C 515 48, 545 40, 600 40" stroke="#9333ea" stroke-width="3" stroke-linecap="round" fill="none" />
+
+            <!-- Inflection Markers at P=0.50 -->
+            <circle cx="202" cy="120" r="5" fill="#3b82f6" stroke="#ffffff" stroke-width="2" />
+            <circle cx="335" cy="120" r="5" fill="#4f46e5" stroke="#ffffff" stroke-width="2" />
+            <circle cx="468" cy="120" r="5" fill="#9333ea" stroke="#ffffff" stroke-width="2" />
+
+            <!-- Labels / Legend -->
+            <rect x="75" y="238" width="12" height="6" rx="3" fill="#3b82f6" />
+            <text x="92" y="244" fill="#3b82f6" font-size="11">Mudah (b = -1,5, a = 1,2)</text>
+
+            <rect x="250" y="238" width="12" height="6" rx="3" fill="#4f46e5" />
+            <text x="267" y="244" fill="#4f46e5" font-size="11">Sedang (b = 0,0, a = 1,4)</text>
+
+            <rect x="430" y="238" width="12" height="6" rx="3" fill="#9333ea" />
+            <text x="447" y="244" fill="#9333ea" font-size="11">Sulit (b = +1,5, a = 1,7)</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Bayesian Expected A Posteriori (EAP) Estimation Engine -->
+    <section id="section-3-eap" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Bagian 03
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Mesin Estimasi Bayesian Expected A Posteriori (EAP)
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Meskipun Estimasi Kemungkinan Maksimum (Maximum Likelihood Estimation / MLE) banyak digunakan pada ujian akademis panjang, MLE mengalami kegagalan matematis kritis pada asesmen pendek: saat peserta menjawab benar 0 dari 24 (atau 24 dari 24), fungsi kemungkinan bersifat monotonik murni, menyebabkan MLE divergen ke nilai tak hingga negatif atau positif.
+        </p>
+      </div>
+
+      <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        FreeIQExam mengatasi kendala ini dengan mengimplementasikan estimasi Bayesian Expected A Posteriori (EAP) dengan prior Gauss standar g(&theta;) ~ N(0, 1). Hal ini menjamin estimasi kemampuan laten yang berhingga, kokoh, dan teratur terlepas dari respons vektor yang ekstrem.
+      </p>
+
+      <!-- Numerical Quadrature Equation -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Kuadratur Numerik Gauss-Hermite (81 Titik Evaluasi)</div>
+        <div class="font-mono text-sm sm:text-base text-blue-600 dark:text-blue-400 font-bold overflow-x-auto py-1">
+          &theta;_hat_EAP = [ &Sigma;<sub>k=1..Q</sub> [ &theta;_k &times; L(&theta;_k | u) &times; W(&theta;_k) ] ] / [ &Sigma;<sub>k=1..Q</sub> [ L(&theta;_k | u) &times; W(&theta;_k) ] ]
+        </div>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Mesin menghitung integral di seluruh Q = 81 titik evaluasi berjarak sama yang mencakup &theta;_k &isin; [-4,0, +4,0] dengan ukuran langkah &Delta;&theta; = 0,10. Untuk setiap vektor respons biner u = (u_1, u_2, ..., u_n), fungsi kemungkinan respons adalah:
+        </p>
+        <div class="font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 py-1">
+          L(&theta;_k | u) = &prod;<sub>i=1..n</sub> [ P_i(&theta;_k)<sup>u_i</sup> &times; (1 - P_i(&theta;_k))<sup>1 - u_i</sup> ]
+        </div>
+        <p class="text-xs text-zinc-500 font-mono">
+          Di mana bobot prior W(&theta;_k) = (1 / &radic;(2&pi;)) &times; exp(-&theta;_k^2 / 2) &times; &Delta;&theta;.
+        </p>
+      </div>
+
+      <!-- Posterior Variance & 95% Credible Interval -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">SEM Kondisional &amp; Interval Kredibilitas 95%</div>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Berbeda dari CTT yang mengasumsikan kesalahan standar konstan untuk semua peserta, IRT memodelkan kesalahan pengukuran kondisional di sepanjang kontinum sifat. Varians posterior dihitung langsung dari momen kedua distribusi posterior:
+        </p>
+        <div class="font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 py-1">
+          Var(&theta; | u) = &Sigma;<sub>k=1..Q</sub> [ (&theta;_k - &theta;_hat_EAP)<sup>2</sup> &times; L(&theta;_k | u) &times; W(&theta;_k) ] / &Sigma;<sub>k=1..Q</sub> [ L(&theta;_k | u) &times; W(&theta;_k) ]
+        </div>
+        <div class="font-mono text-xs sm:text-sm text-indigo-600 dark:text-indigo-400 font-semibold py-1">
+          SEM(&theta;) = &radic;Var(&theta; | u)
+        </div>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Interval Kredibilitas Posterior 95% yang dilaporkan pada sertifikat hasil peserta diturunkan secara formal sebagai:
+        </p>
+        <div class="font-mono text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-bold py-1">
+          Interval<sub>95%</sub> = [ IQ - 1,96 &times; 15 &times; SEM(&theta;), &nbsp; IQ + 1,96 &times; 15 &times; SEM(&theta;) ]
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Scale Standardization vs. Population Norming -->
+    <section id="section-4-standardization" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Bagian 04
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Standardisasi Skala vs. Norma Populasi Klinis
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Persyaratan ilmiah mendasar di bawah Standar Pengujian Pendidikan dan Psikologis (AERA, APA, NCME, 2014) adalah transparansi mutlak mengenai bagaimana metrik kemampuan mentah ditransformasikan menjadi skor terstandarisasi.
+        </p>
+      </div>
+
+      <!-- Linear Transformation Formula -->
+      <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+        <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-1">Transformasi Linear Standar</span>
+        <div class="font-mono text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400 mb-2">
+          Skor Terstandarisasi = round( 100 + 15 &times; &theta;_hat_EAP )
+        </div>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Persentil dihitung melalui fungsi distribusi kumulatif normal standar &Phi;(z):
+        </p>
+        <div class="font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 mt-1">
+          Persentil = &Phi;( (Skor Terstandarisasi - 100) / 15 ) &times; 100%
+        </div>
+      </div>
+
+      <!-- Critical Distinction Card -->
+      <div class="p-5 sm:p-6 rounded-2xl bg-zinc-50/80 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-3">
+        <h3 class="font-heading font-bold text-base uppercase tracking-wider text-zinc-950 dark:text-white">
+          Klarifikasi Ilmiah: Metrik Skala vs. Norma Populasi Klinis
+        </h3>
+        <p>
+          1. <strong>Transformasi Skala:</strong> FreeIQExam memproyeksikan sifat laten theta (&theta;) ke metrik klasik Wechsler/Stanford-Binet (Rata-rata = 100, SD = 15). Ini memberikan skala referensi yang diakui secara universal untuk performa kognitif relatif.
+        </p>
+        <p>
+          2. <strong>Norma Populasi Empiris:</strong> Menetapkan norma populasi demografis formal membutuhkan pengambilan sampel bertingkat pada ribuan subjek klinis yang disegmentasi berdasarkan usia, wilayah geografis, dan tingkat pendidikan. FreeIQExam tidak mengklaim diagnosis klinis; skor kami mencerminkan estimasi matematis 2PL IRT yang tertambat pada tolok ukur sains terbuka yang diverifikasi.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 5: Sub-Domain Reporting Rationale -->
+    <section id="section-5-subdomains" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-2">
+          Bagian 05
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Rasionalitas Pelaporan Sub-Domain Kognitif
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Dalam Penilaian Lengkap 24 soal, peserta menyelesaikan 6 butir soal per domain kognitif (Fluida, Spasial, Kuantitatif, Verbal). Kesalahan umum dalam pengujian komersial online adalah melaporkan sub-skor IQ kontinu untuk sub-tes pendek (misalnya mengklaim "IQ Spasial = 138" hanya berdasarkan 6 butir soal).
+        </p>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+          Masalah Rentang Kesalahan Standar yang Lebar pada Vektor Singkat
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Pada vektor domain 6 butir soal, kesalahan standar pengukuran kondisional sangat lebar (SEM &approx; 0,45 hingga 0,65 &theta;, setara dengan &plusmn;7 hingga &plusmn;10 poin IQ). Menghasilkan sub-skor kontinu semu menghasilkan presisi palsu yang menyesatkan peserta dan melanggar standar pelaporan psikometri.
+        </p>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          FreeIQExam mengadopsi pendekatan ilmiah yang bertanggung jawab:
+        </p>
+        <ul class="list-disc list-inside text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 space-y-1 pl-1">
+          <li><strong>Rasio Akurasi Domain:</strong> Kami melaporkan performa mentah yang transparan (misalnya "5 / 6 Benar, 83%").</li>
+          <li><strong>Pita Kinerja Kualitatif:</strong> Kinerja dipetakan ke dalam kelompok deskriptif:
+            <span class="font-mono text-xs font-semibold text-zinc-900 dark:text-white">Area Kekuatan (&ge;83%)</span>,
+            <span class="font-mono text-xs font-semibold text-zinc-900 dark:text-white">Rata-rata Tinggi (67-82%)</span>,
+            <span class="font-mono text-xs font-semibold text-zinc-700 dark:text-zinc-300">Rentang Rata-rata (50-66%)</span>, dan
+            <span class="font-mono text-xs font-semibold text-zinc-900 dark:text-white">Area Pengembangan (&lt;50%)</span>.
+          </li>
+          <li><strong>Tes 20 Soal Khusus:</strong> Bagi peserta yang menginginkan presisi sub-skala kontinu, FreeIQExam menyediakan empat baterai tes domain tunggal khusus 20 soal di mana kesalahan pengukuran ditekan ke batas yang sangat terpercaya.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Section 6: Transparent Calibration & Open-Science Roadmap -->
+    <section id="section-6-roadmap" class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs space-y-6">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Bagian 06
+        </span>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-3">
+          Kalibrasi Transparan &amp; Peta Jalan Validasi Sains Terbuka
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Sains terbuka menuntut pengungkapan asal-usul butir soal dan peta jalan rekalibrasi yang terstruktur. FreeIQExam beroperasi pada jalur validasi pengembangan dua fase:
+        </p>
+      </div>
+
+      <!-- Roadmap Milestones -->
+      <div class="space-y-4">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              Fase 0: Benih Pengembangan Tertambat Penelitian (Saat Ini)
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">Aktif</span>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Parameter tingkat kesulitan (b_i &isin; [-2,20, +2,60]) dan parameter daya diskriminasi (a_i &isin; [0,95, 2,00]) yang tertanam dalam bank 100 soal merupakan nilai sintesis dari tolok ukur psikometri peer-reviewed dalam International Cognitive Ability Resource (Condon &amp; Revelle, 2014; Dworak et al., 2021) serta bank matriks Sandia National Laboratories (Matzen et al., 2010).
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              Milestone Fase 1 (Target: N = 500 Sesi Ujian Lengkap)
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">Peta Jalan</span>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Setelah mencapai 500 administrasi tes lengkap, indeks kesulitan butir CTT (nilai-p) dan koefisien diskriminasi point-biserial yang dikoreksi (r_pb) akan dihitung secara empiris. Analisis distraktor akan memverifikasi bahwa alternatif jawaban yang salah dipilih secara proporsional oleh responden berkemampuan lebih rendah tanpa adanya ambiguitas soal.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white">
+              Milestone Fase 2 (Target: N = 1.000 Sesi Ujian Lengkap)
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">Peta Jalan</span>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Estimasi parameter Marginal Maximum Likelihood (MMLE) penuh melalui algoritma EM akan dijalankan untuk memperbarui parameter (a_i, b_i) secara langsung. Uji kesesuaian butir (S-X2 dari Orlando &amp; Thissen) akan mendeteksi dan mengeliminasi butir soal yang tidak sesuai.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Peer-Reviewed Citations & Dataverse DOIs -->
+    <section id="section-7-citations" class="p-6 sm:p-8 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs space-y-4">
+      <div>
+        <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-2">
+          Bagian 07
+        </span>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-2">
+          Referensi Ilmiah &amp; Sitasi Peer-Reviewed
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Landasan pustaka akademis yang mendasari desain psikometrik instrumen kami.
+        </p>
+      </div>
+
+      <ul class="space-y-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 font-mono">
+        <li class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <strong>Bock, R. D., &amp; Mislevy, R. J. (1982).</strong> Adaptive EAP estimation of ability in a microcomputer environment. <em>Applied Psychological Measurement</em>, 6(4), 431-444. DOI: 10.1177/014662168200600405
+        </li>
+        <li class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <strong>Condon, D. M., &amp; Revelle, W. (2014).</strong> The International Cognitive Ability Resource: Development and initial validation of a public-domain measure. <em>Intelligence</em>, 43, 52-64. DOI: 10.1016/j.intell.2014.01.004
+        </li>
+        <li class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <strong>Dworak, E. M., et al. (2021).</strong> The International Cognitive Ability Resource (ICAR): Open-source cognitive ability measures for research. <em>Harvard Dataverse</em>. DOI: 10.7910/DVN/PDI7Y1
+        </li>
+        <li class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <strong>Matzen, L. E., et al. (2010).</strong> Recreating Raven's: Software for systematically generating large numbers of matrix reasoning items. <em>Behavior Research Methods</em>, 42(2), 525-541. DOI: 10.3758/BRM.42.2.525
+        </li>
+        <li class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <strong>Schneider, W. J., &amp; McGrew, K. S. (2018).</strong> The Cattell-Horn-Carroll theory of cognitive abilities. <em>Contemporary Intellectual Assessment</em>, 73-163. Guilford Press.
+        </li>
+      </ul>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="space-y-4">
+      <div class="border-b border-zinc-200 dark:border-zinc-800 pb-4">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Pertanyaan yang Sering Diajukan (FAQ)
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Pertanyaan umum mengenai mesin Teori Respons Butir 2PL, kuadratur Bayes, dan validitas konstruk.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa perbedaan antara Teori Respons Butir (IRT) 2PL dan Teori Tes Klasik (CTT)?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Dalam Teori Tes Klasik (CTT), penilaian bergantung pada persentase skor mentah (menjumlahkan jawaban benar), memperlakukan setiap soal seolah memiliki tingkat kesulitan dan bobot diagnostik yang sama. Sebaliknya, Teori Respons Butir 2-Parameter Logistik (2PL IRT) memodelkan setiap butir soal secara matematis dengan dua parameter terpisah: tingkat kesulitan (b) dan daya diskriminasi (a). Hal ini memastikan bahwa menjawab benar soal matriks yang sulit dan berdaya beda tinggi memberikan bukti kemampuan laten (theta) yang jauh lebih kuat daripada menyelesaikan soal pembuka yang mendasar.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Mengapa FreeIQExam menggunakan estimasi Bayes EAP daripada Estimasi Kemungkinan Maksimum (MLE)?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Estimasi Kemungkinan Maksimum (Maximum Likelihood Estimation / MLE) gagal atau menghasilkan nilai tak hingga saat peserta memperoleh skor 0% (semua salah) atau 100% (semua benar). Estimasi Bayesian Expected A Posteriori (EAP) mengatasi masalah ini dengan mengintegrasikan fungsi kemungkinan di atas distribusi prior normal standar (N(0, 1)). Ini menghasilkan estimasi theta yang stabil, berhingga, tidak bias, serta nilai kesalahan standar (SEM) yang teratur di seluruh spektrum distribusi.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Bagaimana tes matriks non-verbal dibandingkan dengan baterai klinis komprehensif seperti WAIS-IV?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Baterai klinis komprehensif seperti WAIS-IV atau SB5 mengevaluasi Full Scale IQ (FSIQ) di berbagai domain luas CHC, termasuk Pemahaman Verbal (Gc), Memori Kerja (Gwm), dan Kecepatan Pemrosesan (Gs). FreeIQExam mengisolasi Penalaran Fluida non-verbal (Gf) dan Pemrosesan Visual-Spasial (Gv) menggunakan penalaran matriks progresif, deret topologis, dan pola lipatan mental. Meskipun bebas dari bias budaya dan bahasa, platform ini adalah alat penyaringan kognitif edukatif, bukan diagnosis medis atau evaluasi neuropsikologis resmi.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Bagaimana ADHD atau neurodivergensi memengaruhi performa pada penilaian kognitif ini?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Kondisi seperti ADHD terutama memengaruhi fungsi eksekutif, kontrol perhatian berkelanjutan, dan memori kerja sementara daripada penalaran fluida mendasar (Gf). Karena FreeIQExam memiliki batas waktu, peserta yang mengalami kendala fokus atau impulsivitas dalam memilih opsi pengecoh dapat mengalami penurunan skor yang mencerminkan eksekusi tes daripada potensi analitis laten. Pengujian di lingkungan bebas distraksi membantu memastikan hasil mencerminkan kapasitas induksi pola sebenarnya.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Mengapa IQ simpangan distandardisasi dengan nilai rata-rata 100 dan simpangan baku 15?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Psikometri modern meninggalkan rasio usia mental dan beralih ke metrik Deviation IQ yang dirumuskan oleh David Wechsler. Dengan mentransformasikan estimasi sifat laten (theta) menggunakan rumus IQ = 100 + 15 * theta, skor berkorespondensi langsung dengan persentil populasi Gauss. Skor 100 mewakili median populasi persis (persentil 50), sementara skor 115 (+1 SD), 130 (+2 SD), dan 145 (+3 SD) masing-masing mewakili persentil ke-84,1, 97,7, dan 99,87.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Apa itu teori respons butir IRT?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Teori Respons Butir (IRT) adalah keluarga model psikometri yang menghubungkan karakteristik butir dengan peluang peserta memberikan respons tertentu pada tingkat kemampuan laten. Model 2PL menggunakan parameter kesulitan dan daya diskriminasi untuk menjelaskan perbedaan informatif antarsoal.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800">
+          <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none text-sm sm:text-base">
+            <span>Bagaimana metode penilaian tes IQ berbeda dari persentase jawaban benar?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">&darr;</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Persentase jawaban benar hanya menghitung proporsi respons yang benar. Pendekatan IRT mencoba menggunakan informasi tentang karakteristik setiap butir sehingga dua peserta dengan jumlah jawaban benar yang sama dapat memperoleh estimasi kemampuan yang berbeda bila pola respons dan tingkat kesulitan soalnya berbeda.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="p-8 rounded-3xl bg-blue-600 text-white text-center space-y-4">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-3xl">
+        Uji Kemampuan Kognitif Anda dengan Model IRT 2PL
+      </h2>
+      <p class="max-w-xl mx-auto text-blue-100 text-sm sm:text-base">
+        Rasakan mesin penilaian psikometrik canggih dengan estimasi sifat laten Bayesian EAP dan interval kredibilitas 95% secara gratis.
+      </p>
+      <div class="pt-2">
+        <a
+          href="/id/tes"
+          class="inline-flex items-center justify-center px-6 py-3 rounded-2xl bg-white text-blue-600 font-bold hover:bg-blue-50 transition-colors shadow-sm"
+        >
+          Mulai Tes IQ Sekarang &rarr;
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,1046 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import { QUESTION_BANK_ID as QUESTION_BANK } from '../../data/questions-id';
+
+const title = "Tes IQ Cepat Gratis: 12 Soal, 10 Menit & Hasil Langsung | FreeIQExam";
+const description = "Ikuti tes IQ cepat gratis dengan 12 soal dalam 10 menit. Lihat estimasi skor IQ dan persentil setelah selesai, tanpa email dan tanpa pendaftaran.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    "name": "Tes IQ Cepat Gratis - 12 Soal",
+    "description": "Skrining kognitif cepat 12 soal dalam 10 menit yang mencakup penalaran fluida, visual-spasial, kuantitatif, dan verbal.",
+    "url": "https://freeiqexam.com/id/tes-singkat",
+    "educationalLevel": "General Population",
+    "typicalAgeRange": "16-",
+    "timeRequired": "PT10M",
+    "numberOfQuestions": 12
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tes IQ Cepat Gratis",
+    "description": "Skrining kognitif cepat 12 soal dalam 10 menit yang mencakup penalaran fluida, visual-spasial, kuantitatif, dan verbal.",
+    "url": "https://freeiqexam.com/id/tes-singkat",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tes IQ Cepat",
+        "item": "https://freeiqexam.com/id/tes-singkat"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Cara mengerjakan tes IQ cepat gratis 12 soal",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Skrining cepat ini berisi 12 soal dengan batas waktu 10 menit. Anda akan menemukan soal penalaran pola, visual-spasial, angka, dan verbal. Jawab sesuai kemampuan Anda dan gunakan navigasi untuk meninjau jawaban. Setelah selesai, sistem membuka laporan untuk menampilkan estimasi skor dan persentil. Tes dapat dikerjakan tanpa email atau pendaftaran."
+        }
+      }
+    ]
+  }
+];
+
+// Expose full sanitized pool to client - sampling happens client-side each session.
+// We pass the full bank; the client session manager selects 3 items per domain dynamically.
+const sanitizedBank = QUESTION_BANK.map((q) => ({
+  id: q.id,
+  domain: q.domain,
+  subType: q.subType,
+  domainLabel: q.domainLabel,
+  promptType: q.promptType,
+  promptText: q.promptText,
+  promptSvg: q.promptSvg ?? null,
+  a: q.a,
+  b: q.b,
+  options: q.options.map((opt) => ({
+    id: opt.id,
+    text: opt.text ?? '',
+    svgContent: opt.svgContent ?? null,
+  })),
+}));
+
+const bankJson = JSON.stringify(sanitizedBank);
+
+// Obfuscated scoring answer key token: questionId -> { c: correctOptionId, exp: explanation }
+const answerKeyToken = Buffer.from(
+  JSON.stringify(
+    QUESTION_BANK.reduce((acc, q) => {
+      const correctOpt = q.options.find((o) => o.isCorrect);
+      acc[q.id] = {
+        c: correctOpt ? correctOpt.id : 1,
+        exp: q.explanation || '',
+      };
+      return acc;
+    }, {} as Record<number, { c: number; exp: string }>)
+  )
+).toString('base64');
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/quick-test">
+  <!-- Distraction-Free Top Navigation Bar -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+
+      <!-- Brand / Exit Trigger -->
+      <button
+        id="btn-exit"
+        type="button"
+        class="flex items-center gap-2.5 group text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black rounded-xl p-1.5 -ml-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+        aria-label="Keluar dari asesmen"
+      >
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-base shadow-xs group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-heading font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
+            FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
+          </span>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Quick Screening</span>
+        </div>
+      </button>
+
+      <!-- Center: Live Countdown Timer and Soal Counter -->
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div
+          id="timer-container"
+          class="flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors duration-300"
+          role="timer"
+          aria-live="polite"
+        >
+          <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="timer-display" class="font-mono text-sm sm:text-base font-medium tracking-tight text-zinc-800 dark:text-zinc-200">
+            10:00
+          </span>
+        </div>
+
+        <!-- Question Counter Badge -->
+        <div class="hidden sm:flex items-center gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          <span>Soal</span>
+          <span id="stat-current" class="font-bold text-zinc-900 dark:text-white">1</span>
+          <span>dari</span>
+          <span class="font-semibold text-zinc-900 dark:text-white">12</span>
+        </div>
+      </div>
+
+      <!-- Right Action: Submit -->
+      <div class="flex items-center gap-3">
+        <button
+          id="btn-top-submit"
+          type="button"
+          class="min-h-[44px] px-4 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 shadow-sm transition-all duration-150 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        >
+          <span>Selesaikan</span>
+          <svg class="w-4 h-4 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Active Linear Progress Bar -->
+    <div class="w-full h-1 bg-zinc-100 dark:bg-zinc-900 overflow-hidden" role="progressbar" aria-valuenow="8" aria-valuemin="0" aria-valuemax="100">
+      <div
+        id="progress-bar"
+        class="h-full bg-blue-600 transition-all duration-300 ease-out"
+        style="width: 8.33%;"
+      ></div>
+    </div>
+  </header>
+
+  <!-- Screen Reader Live Region for Question Transitions -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Storage Warning Banner (Displayed if localStorage is blocked/disabled) -->
+  <div id="storage-warning-banner" class="hidden max-w-4xl mx-auto px-4 sm:px-6 pt-3">
+    <div class="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 flex items-center gap-3 text-xs text-amber-800 dark:text-amber-200">
+      <svg class="w-4 h-4 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+      </svg>
+      <span><strong>Pemberitahuan:</strong> Penyimpanan peramban tidak tersedia atau dalam mode privat. Sesi Anda akan tetap aktif selama tab ini terbuka.</span>
+    </div>
+  </div>
+
+  <!-- Main Active Assessment Area -->
+  <h1 class="sr-only">Tes IQ Cepat Gratis Online: 12 Soal dalam 10 Menit</h1>
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-between">
+    <!-- Pre-Test Orientation Accordion -->
+    <details class="mb-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 p-4 sm:p-5">
+      <summary class="cursor-pointer list-none font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white">
+        Cara mengerjakan tes IQ cepat gratis 12 soal
+      </summary>
+      <div class="mt-3 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed space-y-2">
+        <p>
+          Skrining cepat ini berisi 12 soal dengan batas waktu 10 menit. Anda akan menemukan soal penalaran pola, visual-spasial, angka, dan verbal. Jawab sesuai kemampuan Anda dan gunakan navigasi untuk meninjau jawaban.
+        </p>
+        <p>
+          Setelah selesai, sistem membuka laporan untuk menampilkan estimasi skor dan persentil. Tes dapat dikerjakan tanpa email atau pendaftaran.
+        </p>
+      </div>
+    </details>
+
+    <!-- Top Metadata Bar -->
+    <div class="flex items-center justify-between mb-4 sm:mb-6">
+      <div class="flex items-center gap-2.5">
+        <span
+          id="domain-badge"
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-medium tracking-wide bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80"
+        >
+          Loading...
+        </span>
+        <span id="domain-sublabel" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-mono hidden md:inline">
+          Penalaran Fluida
+        </span>
+      </div>
+
+      <div class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">
+        <span id="answered-count">0</span> dari 12 dijawab
+      </div>
+    </div>
+
+    <!-- Stimulus Prompt Instruction -->
+    <div class="mb-4 sm:mb-6">
+      <p id="question-prompt-text" class="text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+        Memuat soal...
+      </p>
+    </div>
+
+    <!-- Question Stimulus Card (hidden for text-only questions) -->
+    <div id="stimulus-card" class="relative w-full max-w-lg mx-auto p-5 sm:p-7 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 backdrop-blur-md shadow-xs flex items-center justify-center min-h-[200px] sm:min-h-[260px] mb-2 overflow-hidden">
+      <div id="stimulus-container" class="w-full flex items-center justify-center">
+        <!-- Prompt SVG or text injected here -->
+      </div>
+    </div>
+
+    <!-- Response Options Grid -->
+    <div class="w-full max-w-xl mx-auto mt-6 sm:mt-8">
+      <div class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3 text-center sm:text-left">
+        Pilihan Jawaban (<span id="key-hint">Tombol 1 hingga N</span>)
+      </div>
+      <div id="options-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        <!-- Options injected here -->
+      </div>
+    </div>
+
+    <!-- Sticky Navigation Controls (Prev / Next Bar) -->
+    <div class="sticky bottom-0 z-20 w-full py-3 sm:py-4 bg-white/95 dark:bg-black/90 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800 mt-8 sm:mt-10 transition-colors">
+      <div class="w-full max-w-xl mx-auto flex items-center justify-between gap-4">
+        <button
+          id="btn-prev"
+          type="button"
+          class="min-h-[44px] px-5 sm:px-6 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+          <span>Sebelumnya</span>
+        </button>
+
+        <div class="text-sm font-mono font-medium text-zinc-500 sm:hidden">
+          <span id="mobile-q-num">1</span> / 12
+        </div>
+
+        <button
+          id="btn-next"
+          type="button"
+          class="min-h-[44px] px-6 sm:px-8 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-95 shadow-sm transition-all duration-150 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        >
+          <span id="btn-next-text">Berikutnya</span>
+          <svg id="btn-next-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 12-Soal Navigasi Strip -->
+    <div class="w-full max-w-2xl mx-auto mt-8 sm:mt-10">
+      <div class="flex items-center justify-between mb-3 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+        <span>Navigasi Soal</span>
+        <span class="hidden sm:inline">Klik nomor soal untuk melompat</span>
+      </div>
+      <div id="navigator-strip" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 sm:gap-2">
+        <!-- 12 Pills injected here -->
+      </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Helper -->
+    <div class="w-full max-w-xl mx-auto mt-8 text-center hidden md:block">
+      <div class="inline-flex items-center gap-4 px-4 py-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">1-N</kbd> Pilih Jawaban</span>
+        <span class="text-zinc-300 dark:text-zinc-700">|</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&larr;</kbd> <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&rarr;</kbd> Navigasi</span>
+        <span class="text-zinc-300 dark:text-zinc-700">|</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">Enter</kbd> Selesai</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Exit Confirmation Modal -->
+  <div id="modal-exit" role="dialog" aria-modal="true" aria-labelledby="modal-exit-title" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm">
+    <div class="relative w-full max-w-md p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+      <button
+        id="btn-close-exit-modal"
+        type="button"
+        aria-label="Close exit dialog"
+        class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+      </div>
+      <h3 id="modal-exit-title" class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">
+        Keluar dari Skrining Cepat?
+      </h3>
+      <p class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+        Progres tes Anda tersimpan di browser ini. Anda dapat kembali untuk melanjutkan sesi tes IQ cepat tanpa mengulang dari awal.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <button id="btn-modal-resume" type="button" class="w-full sm:w-auto flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+          Lanjutkan Tes
+        </button>
+        <a href="/id" class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-center transition-colors">
+          Keluar ke Beranda
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Confirmation Modal -->
+  <div id="modal-submit" role="dialog" aria-modal="true" aria-labelledby="modal-submit-title" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-sm">
+    <div class="relative w-full max-w-md p-6 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+      <button
+        id="btn-close-submit-modal"
+        type="button"
+        aria-label="Tutup dialog konfirmasi"
+        class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 id="modal-submit-title" class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">
+        Selesaikan Tes IQ Cepat?
+      </h3>
+      <p id="submit-modal-summary" class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
+        Menghitung ringkasan hasil...
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <button id="btn-confirm-submit" type="button" class="w-full sm:w-auto flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-600/20 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+          Selesaikan & Lihat Hasil
+        </button>
+        <button id="btn-cancel-submit" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+          Kembali Mengerjakan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded Client Logic -->
+  <script is:inline define:vars={{ bankJson, answerKeyToken }}>
+    (function () {
+      var FULL_BANK = JSON.parse(bankJson);
+      var answerKeyMap = {};
+      try {
+        var decoded = atob(answerKeyToken);
+        answerKeyMap = JSON.parse(decoded);
+      } catch (e) {}
+      var TOTAL_QUESTIONS = 12;
+      var TOTAL_TIME_SECONDS = 10 * 60; // 600 seconds
+
+      var STORAGE_KEY_SESSION  = 'freeiq_quick_session';
+      var STORAGE_KEY_ANSWERS  = 'iq_assessment_answers';
+      var STORAGE_KEY_QUESTIONS = 'iq_active_questions';
+      var STORAGE_KEY_TYPE     = 'iq_test_type';
+
+      // --- Domain display labels ---
+      var DOMAIN_LABELS = {
+        fluid:        { label: 'Penalaran Fluida',   cat: 'Induksi Abstrak (Gf)' },
+        spatial:      { label: 'Pemrosesan Spasial & Visual',    cat: 'Rotasi Mental & Lipatan (Gv)' },
+        quantitative: { label: 'Penalaran Kuantitatif', cat: 'Penalaran Numerik (Gq)' },
+        verbal:       { label: 'Pemahaman Verbal', cat: 'Kemampuan Bahasa (Gc)' }
+      };
+
+      // --- Seeded RNG (Mulberry32) ---
+      function createRng(seed) {
+        var s = seed >>> 0;
+        return function () {
+          s += 0x6d2b79f5;
+          var t = s;
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function shuffle(arr, rng) {
+        var out = arr.slice();
+        for (var i = out.length - 1; i > 0; i--) {
+          var j = Math.floor(rng() * (i + 1));
+          var tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+        }
+        return out;
+      }
+
+      function sampleDomain(domain, count, rng) {
+        var pool = FULL_BANK.filter(function (item) { return item.domain === domain; });
+        return shuffle(pool, rng).slice(0, count);
+      }
+
+      function buildQuickSet(seed) {
+        var rng = createRng(seed);
+        var domains = ['fluid', 'spatial', 'quantitative', 'verbal'];
+        var result = [];
+        domains.forEach(function (d) {
+          sampleDomain(d, 3, rng).forEach(function (item) { result.push(item); });
+        });
+        return result;
+      }
+
+      // --- State ---
+      var questions = [];
+      var currentIndex = 0;
+      var userAnswers = {};
+      var timeRemaining = TOTAL_TIME_SECONDS;
+      var timerInterval = null;
+      var autoAdvanceTimer = null;
+      var targetEndTime = null;
+      var sessionSeed = null;
+      var startTimeMs = Date.now();
+      var sessionExpired = false;
+
+      // --- Restore or init session ---
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY_SESSION);
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            var now = Date.now();
+            var isFresh = !parsed.savedAt || (now - parsed.savedAt) < 7200000;
+            if (isFresh) {
+              if (typeof parsed.startTimeMs === 'number') startTimeMs = parsed.startTimeMs;
+              if (typeof parsed.seed === 'number') sessionSeed = parsed.seed;
+              if (parsed.answers && typeof parsed.answers === 'object') userAnswers = parsed.answers;
+              if (typeof parsed.timeRemaining === 'number' && parsed.timeRemaining > 0) timeRemaining = parsed.timeRemaining;
+              if (typeof parsed.currentQuestionIndex === 'number') currentIndex = parsed.currentQuestionIndex;
+              if (typeof parsed.targetEndTime === 'number') {
+                if (parsed.targetEndTime <= now) {
+                  timeRemaining = 0;
+                  sessionExpired = true;
+                } else {
+                  targetEndTime = parsed.targetEndTime;
+                  timeRemaining = Math.max(0, Math.round((targetEndTime - now) / 1000));
+                }
+              } else {
+                targetEndTime = now + timeRemaining * 1000;
+              }
+            } else {
+              localStorage.removeItem(STORAGE_KEY_SESSION);
+              targetEndTime = now + timeRemaining * 1000;
+            }
+          }
+        } else {
+          targetEndTime = Date.now() + timeRemaining * 1000;
+        }
+      } catch (e) {
+        targetEndTime = Date.now() + timeRemaining * 1000;
+      }
+
+      if (!sessionSeed) sessionSeed = Math.floor(Math.random() * 0xffffffff);
+      questions = buildQuickSet(sessionSeed);
+
+      // Clamp currentIndex
+      if (currentIndex >= questions.length) currentIndex = 0;
+
+      if (sessionExpired) {
+        localStorage.removeItem(STORAGE_KEY_SESSION);
+        submitTestImmediately();
+        return;
+      }
+
+      // Fisher-Yates shuffle for question options copy
+      function shuffleOptions(opts) {
+        var copy = opts.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = temp;
+        }
+        return copy;
+      }
+
+      // --- DOM Elements ---
+      var timerDisplay       = document.getElementById('timer-display');
+      var timerContainer     = document.getElementById('timer-container');
+      var statCurrent        = document.getElementById('stat-current');
+      var mobileQNum         = document.getElementById('mobile-q-num');
+      var progressBar        = document.getElementById('progress-bar');
+      var domainBadge        = document.getElementById('domain-badge');
+      var domainSublabel     = document.getElementById('domain-sublabel');
+      var promptText         = document.getElementById('question-prompt-text');
+      var stimulusCard       = document.getElementById('stimulus-card');
+      var stimulusContainer  = document.getElementById('stimulus-container');
+      var optionsGrid        = document.getElementById('options-grid');
+      var answeredCountEl    = document.getElementById('answered-count');
+      var keyHint            = document.getElementById('key-hint');
+      var btnPrev            = document.getElementById('btn-prev');
+      var btnNext            = document.getElementById('btn-next');
+      var btnNextText        = document.getElementById('btn-next-text');
+      var btnNextIcon        = document.getElementById('btn-next-icon');
+      var navigatorStrip     = document.getElementById('navigator-strip');
+      var btnTopSubmit       = document.getElementById('btn-top-submit');
+      var modalExit          = document.getElementById('modal-exit');
+      var btnExit            = document.getElementById('btn-exit');
+      var btnModalResume     = document.getElementById('btn-modal-resume');
+      var modalSubmit        = document.getElementById('modal-submit');
+      var submitModalSummary = document.getElementById('submit-modal-summary');
+      var btnConfirmSubmit   = document.getElementById('btn-confirm-submit');
+      var btnBatalSubmit    = document.getElementById('btn-cancel-submit');
+      var srAnnouncer        = document.getElementById('sr-announcer');
+
+      var testSubmitted = false;
+
+      // --- Save session ---
+      function saveSession() {
+        if (testSubmitted) return;
+        try {
+          localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({
+            startTimeMs: startTimeMs,
+            seed: sessionSeed,
+            answers: userAnswers,
+            timeRemaining: timeRemaining,
+            currentQuestionIndex: currentIndex,
+            targetEndTime: targetEndTime,
+            savedAt: Date.now()
+          }));
+        } catch (e) {}
+      }
+
+      // --- Timer ---
+      function updateTimerDisplay() {
+        var mins = Math.floor(timeRemaining / 60);
+        var secs = timeRemaining % 60;
+        var formatted = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        if (timerDisplay) timerDisplay.textContent = formatted;
+
+        if (timeRemaining <= 60) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold animate-pulse';
+        } else if (timeRemaining <= 180) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 font-semibold';
+        } else {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium';
+        }
+      }
+
+      function syncTimerFromWallClock() {
+        if (!targetEndTime || testSubmitted) return;
+        var secondsLeft = Math.max(0, Math.round((targetEndTime - Date.now()) / 1000));
+        timeRemaining = secondsLeft;
+        updateTimerDisplay();
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          submitTestImmediately();
+        }
+      }
+
+      function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(function () {
+          syncTimerFromWallClock();
+          if (timeRemaining > 0) saveSession();
+        }, 1000);
+        window.addEventListener('focus', syncTimerFromWallClock);
+        document.addEventListener('visibilitychange', function () {
+          if (document.visibilityState === 'visible') syncTimerFromWallClock();
+        });
+      }
+
+      // Beforeunload warning
+      window.addEventListener('beforeunload', function (e) {
+        if (!testSubmitted && Object.keys(userAnswers).length > 0) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+
+      // --- Submit ---
+      function submitTestImmediately() {
+        testSubmitted = true;
+        try {
+          var timeElapsedSec = Math.max(1, Math.round((Date.now() - startTimeMs) / 1000));
+          var scoredQuestions = questions.map(function (q) {
+            var key = answerKeyMap[q.id];
+            var correctId = key ? key.c : 0;
+            return {
+              id: q.id,
+              domain: q.domain,
+              subType: q.subType,
+              domainLabel: q.domainLabel,
+              promptType: q.promptType,
+              promptText: q.promptText,
+              promptSvg: q.promptSvg,
+              a: q.a,
+              b: q.b,
+              explanation: key ? key.exp : '',
+              options: q.options.map(function (opt) {
+                return {
+                  id: opt.id,
+                  text: opt.text,
+                  svgContent: opt.svgContent,
+                  isCorrect: opt.id === correctId,
+                };
+              }),
+            };
+          });
+
+          localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify(userAnswers));
+          localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(questions.map(function (q) { return q.id; })));
+          localStorage.setItem(STORAGE_KEY_TYPE, 'quick');
+
+          if (typeof window.__fiqSaveSessionResult === 'function') {
+            window.__fiqSaveSessionResult(userAnswers, scoredQuestions, 'quick', timeElapsedSec);
+          }
+          localStorage.removeItem(STORAGE_KEY_SESSION);
+        } catch (e) {}
+        window.location.href = '/id/hasil';
+      }
+
+      function openSubmitModal() {
+        var count = Object.keys(userAnswers).length;
+        var unanswered = TOTAL_QUESTIONS - count;
+        if (count === TOTAL_QUESTIONS) {
+          submitModalSummary.textContent = 'Semua 12 soal tes IQ telah dijawab. Hasil siap dihitung dan ditampilkan pada halaman laporan.';
+        } else {
+          submitModalSummary.textContent = 'Anda telah menjawab ' + count + ' dari 12 soal (' + unanswered + ' soal belum dijawab). Anda dapat melihat hasil sekarang atau kembali untuk menyelesaikan soal yang tersisa.';
+        }
+        modalSubmit.classList.remove('hidden');
+        modalSubmit.classList.add('flex');
+        requestAnimationFrame(function () { if (btnConfirmSubmit) btnConfirmSubmit.focus(); });
+      }
+
+      function closeSubmitModal() {
+        modalSubmit.classList.add('hidden');
+        modalSubmit.classList.remove('flex');
+      }
+
+      function openExitModal() {
+        modalExit.classList.remove('hidden');
+        modalExit.classList.add('flex');
+        requestAnimationFrame(function () { if (btnModalResume) btnModalResume.focus(); });
+      }
+
+      function closeExitModal() {
+        modalExit.classList.add('hidden');
+        modalExit.classList.remove('flex');
+      }
+
+      // Probe storage availability
+      try {
+        localStorage.setItem('__fiq_probe__', '1');
+        localStorage.removeItem('__fiq_probe__');
+      } catch (storageErr) {
+        var warnEl = document.getElementById('storage-warning-banner');
+        if (warnEl) warnEl.classList.remove('hidden');
+      }
+
+      // Defense-in-depth SVG sanitization helper
+      function sanitizeSvg(raw) {
+        if (!raw || typeof raw !== 'string') return '';
+        return raw
+          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+          .replace(/\bon\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '')
+          .replace(/javascript:/gi, '');
+      }
+
+      // --- Render Question ---
+      function renderCurrentQuestion() {
+        var q = questions[currentIndex];
+        if (!q) return;
+
+        // Smooth transition animation
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          if (stimulusCard) {
+            stimulusCard.classList.remove('animate-fade-in');
+            void stimulusCard.offsetWidth;
+            stimulusCard.classList.add('animate-fade-in');
+          }
+          if (optionsGrid) {
+            optionsGrid.classList.remove('animate-fade-in');
+            void optionsGrid.offsetWidth;
+            optionsGrid.classList.add('animate-fade-in');
+          }
+        }
+
+        var qNum = currentIndex + 1;
+        if (statCurrent) statCurrent.textContent = String(qNum);
+        if (mobileQNum) mobileQNum.textContent = String(qNum);
+        if (progressBar) progressBar.style.width = ((qNum / TOTAL_QUESTIONS) * 100) + '%';
+        if (answeredCountEl) answeredCountEl.textContent = String(Object.keys(userAnswers).length);
+
+        // Domain badge
+        var domInfo = DOMAIN_LABELS[q.domain] || { label: 'Cognitive', sub: 'Assessment' };
+        if (domainBadge) domainBadge.textContent = domInfo.label;
+        if (domainSublabel) domainSublabel.textContent = domInfo.sub;
+
+        // Keyboard hint
+        var optCount = q.options.length;
+        if (keyHint) keyHint.textContent = 'Keys 1 to ' + optCount;
+
+        // Stimulus rendering based on promptType
+        if (stimulusContainer) {
+          stimulusContainer.innerHTML = '';
+        }
+
+        if (q.promptType === 'text') {
+          // Hide the card entirely - text shown cleanly in prompt heading
+          if (stimulusCard) stimulusCard.style.display = 'none';
+          if (promptText) {
+            promptText.textContent = q.promptText;
+            promptText.className = 'text-lg sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        } else if (q.promptType === 'svg' && q.promptSvg) {
+          // Show card for SVG questions
+          if (stimulusCard) stimulusCard.style.display = '';
+          if (stimulusContainer) stimulusContainer.innerHTML = sanitizeSvg(q.promptSvg);
+          if (promptText) {
+            promptText.textContent = (q.promptText && q.promptText.trim().length > 0)
+              ? q.promptText
+              : 'Pilihlah opsi yang melengkapi pola secara logis:';
+            promptText.className = 'text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        } else {
+          // hybrid or fallback
+          if (stimulusCard) stimulusCard.style.display = '';
+          if (stimulusContainer && q.promptSvg) {
+            var hybridText = document.createElement('p');
+            hybridText.className = 'text-sm text-zinc-700 dark:text-zinc-300 mb-3 leading-relaxed';
+            hybridText.textContent = q.promptText;
+            stimulusContainer.appendChild(hybridText);
+            var svgWrap = document.createElement('div');
+            svgWrap.innerHTML = sanitizeSvg(q.promptSvg);
+            stimulusContainer.appendChild(svgWrap);
+          }
+          if (promptText) {
+            promptText.textContent = 'Pelajari informasi di bawah ini, lalu pilihlah jawaban yang benar:';
+            promptText.className = 'text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        }
+
+        // Options grid
+        if (optionsGrid) {
+          optionsGrid.innerHTML = '';
+          var selectedOptionId = userAnswers[q.id];
+          if (!q._shuffledOptions) {
+            q._shuffledOptions = shuffleOptions(q.options);
+          }
+          var displayedOptions = q._shuffledOptions;
+          var hasSvgOptions = displayedOptions.some(function (o) { return o.svgContent; });
+          optionsGrid.className = hasSvgOptions
+            ? 'grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4'
+            : 'grid grid-cols-1 gap-3';
+
+          displayedOptions.forEach(function (opt, optIdx) {
+            var isSelected = selectedOptionId === opt.id;
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('data-option-id', String(opt.id));
+            btn.setAttribute('aria-label', 'Choice ' + (optIdx + 1));
+
+            var baseClass = 'relative p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-150 cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black min-h-[44px] ';
+            var stateClass = isSelected
+              ? 'bg-blue-50/70 dark:bg-blue-950/40 border-2 border-blue-600 dark:border-blue-400 ring-2 ring-blue-600/20 shadow-md scale-[1.02]'
+              : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-xs';
+
+            if (opt.svgContent) stateClass += ' min-h-[90px] sm:min-h-[110px]';
+            btn.className = baseClass + stateClass;
+
+            // Keyboard badge (top-left)
+            var badge = document.createElement('span');
+            badge.className = isSelected
+              ? 'absolute top-2 left-2 w-5 h-5 rounded-full bg-blue-600 text-white font-mono text-xs font-bold flex items-center justify-center'
+              : 'absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold flex items-center justify-center border border-zinc-200 dark:border-zinc-700';
+            badge.textContent = String(optIdx + 1);
+            btn.appendChild(badge);
+
+            // Option content
+            if (opt.svgContent) {
+              var svgWrap = document.createElement('div');
+              svgWrap.className = 'w-full flex items-center justify-center pointer-events-none mt-2';
+              svgWrap.innerHTML = sanitizeSvg(opt.svgContent);
+              btn.appendChild(svgWrap);
+            }
+            if (opt.text) {
+              var textWrap = document.createElement('div');
+              textWrap.className = 'w-full px-6 py-1 text-sm sm:text-base text-zinc-800 dark:text-zinc-200 leading-snug pointer-events-none';
+              textWrap.textContent = opt.text;
+              btn.appendChild(textWrap);
+            }
+
+            btn.addEventListener('click', function () { selectOption(q.id, opt.id); });
+            optionsGrid.appendChild(btn);
+          });
+        }
+
+        // Nav buttons
+        if (btnPrev) btnPrev.disabled = currentIndex === 0;
+        if (btnNextText && btnNextIcon) {
+          if (currentIndex === TOTAL_QUESTIONS - 1) {
+            btnNextText.textContent = 'Selesaikan Tes';
+            btnNextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />';
+          } else {
+            btnNextText.textContent = 'Next';
+            btnNextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />';
+          }
+        }
+
+        renderNavigatorStrip();
+        saveSession();
+
+        if (srAnnouncer) {
+          srAnnouncer.textContent = 'Soal ' + (currentIndex + 1) + ' dari ' + TOTAL_QUESTIONS + ': ' + (q.promptText || 'Pilihlah opsi jawaban yang tepat');
+        }
+      }
+
+      function renderNavigatorStrip() {
+        if (!navigatorStrip) return;
+        navigatorStrip.innerHTML = '';
+        for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+          var qId = questions[i].id;
+          var isCurrent = i === currentIndex;
+          var isAnswered = typeof userAnswers[qId] === 'number';
+          var pill = document.createElement('button');
+          pill.type = 'button';
+          pill.setAttribute('aria-label', 'Go to question ' + (i + 1));
+          var pillClass = 'w-full min-h-[36px] sm:min-h-[40px] rounded-xl font-mono text-xs font-semibold flex items-center justify-center transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ';
+          if (isCurrent) {
+            pillClass += 'bg-blue-600 text-white ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-black shadow-xs font-bold scale-105';
+          } else if (isAnswered) {
+            pillClass += 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900';
+          } else {
+            pillClass += 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800/80 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/60 hover:bg-zinc-200 dark:hover:bg-zinc-700';
+          }
+          pill.className = pillClass;
+          pill.textContent = String(i + 1);
+          pill.addEventListener('click', (function (idx) {
+            return function () {
+              clearTimeout(autoAdvanceTimer);
+              currentIndex = idx;
+              renderCurrentQuestion();
+            };
+          })(i));
+          navigatorStrip.appendChild(pill);
+        }
+      }
+
+      function selectOption(questionId, optionId) {
+        userAnswers[questionId] = optionId;
+        renderCurrentQuestion();
+        clearTimeout(autoAdvanceTimer);
+        var answeredIdx = currentIndex;
+        autoAdvanceTimer = setTimeout(function () {
+          if (currentIndex === answeredIdx && currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          }
+        }, 400);
+      }
+
+      // --- Button listeners ---
+      if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex > 0) { currentIndex -= 1; renderCurrentQuestion(); }
+        });
+      }
+      if (btnNext) {
+        btnNext.addEventListener('click', function () {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          } else {
+            openSubmitModal();
+          }
+        });
+      }
+      if (btnTopSubmit) btnTopSubmit.addEventListener('click', openSubmitModal);
+      if (btnExit) btnExit.addEventListener('click', openExitModal);
+      if (btnModalResume) btnModalResume.addEventListener('click', closeExitModal);
+      if (btnBatalSubmit) btnBatalSubmit.addEventListener('click', closeSubmitModal);
+
+      var btnCloseExitModal = document.getElementById('btn-close-exit-modal');
+      var btnCloseSubmitModal = document.getElementById('btn-close-submit-modal');
+      if (btnCloseExitModal) btnCloseExitModal.addEventListener('click', closeExitModal);
+      if (btnCloseSubmitModal) btnCloseSubmitModal.addEventListener('click', closeSubmitModal);
+
+      if (modalExit) {
+        modalExit.addEventListener('click', function (e) {
+          if (e.target === modalExit) closeExitModal();
+        });
+      }
+      if (modalSubmit) {
+        modalSubmit.addEventListener('click', function (e) {
+          if (e.target === modalSubmit) closeSubmitModal();
+        });
+      }
+      if (btnConfirmSubmit) btnConfirmSubmit.addEventListener('click', submitTestImmediately);
+
+      // Focus traps for modals
+      [modalExit, modalSubmit].forEach(function (modal) {
+        modal.addEventListener('keydown', function (e) {
+          if (e.key !== 'Tab') return;
+          var focusable = Array.from(modal.querySelectorAll('button, a, [tabindex]:not([tabindex="-1"])'));
+          var first = focusable[0];
+          var last = focusable[focusable.length - 1];
+          if (e.shiftKey) {
+            if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+          } else {
+            if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+          }
+        });
+      });
+
+      // --- Keyboard navigation ---
+      window.addEventListener('keydown', function (e) {
+        if (!modalExit.classList.contains('hidden') || !modalSubmit.classList.contains('hidden')) {
+          if (e.key === 'Escape') { closeExitModal(); closeSubmitModal(); }
+          return;
+        }
+
+        var currentQ = questions[currentIndex];
+        var optionCount = currentQ ? currentQ.options.length : 0;
+
+        // Dynamic keys 1-N based on current question option count
+        if (e.key >= '1' && parseInt(e.key, 10) <= optionCount) {
+          var keyIdx = parseInt(e.key, 10) - 1;
+          var opts = currentQ._shuffledOptions || currentQ.options;
+          if (currentQ && opts[keyIdx]) selectOption(currentQ.id, opts[keyIdx].id);
+          return;
+        }
+
+        if (e.key === 'ArrowLeft' || e.key === 'p' || e.key === 'P') {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex > 0) { currentIndex -= 1; renderCurrentQuestion(); }
+          return;
+        }
+        if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex < TOTAL_QUESTIONS - 1) { currentIndex += 1; renderCurrentQuestion(); }
+          return;
+        }
+        if (e.key === 'Enter' && currentIndex === TOTAL_QUESTIONS - 1) {
+          openSubmitModal();
+        }
+      });
+
+      // --- Initialize ---
+      startTimer();
+      renderCurrentQuestion();
+    })();
+  </script>
+
+  <script>
+    import { calculateScore } from '../../utils/scoring';
+    import { saveAssessmentRecord } from '../../utils/profileStore';
+    import type { QuestionItem } from '../../data/questions-id';
+
+    declare global {
+      interface Window {
+        __fiqSaveSessionResult?: (
+          userAnswers: Record<number, number>,
+          scoredQuestions: QuestionItem[],
+          testType: 'standard' | 'quick',
+          durationSeconds?: number
+        ) => void;
+      }
+    }
+
+    window.__fiqSaveSessionResult = function (userAnswers, scoredQuestions, testType, durationSeconds) {
+      try {
+        const scoreResult = calculateScore(userAnswers, scoredQuestions, testType);
+        localStorage.setItem('iq_assessment_result', JSON.stringify(scoreResult));
+
+        const reviewData = scoredQuestions.map((q) => {
+          const selectedId = userAnswers[q.id];
+          const selectedOpt = q.options.find((o) => o.id === selectedId);
+          return {
+            id: q.id,
+            domain: q.domain,
+            subType: q.subType,
+            promptType: q.promptType,
+            promptText: q.promptText,
+            promptSvg: q.promptSvg ?? null,
+            a: q.a,
+            b: q.b,
+            explanation: q.explanation,
+            options: q.options,
+            selectedOptionId: selectedId,
+            isCorrect: selectedOpt ? selectedOpt.isCorrect : false,
+          };
+        });
+        localStorage.setItem('iq_review_data', JSON.stringify(reviewData));
+
+        const defaultDuration = testType === 'quick' ? 600 : 1200;
+        const actualDuration = typeof durationSeconds === 'number' && durationSeconds > 0 ? durationSeconds : defaultDuration;
+
+        saveAssessmentRecord({
+          assessmentType: testType === 'quick' ? 'quick-12' : 'flagship-24',
+          assessmentVersion: '1.0.0',
+          completedAt: new Date().toISOString(),
+          durationSeconds: actualDuration,
+          rawScore: scoreResult.rawScore,
+          totalQuestions: scoredQuestions.length,
+          theta: scoreResult.theta,
+          sem: scoreResult.sem,
+          iqEstimate: scoreResult.iqEstimate,
+          confidenceInterval: scoreResult.confidenceInterval,
+          percentile: scoreResult.percentile,
+          domainBreakdown: scoreResult.domainBreakdown,
+        });
+      } catch (err) {
+        console.warn('[QuickTest] Failed to persist scored assessment:', err);
+      }
+    };
+  </script>
+</Layout>

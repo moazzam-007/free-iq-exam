@@ -1,13 +1,15 @@
 ---
 import Layout from '../../components/id/LayoutId.astro';
-import { QUESTION_BANK_ID as QUESTION_BANK } from '../../data/questions-id';
+import { getStandardTestSet } from '../../data/questions-id';
 
 const title = "Soal Tes IQ Online Gratis: 24 Soal, 20 Menit | FreeIQExam";
 const description = "Kerjakan 24 soal tes IQ online gratis dalam 20 menit. Uji penalaran fluida, visual-spasial, kuantitatif, dan verbal, lalu lihat estimasi skor IQ serta persentil setelah selesai.";
 
-// Expose full sanitized bank to client for dynamic session sampling.
-// Client selects 6 items per CHC domain each new session.
-const sanitizedBank = QUESTION_BANK.map((q) => ({
+// Sample 24 items (6 per CHC domain) on the server.
+// Only the selected 24 items are serialized to the client.
+const selectedItems = getStandardTestSet();
+
+const sanitizedBank = selectedItems.map((q) => ({
   id: q.id,
   domain: q.domain,
   subType: q.subType,
@@ -27,9 +29,10 @@ const sanitizedBank = QUESTION_BANK.map((q) => ({
 const bankJson = JSON.stringify(sanitizedBank);
 
 // Obfuscated scoring answer key token: questionId -> { c: correctOptionId, exp: explanation }
+// Scoped exclusively to the 24 selected items
 const answerKeyToken = Buffer.from(
   JSON.stringify(
-    QUESTION_BANK.reduce((acc, q) => {
+    selectedItems.reduce((acc, q) => {
       const correctOpt = q.options.find((o) => o.isCorrect);
       acc[q.id] = {
         c: correctOpt ? correctOpt.id : 1,
@@ -104,7 +107,7 @@ const schema = [
 ];
 ---
 
-<Layout title={title} description={description} schema={schema} enPath="/test">
+<Layout title={title} description={description} schema={schema} enPath="/test" canonicalUrl="https://freeiqexam.com/id/tes" robots="noindex, follow">
   <!-- Distraction-Free Top Navigation Bar -->
   <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
@@ -398,11 +401,6 @@ const schema = [
   <script is:inline define:vars={{ bankJson, answerKeyToken }}>
     (function () {
       var FULL_BANK = JSON.parse(bankJson);
-      var answerKeyMap = {};
-      try {
-        var decoded = atob(answerKeyToken);
-        answerKeyMap = JSON.parse(decoded);
-      } catch (e) {}
       var TOTAL_QUESTIONS = 24;
       var TOTAL_TIME_SECONDS = 20 * 60; // 1200 seconds
 
@@ -626,6 +624,11 @@ const schema = [
       function submitTestImmediately() {
         testSubmitted = true;
         try {
+          var answerKeyMap = {};
+          try {
+            var decoded = atob(answerKeyToken);
+            answerKeyMap = JSON.parse(decoded);
+          } catch (e) {}
           var timeElapsedSec = Math.max(1, Math.round((Date.now() - startTimeMs) / 1000));
           var scoredQuestions = questions.map(function (q) {
             var key = answerKeyMap[q.id];

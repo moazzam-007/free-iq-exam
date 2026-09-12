@@ -9,6 +9,7 @@ interface Props {
   idPath?: string;
   ogImage?: string;
   noindex?: boolean;
+  robots?: string;
   schema?: Record<string, any> | Record<string, any>[];
 }
 
@@ -20,6 +21,7 @@ const {
   idPath,
   ogImage = "/og-image.png",
   noindex = false,
+  robots,
   schema,
 } = Astro.props;
 
@@ -37,8 +39,16 @@ const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
 const pathWithoutLang = Astro.url.pathname.replace(/^\/ru\//, '/').replace(/^\/ru$/, '/');
 const effectiveEnPath = enPath ?? (pathWithoutLang === '/' ? '/' : pathWithoutLang);
 const effectiveIdPath = idPath ?? (pathWithoutLang === '/' ? '/' : pathWithoutLang);
-const enHref = effectiveEnPath === '/' ? siteOrigin + '/' : siteOrigin + effectiveEnPath;
-const idHref = effectiveIdPath === '/' ? siteOrigin + '/id/' : siteOrigin + '/id' + effectiveIdPath;
+const enHref = effectiveEnPath.startsWith('http')
+  ? effectiveEnPath
+  : effectiveEnPath === '/'
+    ? `${siteOrigin}/`
+    : `${siteOrigin}${effectiveEnPath.startsWith('/') ? '' : '/'}${effectiveEnPath}`;
+const idHref = effectiveIdPath.startsWith('http')
+  ? effectiveIdPath
+  : effectiveIdPath === '/'
+    ? `${siteOrigin}/id/`
+    : `${siteOrigin}/id${effectiveIdPath.startsWith('/') ? '' : '/'}${effectiveIdPath}`;
 ---
 
 <!doctype html>
@@ -84,7 +94,11 @@ const idHref = effectiveIdPath === '/' ? siteOrigin + '/id/' : siteOrigin + '/id
     <link rel="alternate" hreflang="ru" href={resolvedCanonical} />
     <link rel="alternate" hreflang="x-default" href={enHref} />
 
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {robots ? (
+      <meta name="robots" content={robots} />
+    ) : noindex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : null}
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />

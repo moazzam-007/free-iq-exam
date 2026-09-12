@@ -1,68 +1,177 @@
 ---
 interface Props {
   currentPath?: string;
+  enPath?: string;
+  idPath?: string;
+  ruPath?: string;
 }
 
-const { currentPath = Astro.url.pathname } = Astro.props;
+const {
+  currentPath = Astro.url.pathname,
+  enPath,
+  idPath,
+  ruPath,
+} = Astro.props;
 
-const normalizePath = (p: string) => p.replace(/\/$/, '') || '/';
+const normalizePath = (p: string) => p.replace(/\/$/, "") || "/";
 const currentNorm = normalizePath(currentPath);
 
-const isHomeActive = currentNorm === '/';
-const isAssessmentsActive = ['/test', '/quick-test', '/practice'].some(
-  (p) => currentNorm === p || (p !== '/' && currentNorm.startsWith(p))
+const enHref = enPath || currentNorm || "/";
+const idHref = idPath
+  ? idPath === "/"
+    ? "/id"
+    : idPath.startsWith("/id")
+      ? idPath
+      : `/id${idPath}`
+  : currentNorm === "/"
+    ? "/id"
+    : `/id${currentNorm}`;
+const ruHref = ruPath
+  ? ruPath === "/"
+    ? "/ru"
+    : ruPath.startsWith("/ru")
+      ? ruPath
+      : `/ru${ruPath}`
+  : currentNorm === "/"
+    ? "/ru"
+    : `/ru${currentNorm}`;
+
+const isHomeActive = currentNorm === "/";
+const isAssessmentsActive = ["/test", "/quick-test", "/practice"].some(
+  (p) => currentNorm === p || (p !== "/" && currentNorm.startsWith(p)),
 );
 
-const isGamesActive = currentNorm === '/games' || currentNorm.startsWith('/games/');
-const isLeaderboardActive = currentNorm === '/leaderboard';
-const isBlogActive = currentNorm === '/blog' || currentNorm.startsWith('/blog/');
-const isScienceActive = ['/iq-score-chart', '/iq-percentile-calculator', '/methodology'].some(
-  (p) => currentNorm === p
-);
+const isGamesActive =
+  currentNorm === "/games" || currentNorm.startsWith("/games/");
+const isLeaderboardActive = currentNorm === "/leaderboard";
+const isBlogActive =
+  currentNorm === "/blog" || currentNorm.startsWith("/blog/");
+const isScienceActive = [
+  "/iq-score-chart",
+  "/iq-percentile-calculator",
+  "/methodology",
+].some((p) => currentNorm === p);
 
 const allMobileLinks = [
-  { href: '/test', label: 'Full IQ Test (20 min)', badge: 'Official', group: 'Assessments' },
-  { href: '/quick-test', label: 'Quick Screening (10 min)', badge: 'Fast', group: 'Assessments' },
-  { href: '/practice', label: 'Practice Hub (Untimed)', badge: '', group: 'Assessments' },
-  { href: '/games', label: 'Cognitive Games', badge: '', group: 'Training & Rank' },
-  { href: '/leaderboard', label: 'Global Leaderboard', badge: '', group: 'Training & Rank' },
-  { href: '/profile', label: 'My Cognitive Profile', badge: '', group: 'Training & Rank' },
-  { href: '/iq-score-chart', label: 'Score Distribution Chart', badge: '', group: 'Science & Reference' },
-  { href: '/iq-percentile-calculator', label: 'Percentile Calculator', badge: '', group: 'Science & Reference' },
-  { href: '/methodology', label: 'Psychometric Methodology', badge: '2PL IRT', group: 'Science & Reference' },
-  { href: '/blog', label: 'Research Articles & Blog', badge: '', group: 'Science & Reference' },
+  {
+    href: "/test",
+    label: "Full IQ Test (20 min)",
+    badge: "Official",
+    group: "Assessments",
+  },
+  {
+    href: "/quick-test",
+    label: "Quick Screening (10 min)",
+    badge: "Fast",
+    group: "Assessments",
+  },
+  {
+    href: "/practice",
+    label: "Practice Hub (Untimed)",
+    badge: "",
+    group: "Assessments",
+  },
+  {
+    href: "/games",
+    label: "Cognitive Games",
+    badge: "",
+    group: "Training & Rank",
+  },
+  {
+    href: "/leaderboard",
+    label: "Global Leaderboard",
+    badge: "",
+    group: "Training & Rank",
+  },
+  {
+    href: "/profile",
+    label: "My Cognitive Profile",
+    badge: "",
+    group: "Training & Rank",
+  },
+  {
+    href: "/iq-score-chart",
+    label: "Score Distribution Chart",
+    badge: "",
+    group: "Science & Reference",
+  },
+  {
+    href: "/iq-percentile-calculator",
+    label: "Percentile Calculator",
+    badge: "",
+    group: "Science & Reference",
+  },
+  {
+    href: "/methodology",
+    label: "Psychometric Methodology",
+    badge: "2PL IRT",
+    group: "Science & Reference",
+  },
+  {
+    href: "/blog",
+    label: "Research Articles & Blog",
+    badge: "",
+    group: "Science & Reference",
+  },
 ];
 
-const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] as const;
+const mobileGroups = [
+  "Assessments",
+  "Training & Rank",
+  "Science & Reference",
+] as const;
 ---
 
-<header class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-zinc-950/85 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-200">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
-    
+<header
+  class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-zinc-950/85 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-200"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4"
+  >
     <!-- 1. Brand Logo: Minimalist 3-Dot Cognitive Mark + Wordmark -->
-    <a href="/" class="flex items-center gap-2.5 group shrink-0" aria-label="FreeIQExam Home">
-      <svg class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform duration-200" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="16" cy="9.5" r="5.5" class="fill-blue-600 dark:fill-blue-500" />
-        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600" />
-        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400" />
+    <a
+      href="/"
+      class="flex items-center gap-2.5 group shrink-0"
+      aria-label="FreeIQExam Home"
+    >
+      <svg
+        class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform duration-200"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle
+          cx="16"
+          cy="9.5"
+          r="5.5"
+          class="fill-blue-600 dark:fill-blue-500"></circle>
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600"
+        ></circle>
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400"
+        ></circle>
       </svg>
-      <span class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-zinc-950 dark:text-white leading-tight">
+      <span
+        class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-zinc-950 dark:text-white leading-tight"
+      >
         Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
       </span>
     </a>
 
     <!-- 2. Center Desktop Navigation Links -->
-    <nav class="hidden lg:flex items-center gap-6 xl:gap-7 text-[13.5px] font-medium" aria-label="Primary Navigation">
-      
+    <nav
+      class="hidden lg:flex items-center gap-6 xl:gap-7 text-[13.5px] font-medium"
+      aria-label="Primary Navigation"
+    >
       <!-- Link: Home -->
       <a
         href="/"
         class={`py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
           isHomeActive
-            ? 'text-blue-600 dark:text-blue-400 font-semibold'
-            : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
         }`}
-        aria-current={isHomeActive ? 'page' : undefined}
+        aria-current={isHomeActive ? "page" : undefined}
       >
         Home
       </a>
@@ -73,33 +182,53 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
           type="button"
           class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
             isAssessmentsActive
-              ? 'text-blue-600 dark:text-blue-400 font-semibold'
-              : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+              ? "text-blue-600 dark:text-blue-400 font-semibold"
+              : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
           }`}
           aria-haspopup="true"
           aria-expanded="false"
         >
           <span>Assessments</span>
-          <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          <svg
+            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
           </svg>
         </button>
 
         <!-- Assessments Flyout Menu -->
-        <div class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50">
-          <div class="w-72 p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40">
+        <div
+          class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50"
+        >
+          <div
+            class="w-72 p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40"
+          >
             <a
               href="/quick-test"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div
+                class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+              >
                 ⚡
               </div>
               <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                <div
+                  class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors"
+                >
                   Quick Test (10 min)
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                <div
+                  class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug"
+                >
                   12 calibrated questions for rapid screening
                 </div>
               </div>
@@ -109,14 +238,20 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/test"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div
+                class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+              >
                 🎯
               </div>
               <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                <div
+                  class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors"
+                >
                   Full Exam (20 min)
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                <div
+                  class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug"
+                >
                   24 items across 4 calibrated CHC domains
                 </div>
               </div>
@@ -126,14 +261,20 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/practice"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item border-t border-zinc-100 dark:border-zinc-800/60 mt-1"
             >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div
+                class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+              >
                 🧩
               </div>
               <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                <div
+                  class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors"
+                >
                   Practice Hub
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                <div
+                  class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug"
+                >
                   Untimed domain drills & explanations
                 </div>
               </div>
@@ -146,9 +287,11 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
       <a
         href="/games"
         class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
-          isGamesActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
+          isGamesActive
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300"
         }`}
-        aria-current={isGamesActive ? 'page' : undefined}
+        aria-current={isGamesActive ? "page" : undefined}
       >
         Cognitive Games
       </a>
@@ -157,9 +300,11 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
       <a
         href="/leaderboard"
         class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
-          isLeaderboardActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
+          isLeaderboardActive
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300"
         }`}
-        aria-current={isLeaderboardActive ? 'page' : undefined}
+        aria-current={isLeaderboardActive ? "page" : undefined}
       >
         Leaderboard
       </a>
@@ -170,33 +315,53 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
           type="button"
           class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
             isScienceActive
-              ? 'text-blue-600 dark:text-blue-400 font-semibold'
-              : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+              ? "text-blue-600 dark:text-blue-400 font-semibold"
+              : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
           }`}
           aria-haspopup="true"
           aria-expanded="false"
         >
           <span>Science & Tools</span>
-          <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          <svg
+            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
           </svg>
         </button>
 
         <!-- Science Flyout Menu (without blog, as requested) -->
-        <div class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50">
-          <div class="w-72 p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40">
+        <div
+          class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50"
+        >
+          <div
+            class="w-72 p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40"
+          >
             <a
               href="/iq-score-chart"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div
+                class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+              >
                 📊
               </div>
               <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                <div
+                  class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors"
+                >
                   Score Distribution Chart
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                <div
+                  class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug"
+                >
                   Gaussian bell curve & standard deviations
                 </div>
               </div>
@@ -206,14 +371,20 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/iq-percentile-calculator"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm font-mono font-bold">
+              <div
+                class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm font-mono font-bold"
+              >
                 %
               </div>
               <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                <div
+                  class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors"
+                >
                   Percentile Calculator
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                <div
+                  class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug"
+                >
                   Convert raw IQ score to population percentile
                 </div>
               </div>
@@ -223,14 +394,20 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
               href="/methodology"
               class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
             >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
+              <div
+                class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+              >
                 🔬
               </div>
               <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                <div
+                  class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors"
+                >
                   Scientific Methodology
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                <div
+                  class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug"
+                >
                   2PL IRT calibration & psychometric validity
                 </div>
               </div>
@@ -243,18 +420,45 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
       <a
         href="/blog"
         class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
-          isBlogActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
+          isBlogActive
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300"
         }`}
-        aria-current={isBlogActive ? 'page' : undefined}
+        aria-current={isBlogActive ? "page" : undefined}
       >
         Blog
       </a>
-
     </nav>
 
-    <!-- 3. Right Action Cluster: Theme Button + Profile Button + Segmented CTA Capsule -->
+    <!-- 3. Right Action Cluster: Language Switcher + Theme Button + Profile Button + Segmented CTA Capsule -->
     <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
-      
+      <!-- Language Switcher Capsule (EN | ID | RU) -->
+      <div
+        class="inline-flex items-center rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 p-0.5 text-xs font-semibold shadow-2xs"
+        aria-label="Language Selector"
+      >
+        <span
+          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 shadow-xs font-bold"
+          title="English (Active)"
+        >
+          EN
+        </span>
+        <a
+          href={idHref}
+          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          title="Switch to Bahasa Indonesia"
+        >
+          ID
+        </a>
+        <a
+          href={ruHref}
+          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          title="Переключить на русский"
+        >
+          RU
+        </a>
+      </div>
+
       <!-- Theme Toggle (Rounded Square) -->
       <button
         id="theme-toggle-btn"
@@ -262,11 +466,33 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
         class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
         aria-label="Toggle light and dark mode"
       >
-        <svg class="w-4 h-4 hidden dark:block text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+        <svg
+          class="w-4 h-4 hidden dark:block text-amber-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+          ></path>
         </svg>
-        <svg class="w-4 h-4 block dark:hidden text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+        <svg
+          class="w-4 h-4 block dark:hidden text-zinc-700"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
+          ></path>
         </svg>
       </button>
 
@@ -274,18 +500,33 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
       <a
         href="/profile"
         class={`w-10 h-10 rounded-xl hidden sm:flex items-center justify-center bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
-          currentNorm === '/profile' ? 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800' : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+          currentNorm === "/profile"
+            ? "text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800"
+            : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
         }`}
         title="My Cognitive Profile & History"
         aria-label="My Cognitive Profile"
       >
-        <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        <svg
+          class="w-4.5 h-4.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+          ></path>
         </svg>
       </a>
 
       <!-- Connected Segmented CTA Capsule -->
-      <div class="hidden sm:inline-flex items-center bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 rounded-full p-[3px] shadow-xs">
+      <div
+        class="hidden sm:inline-flex items-center bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 rounded-full p-[3px] shadow-xs"
+      >
         <a
           href="/quick-test"
           class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors flex items-center gap-1.5 whitespace-nowrap"
@@ -313,13 +554,21 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
         aria-controls="mobile-drawer"
         aria-expanded="false"
       >
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
         </svg>
       </button>
-
     </div>
-
   </div>
 </header>
 
@@ -328,7 +577,8 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
   id="mobile-menu-backdrop"
   class="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 transition-opacity duration-300 opacity-0 pointer-events-none hidden"
   aria-hidden="true"
-></div>
+>
+</div>
 
 <!-- Mobile Navigation Slide Drawer -->
 <aside
@@ -340,14 +590,30 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
   aria-hidden="true"
 >
   <!-- Drawer Header -->
-  <div class="h-16 px-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
+  <div
+    class="h-16 px-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0"
+  >
     <div class="flex items-center gap-2.5">
-      <svg class="w-7 h-7 shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="16" cy="9.5" r="5.5" class="fill-blue-600 dark:fill-blue-500" />
-        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600" />
-        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400" />
+      <svg
+        class="w-7 h-7 shrink-0"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle
+          cx="16"
+          cy="9.5"
+          r="5.5"
+          class="fill-blue-600 dark:fill-blue-500"></circle>
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600"
+        ></circle>
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400"
+        ></circle>
       </svg>
-      <span class="font-heading font-extrabold text-base text-zinc-950 dark:text-white">
+      <span
+        class="font-heading font-extrabold text-base text-zinc-950 dark:text-white"
+      >
         Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
       </span>
     </div>
@@ -357,14 +623,26 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
       class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
       aria-label="Close navigation menu"
     >
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     </button>
   </div>
 
   <!-- Mobile Drawer Fast Action Capsule -->
-  <div class="p-4 border-b border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/50">
+  <div
+    class="p-4 border-b border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-3"
+  >
     <div class="flex items-center gap-2">
       <a
         href="/quick-test"
@@ -379,6 +657,31 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
         <span>Full Test →</span>
       </a>
     </div>
+
+    <!-- Mobile Drawer Language Selector -->
+    <div class="flex items-center justify-between px-1 pt-1">
+      <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400"
+        >Language</span
+      >
+      <div
+        class="inline-flex items-center rounded-lg bg-zinc-200/70 dark:bg-zinc-800 p-0.5 text-xs font-semibold border border-zinc-300/60 dark:border-zinc-700/80"
+      >
+        <span
+          class="px-2.5 py-1 rounded-md bg-white dark:bg-zinc-700 text-blue-600 dark:text-blue-400 shadow-xs font-bold"
+          >EN</span
+        >
+        <a
+          href={idHref}
+          class="px-2.5 py-1 rounded-md text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          >ID</a
+        >
+        <a
+          href={ruHref}
+          class="px-2.5 py-1 rounded-md text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          >RU</a
+        >
+      </div>
+    </div>
   </div>
 
   <!-- Drawer Grouped Links -->
@@ -387,102 +690,104 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
       <a
         href="/"
         class={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
-          currentNorm === '/'
-            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold'
-            : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white'
+          currentNorm === "/"
+            ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold"
+            : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white"
         }`}
-        aria-current={currentNorm === '/' ? 'page' : undefined}
+        aria-current={currentNorm === "/" ? "page" : undefined}
       >
         <span>Home</span>
       </a>
     </div>
 
-    {mobileGroups.map((grp) => (
-      <div>
-        <p class="px-2 pb-2 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-          {grp}
-        </p>
-        <div class="flex flex-col gap-1">
-          {allMobileLinks
-            .filter((l) => l.group === grp)
-            .map((link) => {
-              const isActive = currentNorm === normalizePath(link.href);
-              return (
-                <a
-                  href={link.href}
-                  class={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
-                    isActive
-                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold'
-                      : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white'
-                  }`}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  <span>{link.label}</span>
-                  {link.badge && (
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
-                      {link.badge}
-                    </span>
-                  )}
-                </a>
-              );
-            })}
+    {
+      mobileGroups.map((grp) => (
+        <div>
+          <p class="px-2 pb-2 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            {grp}
+          </p>
+          <div class="flex flex-col gap-1">
+            {allMobileLinks
+              .filter((l) => l.group === grp)
+              .map((link) => {
+                const isActive = currentNorm === normalizePath(link.href);
+                return (
+                  <a
+                    href={link.href}
+                    class={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
+                      isActive
+                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold"
+                        : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white"
+                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    <span>{link.label}</span>
+                    {link.badge && (
+                      <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                        {link.badge}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
+          </div>
         </div>
-      </div>
-    ))}
+      ))
+    }
   </div>
 </aside>
 
 <script>
   // 1. Theme toggle script
-  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  const themeToggleBtn = document.getElementById("theme-toggle-btn");
   if (themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', () => {
+    themeToggleBtn.addEventListener("click", () => {
       try {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
       } catch (e) {}
     });
   }
 
   // 2. Mobile Drawer Toggle logic
-  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-  const mobileDrawer = document.getElementById('mobile-drawer');
-  const mobileDrawerClose = document.getElementById('mobile-drawer-close');
-  const mobileBackdrop = document.getElementById('mobile-menu-backdrop');
+  const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+  const mobileDrawer = document.getElementById("mobile-drawer");
+  const mobileDrawerClose = document.getElementById("mobile-drawer-close");
+  const mobileBackdrop = document.getElementById("mobile-menu-backdrop");
 
   function openDrawer() {
     if (!mobileDrawer || !mobileBackdrop || !mobileMenuBtn) return;
-    mobileBackdrop.classList.remove('hidden');
+    mobileBackdrop.classList.remove("hidden");
     requestAnimationFrame(() => {
-      mobileBackdrop.classList.remove('opacity-0', 'pointer-events-none');
-      mobileBackdrop.classList.add('opacity-100', 'pointer-events-auto');
-      mobileDrawer.classList.remove('translate-x-full', 'pointer-events-none');
-      mobileDrawer.classList.add('translate-x-0', 'pointer-events-auto');
-      mobileDrawer.setAttribute('aria-hidden', 'false');
-      mobileMenuBtn.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
+      mobileBackdrop.classList.remove("opacity-0", "pointer-events-none");
+      mobileBackdrop.classList.add("opacity-100", "pointer-events-auto");
+      mobileDrawer.classList.remove("translate-x-full", "pointer-events-none");
+      mobileDrawer.classList.add("translate-x-0", "pointer-events-auto");
+      mobileDrawer.setAttribute("aria-hidden", "false");
+      mobileMenuBtn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
       if (mobileDrawerClose) mobileDrawerClose.focus();
     });
   }
 
   function closeDrawer() {
     if (!mobileDrawer || !mobileBackdrop || !mobileMenuBtn) return;
-    mobileBackdrop.classList.remove('opacity-100', 'pointer-events-auto');
-    mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
-    mobileDrawer.classList.remove('translate-x-0', 'pointer-events-auto');
-    mobileDrawer.classList.add('translate-x-full', 'pointer-events-none');
-    mobileDrawer.setAttribute('aria-hidden', 'true');
-    mobileMenuBtn.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    mobileBackdrop.classList.remove("opacity-100", "pointer-events-auto");
+    mobileBackdrop.classList.add("opacity-0", "pointer-events-none");
+    mobileDrawer.classList.remove("translate-x-0", "pointer-events-auto");
+    mobileDrawer.classList.add("translate-x-full", "pointer-events-none");
+    mobileDrawer.setAttribute("aria-hidden", "true");
+    mobileMenuBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
     setTimeout(() => {
-      mobileBackdrop.classList.add('hidden');
+      mobileBackdrop.classList.add("hidden");
       mobileMenuBtn.focus();
     }, 300);
   }
 
   if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', () => {
-      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+    mobileMenuBtn.addEventListener("click", () => {
+      const isExpanded = mobileMenuBtn.getAttribute("aria-expanded") === "true";
       if (isExpanded) {
         closeDrawer();
       } else {
@@ -492,25 +797,26 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
   }
 
   if (mobileDrawerClose) {
-    mobileDrawerClose.addEventListener('click', closeDrawer);
+    mobileDrawerClose.addEventListener("click", closeDrawer);
   }
 
   if (mobileBackdrop) {
-    mobileBackdrop.addEventListener('click', closeDrawer);
+    mobileBackdrop.addEventListener("click", closeDrawer);
   }
 
-  window.addEventListener('keydown', (e) => {
-    const isDrawerOpen = mobileMenuBtn?.getAttribute('aria-expanded') === 'true';
+  window.addEventListener("keydown", (e) => {
+    const isDrawerOpen =
+      mobileMenuBtn?.getAttribute("aria-expanded") === "true";
     if (!isDrawerOpen) return;
 
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       closeDrawer();
       return;
     }
 
-    if (e.key === 'Tab' && mobileDrawer) {
+    if (e.key === "Tab" && mobileDrawer) {
       const focusableEls = mobileDrawer.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       );
       if (focusableEls.length === 0) return;
       const firstEl = focusableEls[0] as HTMLElement;
@@ -531,48 +837,50 @@ const mobileGroups = ['Assessments', 'Training & Rank', 'Science & Reference'] a
   });
 
   // 3. Desktop Dropdown hover/click toggle & aria-expanded synchronization
-  const dropdownAssessments = document.getElementById('nav-dropdown-assessments');
-  const dropdownScience = document.getElementById('nav-dropdown-science');
+  const dropdownAssessments = document.getElementById(
+    "nav-dropdown-assessments",
+  );
+  const dropdownScience = document.getElementById("nav-dropdown-science");
 
   [dropdownAssessments, dropdownScience].forEach((dd) => {
     if (!dd) return;
-    const btn = dd.querySelector('button');
+    const btn = dd.querySelector("button");
     if (!btn) return;
 
     const setExpanded = (expanded: boolean) => {
-      btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      btn.setAttribute("aria-expanded", expanded ? "true" : "false");
     };
 
-    dd.addEventListener('mouseenter', () => setExpanded(true));
-    dd.addEventListener('mouseleave', () => {
-      if (!dd.classList.contains('active-click')) setExpanded(false);
+    dd.addEventListener("mouseenter", () => setExpanded(true));
+    dd.addEventListener("mouseleave", () => {
+      if (!dd.classList.contains("active-click")) setExpanded(false);
     });
 
-    dd.addEventListener('focusin', () => setExpanded(true));
-    dd.addEventListener('focusout', (e) => {
+    dd.addEventListener("focusin", () => setExpanded(true));
+    dd.addEventListener("focusout", (e) => {
       if (!dd.contains((e as FocusEvent).relatedTarget as Node)) {
-        if (!dd.classList.contains('active-click')) setExpanded(false);
+        if (!dd.classList.contains("active-click")) setExpanded(false);
       }
     });
 
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const isCurrentlyOpen = dd.classList.contains('active-click');
+      const isCurrentlyOpen = dd.classList.contains("active-click");
       [dropdownAssessments, dropdownScience].forEach((d) => {
-        d?.classList.remove('active-click');
-        d?.querySelector('button')?.setAttribute('aria-expanded', 'false');
+        d?.classList.remove("active-click");
+        d?.querySelector("button")?.setAttribute("aria-expanded", "false");
       });
       if (!isCurrentlyOpen) {
-        dd.classList.add('active-click');
+        dd.classList.add("active-click");
         setExpanded(true);
       }
     });
   });
 
-  document.addEventListener('click', () => {
+  document.addEventListener("click", () => {
     [dropdownAssessments, dropdownScience].forEach((d) => {
-      d?.classList.remove('active-click');
-      d?.querySelector('button')?.setAttribute('aria-expanded', 'false');
+      d?.classList.remove("active-click");
+      d?.querySelector("button")?.setAttribute("aria-expanded", "false");
     });
   });
 </script>

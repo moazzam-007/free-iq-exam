@@ -1,13 +1,15 @@
 ---
 import Layout from '../../components/ru/LayoutRu.astro';
-import { QUESTION_BANK } from '../../data/questions-ru';
+import { getStandardTestSet } from '../../data/questions-ru';
 
 const title = "Тест на IQ: 24 вопроса за 20 минут онлайн бесплатно | FreeIQExam";
 const description = "Пройдите тест на IQ из 24 вопросов за 20 минут. Оценка IQ по шкале SD 15, процентиль и результат сразу после прохождения. Без регистрации, e-mail и оплаты.";
 
-// Expose full sanitized bank to client for dynamic session sampling.
-// Client selects 6 items per CHC domain each new session.
-const sanitizedBank = QUESTION_BANK.map((q) => ({
+// Sample 24 items (6 per CHC domain) on the server.
+// Only the selected 24 items are serialized to the client.
+const selectedItems = getStandardTestSet();
+
+const sanitizedBank = selectedItems.map((q) => ({
   id: q.id,
   domain: q.domain,
   subType: q.subType,
@@ -27,9 +29,10 @@ const sanitizedBank = QUESTION_BANK.map((q) => ({
 const bankJson = JSON.stringify(sanitizedBank);
 
 // Obfuscated scoring answer key token: questionId -> { c: correctOptionId, exp: explanation }
+// Scoped exclusively to the 24 selected items
 const answerKeyToken = Buffer.from(
   JSON.stringify(
-    QUESTION_BANK.reduce((acc, q) => {
+    selectedItems.reduce((acc, q) => {
       const correctOpt = q.options.find((o) => o.isCorrect);
       acc[q.id] = {
         c: correctOpt ? correctOpt.id : 1,
@@ -401,11 +404,6 @@ const schema = [
   <script is:inline define:vars={{ bankJson, answerKeyToken }}>
     (function () {
       var FULL_BANK = JSON.parse(bankJson);
-      var answerKeyMap = {};
-      try {
-        var decoded = atob(answerKeyToken);
-        answerKeyMap = JSON.parse(decoded);
-      } catch (e) {}
       var TOTAL_QUESTIONS = 24;
       var TOTAL_TIME_SECONDS = 20 * 60; // 1200 seconds
 
@@ -637,6 +635,11 @@ const schema = [
       function submitTestImmediately() {
         testSubmitted = true;
         try {
+          var answerKeyMap = {};
+          try {
+            var decoded = atob(answerKeyToken);
+            answerKeyMap = JSON.parse(decoded);
+          } catch (e) {}
           var timeElapsedSec = Math.max(1, Math.round((Date.now() - startTimeMs) / 1000));
           var scoredQuestions = questions.map(function (q) {
             var key = answerKeyMap[q.id];

@@ -133,8 +133,12 @@ function eapEstimate(
   return { theta: estimatedTheta, posteriorVariance };
 }
 
+export const SCORING_MODEL_DESCRIPTION =
+  "Standardized IRT EAP scoring engine utilizing 3PL formulation with empirical lower asymptote guessing correction (c = 1 / options)";
+
 /**
- * Calculates psychometrically calibrated assessment results using 2PL IRT EAP estimation.
+ * Standardized IRT EAP scoring engine utilizing 3PL formulation with empirical lower asymptote guessing correction (c = 1 / options).
+ * Calculates psychometrically calibrated assessment results using IRT EAP estimation.
  *
  * @param userAnswers - Map of question ID to selected option ID
  * @param activeQuestions - The specific question set used for this session
@@ -184,8 +188,9 @@ export function calculateScore(
   // Global EAP estimation
   const { theta: globalTheta, posteriorVariance } = eapEstimate(globalVector);
 
-  // Clamp global theta within plausible psychometric range [-3.0, +3.0]
-  const clampedTheta = Math.max(-3.0, Math.min(3.0, globalTheta));
+  // Clamp global theta within plausible psychometric range [-4.0, +4.0]
+  // (IQ 100 + 15 * 4 = 160 maximum; IQ 100 + 15 * -4 = 60 minimum)
+  const clampedTheta = Math.max(-4.0, Math.min(4.0, globalTheta));
   const sem = Math.sqrt(posteriorVariance);
 
   // Standardized IQ Scale (Mean = 100, SD = 15)
@@ -197,8 +202,8 @@ export function calculateScore(
   const ciLower = Math.max(60, Math.round(iqEstimate - 1.96 * semIq));
   const ciUpper = Math.min(160, Math.round(iqEstimate + 1.96 * semIq));
 
-  // Percentile rank derived from standard normal CDF using continuous latent ability theta
-  const rawPercentile = normalCdf(globalTheta) * 100;
+  // Percentile rank derived from standard normal CDF using the clamped latent ability theta
+  const rawPercentile = normalCdf(clampedTheta) * 100;
   const percentile = Math.max(0.1, Math.min(99.9, Math.round(rawPercentile * 10) / 10));
 
   // Per-domain EAP estimation and standard score computation
@@ -211,7 +216,7 @@ export function calculateScore(
     let domainTheta = 0;
     if (dData.items.length > 0) {
       const { theta: dt } = eapEstimate(dData.items);
-      domainTheta = Math.max(-3.0, Math.min(3.0, dt));
+      domainTheta = Math.max(-4.0, Math.min(4.0, dt));
     }
 
     const rawDomainScore = 100 + 15 * domainTheta;

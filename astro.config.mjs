@@ -1,4 +1,5 @@
 // @ts-check
+process.env.NAPI_RS_FORCE_WASI = 'true';
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';

@@ -5,6 +5,8 @@ interface Props {
   title?: string;
   description?: string;
   canonicalUrl?: string;
+  idPath?: string;
+  ruPath?: string;
   ogImage?: string;
   noindex?: boolean;
   schema?: Record<string, any> | Record<string, any>[];
@@ -14,6 +16,8 @@ const {
   title = "Free IQ Test 2026: Instant Results, No Email Required",
   description = "Take our fast, free IQ test with instant, reliable results. 24 reasoning items, standardized IQ-scale estimate and percentile breakdown. 100% free, no sign-up or credit card.",
   canonicalUrl,
+  idPath,
+  ruPath,
   ogImage = "/og-image.png",
   noindex = false,
   schema,
@@ -22,6 +26,21 @@ const {
 const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
 const resolvedCanonical = canonicalUrl || new URL(Astro.url.pathname, siteOrigin).href;
 const resolvedOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteOrigin).href;
+
+// Reciprocal hreflang alternates
+const currentPath = Astro.url.pathname;
+const effectiveIdPath = idPath ?? (currentPath === '/' ? '/' : currentPath);
+const effectiveRuPath = ruPath ?? (currentPath === '/' ? '/' : currentPath);
+const idHref = effectiveIdPath.startsWith('http')
+  ? effectiveIdPath
+  : effectiveIdPath === '/'
+    ? `${siteOrigin}/id/`
+    : `${siteOrigin}/id${effectiveIdPath.startsWith('/') ? '' : '/'}${effectiveIdPath}`;
+const ruHref = effectiveRuPath.startsWith('http')
+  ? effectiveRuPath
+  : effectiveRuPath === '/'
+    ? `${siteOrigin}/ru/`
+    : `${siteOrigin}/ru${effectiveRuPath.startsWith('/') ? '' : '/'}${effectiveRuPath}`;
 
 const publicGaId = import.meta.env.PUBLIC_GA_ID;
 const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
@@ -63,6 +82,13 @@ const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <link rel="canonical" href={resolvedCanonical} />
+
+    <!-- Reciprocal Hreflang Tags -->
+    <link rel="alternate" hreflang="en" href={resolvedCanonical} />
+    <link rel="alternate" hreflang="id" href={idHref} />
+    <link rel="alternate" hreflang="ru" href={ruHref} />
+    <link rel="alternate" hreflang="x-default" href={resolvedCanonical} />
+
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- Open Graph / Facebook -->

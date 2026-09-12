@@ -25,8 +25,9 @@ const {
   badgeClass = 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
 } = Astro.props;
 
-// Fetch 16 items sorted by difficulty ascending
-const items = getDomainTestSet(domain, itemCount);
+// Fetch 16 items sorted by difficulty ascending.
+// Pass a build-time seed so each SSG build bakes a different item subset/order
+const items = getDomainTestSet(domain, itemCount, Date.now() % 0xffffffff);
 
 // Sanitize question options passed to client: strip isCorrect and explanation
 const clientQuestions = items.map((q) => ({
@@ -483,13 +484,46 @@ const runnerConfig = JSON.stringify({
   (function () {
     var questions = JSON.parse(questionsJson);
     var config = JSON.parse(runnerConfig);
-    var answerKeyMap = {};
-    try {
-      var decoded = atob(answerKeyToken);
-      answerKeyMap = JSON.parse(decoded);
-    } catch (e) {}
+    var _cachedAnswerKeyMap = null;
+    function getAnswerKeyMap() {
+      if (!_cachedAnswerKeyMap) {
+        try {
+          var decoded = atob(answerKeyToken);
+          _cachedAnswerKeyMap = JSON.parse(decoded);
+        } catch (e) {
+          _cachedAnswerKeyMap = {};
+        }
+      }
+      return _cachedAnswerKeyMap;
+    }
     var TOTAL_QUESTIONS = questions.length;
     var TOTAL_TIME_SECONDS = config.testDurationMinutes * 60;
+
+    // Session-seeded shuffle: each user/retake gets a fresh item order instead of
+    // the static set baked at SSG build time. Deterministic per session seed so
+    // page refresh mid-test keeps the same ordering.
+    (function () {
+      var key = 'freeiq_cat_seed_' + config.domain;
+      var seedStr = null;
+      try { seedStr = localStorage.getItem(key); } catch (e) {}
+      var seed;
+      if (seedStr) {
+        seed = parseInt(seedStr, 10) || 0;
+      } else {
+        seed = Math.floor(Math.random() * 0xffffffff);
+        try { localStorage.setItem(key, String(seed)); } catch (e) {}
+      }
+      var s = seed >>> 0;
+      for (var i = questions.length - 1; i > 0; i--) {
+        s += 0x6d2b79f5;
+        var t = s;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        var r = ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        var j = Math.floor(r * (i + 1));
+        var tmp = questions[i]; questions[i] = questions[j]; questions[j] = tmp;
+      }
+    })();
 
     var STORAGE_KEY_SESSION = 'freeiq_cat_session_' + config.domain;
 
@@ -1066,6 +1100,7 @@ const runnerConfig = JSON.stringify({
       if (timerInterval) clearInterval(timerInterval);
       try { localStorage.removeItem(STORAGE_KEY_SESSION); } catch (e) {}
 
+      var answerKeyMap = getAnswerKeyMap();
       var correctCount = 0;
       questions.forEach(function (q) {
         var chosenId = userAnswers[q.id];
@@ -1149,15 +1184,15 @@ const runnerConfig = JSON.stringify({
           resTier.textContent = 'High Average';
           resTier.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800';
         } else if (accuracyPct >= 50) {
-          resTier.textContent = 'Average Range';
-          resTier.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700';
-        } else {
-          resTier.textContent = 'Developing Area';
+          resTier.textContent = 'Baseline Competence';
           resTier.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+        } else {
+          resTier.textContent = 'Growth Opportunity';
+          resTier.className = 'inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-800';
         }
       }
 
-      // Populate Accordion
+      // Render Review Accordion
       renderReviewAccordion();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1167,6 +1202,7 @@ const runnerConfig = JSON.stringify({
       var list = document.getElementById('cat-review-list');
       if (!list) return;
       list.innerHTML = '';
+      var answerKeyMap = getAnswerKeyMap();
 
       questions.forEach(function (q, idx) {
         var chosenId = userAnswers[q.id];
@@ -1226,16 +1262,11 @@ const runnerConfig = JSON.stringify({
     // Retake handler
     if (btnRetake) {
       btnRetake.addEventListener('click', function () {
-        userAnswers = {};
-        flaggedQuestions = {};
-        currentIndex = 0;
-        timeRemaining = TOTAL_TIME_SECONDS;
-        testSubmitted = false;
-        startTimeMs = Date.now();
-        if (resultsRoot) resultsRoot.classList.add('hidden');
-        if (testRunnerRoot) testRunnerRoot.classList.remove('hidden');
-        setMode(currentMode);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        try {
+          localStorage.removeItem('freeiq_cat_seed_' + config.domain);
+          localStorage.removeItem(STORAGE_KEY_SESSION);
+        } catch (e) {}
+        window.location.reload();
       });
     }
 

@@ -5,49 +5,123 @@ interface Props {
   title?: string;
   description?: string;
   canonicalUrl?: string;
+  // Map of locale -> relative or absolute path
+  // e.g. { 'id': '/id/tes-buta-warna', 'fi': '/fi/varinakotesti', 'de': '/de/farbsehtest' }
+  alternates?: Record<string, string>;
   idPath?: string;
   ruPath?: string;
   ogImage?: string;
   noindex?: boolean;
   schema?: Record<string, any> | Record<string, any>[];
+  lang?: string;
 }
 
 const {
   title = "Free IQ Test 2026: Instant Results, No Email Required",
   description = "Take our fast, free IQ test with instant, reliable results. 24 reasoning items, standardized IQ-scale estimate and percentile breakdown. 100% free, no sign-up or credit card.",
   canonicalUrl,
+  alternates,
   idPath,
   ruPath,
   ogImage = "/og-image.png",
   noindex = false,
   schema,
+  lang = "en",
 } = Astro.props;
 
 const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
 const resolvedCanonical = canonicalUrl || new URL(Astro.url.pathname, siteOrigin).href;
 const resolvedOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteOrigin).href;
 
-// Reciprocal hreflang alternates
+// Normalization helper
 const currentPath = Astro.url.pathname;
-const effectiveIdPath = idPath ?? (currentPath === '/' ? '/' : currentPath);
-const effectiveRuPath = ruPath ?? (currentPath === '/' ? '/' : currentPath);
-const idHref = effectiveIdPath.startsWith('http')
-  ? effectiveIdPath
-  : effectiveIdPath === '/'
-    ? `${siteOrigin}/id/`
-    : `${siteOrigin}/id${effectiveIdPath.startsWith('/') ? '' : '/'}${effectiveIdPath}`;
-const ruHref = effectiveRuPath.startsWith('http')
-  ? effectiveRuPath
-  : effectiveRuPath === '/'
-    ? `${siteOrigin}/ru/`
-    : `${siteOrigin}/ru${effectiveRuPath.startsWith('/') ? '' : '/'}${effectiveRuPath}`;
+const normalizedPath = currentPath.replace(/\/$/, '') || '/';
+
+// Legacy routes that have verified full Indonesian and Russian localizations
+const LEGACY_LOCALIZED_PATHS = new Set([
+  '/',
+  '/test',
+  '/quick-test',
+  '/results',
+  '/practice',
+  '/methodology',
+  '/about',
+  '/contact',
+  '/privacy',
+  '/terms',
+  '/blog',
+  '/iq-score-chart',
+  '/iq-classification-scale',
+  '/iq-percentile-calculator',
+  '/average-iq-by-age',
+  '/high-iq-societies',
+  '/mensa-iq-test-practice',
+  '/matrix-reasoning-test',
+  '/spatial-reasoning-test',
+  '/quantitative-reasoning-test',
+  '/verbal-reasoning-test',
+  '/fluid-reasoning-test',
+  '/games',
+  '/games/digit-span',
+  '/games/flanker-test',
+  '/games/memory-matrix',
+  '/games/rotation',
+  '/games/stroop-clash',
+  '/games/symbol-match',
+  '/games/syllogism',
+  '/games/sequence-rush',
+  '/games/math-sprint',
+  '/games/n-back',
+  '/leaderboard',
+  '/profile',
+]);
+
+// Dynamic reciprocal alternates map
+const computedAlternates: Record<string, string> = {};
+
+if (alternates) {
+  // Explicit alternates take highest priority
+  for (const [locale, path] of Object.entries(alternates)) {
+    if (path) computedAlternates[locale] = path;
+  }
+} else {
+  // Backwards-compatibility for explicit idPath or ruPath props
+  if (idPath) computedAlternates['id'] = idPath;
+  if (ruPath) computedAlternates['ru'] = ruPath;
+
+  // Gracefully maintain legacy mappings ONLY for verified routes
+  if (LEGACY_LOCALIZED_PATHS.has(normalizedPath)) {
+    if (!computedAlternates['id']) {
+      computedAlternates['id'] = normalizedPath === '/' ? '/id/' : `/id${normalizedPath}`;
+    }
+    if (!computedAlternates['ru']) {
+      computedAlternates['ru'] = normalizedPath === '/' ? '/ru/' : `/ru${normalizedPath}`;
+    }
+  }
+}
+
+// Format resolved hrefs (relative -> absolute)
+const formatHref = (pathOrUrl: string) => {
+  if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
+    return pathOrUrl;
+  }
+  const cleanPath = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+  return `${siteOrigin}${cleanPath}`;
+};
+
+const alternateEntries = Object.entries(computedAlternates)
+  .filter(([locale]) => locale !== lang && locale !== 'x-default')
+  .map(([locale, targetPath]) => ({
+    locale,
+    href: formatHref(targetPath),
+  }));
 
 const publicGaId = import.meta.env.PUBLIC_GA_ID;
 const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth no-transitions">
+<html lang={lang} class="scroll-smooth no-transitions">
   <head>
     <!-- Theme Initialization Script: Executed immediately before rendering to eliminate FOUC -->
     <script is:inline>
@@ -87,10 +161,11 @@ const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
     <link rel="canonical" href={resolvedCanonical} />
 
     <!-- Reciprocal Hreflang Tags -->
-    <link rel="alternate" hreflang="en" href={resolvedCanonical} />
-    <link rel="alternate" hreflang="id" href={idHref} />
-    <link rel="alternate" hreflang="ru" href={ruHref} />
+    <link rel="alternate" hreflang={lang} href={resolvedCanonical} />
     <link rel="alternate" hreflang="x-default" href={resolvedCanonical} />
+    {alternateEntries.map(({ locale, href }) => (
+      <link rel="alternate" hreflang={locale} href={href} />
+    ))}
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 

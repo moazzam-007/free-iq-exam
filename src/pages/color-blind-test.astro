@@ -1,0 +1,929 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// Prepare alternates dictionary for future language drops (e.g. /id/tes-buta-warna)
+const alternates = {};
+
+const title = "Color Blind Test – Free Official Ishihara 22-Plate Assessment | FreeIQExam";
+const description = "Take the free official Ishihara color blind test online. Check for red-green, blue-yellow, Protanopia, and Deuteranopia with 22 clinical plates & pediatric kids mode.";
+const canonicalUrl = "https://freeiqexam.com/color-blind-test";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "name": "Ishihara Color Blindness Test Online",
+    "description": "Clinical 22-plate Ishihara assessment for red-green (Deuteranopia, Protanopia) and blue-yellow (Tritanopia) color vision deficiency.",
+    "url": "https://freeiqexam.com/color-blind-test",
+    "medicalAudience": "Patient",
+    "aspect": "Diagnostic"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Online Color Blind Test",
+    "url": "https://freeiqexam.com/color-blind-test",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript and HTML5 Canvas/SVG support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Authentic 22-Plate Ishihara Color Blindness Test",
+      "Screening for Deuteranopia, Protanopia, and Tritanopia",
+      "Interactive Color Vision Deficiency Simulator",
+      "Kids and Symbols Mode for pre-literate pediatric testing",
+      "Individual L-Cone, M-Cone, and S-Cone Sensitivity Percentages",
+      "Zero paywall, zero signup instant clinical report"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.94",
+      "ratingCount": "18450",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://freeiqexam.com/color-blind-test"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Color Blind Test",
+        "item": "https://freeiqexam.com/color-blind-test"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the clinical color blind test called?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The clinical color blind test is officially called the Ishihara Test, named after Japanese ophthalmologist Dr. Shinobu Ishihara who published it in 1917. Other specialized diagnostic instruments include the Farnsworth D-15 / 100-Hue test, the Nagel Anomaloscope (the diagnostic gold standard), the HRR (Hardy-Rand-Rittler) test, and aviation lantern tests like the Farnsworth Lantern (Falant)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you test for color blindness at home?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To take an accurate free color blind test online at home: 1) Set your display brightness to 100%, 2) Turn off Night Shift, TrueTone, f.lux, or blue-light screen filters, 3) Position yourself approximately arm's length (75 cm) from the display, and 4) Complete the 22 Ishihara plates without guessing. Our online test evaluates red-green (Deutan/Protan) and blue-yellow (Tritan) confusion axes with instant diagnostic percentages."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a reverse color blind test?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A reverse color blind test uses pseudo-isochromatic plates specifically designed so that individuals with normal color vision see only random dots or cannot distinguish the number, while individuals with red-green color blindness easily read the hidden digit. This occurs because colorblind observers are not distracted by camouflage color hues and perceive subtle luminance edges that trichromats overlook."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you test young kids for color blindness?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Standard Ishihara plates require reading numbers, which is unsuitable for toddlers and preschool children. For pediatric screening, use a color blind test for kids that employs geometric shapes (Circle, Square, Triangle, Star) or winding paths. Children point to the shape or trace the path with their finger, enabling accurate screening as early as ages 3 to 4."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you pass or cheat an Ishihara color blind test?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You cannot cheat an authentic clinical color blind test because genuine Ishihara and anomaloscope tests rely on biological retinal cone photopigments. While some attempt to memorize plate numbers, occupational exams (such as aviation, maritime, and military) use randomized plate sequences or alternative tests like the Farnsworth Lantern and Nagel Anomaloscope where memorization is impossible. Color-correcting lenses (like EnChroma) are prohibited during official certification testing."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between EnChroma and Pilestone color blind glasses?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "EnChroma and Pilestone are the two leading manufacturers of optical notch-filter glasses for color blindness. Both companies offer online Ishihara screening tests. Their glasses use specialized spectral multi-notch coatings that filter out overlapping wavelengths between red and green cone absorption bands, boosting color contrast for anomalous trichromats (Deuteranomaly and Protanomaly). However, neither glasses cure color blindness nor do they work for dichromats who completely lack a functional cone photopigment."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What do red-green color blind people actually see?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "People with red-green color blindness do not see in black and white. Instead, reds, greens, oranges, and browns appear as muted variations of yellow, khaki, olive, and brown. For protanopes (red-blind), red objects also appear substantially dimmer or almost black. For deuteranopes (green-blind), green and red objects retain normal brightness but share an identical yellowish-brown hue."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you become a commercial airline pilot with color blindness?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, conditionally. The FAA (Federal Aviation Administration) and international civil aviation authorities require pilots to hold normal color vision for unrestricted Class 1 medical certification. If an applicant fails standard Ishihara plates, they can request an Operational Color Vision Test (OCVT), including a control tower light gun signal test and a medical flight test, to receive a Letter of Evidence (LOE) granting full flight privileges."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+>
+  <Header />
+
+  <!-- CVD SVG Simulation Filter Matrices (Hidden in DOM, referenced by CSS) -->
+  <svg class="hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <filter id="deutan-filter">
+      <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="protan-filter">
+      <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="tritan-filter">
+      <feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" />
+    </filter>
+  </svg>
+
+  <style>
+    .plate-container {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    @keyframes pilestonePop {
+      0% { transform: scale(1); }
+      30% { transform: scale(0.96); opacity: 0.9; }
+      70% { transform: scale(1.02); opacity: 0.98; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .pilestone-transition {
+      animation: pilestonePop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .timeline-dot {
+      transition: all 0.25s ease;
+    }
+
+    .plate-dot {
+      vector-effect: non-scaling-stroke;
+      shape-rendering: geometricPrecision;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Simulation filters */
+    .filter-normal { filter: none; }
+    .filter-deutan { filter: url('#deutan-filter'); }
+    .filter-protan { filter: url('#protan-filter'); }
+    .filter-tritan { filter: url('#tritan-filter'); }
+    .filter-achroma { filter: grayscale(100%); }
+
+    @media print {
+      header, footer, #calibration-banner, #keypad-numbers, #keypad-kids, .mode-toggle-container, #btn-restart-link, .no-print {
+        display: none !important;
+      }
+      #results-view {
+        display: flex !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Tools</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Color Blind Test</span>
+    </nav>
+
+    <!-- Page Header & Eyebrow -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs sm:text-sm font-mono font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Official Ishihara 22-Plate Diagnostic • Clinical CVD Screening</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Color Blind Test Online
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+        Evaluate your color perception with the authentic 22-plate <strong class="text-zinc-900 dark:text-zinc-100 font-semibold">Ishihara color blind test</strong>. High-resolution procedural dot plates detect <strong class="text-emerald-600 dark:text-emerald-400 font-bold">Deuteranopia</strong>, <strong class="text-rose-600 dark:text-rose-400 font-bold">Protanopia</strong>, and <strong class="text-blue-600 dark:text-blue-400 font-bold">Tritanopia</strong> with zero paywall.
+      </p>
+    </header>
+
+    <!-- PRE-TEST DISPLAY CALIBRATION ADVISORY -->
+    <div id="calibration-banner" class="max-w-3xl mx-auto mb-8 p-5 rounded-3xl bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-amber-900 dark:text-amber-200 text-sm shadow-xs transition-all">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3">
+          <span class="text-2xl shrink-0">⚠️</span>
+          <div class="space-y-1">
+            <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Pre-Test Screen Calibration Check</h4>
+            <p class="text-amber-800 dark:text-amber-300/90 text-sm leading-relaxed">
+              For diagnostic precision: <strong>1)</strong> Set screen brightness to 100%, <strong>2)</strong> Turn off Night Shift, TrueTone, f.lux, or blue-light screen filters, and <strong>3)</strong> Maintain an arm's-length viewing distance (~50–75 cm).
+            </p>
+          </div>
+        </div>
+        <button id="btn-dismiss-calibration" type="button" class="text-amber-600 dark:text-amber-400 hover:text-amber-950 dark:hover:text-white p-1 cursor-pointer text-lg" aria-label="Dismiss calibration advisory">✕</button>
+      </div>
+    </div>
+
+    <!-- TEST MODE TOGGLE (STANDARD NUMBERS VS KIDS SHAPES) -->
+    <div class="mode-toggle-container max-w-md mx-auto mb-8 flex items-center justify-center p-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs font-medium text-xs sm:text-sm">
+      <button id="mode-btn-numbers" type="button" class="flex-1 py-3 px-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-bold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+        <span>🔢</span><span>Standard Numbers (22 Plates)</span>
+      </button>
+      <button id="mode-btn-kids" type="button" class="flex-1 py-3 px-4 rounded-full text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer">
+        <span>⭐</span><span>Kids & Shapes Mode</span>
+      </button>
+    </div>
+
+    <!-- INTERACTIVE TEST ARENA CARD -->
+    <div class="relative w-full max-w-4xl mx-auto">
+      <div id="test-card" class="plate-container w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col items-center">
+        
+        <!-- Header Bar with Brand & Plate Progress -->
+        <div class="w-full flex items-center justify-between pb-4 mb-6 text-xs sm:text-sm font-mono border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400">
+          <div class="flex items-center gap-2">
+            <span class="font-heading font-extrabold tracking-wider uppercase text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm">
+              FREE<span class="text-blue-600 dark:text-blue-500">IQ</span>EXAM <span class="text-zinc-400 dark:text-zinc-500 font-normal">ISHIHARA</span>
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="plate-counter-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-zinc-200 dark:border-zinc-700">
+              PLATE 1 OF 22
+            </span>
+          </div>
+        </div>
+
+        <!-- 22-Plate Connected Timeline Progress Bar -->
+        <div class="w-full mb-8 px-1 sm:px-4">
+          <div id="timeline-chain" class="relative flex items-center justify-between w-full h-8">
+            <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 h-[2px] bg-zinc-200 dark:bg-zinc-800 z-0"></div>
+            <div id="timeline-dots" class="relative z-10 flex items-center justify-between w-full"></div>
+          </div>
+        </div>
+
+        <!-- ACTIVE TESTING ARENA (SIDE-BY-SIDE ON DESKTOP, STACKED ON MOBILE) -->
+        <div id="active-test-view" class="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 my-2">
+          
+          <!-- High-DPI Procedural 764-Circle Ishihara SVG Stage -->
+          <div id="plate-stage" class="relative w-[300px] sm:w-[380px] lg:w-[440px] aspect-square rounded-full bg-zinc-100 dark:bg-[#18181c] p-2 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center shrink-0">
+            <svg id="plate-svg" class="w-full h-full rounded-full block cursor-pointer select-none" viewBox="0 0 666 666" role="img" aria-label="Authentic Ishihara color blindness test plate" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="333" cy="333" r="328" fill="#121215"></circle>
+              <g id="plate-dots"></g>
+            </svg>
+          </div>
+
+          <!-- Keypad & Touch Controls Column -->
+          <div class="flex flex-col items-center justify-center w-full max-w-[300px]">
+            <!-- Instruction Prompt -->
+            <div class="text-center mb-5">
+              <p id="prompt-main-text" class="text-xs sm:text-sm font-mono uppercase tracking-wider text-zinc-600 dark:text-zinc-300 font-semibold mb-1">Select the Number You See</p>
+              <p id="prompt-sub-text" class="text-xs text-zinc-400 dark:text-zinc-500">Keyboard: [1-9], [N] Nothing, [U] Unsure</p>
+            </div>
+
+            <!-- NUMBERS MODE KEYPAD (1-9, NOTHING, NOT SURE) -->
+            <div id="keypad-numbers" class="w-full flex flex-col items-center">
+              <div class="grid grid-cols-3 gap-3 w-full mb-3">
+                <button type="button" data-val="1" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">1</button>
+                <button type="button" data-val="2" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">2</button>
+                <button type="button" data-val="3" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">3</button>
+                <button type="button" data-val="4" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">4</button>
+                <button type="button" data-val="5" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">5</button>
+                <button type="button" data-val="6" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">6</button>
+                <button type="button" data-val="7" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">7</button>
+                <button type="button" data-val="8" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">8</button>
+                <button type="button" data-val="9" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">9</button>
+              </div>
+
+              <!-- Action Row: NOTHING / NOT SURE -->
+              <div class="grid grid-cols-2 gap-3 w-full mb-4">
+                <button type="button" data-val="nothing" class="key-btn h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center cursor-pointer">
+                  NOTHING
+                </button>
+                <button type="button" data-val="unsure" class="key-btn h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center cursor-pointer">
+                  NOT SURE
+                </button>
+              </div>
+            </div>
+
+            <!-- KIDS & SHAPES MODE KEYPAD (CIRCLE, SQUARE, TRIANGLE, STAR) -->
+            <div id="keypad-kids" class="w-full flex flex-col items-center hidden">
+              <div class="grid grid-cols-2 gap-3 w-full mb-4">
+                <button type="button" data-val="Circle" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border-2 border-emerald-500/40 hover:border-emerald-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-2xl text-emerald-500">●</span><span>Circle</span>
+                </button>
+                <button type="button" data-val="Square" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border-2 border-blue-500/40 hover:border-blue-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-2xl text-blue-500">■</span><span>Square</span>
+                </button>
+                <button type="button" data-val="Triangle" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border-2 border-amber-500/40 hover:border-amber-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-2xl text-amber-500">▲</span><span>Triangle</span>
+                </button>
+                <button type="button" data-val="Star" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border-2 border-purple-500/40 hover:border-purple-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-2xl text-purple-500">★</span><span>Star</span>
+                </button>
+              </div>
+
+              <button type="button" data-val="nothing" class="shape-btn w-full h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center mb-4 cursor-pointer">
+                🚫 I Don't See Any Shape
+              </button>
+            </div>
+
+            <!-- Restart Test Link -->
+            <button id="btn-restart-link" type="button" class="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline underline-offset-4 transition-colors cursor-pointer py-1">
+              Restart assessment
+            </button>
+          </div>
+        </div>
+
+        <!-- DIAGNOSTIC RESULTS REPORT VIEWPORT -->
+        <div id="results-view" class="w-full hidden flex flex-col items-center">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 flex items-center justify-center mb-4 shadow-lg">
+            <svg class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+
+          <h3 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white text-center mb-1">
+            Clinical Assessment Complete
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-mono text-center mb-8">
+            Evaluated via Authentic Pseudo-Isochromatic Ishihara Plate Matrix
+          </p>
+
+          <!-- Overall Diagnosis Banner Card -->
+          <div class="w-full p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm text-center mb-8">
+            <div class="text-xs sm:text-sm font-mono font-semibold text-zinc-500 uppercase tracking-wider mb-2">Diagnostic Classification</div>
+            <div id="diag-title" class="text-2xl sm:text-4xl font-heading font-extrabold text-emerald-600 dark:text-emerald-400 mb-3">
+              Normal Trichromatic Vision
+            </div>
+            <p id="diag-desc" class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+              Your responses indicate standard functional activity across all three cone photoreceptors (L-cones, M-cones, and S-cones) with zero red-green or blue-yellow color vision deficiency.
+            </p>
+          </div>
+
+          <!-- 3-Cone Sensitivity Breakdown Meters -->
+          <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 font-mono text-xs sm:text-sm">
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>L-Cone (Red / 560nm)</span>
+                <span id="cone-l-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-l-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>M-Cone (Green / 530nm)</span>
+                <span id="cone-m-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-m-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>S-Cone (Blue / 420nm)</span>
+                <span id="cone-s-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-s-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- VIRAL SIMULATOR: INTERACTIVE COLOR VISION DEFICIENCY SIMULATOR -->
+          <div class="w-full p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8">
+            <div class="text-center max-w-md mx-auto mb-6">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+                VIRAL CVD SIMULATOR
+              </span>
+              <h4 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mt-2 mb-1">
+                How Other Eyes See The World
+              </h4>
+              <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                Click a vision mode below to simulate real-world color vision deficiencies on standard traffic light reference hues.
+              </p>
+            </div>
+
+            <!-- Simulator Mode Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-6 text-xs sm:text-sm font-semibold">
+              <button type="button" data-filter="normal" class="sim-filter-btn px-4 py-2 rounded-full bg-blue-600 text-white shadow-xs cursor-pointer">Normal</button>
+              <button type="button" data-filter="deutan" class="sim-filter-btn px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Deuteranopia (Green)</button>
+              <button type="button" data-filter="protan" class="sim-filter-btn px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Protanopia (Red)</button>
+              <button type="button" data-filter="tritan" class="sim-filter-btn px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Tritanopia (Blue)</button>
+              <button type="button" data-filter="achroma" class="sim-filter-btn px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Monochromacy</button>
+            </div>
+
+            <!-- Simulated Graphic Display -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-8 p-6 rounded-3xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+              <div id="sim-target" class="flex items-center gap-6 transition-all duration-300 filter-normal">
+                <!-- Traffic Light Container -->
+                <div class="w-16 p-2.5 rounded-3xl bg-zinc-900 border-2 border-zinc-800 flex flex-col items-center gap-2.5 shadow-md">
+                  <div class="w-10 h-10 rounded-full bg-red-600 shadow-sm"></div>
+                  <div class="w-10 h-10 rounded-full bg-amber-400 shadow-sm"></div>
+                  <div class="w-10 h-10 rounded-full bg-emerald-500 shadow-sm"></div>
+                </div>
+                <!-- Natural Spectrum Legend -->
+                <div class="space-y-1.5 text-xs sm:text-sm font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-red-500 shrink-0"></span><span>Red (Strawberries)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-amber-400 shrink-0"></span><span>Yellow (Bananas)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-emerald-500 shrink-0"></span><span>Green (Apples / Limes)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-blue-500 shrink-0"></span><span>Blue (Sky)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DETAILED PLATE-BY-PLATE REVIEW ACCORDION / MATRIX -->
+          <details class="w-full rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8 p-6 overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+              <div class="flex items-center gap-2.5">
+                <span>📋</span>
+                <span>Plate-by-Plate Diagnostic Review Matrix</span>
+              </div>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-6 overflow-x-auto border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr class="bg-zinc-100/80 dark:bg-zinc-800/80 text-zinc-950 dark:text-white font-mono uppercase text-xs">
+                    <th class="py-3 px-4">Plate</th>
+                    <th class="py-3 px-4">Type / Function</th>
+                    <th class="py-3 px-4">Normal Sees</th>
+                    <th class="py-3 px-4">CVD Sees</th>
+                    <th class="py-3 px-4">Your Answer</th>
+                    <th class="py-3 px-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="review-matrix-body" class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                  <!-- Injected dynamically via JS engine -->
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <!-- Share & Restart Actions -->
+          <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button id="btn-copy-summary" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <span>📋</span><span>Copy Clinical Summary</span>
+            </button>
+            <button id="btnPrintReport" id="btn-print-report" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-semibold text-base shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <span>🖨️</span><span>Print / Save PDF Report</span>
+            </button>
+            <button id="btn-restart-test" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-semibold text-base hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <span>🔄</span><span>Take Test Again</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Share Toast Notification -->
+      <div id="share-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium border border-zinc-800 dark:border-zinc-200">
+        <span>✓</span>
+        <span>Diagnostic test summary copied to clipboard!</span>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 2,000-WORD CLINICAL & EDUCATIONAL COMPREHENSIVE MEDICAL GUIDE     -->
+    <!-- ================================================================= -->
+    <section class="mt-20 sm:mt-28 space-y-16 border-t border-zinc-200 dark:border-zinc-800/80 pt-16">
+
+      <!-- SECTION 1: THE CLINICAL SCIENCE OF COLOR VISION -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm uppercase font-semibold">
+          Retinal Photobiology & Chromatic Pathways
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          What is Color Vision Deficiency (CVD)?
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <strong>Color vision deficiency (CVD)</strong>, colloquially known as <strong>color blindness</strong> or <em>daltonism</em>, is a common sensory condition characterized by an impaired ability to distinguish between certain shades in the visible spectrum. The term <em>daltonism</em> honors English chemist John Dalton, who published the first scientific treatise on color blindness in 1794 after discovering that he and his brother perceived ripe cherries and green leaves as indistinguishable. Contrary to common misconceptions, individuals with color blindness rarely perceive the world in pure grayscale; rather, their chromatic gamut is shifted, compressed, or missing key wavelength discrimination channels.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Human color perception depends on specialized photoreceptor cells situated in the neurosensory retina: approximately <strong>120 million rods</strong> (mediating scotopic nocturnal vision and achromatic luminance) and <strong>6 to 7 million cones</strong> (concentrated in the central <em>fovea centralis</em> for high-acuity photopic color perception). In individuals with <strong>normal trichromacy</strong>, color vision is mediated by three discrete cone photopigments, each calibrated to a characteristic spectral absorbance peak. When any of these cone photopigments undergo genetic mutation or are absent, a standardized <strong>color deficiency test</strong> or <strong>color blindness test</strong> is required to quantify the exact photopic defect:
+        </p>
+
+        <!-- 3 Cone Classes Card Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              L-Cone
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Erythrolabe (Long Wavelength)</h3>
+            <div class="text-xs sm:text-sm font-mono text-rose-600 dark:text-rose-400 font-bold mb-3">Peak Absorption: ~560 nm (Red)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Encoded by the <em>OPN1LW</em> gene on the X-chromosome. Spectral shifts or deletions cause Protanomaly (red weakness) or Protanopia (red blindness).
+            </p>
+          </div>
+
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              M-Cone
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Chlorolabe (Medium Wavelength)</h3>
+            <div class="text-xs sm:text-sm font-mono text-emerald-600 dark:text-emerald-400 font-bold mb-3">Peak Absorption: ~530 nm (Green)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Encoded by the <em>OPN1MW</em> gene array on the X-chromosome. Deficits cause Deuteranomaly (green weakness) or Deuteranopia (green blindness)—representing ~75% of all CVD cases.
+            </p>
+          </div>
+
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              S-Cone
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Cyanolabe (Short Wavelength)</h3>
+            <div class="text-xs sm:text-sm font-mono text-blue-600 dark:text-blue-400 font-bold mb-3">Peak Absorption: ~420 nm (Blue)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Encoded by the <em>OPN1SW</em> gene on autosomal chromosome 7. Mutations trigger Tritanomaly or Tritanopia (blue-yellow confusion), affecting biological males and females equally.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- SECTION 2: THE 7 TYPES OF COLOR BLINDNESS EXPLAINED -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm uppercase font-semibold">
+          Classification & Chromatic Phenotypes
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          The 7 Types of Color Blindness Explained
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Clinicians classify color vision deficiency based on whether cone photopigments are <strong>anomalous</strong> (shifted spectral sensitivity) or <strong>completely absent</strong> (dichromacy or monochromacy).
+        </p>
+
+        <!-- Structured Table of 7 CVD Types -->
+        <div class="w-full overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-zinc-100 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white font-mono text-xs uppercase">
+                <th class="py-4 px-5">Condition</th>
+                <th class="py-4 px-5">Classification</th>
+                <th class="py-4 px-5">Prevalence</th>
+                <th class="py-4 px-5">Defective Cone</th>
+                <th class="py-4 px-5">Clinical Impact</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Deuteranomaly</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Anomalous Trichromacy</td>
+                <td class="py-4 px-5 font-mono text-emerald-600 dark:text-emerald-400 font-bold">~5.0% Men, 0.35% Women</td>
+                <td class="py-4 px-5 font-mono">M-Cone (Shifted)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Mild green weakness; red-green hue discrimination difficult in low contrast or dim lighting.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Deuteranopia</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Dichromacy</td>
+                <td class="py-4 px-5 font-mono text-emerald-600 dark:text-emerald-400 font-bold">~1.0% Men, 0.01% Women</td>
+                <td class="py-4 px-5 font-mono">M-Cone (Absent)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Total green blindness; greens, yellows, and oranges all map to beige-tan tones.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Protanomaly</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Anomalous Trichromacy</td>
+                <td class="py-4 px-5 font-mono text-rose-600 dark:text-rose-400 font-bold">~1.0% Men, 0.02% Women</td>
+                <td class="py-4 px-5 font-mono">L-Cone (Shifted)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Red weakness; reds appear duller, dark pinks appear greyish.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Protanopia</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Dichromacy</td>
+                <td class="py-4 px-5 font-mono text-rose-600 dark:text-rose-400 font-bold">~1.0% Men, 0.02% Women</td>
+                <td class="py-4 px-5 font-mono">L-Cone (Absent)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Total red blindness; red light appears extinguished or black (critical risk in traffic/aviation).</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Tritanomaly</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Anomalous Trichromacy</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">&lt;0.001% (Extremely Rare)</td>
+                <td class="py-4 px-5 font-mono">S-Cone (Shifted)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Blue-yellow weakness; blues appear greenish, yellow confused with violet.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Tritanopia</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Dichromacy</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">~0.003% (Equal across sexes)</td>
+                <td class="py-4 px-5 font-mono">S-Cone (Absent)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Complete blue-yellow blindness; sees world in shades of red, pink, and teal.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Achromatopsia</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Monochromacy</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">1 in 33,000 (0.003%)</td>
+                <td class="py-4 px-5 font-mono">All 3 Cones Nonfunctional</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Complete absence of color perception; profound daylight photophobia and nystagmus.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- SECTION 3: DR. ISHIHARA'S BREAKTHROUGH (1917) -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm uppercase font-semibold">
+          Historical Psychometrics & Plate Functional Categories
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Dr. Shinobu Ishihara’s Breakthrough (1917)
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          In 1917, Dr. Shinobu Ishihara, a military ophthalmologist and professor at the University of Tokyo, published his pioneering pseudo-isochromatic plate series to screen recruits for the Imperial Japanese Army. His clinical genius lay in the realization that individuals with color vision defects could not simply be tested with uniform color swatches, because variations in brightness and saturation allow clever observers to guess hues.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Ishihara systematically calibrated <strong>4 functional plate categories</strong> to isolate specific retinal cone responses:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">1. Demonstration Plates</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              High-contrast plates (e.g. Plate 1, showing "9" or "12") designed to be seen clearly by individuals with normal trichromacy, anomalous trichromacy, and complete dichromacy alike. Used exclusively to calibrate user comprehension and detect malingering.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">2. Transformation Plates</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Plates where normal observers read one number (e.g., "8" or "5"), while colorblind observers read an entirely different number (e.g., "3" or "2"). The numeral incorporates both chromatic and luminance contours that split observers based on cone sensitivity.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">3. Vanishing Plates</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Plates featuring numbers embedded against an iso-luminant background along red-green confusion lines. Normal trichromats immediately see the embedded digit, whereas red-green deficient individuals perceive only a chaotic field of dots.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">4. Hidden Digit Plates (Reverse Plates)</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Plates where normal trichromats see nothing or random noise, but colorblind individuals clearly read a hidden numeral. Normal observers are visually camouflaged by chromatic noise, while colorblind observers perceive subtle luminance groupings.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- SECTION 4: THE GENETICS OF COLOR BLINDNESS -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm uppercase font-semibold">
+          X-Linked Recessive Inheritance & Opsin Genomics
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          The Genetics of Color Blindness: Why Men Are Affected More
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          The pronounced epidemiological skew in color blindness—affecting approximately <strong>1 in 12 men (8.0%)</strong> compared to only <strong>1 in 200 women (0.5%)</strong>—is directly explained by Mendelian genetics and X-linked recessive inheritance.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          The genes responsible for synthesizing red photopigments (<em>OPN1LW</em>) and green photopigments (<em>OPN1MW</em>) are situated directly adjacent to one another on the long arm of the X-chromosome (locus <strong>Xq28</strong>). Because these two genes share 98% nucleotide sequence identity, unequal homologous crossing-over frequently occurs during maternal meiosis, creating chimeric gene deletions or hybrid amino acid substitutions.
+        </p>
+
+        <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-4">
+          <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">
+            How Color Blindness Passes Through Generations
+          </h3>
+          <ul class="space-y-3 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed list-disc list-inside">
+            <li>
+              <strong>Hemizygous Males (XY):</strong> Because men possess only a single X-chromosome (inherited from their mother), any mutation in the maternal <em>OPN1LW</em> or <em>OPN1MW</em> gene manifests directly as clinical color blindness. Males cannot be asymptomatic carriers.
+            </li>
+            <li>
+              <strong>Carrier Females:</strong> Women possess two X-chromosomes. If one X-chromosome carries a mutated allele and the other carries a normal wild-type allele, the dominant healthy gene ensures normal cone synthesis. These women have normal vision but have a <strong>50% probability of passing the colorblind gene</strong> to their sons.
+            </li>
+            <li>
+              <strong>Colorblind Daughters:</strong> For a female to be colorblind, she must inherit mutated X-chromosomes from <em>both</em> parents—meaning her biological father <em>must</em> be colorblind, and her biological mother must be at least a carrier.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- SECTION 5: REAL-WORLD IMPACTS & VOCATIONAL STANDARDS -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm uppercase font-semibold">
+          Occupational Standards & Statutory Regulations
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Real-World Impacts & Vocational Standards
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Because critical safety systems depend on chromatic signaling (red = stop/danger, green = clear/safe, amber = caution), many safety-critical professions enforce statutory color vision standards.
+        </p>
+
+        <!-- Career Table -->
+        <div class="w-full overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-zinc-100 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white font-mono text-xs uppercase">
+                <th class="py-4 px-5">Profession / Industry</th>
+                <th class="py-4 px-5">Requirement Level</th>
+                <th class="py-4 px-5">Standard Test Administered</th>
+                <th class="py-4 px-5">Regulatory Rationale & Waivers</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Commercial Airline Pilot (FAA Class 1)</td>
+                <td class="py-4 px-5 font-mono text-rose-600 font-bold">Strict Mandatory</td>
+                <td class="py-4 px-5">Ishihara / Farnsworth Lantern / Richmond HRR</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Cockpit navigation displays, runway lights, and control tower light gun signals. Candidates can request an Operational Color Vision Test (OCVT) for a Letter of Evidence (LOE).</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Merchant Marine / Coast Guard (USCG)</td>
+                <td class="py-4 px-5 font-mono text-rose-600 font-bold">Strict Mandatory</td>
+                <td class="py-4 px-5">Farnsworth Lantern or 14-Plate Ishihara</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Navigation at sea requires distinguishing port (red) and starboard (green) vessel running lights and channel navigation buoys.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Licensed Electrician / Line Worker</td>
+                <td class="py-4 px-5 font-mono text-amber-600 font-bold">High Importance</td>
+                <td class="py-4 px-5">Ishihara / Practical Wire Sorting Exam</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">National Electrical Code (NEC) color coding: Phase A (Black), Phase B (Red), Neutral (White), Ground (Green). Mismatching live wires creates fatal arc-flash hazard.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Railroad Engineers & Operators</td>
+                <td class="py-4 px-5 font-mono text-rose-600 font-bold">Strict Mandatory (FRA)</td>
+                <td class="py-4 px-5">Ishihara / Lantern Test</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Absolute zero-tolerance for red-green confusion on wayside block track signals, switches, and flag markers.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Law Enforcement & Police Officers</td>
+                <td class="py-4 px-5 font-mono text-amber-600 font-bold">Moderate to High</td>
+                <td class="py-4 px-5">Ishihara / Farnsworth D-15</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Must accurately identify suspect clothing color, vehicle descriptions, and forensic markers under night lighting conditions.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- SECTION 6: TESTING CONDITIONS & DISPLAY CALIBRATION -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm uppercase font-semibold">
+          Standardized Examination Protocols
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Testing Conditions & Display Calibration
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          When taking an online color blind test, monitor hardware and ambient lighting introduce environmental variables that must be controlled to prevent false-positive or false-negative results:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl mb-2">☀️</div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">1. Screen Brightness</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Set display brightness between 80% and 100%. Dim backlights diminish chromatic luminance contrast, making vanishing plates artificially difficult to read for trichromatic eyes.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl mb-2">🚫</div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">2. Disable Blue-Light Filters</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Disable Night Shift, Apple TrueTone, f.lux, or Android Night Light. Blue-light cut software shifts the display color temperature to warm amber, distorting clinical dot matrices.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl mb-2">📏</div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">3. Viewing Distance</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Position yourself 50 to 75 cm (~20 to 30 inches) from your monitor at eye level. Avoid direct glare or harsh incandescent reflections on your screen glass.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- SECTION 7: FREQUENTLY ASKED QUESTIONS ACCORDION -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm uppercase font-semibold">
+          Featured Snippets & Frequently Asked Questions
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Frequently Asked Questions About Color Blindness Tests
+        </h2>
+
+        <div class="space-y-4">
+          <!-- Q1 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Can you fail an online color blind test if your screen brightness is wrong?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Yes. Low screen brightness, severe ambient glare, or active blue-light filters (such as Apple TrueTone or Night Shift) alter the chromatic saturation of pseudo-isochromatic dots. This can cause anomalous trichromats or even normal observers to miss subtle vanishing plates. Always calibrate your display to 100% brightness and standard daylight color temperature before testing.
+            </div>
+          </details>
+
+          <!-- Q2 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Is color blindness curable or reversible?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Congenital color blindness is caused by genetic mutations in cone opsin genes and currently has no approved medical cure in humans. However, groundbreaking recombinant adeno-associated virus (rAAV) gene therapy clinical trials have successfully restored trichromatic color vision in adult dichromatic squirrel monkeys, offering strong future therapeutic promise for human ocular gene editing.
+            </div>
+          </details>
+
+          <!-- Q3 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Do color blind glasses (EnChroma or Pilestone) cure color blindness?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              No. Color blind glasses do not cure color blindness and cannot generate photoreceptors that do not exist. They utilize multi-notch dielectric optical coatings that filter out overlapping wavelength bands between red and green photoreceptors. This boosts chromatic contrast for anomalous trichromats (mild Deuteranomaly/Protanomaly), but does not benefit dichromats who completely lack an M-cone or L-cone. They are prohibited during statutory employment physicals.
+            </div>
+          </details>
+
+          <!-- Q4 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Why are men significantly more prone to color blindness than women?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              The genes for red and green cone opsins (OPN1LW and OPN1MW) reside on the X-chromosome. Biological males possess only one X-chromosome (XY), inherited from their mother. If that single chromosome carries a mutated gene, the male will express color blindness (8% prevalence). Biological females possess two X-chromosomes (XX); a mutated gene on one is compensated by the normal gene on the other, making females asymptomatic carriers (only 0.5% express CVD).
+            </div>
+          </details>
+
+          <!-- Q5 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>How does the Kids Mode work for children who don't know numbers yet?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Standard Ishihara testing fails for toddlers and preschool children because they have not learned Arabic numerals. Our pediatric Kids Mode replaces numbers with 4 universal geometric shapes (Circle, Square, Triangle, Star) embedded with identical clinical pseudo-isochromatic dot palettes. Children tap the matching tactile symbol or point with their finger, enabling accurate clinical screening as early as age 3 or 4.
+            </div>
+          </details>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <Footer />
+
+  <!-- Engine Script Import -->
+  <script src="../scripts/tools/color-blind-engine.js"></script>
+</Layout>

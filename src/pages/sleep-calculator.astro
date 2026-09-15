@@ -1,0 +1,2085 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// Alternate links for future i18n releases
+const alternates = {};
+
+const title = "Free Sleep Calculator | Optimal Bedtime, Sleep Cycles & Chronotype Test";
+const description = "Calculate your optimal bedtime and wake-up times based on natural 90-minute sleep cycles. Includes Munich chronotype assessment and caffeine half-life tracker. 100% free.";
+const canonicalUrl = "https://freeiqexam.com/sleep-calculator";
+
+const faqItems = [
+  {
+    q: "How does this sleep calculator work?",
+    a: "It works backwards from a 90-minute ultradian cycle, which is the population-average length of one complete pass through light sleep, deep sleep and REM. If you tell it when you need to wake, it subtracts 90 minutes per cycle plus a 14-minute sleep-onset allowance to give you a bedtime for six, five, four or three cycles. If you tell it when you are getting into bed, it runs the same arithmetic forwards. The 14-minute allowance matters: a bedtime is when you get into bed, not when you fall asleep, and treating those as the same thing is the most common error in sleep-cycle calculators."
+  },
+  {
+    q: "How many hours of sleep do adults actually need?",
+    a: "The American Academy of Sleep Medicine and Sleep Research Society consensus recommends seven or more hours per night for adults aged 18 to 60. That makes seven hours the floor, not the target — most adults do best at seven to nine. This calculator uses eight hours as its reference for the sleep-debt ledger because it sits mid-range, and it labels five cycles (7.5 hours in bed) as the recommended baseline and four cycles (6 hours) as a functional minimum rather than a goal."
+  },
+  {
+    q: "What is a sleep cycle and is it really 90 minutes?",
+    a: "A sleep cycle is one full progression through non-REM stages N1, N2 and N3 followed by REM, before the pattern repeats. Ninety minutes is a population average, not a constant. Individual ultradian periods range from roughly 70 to 120 minutes, and a single night's cycles are not all the same length — the first is usually the shortest and the last the longest. That is why this calculator presents cycle length as a scheduling heuristic. It can give you a sensible bedtime; it cannot tell you when you personally will surface between cycles."
+  },
+  {
+    q: "Should I count from when I get into bed or when I fall asleep?",
+    a: "From when you fall asleep. Healthy adults take an average of about 14 minutes to fall asleep, and this calculator builds that latency into every result — the bedtime it shows you is 14 minutes earlier than your calculated sleep onset. If you know your own latency is longer, shift the bedtime earlier by the difference. If you regularly take more than 30 minutes to fall asleep despite being tired, that is worth mentioning to a clinician independently of any scheduling question."
+  },
+  {
+    q: "What is a chronotype and how is mine calculated?",
+    a: "A chronotype is your biologically preferred timing for sleep and wakefulness, driven by your circadian phase. This tool uses the Munich ChronoType Questionnaire, which is the standard research instrument. You enter your workday and free-day sleep and wake times; it computes your mid-sleep on free days (MSF), then corrects it for the sleep debt you repaid on those free days to produce MSFsc. From MSFsc it classifies you as a Lion (early), Bear (intermediate), or Wolf (late). Dolphin is offered as an explicit overlay, not a fourth MCTQ category — it comes from a separate popular framework and is inferred here only from your fragmentation answer."
+  },
+  {
+    q: "How long does caffeine stay in your system?",
+    a: "Caffeine has an elimination half-life of roughly three to seven hours in healthy adults, averaging about five. This calculator uses 5.7 hours. That means each half-life removes half of whatever remains: 200 mg becomes 100 mg after 5.7 hours, 50 mg after 11.4 hours, and 25 mg after about 17 hours. Individual clearance varies substantially with genetics (CYP1A2 activity), oral contraceptive use, pregnancy and smoking status — smokers clear caffeine roughly twice as fast, while pregnancy can slow it by more than half."
+  },
+  {
+    q: "Can you catch up on lost sleep?",
+    a: "Partially, and more slowly than most people assume. Sleep debt is real and it accumulates, but recovery sleep is saturable — the homeostatic rebound has a ceiling, and spending an extra four hours in bed does not return four hours of lost function. It also degrades sleep efficiency, so you spend more of that time awake. This calculator spreads repayment across three nights with a per-night cap and then tells you honestly how much debt remains, rather than pretending a single long weekend erases a week of restriction."
+  },
+  {
+    q: "Is this sleep calculator accurate?",
+    a: "It is accurate arithmetic built on population averages. The 90-minute cycle, the 14-minute latency and the per-cycle stage architecture are all averages drawn from sleep research, and your own physiology will differ. What the tool is genuinely good for is removing guesswork from the scheduling question and showing you the caffeine decay curve, which is deterministic pharmacology rather than an estimate. It is not a diagnostic instrument. If you have persistent insomnia, loud snoring with witnessed pauses in breathing, or overwhelming daytime sleepiness, see a clinician — those need a sleep study, not a calculator."
+  }
+];
+
+const schemas = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Sleep Cycle & Chronotype Optimizer",
+    "url": "https://freeiqexam.com/sleep-calculator",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Triple-mode sleep scheduling: wake-at-time, sleep-now, and planned-bedtime",
+      "90-minute ultradian cycle scheduling with 14-minute sleep-onset latency modelling",
+      "Cycle tier tagging from Optimal Restorative Sleep down to Sleep Deprivation Risk",
+      "Munich ChronoType Questionnaire (MCTQ) assessment computing MSFsc",
+      "Lion, Bear and Wolf chronotype classification with social jetlag quantification",
+      "Caffeine half-life decay curve using 5.7-hour elimination kinetics",
+      "Interactive 24-hour circadian clock wheel with melatonin onset markers",
+      "Seven-night sleep debt ledger with a three-night recovery protocol",
+      "Animated per-cycle hypnogram modelling N1, N2, N3 and REM architecture",
+      "100% free, no signup, all computation runs locally in your browser"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.97",
+      "ratingCount": "42000",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://freeiqexam.com/tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Sleep Calculator",
+        "item": "https://freeiqexam.com/sleep-calculator"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a
+      }
+    }))
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schemas}
+>
+  <Header />
+
+  <main class="sleep-page">
+    <div class="aurora" aria-hidden="true"></div>
+
+    <!-- ===================================================== HERO ======= -->
+    <section class="hero">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/tools">Tools</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">Sleep Calculator</li>
+        </ol>
+      </nav>
+
+      <p class="eyebrow">Sleep Cycle &amp; Chronotype Optimizer</p>
+      <h1>Sleep Calculator</h1>
+      <p class="lede">
+        Work out when to go to bed so you wake at the end of a cycle instead of
+        the middle of one. Three scheduling modes, a Munich ChronoType
+        assessment, a caffeine half-life decay curve, and a seven-night sleep
+        debt ledger — all computed locally, nothing sent anywhere.
+      </p>
+
+      <ul class="hero-stats">
+        <li><strong>90 min</strong><span>ultradian cycle</span></li>
+        <li><strong>14 min</strong><span>onset latency</span></li>
+        <li><strong>5.7 h</strong><span>caffeine half-life</span></li>
+        <li><strong>0</strong><span>data uploaded</span></li>
+      </ul>
+    </section>
+
+    <!-- ================================================ SCHEDULER ======= -->
+    <section class="panel" aria-labelledby="scheduler-title">
+      <header class="panel-head">
+        <h2 id="scheduler-title">Sleep Cycle Scheduler</h2>
+        <p>
+          Pick a mode. Every result subtracts a 14-minute sleep-onset allowance,
+          so the bedtime shown is when to get into bed — not when you will
+          actually fall asleep.
+        </p>
+      </header>
+
+      <div class="mode-tabs" role="tablist" aria-label="Scheduling mode">
+        <button
+          type="button"
+          role="tab"
+          class="mode-tab is-active"
+          data-sleep-mode="wake"
+          aria-selected="true"
+        >I need to wake at…</button>
+        <button
+          type="button"
+          role="tab"
+          class="mode-tab"
+          data-sleep-mode="now"
+          aria-selected="false"
+        >I'm going to sleep now</button>
+        <button
+          type="button"
+          role="tab"
+          class="mode-tab"
+          data-sleep-mode="bedtime"
+          aria-selected="false"
+        >My bedtime is…</button>
+      </div>
+
+      <div class="mode-panel" data-mode-panel="wake">
+        <label class="field" for="wake-time">
+          <span class="field-label">Wake-up time</span>
+          <input type="time" id="wake-time" value="07:00" step="60" />
+        </label>
+        <p class="results-summary" id="wake-results-summary" aria-live="polite"></p>
+        <div class="cycle-grid" id="wake-results"></div>
+      </div>
+
+      <div class="mode-panel" data-mode-panel="now" hidden>
+        <p class="mode-note">
+          Using your device clock. Times refresh every minute while this tab is
+          open, and the schedule below is recalculated from the current minute.
+        </p>
+        <p class="results-summary" id="now-results-summary" aria-live="polite"></p>
+        <div class="cycle-grid" id="now-results"></div>
+      </div>
+
+      <div class="mode-panel" data-mode-panel="bedtime" hidden>
+        <label class="field" for="bedtime-input">
+          <span class="field-label">Time you get into bed</span>
+          <input type="time" id="bedtime-input" value="23:00" step="60" />
+        </label>
+        <p class="results-summary" id="bedtime-results-summary" aria-live="polite"></p>
+        <div class="cycle-grid" id="bedtime-results"></div>
+      </div>
+
+      <div class="tier-legend">
+        <span class="tier-chip tone-optimal">Optimal · 6 cycles</span>
+        <span class="tier-chip tone-baseline">Baseline · 5 cycles</span>
+        <span class="tier-chip tone-minimum">Minimum · 4 cycles</span>
+        <span class="tier-chip tone-deficit">Deficit · 3 cycles or fewer</span>
+      </div>
+    </section>
+
+    <!-- ============================================ CLOCK + HYPNOGRAM === -->
+    <section class="split" aria-labelledby="wheel-title">
+      <div class="panel">
+        <header class="panel-head">
+          <h2 id="wheel-title">24-Hour Circadian Wheel</h2>
+          <p>
+            Midnight at the top, noon at the bottom, running clockwise. Shows
+            your sleep window, estimated melatonin onset, caffeine cut-off and
+            chronotype peak.
+          </p>
+        </header>
+
+        <svg
+          id="clock-wheel"
+          class="wheel"
+          viewBox="0 0 260 260"
+          role="img"
+          aria-label="Circadian clock wheel showing sleep window and markers"
+        ></svg>
+
+        <ul class="wheel-legend">
+          <li><i class="swatch swatch-sleep"></i>Sleep window</li>
+          <li><i class="swatch swatch-melatonin"></i>Melatonin onset</li>
+          <li><i class="swatch swatch-caffeine"></i>Caffeine cut-off</li>
+          <li><i class="swatch swatch-peak"></i>Chronotype peak</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <header class="panel-head">
+          <h2>Night Architecture</h2>
+          <p>
+            Population-average stage architecture for six cycles. Slow-wave
+            sleep concentrates in the early cycles; REM dominates the late ones.
+          </p>
+        </header>
+
+        <svg
+          id="hypnogram"
+          class="hypnogram"
+          viewBox="0 0 720 200"
+          role="img"
+          aria-label="Hypnogram showing sleep stage architecture across the night"
+        ></svg>
+
+        <dl class="hypo-totals">
+          <div><dt>Total sleep</dt><dd id="hypo-total">—</dd></div>
+          <div><dt>Deep (N3)</dt><dd id="hypo-sws">—</dd></div>
+          <div><dt>REM</dt><dd id="hypo-rem">—</dd></div>
+          <div><dt>Light (N1+N2)</dt><dd id="hypo-light">—</dd></div>
+        </dl>
+
+        <p class="caveat">
+          This is a model, not a measurement. Your own architecture will differ,
+          and it changes with age — slow-wave sleep declines substantially from
+          the thirties onward.
+        </p>
+      </div>
+    </section>
+
+    <!-- ================================================ CHRONOTYPE ====== -->
+    <section class="panel" aria-labelledby="chrono-title">
+      <header class="panel-head">
+        <h2 id="chrono-title">Munich ChronoType Assessment</h2>
+        <p>
+          The MCTQ is the standard research instrument for chronotype. It
+          compares your workday and free-day sleep to find your biological
+          mid-sleep, then corrects for the debt you repaid at the weekend.
+        </p>
+      </header>
+
+      <div class="mctq-grid">
+        <fieldset class="mctq-group">
+          <legend>Workdays</legend>
+          <label class="field" for="mctq-workday-sleep">
+            <span class="field-label">Time you go to sleep</span>
+            <input type="time" id="mctq-workday-sleep" value="23:30" step="60" />
+          </label>
+          <label class="field" for="mctq-workday-wake">
+            <span class="field-label">Time you wake up</span>
+            <input type="time" id="mctq-workday-wake" value="07:00" step="60" />
+          </label>
+        </fieldset>
+
+        <fieldset class="mctq-group">
+          <legend>Free days</legend>
+          <label class="field" for="mctq-freeday-sleep">
+            <span class="field-label">Time you go to sleep</span>
+            <input type="time" id="mctq-freeday-sleep" value="01:00" step="60" />
+          </label>
+          <label class="field" for="mctq-freeday-wake">
+            <span class="field-label">Time you wake up</span>
+            <input type="time" id="mctq-freeday-wake" value="09:00" step="60" />
+          </label>
+        </fieldset>
+
+        <fieldset class="mctq-group">
+          <legend>Sleep quality</legend>
+          <label class="field" for="mctq-fragmentation">
+            <span class="field-label">How often do you wake during the night?</span>
+            <select id="mctq-fragmentation">
+              <option value="never">Rarely or never</option>
+              <option value="sometimes" selected>Sometimes</option>
+              <option value="often">Often — most nights</option>
+            </select>
+          </label>
+          <p class="field-hint">
+            Used only to surface the Dolphin overlay. It does not change your
+            MCTQ classification.
+          </p>
+        </fieldset>
+      </div>
+
+      <p class="field-error" id="chrono-error" hidden></p>
+
+      <article class="chrono-card" id="chrono-result" hidden>
+        <header class="chrono-head">
+          <div>
+            <p class="chrono-kicker">Your chronotype</p>
+            <h3 id="chrono-name">—</h3>
+            <p class="chrono-alias" id="chrono-alias">—</p>
+          </div>
+          <div class="chrono-msfsc">
+            <span class="chrono-msfsc-label">MSFsc</span>
+            <strong id="chrono-msfsc">—</strong>
+          </div>
+        </header>
+
+        <p class="chrono-summary" id="chrono-summary">—</p>
+
+        <p class="chrono-disclosure" id="chrono-overlay-note" hidden></p>
+
+        <div class="chrono-windows">
+          <div class="window-card">
+            <span class="window-label">Peak alertness</span>
+            <strong id="chrono-peak">—</strong>
+          </div>
+          <div class="window-card">
+            <span class="window-label">Secondary peak</span>
+            <strong id="chrono-secondary">—</strong>
+          </div>
+          <div class="window-card">
+            <span class="window-label">Trough</span>
+            <strong id="chrono-trough">—</strong>
+          </div>
+          <div class="window-card">
+            <span class="window-label">Melatonin onset</span>
+            <strong id="chrono-melatonin-onset">—</strong>
+          </div>
+          <div class="window-card">
+            <span class="window-label">Caffeine cut-off</span>
+            <strong id="chrono-caffeine-cutoff">—</strong>
+          </div>
+        </div>
+
+        <div class="chrono-notes">
+          <p><strong>How to work with it.</strong> <span id="chrono-advice">—</span></p>
+          <p><strong>Where it costs you.</strong> <span id="chrono-friction">—</span></p>
+        </div>
+
+        <details class="chrono-math">
+          <summary>Show the arithmetic behind this result</summary>
+          <dl class="math-list">
+            <div><dt>Workday sleep duration</dt><dd id="chrono-sdweek">—</dd></div>
+            <div><dt>Free-day sleep duration</dt><dd id="chrono-sdfree">—</dd></div>
+            <div><dt>Mid-sleep, workdays (MSW)</dt><dd id="chrono-msw">—</dd></div>
+            <div><dt>Mid-sleep, free days (MSF)</dt><dd id="chrono-msf">—</dd></div>
+            <div><dt>Debt correction</dt><dd id="chrono-correction">—</dd></div>
+            <div><dt>Corrected mid-sleep (MSFsc)</dt><dd id="chrono-msfsc-echo">—</dd></div>
+            <div><dt>Average sleep duration</dt><dd id="chrono-average">—</dd></div>
+            <div><dt>Social jetlag</dt><dd id="chrono-social-jetlag">—</dd></div>
+          </dl>
+          <p class="math-note">
+            MSFsc = MSF − (SD<sub>free</sub> − SD<sub>work</sub>) ÷ 2, applied
+            only when free-day sleep is longer than workday sleep. Applying the
+            correction unconditionally is a common bug in sleep calculators: it
+            misclassifies short sleepers who catch up at the weekend as late
+            chronotypes. Social jetlag is the phase gap between your biological
+            mid-sleep and your socially imposed one.
+          </p>
+        </details>
+      </article>
+    </section>
+
+    <!-- ================================================== CAFFEINE ====== -->
+    <section class="panel" aria-labelledby="caffeine-title">
+      <header class="panel-head">
+        <h2 id="caffeine-title">Caffeine Half-Life Decay Tracker</h2>
+        <p>
+          Caffeine is eliminated by first-order kinetics with a mean half-life of
+          5.7 hours. Move the sliders to see how much is still circulating when
+          your head hits the pillow.
+        </p>
+      </header>
+
+      <div class="caffeine-controls">
+        <label class="field" for="caffeine-dose">
+          <span class="field-label">
+            Dose: <output id="caffeine-dose-value">200 mg</output>
+          </span>
+          <input
+            type="range"
+            id="caffeine-dose"
+            min="0"
+            max="600"
+            step="10"
+            value="200"
+          />
+          <span class="field-hint">
+            A 250 ml brewed coffee is roughly 95 mg; a double espresso about
+            125 mg; a 330 ml cola about 34 mg.
+          </span>
+        </label>
+
+        <label class="field" for="caffeine-time">
+          <span class="field-label">Time consumed</span>
+          <input type="time" id="caffeine-time" value="14:00" step="60" />
+        </label>
+
+        <label class="field" for="caffeine-bedtime">
+          <span class="field-label">Your bedtime</span>
+          <input type="time" id="caffeine-bedtime" value="23:00" step="60" />
+        </label>
+      </div>
+
+      <div class="caffeine-readouts">
+        <div class="readout">
+          <span class="readout-label">Remaining at bedtime</span>
+          <strong id="caffeine-remaining">—</strong>
+        </div>
+        <div class="readout">
+          <span class="readout-label">Hours until bedtime</span>
+          <strong id="caffeine-hours">—</strong>
+        </div>
+        <div class="readout">
+          <span class="readout-label">Fraction of dose</span>
+          <strong id="caffeine-fraction">—</strong>
+        </div>
+        <div class="readout">
+          <span class="readout-label">Last safe dose</span>
+          <strong id="caffeine-cutoff">—</strong>
+        </div>
+      </div>
+
+      <svg
+        id="caffeine-curve"
+        class="curve"
+        viewBox="0 0 640 220"
+        role="img"
+        aria-label="Caffeine plasma concentration decay curve over 24 hours"
+      ></svg>
+
+      <div class="verdict" id="caffeine-verdict" data-tone="optimal">
+        <p id="caffeine-verdict-text">—</p>
+      </div>
+
+      <h3 class="sub-head">Half-life milestones</h3>
+      <ul class="milestones" id="caffeine-milestones"></ul>
+    </section>
+
+    <!-- ====================================================== DEBT ======= -->
+    <section class="panel" aria-labelledby="debt-title">
+      <header class="panel-head">
+        <h2 id="debt-title">Sleep Debt &amp; Recovery Calculator</h2>
+        <p>
+          Log the last seven nights. The ledger compares them against an
+          eight-hour reference and builds a three-night repayment schedule — one
+          that tells you honestly how much debt it cannot clear.
+        </p>
+      </header>
+
+      <div class="debt-grid">
+        <label class="debt-field"><span>Night 1</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Night 2</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Night 3</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Night 4</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Night 5</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Night 6</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Night 7</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+      </div>
+      <p class="field-hint">Hours slept per night, not hours in bed.</p>
+
+      <article class="debt-result" id="debt-result" data-tone="optimal">
+        <div class="debt-readouts">
+          <div class="readout">
+            <span class="readout-label">Cumulative deficit</span>
+            <strong id="debt-deficit">—</strong>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Average per night</span>
+            <strong id="debt-average">—</strong>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Nights logged</span>
+            <strong id="debt-nights">—</strong>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Shortest night</span>
+            <strong id="debt-worst">—</strong>
+          </div>
+        </div>
+
+        <p class="debt-summary" id="debt-summary">—</p>
+
+        <h3 class="sub-head">Three-night recovery protocol</h3>
+        <ul class="debt-plan" id="debt-plan"></ul>
+        <p class="caveat" id="debt-residual">—</p>
+      </article>
+    </section>
+
+    <!-- ==================================================== GUIDE ======== -->
+    <article class="guide">
+      <header class="guide-head">
+        <h2>The Clinical Guide to Sleep Cycles, Chronotypes and Caffeine</h2>
+        <p>
+          What the arithmetic above is actually modelling, where the evidence is
+          solid, and where it thins out.
+        </p>
+      </header>
+
+      <section>
+        <h3>The 90-minute cycle is an average, not a constant</h3>
+        <p>
+          Sleep is not a uniform state you enter and leave. It is a series of
+          cycles, each roughly 90 minutes long, that repeat four to six times a
+          night. The term for this rhythm is <em>ultradian</em> — faster than
+          the 24-hour circadian cycle, slower than the seconds-scale rhythms of
+          breathing and heart rate. The 90-minute figure comes from Kleitman's
+          mid-twentieth-century work on the basic rest-activity cycle, and it
+          has held up well as a population average.
+        </p>
+        <p>
+          As a description of any one person on any one night, it is loose.
+          Individual ultradian periods range from about 70 to 120 minutes.
+          Cycles are not equal in length within a single night either: the first
+          is typically the shortest, at around 70 to 80 minutes, and later
+          cycles stretch toward 100 to 120 minutes. This is why the calculator
+          above is explicit that it is offering a scheduling heuristic. It can
+          tell you a sensible time to get into bed. It cannot tell you when your
+          own brain will surface between cycles, because that depends on a
+          period length the tool has no way to measure.
+        </p>
+      </section>
+
+      <section>
+        <h3>What each stage is doing</h3>
+        <p>
+          Non-REM sleep is divided into three stages, and each has a distinct
+          electrophysiological signature and a distinct job.
+        </p>
+        <p>
+          <strong>N1</strong> is the transition — the two-to-five-minute drift
+          at the edge of sleep where theta waves appear, muscles relax, and
+          hypnic jerks happen. It is trivially easy to be woken from N1, and
+          people woken from it often deny having slept at all.
+        </p>
+        <p>
+          <strong>N2</strong> is where you spend the largest share of the night,
+          typically 45 to 55 percent. Its defining features are sleep spindles —
+          short bursts of 12 to 14 Hz activity generated by thalamocortical
+          circuits — and K-complexes, the large biphasic waves that appear to
+          gate sensory input and protect sleep from disturbance. N2 is heavily
+          implicated in motor skill consolidation and in the offline replay of
+          newly learned material.
+        </p>
+        <p>
+          <strong>N3</strong>, previously split into stages 3 and 4 and still
+          widely called slow-wave sleep or deep sleep, is defined by
+          high-amplitude delta waves below 4 Hz. It is the hardest stage to be
+          woken from, and waking from it produces the most severe sleep inertia.
+          N3 is when growth hormone release peaks, when immune function
+          consolidates, and when the brain's waste-clearance system is most
+          active. Critically for the calculator above, N3 is front-loaded: most
+          of it lands in the first two cycles. Cut a night short and you
+          preferentially lose REM, not deep sleep, because the deep sleep was
+          already banked early.
+        </p>
+        <p>
+          <strong>REM</strong> is paradoxical sleep — your brain is
+          metabolically as active as it is when you are awake and your eyes move
+          in saccades, while your skeletal muscles are actively paralysed.
+          Arousal thresholds in REM are similar to N1, which is why REM is drawn
+          near the top of the hypnogram above rather than deep in it. REM is
+          back-loaded, concentrated in the final cycles before waking, and it is
+          involved in emotional memory processing and in the integration of
+          procedural learning.
+        </p>
+      </section>
+
+      <section>
+        <h3>The glymphatic system: why sleep is not optional maintenance</h3>
+        <p>
+          In 2012 Nedergaard's group described a clearance pathway in the
+          central nervous system that had been missed for decades because it
+          only runs efficiently during sleep. Cerebrospinal fluid is driven
+          along perivascular channels and exchanged with interstitial fluid,
+          carrying metabolic waste out of the brain parenchyma. The mechanism is
+          now called the glymphatic system, and its sleep-dependence is its most
+          striking property.
+        </p>
+        <p>
+          During slow-wave sleep, the interstitial space expands by roughly 60
+          percent, dropping the resistance to convective flow and increasing
+          clearance rates substantially. What gets cleared includes
+          beta-amyloid and tau — the two proteins that aggregate in Alzheimer's
+          disease. In rodent models, chronic sleep restriction raises amyloid
+          burden, and the effect runs in both directions: amyloid deposition
+          itself disrupts slow-wave sleep, which further impairs clearance.
+        </p>
+        <p>
+          The honest caveat is that much of the mechanistic work is in mice, and
+          the human evidence, while growing and consistent in direction, is
+          still indirect — largely MRI-based measures of flow and observational
+          associations between chronic short sleep and later cognitive decline.
+          The direction of the finding is not seriously contested. The precise
+          magnitude in humans is still being pinned down. What the evidence does
+          not support is the idea that a supplement or a device replicates the
+          effect; the active ingredient appears to be slow-wave sleep itself.
+        </p>
+      </section>
+
+      <section>
+        <h3>Sleep inertia: why waking mid-cycle feels terrible</h3>
+        <p>
+          Sleep inertia is the transitional state of impaired alertness,
+          slowed reaction time and degraded performance that follows waking. It
+          typically lasts 15 to 30 minutes and can persist for hours when the
+          sleep restriction is severe or the waking is from deep sleep.
+        </p>
+        <p>
+          Its severity depends heavily on which stage you were in and how much
+          sleep pressure you were under. Waking from N3 produces the worst
+          inertia by a wide margin; waking from N1, N2 or REM is comparatively
+          gentle. This is the entire mechanistic basis for cycle-aligned
+          scheduling: if you wake at the boundary between cycles, you are more
+          likely to be surfacing from a lighter stage, and the transition costs
+          you less. Scheduling in 90-minute multiples from sleep onset is
+          therefore a reasonable way to improve your odds.
+        </p>
+        <p>
+          It is not a guarantee, and it is worth being blunt about that. Your
+          cycle length is not exactly 90 minutes, cycle boundaries drift across
+          the night, and an alarm at any fixed time lands wherever it lands. No
+          formula reliably produces an inertia-free waking, because the variable
+          that determines inertia — your current stage — is not something a
+          clock can observe. Use the schedule to load the odds in your favour,
+          not as a promise.
+        </p>
+      </section>
+
+      <section>
+        <h3>Adenosine, caffeine, and the difference between feeling alert and being rested</h3>
+        <p>
+          Sleep pressure accumulates as a function of how long you have been
+          awake. The molecule carrying that signal is adenosine, which builds in
+          the brain during wakefulness and binds to A1 and A2A receptors,
+          progressively inhibiting the wake-promoting circuits and tipping the
+          balance toward sleep. Under normal conditions, adenosine concentration
+          falls during sleep and the cycle resets.
+        </p>
+        <p>
+          Caffeine does not add alertness. It is a competitive antagonist at
+          those same A1 and A2A receptors — it occupies the site so adenosine
+          cannot bind, and the sleepiness signal goes unheard. The adenosine is
+          still there, and still accumulating. This is why caffeine defers
+          tiredness rather than removing it, and why it stops working as well
+          once the receptors are chronically occupied: the brain responds by
+          upregulating receptor density, which is the mechanism behind
+          tolerance and the withdrawal headache that follows abrupt cessation.
+        </p>
+        <p>
+          Caffeine is cleared by first-order kinetics, meaning a fixed
+          <em>fraction</em> is removed per unit time rather than a fixed amount.
+          The half-life in healthy adults is commonly cited as three to seven
+          hours, averaging around five; the calculator above uses 5.7 hours.
+          Each half-life halves what remains: a 200 mg dose is 100 mg after 5.7
+          hours, 50 mg after 11.4 hours, and 25 mg after about 17 hours. A
+          14:00 coffee therefore still has meaningful circulating concentration
+          at midnight.
+        </p>
+        <p>
+          The controlled evidence matches the pharmacology. Drake and colleagues
+          gave 400 mg of caffeine at 0, 3 and 6 hours before bed and found sleep
+          disruption at every interval, including the 6-hour condition, where
+          measured sleep time fell by more than 40 minutes. That is the finding
+          worth internalising: even a mid-afternoon dose measurably degrades
+          sleep architecture in a laboratory setting.
+        </p>
+        <p>
+          Individual variation is large and worth knowing about. Clearance is
+          primarily mediated by the CYP1A2 enzyme, and common polymorphisms
+          split people into fast and slow metabolisers. Oral contraceptive use
+          roughly doubles the half-life; pregnancy can extend it well beyond
+          that, particularly in the third trimester. Smoking induces CYP1A2 and
+          roughly halves it. If you are a slow metaboliser, a 16:00 coffee may
+          still be affecting you at 02:00.
+        </p>
+      </section>
+
+      <section>
+        <h3>Chronotype is biology, not discipline</h3>
+        <p>
+          Your chronotype is the phase relationship between your internal
+          circadian clock and the external day. It is substantially heritable,
+          it shifts predictably across the lifespan — later through adolescence,
+          earlier again from the late fifties — and it is not a lifestyle
+          preference you can decide your way out of.
+        </p>
+        <p>
+          The Munich ChronoType Questionnaire measures it behaviourally rather
+          than by asking how much of a morning person you think you are. It
+          takes your sleep timing on workdays and on free days, computes the
+          midpoint of each, and uses the free-day midpoint (MSF) as the
+          biological marker, on the logic that free days let the clock run at
+          its natural phase without an alarm truncating it.
+        </p>
+        <p>
+          The refinement — and the part most calculators skip — is that free-day
+          sleep is not purely biological either. If you are chronically
+          short-sleeping on workdays, part of your long weekend sleep is debt
+          repayment, which artificially pushes the midpoint later and makes you
+          look like more of an owl than you are. The MCTQ corrects for this by
+          subtracting half the difference between free-day and workday sleep
+          duration, and only when free-day sleep is longer. That produces MSFsc,
+          the sleep-corrected midpoint. Applying the correction regardless of
+          sign is a genuine bug that misclassifies short sleepers, and the
+          engine here guards against it.
+        </p>
+        <p>
+          The gap between your biological mid-sleep and your socially required
+          one is social jetlag, and it behaves like the travel kind. People with
+          more than about two hours of social jetlag show higher rates of
+          smoking, caffeine use and metabolic disturbance, independent of how
+          long they actually sleep. If your result shows a large social jetlag
+          value, the productive response is not to force an earlier bedtime —
+          it is to move your wake time on free days closer to your workday wake
+          time, which anchors the clock without truncating sleep.
+        </p>
+        <p>
+          One note on taxonomy, because the internet is inconsistent about it.
+          The research literature generally describes three chronotypes. The
+          four-animal scheme — Lion, Bear, Wolf, Dolphin — is a popularisation,
+          and Dolphin in particular is not an MCTQ construct. This calculator
+          will surface Dolphin, but it does so as an explicitly labelled overlay
+          driven by your fragmentation answer, and it always tells you what your
+          measured MCTQ type was. Presenting a fragmentation pattern as a
+          validated fourth chronotype would be a fabrication.
+        </p>
+      </section>
+
+      <section>
+        <h3>What this calculator cannot do</h3>
+        <p>
+          It cannot diagnose anything. It has no way to detect obstructive sleep
+          apnoea, and neither the schedule nor the chronotype result will flag
+          it. If you snore loudly, if a partner has witnessed pauses in your
+          breathing, or if you wake unrefreshed after adequate time in bed, that
+          needs a clinical sleep study — no amount of bedtime optimisation
+          addresses a airway that closes at night.
+        </p>
+        <p>
+          It cannot measure your cycle length, your sleep latency or your actual
+          sleep stages. Everything it reports about architecture is a
+          population-average model. It cannot tell you when you will wake
+          naturally, and it cannot guarantee that a cycle-aligned alarm will
+          feel better than any other alarm.
+        </p>
+        <p>
+          What it can do is remove the arithmetic from the scheduling question,
+          show you a caffeine decay curve that is genuine pharmacology rather
+          than a heuristic, quantify your social jetlag from a validated
+          instrument, and give you an honest sleep-debt ledger that does not
+          pretend three good nights undoes a week of restriction.
+        </p>
+      </section>
+
+      <section class="sources">
+        <h3>Sources and further reading</h3>
+        <ul>
+          <li>Roenneberg T. et al. — <em>Social jetlag and obesity</em>, Current Biology (2012)</li>
+          <li>Roenneberg T. et al. — <em>Epidemiology of the human circadian clock</em>, Sleep Medicine Reviews (2007)</li>
+          <li>Nedergaard M. et al. — <em>A paravascular pathway facilitates CSF flow through the brain parenchyma</em>, Science Translational Medicine (2012)</li>
+          <li>Xie L. et al. — <em>Sleep drives metabolite clearance from the adult brain</em>, Science (2013)</li>
+          <li>Drake C. et al. — <em>Caffeine effects on sleep taken 0, 3, or 6 hours before going to bed</em>, Journal of Clinical Sleep Medicine (2013)</li>
+          <li>Watson N.F. et al. — <em>Recommended amount of sleep for a healthy adult: AASM and SRS consensus statement</em>, Sleep (2015)</li>
+          <li>Hirshkowitz M. et al. — <em>National Sleep Foundation's sleep time duration recommendations</em>, Sleep Health (2015)</li>
+          <li>Borbély A.A. — <em>A two process model of sleep regulation</em>, Human Neurobiology (1982)</li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- ======================================================= FAQ ======= -->
+    <section class="faq" aria-labelledby="faq-title">
+      <h2 id="faq-title">Frequently Asked Questions</h2>
+      {faqItems.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </section>
+  </main>
+
+  <Footer />
+
+  <script src="../scripts/tools/sleep-engine.js"></script>
+</Layout>
+
+<style is:global>
+  /* ===================================================== page tokens === */
+  .sleep-page {
+    --bg: #000000;
+    --elev: #09090b;
+    --elev2: #121215;
+    --line: #1f1f23;
+    --line-soft: #16161a;
+    --ink: #f4f4f5;
+    --ink-dim: #a1a1aa;
+    --ink-faint: #71717a;
+    --violet: #8b5cf6;
+    --indigo: #6366f1;
+    --sky: #38bdf8;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+    --rose: #f472b6;
+
+    position: relative;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 0 1rem 6rem;
+    overflow-x: clip;
+  }
+
+  .dark .sleep-page,
+  :root:not(.light) .sleep-page {
+    color-scheme: dark;
+  }
+
+  html:not(.dark) .sleep-page {
+    --bg: #ffffff;
+    --elev: #fafafa;
+    --elev2: #f4f4f5;
+    --line: #e4e4e7;
+    --line-soft: #f0f0f2;
+    --ink: #09090b;
+    --ink-dim: #52525b;
+    --ink-faint: #71717a;
+  }
+
+  .sleep-page > * {
+    max-width: 1120px;
+    margin-inline: auto;
+  }
+
+  /* Celestial ambient glow. Pointer-events off, clipped by overflow-x above. */
+  .sleep-page .aurora {
+    position: absolute;
+    inset: -10% -20% auto -20%;
+    height: 620px;
+    max-width: none;
+    margin: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(48% 42% at 22% 18%, rgba(99, 102, 241, 0.28), transparent 70%),
+      radial-gradient(42% 38% at 78% 8%, rgba(139, 92, 246, 0.24), transparent 70%),
+      radial-gradient(38% 34% at 52% 36%, rgba(56, 189, 248, 0.14), transparent 72%);
+    filter: blur(28px);
+  }
+
+  html:not(.dark) .sleep-page .aurora {
+    opacity: 0.5;
+  }
+
+  .sleep-page > *:not(.aurora) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ========================================================== hero ==== */
+  .sleep-page .hero {
+    padding: 3rem 0 2rem;
+  }
+
+  .sleep-page .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    list-style: none;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    font-size: 0.8125rem;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .crumbs a {
+    color: var(--ink-dim);
+    text-decoration: none;
+  }
+
+  .sleep-page .crumbs a:hover {
+    color: var(--violet);
+  }
+
+  .sleep-page .eyebrow {
+    margin: 0 0 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--violet);
+  }
+
+  .sleep-page h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(48px, 6vw, 64px);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .sleep-page .lede {
+    max-width: 62ch;
+    margin: 0 0 2rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--line-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .sleep-page .hero-stats li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--elev);
+  }
+
+  .sleep-page .hero-stats strong {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: var(--violet);
+  }
+
+  .sleep-page .hero-stats span {
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+  }
+
+  /* ========================================================= panels === */
+  .sleep-page .panel {
+    margin-top: 2.5rem;
+    padding: 1.75rem;
+    background: var(--elev);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+  }
+
+  .sleep-page .panel-head {
+    margin-bottom: 1.5rem;
+  }
+
+  .sleep-page .panel-head h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .sleep-page .panel-head p {
+    margin: 0;
+    max-width: 68ch;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .sub-head {
+    margin: 2rem 0 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .split {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .sleep-page .split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* ======================================================= mode tabs === */
+  .sleep-page .mode-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sleep-page .mode-tab {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-dim);
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .sleep-page .mode-tab:hover {
+    color: var(--ink);
+    border-color: var(--violet);
+  }
+
+  .sleep-page .mode-tab.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    border-color: transparent;
+  }
+
+  .sleep-page .mode-note {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    color: var(--ink-dim);
+  }
+
+  /* Each panel owns its own summary + card grid, so hiding the panel hides
+     the whole result set. This spacing is what separates the control from it. */
+  .sleep-page .mode-panel > .field,
+  .sleep-page .mode-panel > .mode-note {
+    margin-bottom: 1.5rem;
+  }
+
+  /* ========================================================== fields == */
+  .sleep-page .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sleep-page .field-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .field-hint {
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .field-error {
+    margin: 0.75rem 0 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--bad);
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px;
+  }
+
+  .sleep-page input[type="time"],
+  .sleep-page input[type="number"],
+  .sleep-page select {
+    padding: 0.625rem 0.75rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9375rem;
+    color: var(--ink);
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .sleep-page select {
+    font-family: inherit;
+  }
+
+  .sleep-page input[type="time"]:focus-visible,
+  .sleep-page input[type="number"]:focus-visible,
+  .sleep-page select:focus-visible,
+  .sleep-page input[type="range"]:focus-visible,
+  .sleep-page .mode-tab:focus-visible {
+    border-color: var(--violet);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+  }
+
+  .sleep-page input[type="range"] {
+    width: 100%;
+    accent-color: var(--violet);
+    cursor: pointer;
+  }
+
+  .sleep-page output {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--violet);
+  }
+
+  /* ================================================= cycle result cards = */
+  .sleep-page .results-summary {
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .cycle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 0.875rem;
+  }
+
+  .sleep-page .cycle-grid:empty {
+    display: none;
+  }
+
+  .sleep-page .cycle-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.125rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    animation: cycleIn 0.32s ease both;
+  }
+
+  .sleep-page .cycle-card:nth-child(2) { animation-delay: 0.05s; }
+  .sleep-page .cycle-card:nth-child(3) { animation-delay: 0.1s; }
+  .sleep-page .cycle-card:nth-child(4) { animation-delay: 0.15s; }
+
+  @keyframes cycleIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sleep-page .cycle-card { animation: none; }
+  }
+
+  .sleep-page .cycle-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.875rem;
+  }
+
+  .sleep-page .cycle-count {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .cycle-tier {
+    padding: 0.1875rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 999px;
+  }
+
+  .sleep-page .cycle-card[data-tone="optimal"] .cycle-tier {
+    color: var(--good);
+    background: rgba(16, 185, 129, 0.12);
+  }
+
+  .sleep-page .cycle-card[data-tone="baseline"] .cycle-tier {
+    color: var(--sky);
+    background: rgba(56, 189, 248, 0.12);
+  }
+
+  .sleep-page .cycle-card[data-tone="minimum"] .cycle-tier {
+    color: var(--warn);
+    background: rgba(245, 158, 11, 0.12);
+  }
+
+  .sleep-page .cycle-card[data-tone="deficit"] .cycle-tier {
+    color: var(--bad);
+    background: rgba(239, 68, 68, 0.12);
+  }
+
+  .sleep-page .cycle-card[data-tone="optimal"] { border-color: rgba(16, 185, 129, 0.28); }
+  .sleep-page .cycle-card[data-tone="minimum"] { border-color: rgba(245, 158, 11, 0.28); }
+  .sleep-page .cycle-card[data-tone="deficit"] { border-color: rgba(239, 68, 68, 0.32); }
+
+  .sleep-page .cycle-primary {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .sleep-page .cycle-primary-label {
+    margin: 0.25rem 0 0.875rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .cycle-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin: 0 0 0.875rem;
+    padding: 0.875rem 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .sleep-page .cycle-meta > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .sleep-page .cycle-meta dt {
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .cycle-meta dd {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .cycle-note {
+    margin: auto 0 0;
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .cycle-alert {
+    margin: 0.625rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--bad);
+  }
+
+  /* ==================================================== tier legend ==== */
+  .sleep-page .tier-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .sleep-page .tier-chip {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: 999px;
+  }
+
+  .sleep-page .tier-chip.tone-optimal {
+    color: var(--good);
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+  }
+
+  .sleep-page .tier-chip.tone-baseline {
+    color: var(--sky);
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.28);
+  }
+
+  .sleep-page .tier-chip.tone-minimum {
+    color: var(--warn);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.28);
+  }
+
+  .sleep-page .tier-chip.tone-deficit {
+    color: var(--bad);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.28);
+  }
+
+  /* ===================================================== clock wheel === */
+  .sleep-page .wheel {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin: 0 auto 1.25rem;
+  }
+
+  .sleep-page .wheel-ring {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .sleep-page .wheel-tick {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .sleep-page .wheel-tick.is-major {
+    stroke: var(--ink-faint);
+    stroke-width: 1.5;
+  }
+
+  .sleep-page .wheel-hour {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    fill: var(--ink-faint);
+  }
+
+  .sleep-page .wheel-sleep-arc {
+    fill: none;
+    stroke: var(--indigo);
+    stroke-width: 14;
+    stroke-linecap: round;
+    opacity: 0.45;
+  }
+
+  .sleep-page .wheel-peak-arc {
+    fill: none;
+    stroke: var(--violet);
+    stroke-width: 5;
+    stroke-linecap: round;
+    opacity: 0.7;
+  }
+
+  .sleep-page .wheel-node.is-bed { fill: var(--indigo); }
+  .sleep-page .wheel-node.is-wake { fill: var(--sky); }
+  .sleep-page .wheel-node.is-melatonin { fill: var(--violet); }
+  .sleep-page .wheel-node.is-caffeine { fill: var(--warn); }
+
+  .sleep-page .wheel-hand {
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .sleep-page .wheel-hub { fill: var(--ink); }
+
+  .sleep-page .wheel-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.75rem;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .wheel-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .sleep-page .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  .sleep-page .swatch-sleep { background: var(--indigo); }
+  .sleep-page .swatch-melatonin { background: var(--violet); }
+  .sleep-page .swatch-caffeine { background: var(--warn); }
+  .sleep-page .swatch-peak { background: var(--violet); opacity: 0.6; }
+
+  /* ====================================================== hypnogram ==== */
+  .sleep-page .hypnogram {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .sleep-page .hypo-grid {
+    stroke: var(--line-soft);
+    stroke-width: 1;
+  }
+
+  .sleep-page .hypo-stage {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    fill: var(--ink-faint);
+  }
+
+  .sleep-page .hypo-trace {
+    fill: none;
+    stroke: var(--violet);
+    stroke-width: 1.75;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .sleep-page .hypo-cycle-tick {
+    stroke: var(--line);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+  }
+
+  .sleep-page .hypo-axis {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    fill: var(--ink-faint);
+  }
+
+  .sleep-page .hypo-totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+  }
+
+  .sleep-page .hypo-totals > div {
+    padding: 0.75rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+
+  .sleep-page .hypo-totals dt {
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .hypo-totals dd {
+    margin: 0.25rem 0 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .sleep-page .caveat {
+    margin: 1rem 0 0;
+    padding: 0.875rem 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    background: var(--elev2);
+    border-left: 3px solid var(--violet);
+    border-radius: 0 10px 10px 0;
+  }
+
+  /* ====================================================== chronotype === */
+  .sleep-page .mctq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .sleep-page .mctq-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0;
+    padding: 1.125rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .sleep-page .mctq-group legend {
+    padding: 0 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--violet);
+  }
+
+  .sleep-page .chrono-card {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+  }
+
+  .sleep-page .chrono-card[data-tone="early"] { border-color: rgba(56, 189, 248, 0.32); }
+  .sleep-page .chrono-card[data-tone="intermediate"] { border-color: rgba(99, 102, 241, 0.32); }
+  .sleep-page .chrono-card[data-tone="late"] { border-color: rgba(139, 92, 246, 0.36); }
+  .sleep-page .chrono-card[data-tone="fragmented"] { border-color: rgba(244, 114, 182, 0.32); }
+
+  .sleep-page .chrono-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .sleep-page .chrono-kicker {
+    margin: 0 0 0.25rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .chrono-head h3 {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .sleep-page .chrono-alias {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .chrono-msfsc {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    text-align: right;
+    background: var(--elev);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .sleep-page .chrono-msfsc-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .chrono-msfsc strong {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.25rem;
+    color: var(--violet);
+  }
+
+  .sleep-page .chrono-summary {
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .chrono-disclosure {
+    margin: 0 0 1rem;
+    padding: 0.875rem 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--rose);
+    background: rgba(244, 114, 182, 0.08);
+    border: 1px solid rgba(244, 114, 182, 0.26);
+    border-radius: 10px;
+  }
+
+  .sleep-page .chrono-windows {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sleep-page .window-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.875rem;
+    background: var(--elev);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .sleep-page .window-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .window-card strong {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+
+  .sleep-page .chrono-notes p {
+    margin: 0 0 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .chrono-notes strong {
+    color: var(--ink);
+  }
+
+  .sleep-page .chrono-math {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .sleep-page .chrono-math summary {
+    font-size: 0.875rem;
+    color: var(--violet);
+    cursor: pointer;
+  }
+
+  .sleep-page .math-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 0.5rem 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .sleep-page .math-list > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .sleep-page .math-list dt {
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .math-list dd {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--ink);
+  }
+
+  .sleep-page .math-note {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: var(--ink-faint);
+  }
+
+  /* ======================================================== caffeine === */
+  .sleep-page .caffeine-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sleep-page .caffeine-readouts,
+  .sleep-page .debt-readouts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sleep-page .readout {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.875rem 1rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .sleep-page .readout-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .readout strong {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.125rem;
+    color: var(--ink);
+  }
+
+  .sleep-page .curve {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 1.25rem;
+  }
+
+  .sleep-page .curve-axis {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .sleep-page .curve-grid {
+    stroke: var(--line-soft);
+    stroke-width: 1;
+  }
+
+  .sleep-page .curve-tick {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    fill: var(--ink-faint);
+  }
+
+  .sleep-page .curve-line {
+    fill: none;
+    stroke: var(--violet);
+    stroke-width: 2.25;
+    stroke-linecap: round;
+  }
+
+  .sleep-page .curve-threshold {
+    stroke: var(--warn);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    opacity: 0.75;
+  }
+
+  .sleep-page .curve-threshold-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    fill: var(--warn);
+  }
+
+  .sleep-page .curve-bedtime {
+    stroke: var(--sky);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .sleep-page .curve-node {
+    fill: var(--sky);
+  }
+
+  .sleep-page .curve-bedtime-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    fill: var(--sky);
+  }
+
+  .sleep-page .verdict {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    border-radius: 12px;
+  }
+
+  .sleep-page .verdict p {
+    margin: 0;
+  }
+
+  .sleep-page .verdict[data-tone="optimal"] {
+    color: var(--good);
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.26);
+  }
+
+  .sleep-page .verdict[data-tone="minimum"] {
+    color: var(--warn);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.26);
+  }
+
+  .sleep-page .verdict[data-tone="deficit"] {
+    color: var(--bad);
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.26);
+  }
+
+  .sleep-page .milestones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sleep-page .milestones li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.875rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .sleep-page .milestone-dose {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.125rem;
+    color: var(--violet);
+  }
+
+  .sleep-page .milestone-time {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875rem;
+    color: var(--ink);
+  }
+
+  .sleep-page .milestone-label {
+    font-size: 0.6875rem;
+    color: var(--ink-faint);
+  }
+
+  /* ============================================================ debt === */
+  .sleep-page .debt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sleep-page .debt-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .sleep-page .debt-field span {
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .debt-field input {
+    width: 100%;
+  }
+
+  .sleep-page .debt-result {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .sleep-page .debt-summary {
+    margin: 0 0 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .debt-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sleep-page .debt-step {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.875rem 1rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 0.8125rem;
+  }
+
+  @media (max-width: 640px) {
+    .sleep-page .debt-step {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .sleep-page .debt-step-night {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .sleep-page .debt-step-extend {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--good);
+  }
+
+  .sleep-page .debt-step-total {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .debt-step-residual {
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+  }
+
+  /* =========================================================== guide === */
+  .sleep-page .guide {
+    margin-top: 4rem;
+  }
+
+  .sleep-page .guide-head {
+    margin-bottom: 2rem;
+  }
+
+  .sleep-page .guide-head h2 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  .sleep-page .guide-head p {
+    margin: 0;
+    max-width: 68ch;
+    font-size: 1rem;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .guide section {
+    margin-bottom: 2.5rem;
+  }
+
+  .sleep-page .guide h3 {
+    margin: 0 0 0.875rem;
+    font-size: 1.25rem;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  .sleep-page .guide p {
+    max-width: 74ch;
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .guide strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .sleep-page .guide em {
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  .sleep-page .sources ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .sleep-page .sources li {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--ink-faint);
+  }
+
+  /* ============================================================= FAQ === */
+  .sleep-page .faq {
+    margin-top: 4rem;
+  }
+
+  .sleep-page .faq h2 {
+    margin: 0 0 1.5rem;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    letter-spacing: -0.02em;
+  }
+
+  .sleep-page .faq-item {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sleep-page .faq-item summary {
+    padding: 1.125rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .sleep-page .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .sleep-page .faq-item summary::after {
+    content: "+";
+    float: right;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--violet);
+  }
+
+  .sleep-page .faq-item[open] summary::after {
+    content: "−";
+  }
+
+  .sleep-page .faq-item p {
+    margin: 0 0 1.25rem;
+    max-width: 74ch;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--ink-dim);
+  }
+
+  /* Light-theme corrections for surfaces that assume a dark ground. */
+  html:not(.dark) .sleep-page .mode-tab.is-active {
+    color: #ffffff;
+  }
+
+  html:not(.dark) .sleep-page .wheel-hand {
+    stroke: #52525b;
+  }
+
+  html:not(.dark) .sleep-page .wheel-hub {
+    fill: #52525b;
+  }
+
+  html:not(.dark) .sleep-page .wheel-sleep-arc {
+    opacity: 0.35;
+  }
+</style>

@@ -328,10 +328,10 @@
       this.earIndex = 0;
       this.freqIndex = 0;
       this.currentDbHL = 40;
-      this.lastHeard = null;
-      this.lastNotHeard = null;
-      this.reversals = 0;
-      this.lastDirection = null;
+      this.direction = null; // 'down' (after heard) or 'up' (after not heard)
+      this.ascendingResponses = {}; // dbHL -> count of heard responses on ascending runs
+      this.lowestHeard = null;
+      this.trialCount = 0;
       this.threshold = null;
       this.results = { left: {}, right: {} };
       this.completed = false;
@@ -347,15 +347,19 @@
       }
       this.earIndex = 0;
       this.freqIndex = 0;
-      this.currentDbHL = 40;
-      this.lastHeard = null;
-      this.lastNotHeard = null;
-      this.reversals = 0;
-      this.lastDirection = null;
-      this.threshold = null;
+      this.resetPointState();
       this.results = { left: {}, right: {} };
       this.completed = false;
       this.playCurrent();
+    }
+
+    resetPointState() {
+      this.currentDbHL = 40;
+      this.direction = null;
+      this.ascendingResponses = {};
+      this.lowestHeard = null;
+      this.trialCount = 0;
+      this.threshold = null;
     }
 
     getCurrentPoint() {
@@ -375,64 +379,80 @@
     async playCurrent() {
       const point = this.getCurrentPoint();
       if (!point) return;
+      this.trialCount++;
       this.tonePlaying = true;
       await this.audio.playTone(point.freq, this.currentDbHL, point.ear, 1.4);
       this.tonePlaying = false;
     }
 
     respondHeard() {
-      this.lastHeard = this.currentDbHL;
-      if (this.lastDirection === 'down') {
-        this.reversals++;
-      }
-      this.lastDirection = 'down';
-
-      if (this.reversals >= 2 && this.lastHeard !== null) {
-        this.threshold = this.lastHeard;
-        this.advancePoint();
-        return;
+      if (this.lowestHeard === null || this.currentDbHL < this.lowestHeard) {
+        this.lowestHeard = this.currentDbHL;
       }
 
+      // If this tone was presented after an increase ("up" direction), count as an ascending response
+      if (this.direction === 'up') {
+        this.ascendingResponses[this.currentDbHL] = (this.ascendingResponses[this.currentDbHL] || 0) + 1;
+        if (this.ascendingResponses[this.currentDbHL] >= 2) {
+          this.threshold = this.currentDbHL;
+          this.advancePoint();
+          return;
+        }
+      }
+
+      // Hughson-Westlake: On heard, decrease by 10 dB
+      this.direction = 'down';
       this.currentDbHL -= 10;
-      if (this.currentDbHL < 0) {
+
+      if (this.currentDbHL <= 0) {
         this.currentDbHL = 0;
-        this.threshold = 0;
+        // If 0 dB HL is heard twice, confirm threshold at 0 dB
+        if (this.lowestHeard === 0) {
+          this.ascendingResponses[0] = (this.ascendingResponses[0] || 0) + 1;
+          if (this.ascendingResponses[0] >= 2) {
+            this.threshold = 0;
+            this.advancePoint();
+            return;
+          }
+        }
+      }
+
+      if (this.trialCount >= 10 && this.lowestHeard !== null) {
+        this.threshold = this.lowestHeard;
         this.advancePoint();
         return;
       }
+
       setTimeout(() => this.playCurrent(), 350);
     }
 
     respondNotHeard() {
-      this.lastNotHeard = this.currentDbHL;
-      if (this.lastDirection === 'up') {
-        this.reversals++;
-      }
-      this.lastDirection = 'up';
+      // Hughson-Westlake: On not heard, increase by 5 dB
+      this.direction = 'up';
+      this.currentDbHL += 5;
 
-      if (this.lastHeard !== null) {
-        this.threshold = this.lastHeard + 5;
-        if (this.threshold > this.lastNotHeard) {
-          this.threshold = this.lastNotHeard;
-        }
-        this.advancePoint();
-        return;
-      }
-
-      this.currentDbHL += 10;
-      if (this.currentDbHL > 90) {
+      if (this.currentDbHL >= 90) {
         this.currentDbHL = 90;
-        this.threshold = 90;
+        if (this.trialCount >= 4) {
+          this.threshold = this.lowestHeard !== null ? this.lowestHeard : 90;
+          this.advancePoint();
+          return;
+        }
+      }
+
+      if (this.trialCount >= 12) {
+        this.threshold = this.lowestHeard !== null ? this.lowestHeard : (this.currentDbHL <= 90 ? this.currentDbHL : 90);
         this.advancePoint();
         return;
       }
+
       setTimeout(() => this.playCurrent(), 350);
     }
 
     advancePoint() {
       const point = this.getCurrentPoint();
       if (point) {
-        this.results[point.ear][point.freq] = this.threshold;
+        this.results[point.ear][point.freq] = this.threshold !== null ? this.threshold : (this.lowestHeard !== null ? this.lowestHeard : 40);
       }
 
       this.freqIndex++;
@@ -441,12 +461,7 @@
         this.earIndex++;
       }
 
-      this.currentDbHL = 40;
-      this.lastHeard = null;
-      this.lastNotHeard = null;
-      this.reversals = 0;
-      this.lastDirection = null;
-      this.threshold = null;
+      this.resetPointState();
 
       if (this.earIndex >= this.ears.length) {
         this.completed = true;
@@ -457,10 +472,10 @@
     }
 
     classifyThreshold(dbHL) {
-      if (dbHL <= 20) return { label: 'Normal Hearing', class: 'normal', color: 'emerald', desc: 'Thresholds within standard clinical range (0–20 dB HL).' };
-      if (dbHL <= 40) return { label: 'Mild Hearing Loss', class: 'mild', color: 'amber', desc: 'Difficulty hearing soft speech, whispered consonants, or speech in noisy cafes.' };
-      if (dbHL <= 70) return { label: 'Moderate Hearing Loss', class: 'moderate', color: 'orange', desc: 'Difficulty hearing conversational speech without amplification.' };
-      return { label: 'Severe Hearing Loss', class: 'severe', color: 'rose', desc: 'Speech is inaudible without specialized hearing aids or amplification.' };
+      if (dbHL <= 20) return { label: 'Normal Hearing', class: 'normal', textClass: 'text-emerald-600 dark:text-emerald-400', desc: 'Thresholds within standard clinical range (0–20 dB HL).' };
+      if (dbHL <= 40) return { label: 'Mild Hearing Loss', class: 'mild', textClass: 'text-amber-600 dark:text-amber-400', desc: 'Difficulty hearing soft speech, whispered consonants, or speech in noisy cafes.' };
+      if (dbHL <= 70) return { label: 'Moderate Hearing Loss', class: 'moderate', textClass: 'text-amber-600 dark:text-amber-400', desc: 'Difficulty hearing conversational speech without amplification.' };
+      return { label: 'Severe Hearing Loss', class: 'severe', textClass: 'text-rose-600 dark:text-rose-400', desc: 'Speech is inaudible without specialized hearing aids or amplification.' };
     }
 
     getAverageLoss(ear) {
@@ -479,6 +494,7 @@
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d');
       this.dpr = window.devicePixelRatio || 1;
+      this.padding = { left: 65, right: 30, top: 35, bottom: 45 };
       this.setupCanvas();
     }
 
@@ -498,24 +514,22 @@
       const minLog = Math.log10(125);
       const maxLog = Math.log10(8000);
       const logF = Math.log10(freq);
-      const padding = 65;
-      const plotWidth = this.width - padding * 2;
-      return padding + ((logF - minLog) / (maxLog - minLog)) * plotWidth;
+      const plotWidth = this.width - this.padding.left - this.padding.right;
+      return this.padding.left + ((logF - minLog) / (maxLog - minLog)) * plotWidth;
     }
 
     dbToY(db) {
       const minDb = -10;
       const maxDb = 120;
-      const padding = 35;
-      const plotHeight = this.height - padding * 2;
-      return padding + ((db - minDb) / (maxDb - minDb)) * plotHeight;
+      const plotHeight = this.height - this.padding.top - this.padding.bottom;
+      return this.padding.top + ((db - minDb) / (maxDb - minDb)) * plotHeight;
     }
 
     draw(results) {
       const ctx = this.ctx;
       ctx.clearRect(0, 0, this.width, this.height);
 
-      const padding = { left: 65, right: 30, top: 35, bottom: 45 };
+      const padding = this.padding;
       const plotW = this.width - padding.left - padding.right;
       const plotH = this.height - padding.top - padding.bottom;
 
@@ -676,6 +690,7 @@
       dlCtx.fillStyle = '#ef4444';
       dlCtx.fillText('○ Right Ear (Red)', 1060, 50);
 
+      const savedDpr = window.devicePixelRatio || 1;
       const oldCanvas = this.canvas;
       const oldCtx = this.ctx;
       const oldWidth = this.width;
@@ -696,6 +711,7 @@
       this.ctx = oldCtx;
       this.width = oldWidth;
       this.height = oldHeight;
+      this.dpr = savedDpr;
       this.setupCanvas();
       this.draw(results);
 
@@ -1197,7 +1213,7 @@
 
     audRespond(heard) {
       if (!this.audiometryTest || this.audiometryTest.completed) return;
-      if (this.audiometryTest.tonePlaying) return;
+      this.audio.stopTone();
 
       if (heard) {
         this.audiometryTest.respondHeard();
@@ -1259,7 +1275,7 @@
           <div class="text-xs font-mono font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
             ${ear === 'left' ? 'Left Ear (Blue)' : 'Right Ear (Red)'} · PTA (500–4000 Hz)
           </div>
-          <div class="font-heading font-extrabold text-2xl sm:text-3xl text-${classification.color}-600 dark:text-${classification.color}-400">
+          <div class="font-heading font-extrabold text-2xl sm:text-3xl ${classification.textClass}">
             ${avgLoss !== null ? Math.round(avgLoss) + ' dB HL' : 'N/A'}
           </div>
           <div class="text-sm font-semibold text-zinc-900 dark:text-white">${classification.label}</div>

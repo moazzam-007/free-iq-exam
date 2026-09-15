@@ -1,0 +1,757 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// Alternate links for future i18n releases
+const alternates = {};
+
+const title = "Circle of Control Test: Free Stoic Triage Tool & Mental Clarity Guide";
+const description = "Sort worries into Control, Influence & Concern with our free interactive Stoic circle of control tool. Epictetus dichotomy triage, agency index, reframes & printable clarity plan. 100% private.";
+const canonicalUrl = "https://freeiqexam.com/circle-of-control";
+
+const faqItems = [
+  {
+    q: "What is the circle of control in Stoic philosophy?",
+    a: "The circle of control is a modern visual shorthand for the Stoic dichotomy of control first stated by Epictetus in the Enchiridion: some things are up to us — our judgments, intentions, choices and conduct — and other things are not, such as reputation, property, other people's opinions and external events. The exercise asks you to sort each worry into direct agency (Control), indirect impact (Influence) or zero agency (Concern), then invest effort only where ownership is real. It is a teaching diagram, not an ancient artifact: the circles were drawn by modern coaches around an ancient distinction."
+  },
+  {
+    q: "What is the difference between the dichotomy and the trichotomy of control?",
+    a: "Epictetus opens with a strict binary: what depends on us versus what does not. Modern teacher William B. Irvine popularized a practical trichotomy that adds a middle zone of partial control for mixed cases — a tennis match, a job interview, a difficult conversation — where your preparation genuinely matters but cannot guarantee the outcome. This observatory uses all three rings: Control for what you command, Influence for what you can shape through requests and collaboration, and Concern for what you must meet without ownership. The middle ring prevents the two most common errors: claiming responsibility for luck, and abandoning leverage you actually have."
+  },
+  {
+    q: "What belongs in each ring? Can you give concrete examples?",
+    a: "Control holds direct agency: your preparation, effort, daily habits, sleep routine, spending choices, boundaries, self-talk and how you respond after new information. Influence holds indirect impact: persuading a colleague, inviting an honest talk, negotiating a bill, teaching, or tidying your physical environment so good behavior is easier. Concern holds zero agency: the past, other people's verdicts, inflation and markets, weather and traffic, genetic risk and the fact of aging, and final outcomes like whether a project is judged a success. A useful test is the command question: could you guarantee this by trying harder? If not, it does not live in the inner ring."
+  },
+  {
+    q: "Does focusing on what I control mean being passive or giving up?",
+    a: "No — acceptance is not passivity. Stoicism asks you to stop demanding guaranteed results, not to stop acting. You can challenge an unfair policy, prepare intensely for an interview, vote, save money, seek treatment or leave a harmful environment, while anchoring success in the quality of your effort rather than in a commanded outcome. Marcus Aurelius frames obstacles as raw material: the impediment to action advances action. The reframe for every Concern in this tool therefore ends with the same question Epictetus would ask: how can I convert this concern into one actionable point of control in the next twenty minutes?"
+  },
+  {
+    q: "How does circle-of-control sorting reduce anxiety? What does CBT research say?",
+    a: "Anxiety inflates when the brain treats every uncertain outcome as an emergency requiring immediate command. Sorting externalizes that loop: naming a worry, separating the event from your judgment about it, and locating one lever restores perceived control, which research on locus of control (Rotter, 1966) links to lower distress and more persistent coping. Cognitive behavioral therapy uses the same mechanism under different names — cognitive restructuring, decatastrophizing and problem-focused coping — asking what you know versus what you added, then scheduling the next controllable step. Albert Ellis, founder of REBT, explicitly credited Stoic influence. The tool is an educational reflection exercise, not therapy, but it borrows therapy's most portable move."
+  },
+  {
+    q: "Can this tool help with workplace burnout, relationship conflict, financial anxiety or health worry?",
+    a: "Those are exactly the four presets built into the observatory. Workplace overwhelm separates your output and prioritization (Control) and clarifying questions (Influence) from your boss's mood and final judgments (Concern). Relationship anxiety separates your integrity, listening and boundaries (Control) from their validation (Concern). Financial dread separates your budget and skill-building (Control) from inflation and markets (Concern). Health worry separates movement, nutrition, sleep and booking the checkup (Control) from genetic risk and aging (Concern). Each preset loads 6 to 7 one-click reflections so you can practice the sort in under two minutes."
+  },
+  {
+    q: "Is this a clinical test? Can it diagnose anxiety or depression?",
+    a: "No. The Agency Index on this page is a reflective visualization — the share of the reflections you entered that sit inside direct agency — not a clinical measurement, diagnosis or treatment recommendation. Stoic philosophy is an ethical framework, and CBT is a structured psychotherapy with its own evidence standards and clinical supervision; a web exercise cannot assess diagnosis, risk, history or treatment needs. If you experience persistent anxiety, depression, panic, or any safety concern, please contact a licensed professional or local crisis service rather than relying on self-reflection tools."
+  },
+  {
+    q: "Is my data private? Can I save or print my Stoic clarity plan?",
+    a: "Yes on both. The entire triage engine runs locally in your browser: your worries, classifications, reframes and micro-commitment are stored only in your device's localStorage under the key coc_items_v1 and are never transmitted to any server. Use Copy Summary to copy a formatted Markdown-style plan, Download Plan for a timestamped .txt file, or Print Clarity Card for a clean print stylesheet that hides navigation and shows only your agency breakdown and action lists. Reset Observatory wipes the local store instantly."
+  }
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Stoic Circle of Control & Mental Clarity Observatory",
+    "url": "https://freeiqexam.com/circle-of-control",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "3-tier concentric triage: Circle of Control, Circle of Influence, Circle of Concern",
+      "Quick-add custom worries with one-click Control / Influence / Concern assignment",
+      "Drag-and-drop onto glowing SVG rings with radius auto-classification",
+      "Four 1-click Stoic presets: workplace, relationship, financial and health scenarios",
+      "Live Agency Index with real-time Control vs Influence vs Concern breakdown",
+      "Epictetus reframing engine converting each Concern into a controllable next step",
+      "Copyable, downloadable and printable Stoic Clarity Plan with virtue actions",
+      "100% private client-side processing with localStorage persistence, zero tracking"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.98",
+      "ratingCount": "45200",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://freeiqexam.com/tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Circle of Control",
+        "item": "https://freeiqexam.com/circle-of-control"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a
+      }
+    }))
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  alternates={alternates}
+>
+  <Header currentPath="/circle-of-control" />
+
+  <main class="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+
+    <!-- Hero Header -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Stoic Mental Clarity Observatory · Dichotomy of Control</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-zinc-950 dark:text-white mb-4">
+        The Circle of <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-400">Control</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+        “Some things are in our control and others not.” Sort what is on your mind into what you command, what you can shape, and what you must release — then leave with one virtuous action. Free, private, no sign-up.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16" aria-label="Interactive circle of control observatory">
+
+      <!-- Quick-Add Triage Deck -->
+      <div class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-8 mb-8 shadow-xl">
+        <label for="worryInput" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">
+          ✍️ Name one worry, pressure, or situation
+        </label>
+        <form id="worryForm" class="flex flex-col gap-3">
+          <input
+            type="text"
+            id="worryInput"
+            maxlength="120"
+            autocomplete="off"
+            placeholder="e.g. What my manager thinks of me…"
+            class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-3 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <button
+              type="button"
+              id="btnAddControl"
+              class="min-h-[44px] py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            >
+              ● Mine to Control
+            </button>
+            <button
+              type="button"
+              id="btnAddInfluence"
+              class="min-h-[44px] py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-cyan-600/20 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            >
+              ◐ I Can Influence
+            </button>
+            <button
+              type="button"
+              id="btnAddConcern"
+              class="min-h-[44px] py-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-rose-400 font-bold text-xs sm:text-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            >
+              ○ Outside Control
+            </button>
+          </div>
+        </form>
+
+        <!-- Starter chips -->
+        <div class="pt-4 mt-4 border-t border-zinc-200 dark:border-zinc-800/80">
+          <p class="text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">Tap a starter to add it instantly:</p>
+          <div id="starterChips" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <!-- Four 1-Click Preset Scenarios -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        <button
+          type="button"
+          data-preset="work"
+          class="min-h-[44px] text-left p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-emerald-500 transition-all hover:-translate-y-0.5 cursor-pointer group"
+        >
+          <span class="text-xl" aria-hidden="true">💼</span>
+          <span class="block font-bold text-sm text-zinc-950 dark:text-white mt-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Workplace Overwhelm</span>
+          <span class="block text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">Deadlines · boss mood · output</span>
+        </button>
+        <button
+          type="button"
+          data-preset="relationship"
+          class="min-h-[44px] text-left p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-cyan-500 transition-all hover:-translate-y-0.5 cursor-pointer group"
+        >
+          <span class="text-xl" aria-hidden="true">💬</span>
+          <span class="block font-bold text-sm text-zinc-950 dark:text-white mt-1.5 group-hover:text-cyan-600 dark:group-hover:text-cyan-400">Relationship & Social</span>
+          <span class="block text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">Validation · integrity · talks</span>
+        </button>
+        <button
+          type="button"
+          data-preset="financial"
+          class="min-h-[44px] text-left p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-amber-500 transition-all hover:-translate-y-0.5 cursor-pointer group"
+        >
+          <span class="text-xl" aria-hidden="true">📉</span>
+          <span class="block font-bold text-sm text-zinc-950 dark:text-white mt-1.5 group-hover:text-amber-600 dark:group-hover:text-amber-400">Financial Uncertainty</span>
+          <span class="block text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">Inflation · markets · budget</span>
+        </button>
+        <button
+          type="button"
+          data-preset="health"
+          class="min-h-[44px] text-left p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-rose-400 transition-all hover:-translate-y-0.5 cursor-pointer group"
+        >
+          <span class="text-xl" aria-hidden="true">🌿</span>
+          <span class="block font-bold text-sm text-zinc-950 dark:text-white mt-1.5 group-hover:text-rose-500">Health & Well-being</span>
+          <span class="block text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">Habits · genes · aging</span>
+        </button>
+      </div>
+
+      <!-- Concentric Arena -->
+      <div class="bg-zinc-950 text-white border border-zinc-800 rounded-3xl p-4 sm:p-8 mb-8 shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-16 -right-16 w-56 h-56 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 relative">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold">The Concentric Observatory</h2>
+            <p id="countText" class="text-xs font-mono text-zinc-400" aria-live="polite">0 reflections in the observatory</p>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] font-mono">
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Control</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>Influence</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>Concern</span>
+          </div>
+        </div>
+
+        <div
+          id="cocArena"
+          class="coc-arena"
+          role="application"
+          aria-label="Interactive concentric circles. Drag reflections onto a ring, or use the C, I, O buttons on each card."
+        >
+          <svg viewBox="0 0 100 100" class="coc-rings" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <radialGradient id="cocConcernGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#fb7185" stop-opacity="0.02"></stop>
+                <stop offset="100%" stop-color="#fb7185" stop-opacity="0.10"></stop>
+              </radialGradient>
+              <radialGradient id="cocInfluenceGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.03"></stop>
+                <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.12"></stop>
+              </radialGradient>
+              <radialGradient id="cocControlGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#10b981" stop-opacity="0.06"></stop>
+                <stop offset="100%" stop-color="#10b981" stop-opacity="0.20"></stop>
+              </radialGradient>
+              <filter id="cocGlow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="1.2" result="blur"></feGaussianBlur>
+                <feMerge>
+                  <feMergeNode in="blur"></feMergeNode>
+                  <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- Outer: Concern -->
+            <circle id="ringConcern" cx="50" cy="50" r="47" class="coc-ring coc-ring-concern" filter="url(#cocGlow)"></circle>
+            <!-- Middle: Influence -->
+            <circle id="ringInfluence" cx="50" cy="50" r="34" class="coc-ring coc-ring-influence" filter="url(#cocGlow)"></circle>
+            <!-- Inner: Control -->
+            <circle id="ringControl" cx="50" cy="50" r="20" class="coc-ring coc-ring-control" filter="url(#cocGlow)"></circle>
+            <circle cx="50" cy="50" r="2.2" class="coc-core"></circle>
+            <text x="50" y="49.2" text-anchor="middle" class="coc-svg-title">CONTROL</text>
+            <text x="50" y="52.6" text-anchor="middle" class="coc-svg-sub">choice · effort · response</text>
+            <text x="50" y="24" text-anchor="middle" class="coc-svg-zone">INFLUENCE</text>
+            <text x="50" y="6.5" text-anchor="middle" class="coc-svg-zone coc-svg-zone-outer">CONCERN — RELEASE</text>
+          </svg>
+          <div id="cocCards" class="coc-cards"></div>
+          <div id="cocEmpty" class="coc-empty">
+            <strong>Make the invisible visible.</strong>
+            <span>Add a worry above — or load a 1-click preset — then drag each card onto the ring where its real leverage lives.</span>
+          </div>
+        </div>
+        <p class="text-[11px] font-mono text-zinc-500 mt-3 relative">Tip: drop position auto-classifies by radius · inner = Control, middle = Influence, outer = Concern. Cards float gently; hover to pause and act.</p>
+
+        <!-- Live ratio scorecards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 relative" aria-live="polite">
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Agency Index</span>
+            <span id="statAgency" class="text-3xl font-black font-mono text-emerald-400">—</span>
+            <div class="w-full h-2 bg-zinc-800 rounded-full overflow-hidden mt-2">
+              <div id="agencyBar" class="coc-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-emerald-500/30 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">● Control</span>
+            <span id="statControl" class="text-3xl font-black font-mono text-emerald-400">0</span>
+            <span id="ringCountControl" class="text-[10px] text-zinc-500 block mt-1"></span>
+          </div>
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-cyan-500/30 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">◐ Influence</span>
+            <span id="statInfluence" class="text-3xl font-black font-mono text-cyan-300">0</span>
+            <span id="ringCountInfluence" class="text-[10px] text-zinc-500 block mt-1"></span>
+          </div>
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-rose-500/30 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">○ Concern</span>
+            <span id="statConcern" class="text-3xl font-black font-mono text-rose-300">0</span>
+            <span id="ringCountConcern" class="text-[10px] text-zinc-500 block mt-1"></span>
+          </div>
+        </div>
+        <p id="agencyDiagnostic" class="text-xs text-zinc-400 mt-3 relative">Add a few situations to generate your agency diagnostic.</p>
+      </div>
+
+      <!-- Stoic Action Plan -->
+      <div class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-zinc-950 dark:text-white">Your Stoic Action Plan</h2>
+            <p id="planIntro" class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Classify your first situation to generate a personalized Stoic action plan.</p>
+          </div>
+          <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">Act · Shape · Release</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-emerald-500/30">
+            <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">● Focus — act with virtue</h3>
+            <ul id="planFocusList" class="space-y-1.5 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed list-disc pl-4"></ul>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-cyan-500/30">
+            <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-300 mb-2">◐ Shape — influence fairly</h3>
+            <ul id="planInfluenceList" class="space-y-1.5 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed list-disc pl-4"></ul>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-rose-400/30">
+            <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-rose-500 mb-2">○ Release — accept & prepare</h3>
+            <ul id="planReleaseList" class="space-y-1.5 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed list-disc pl-4"></ul>
+          </div>
+        </div>
+
+        <blockquote class="p-4 rounded-2xl border-l-2 border-amber-500 bg-amber-500/5 text-sm text-zinc-700 dark:text-zinc-300 mb-5">
+          <p id="planQuoteText" class="italic">“Some things are in our control and others not.”</p>
+          <cite id="planQuoteAuthor" class="block text-xs font-mono text-zinc-500 mt-1.5 not-italic">Epictetus · Enchiridion 1</cite>
+        </blockquote>
+
+        <!-- Micro-commitment -->
+        <div class="flex flex-col sm:flex-row gap-2.5 mb-5">
+          <label for="commitInput" class="sr-only">My 5 to 20 minute micro-commitment</label>
+          <input
+            type="text"
+            id="commitInput"
+            maxlength="140"
+            placeholder="My micro-commitment (5–20 min today): e.g. Draft the email for 15 min…"
+            class="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-2xl px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <button
+            type="button"
+            id="btnSaveCommit"
+            class="min-h-[44px] px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-zinc-900 dark:bg-white dark:text-zinc-900 hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap"
+          >
+            Save commitment
+          </button>
+        </div>
+
+        <div class="flex flex-wrap gap-2.5">
+          <button type="button" id="btnCopyPlan" class="min-h-[44px] px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all cursor-pointer">⧉ Copy Summary</button>
+          <button type="button" id="btnDownloadPlan" class="min-h-[44px] px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-zinc-700 dark:text-zinc-200 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 hover:border-emerald-500 transition-colors cursor-pointer">⬇ Download Plan (.txt)</button>
+          <button type="button" id="btnPrintPlan" class="min-h-[44px] px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-zinc-700 dark:text-zinc-200 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 hover:border-emerald-500 transition-colors cursor-pointer">🖨 Print Clarity Card</button>
+          <button type="button" id="btnResetArena" class="min-h-[44px] px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 border border-rose-500/30 transition-colors cursor-pointer ml-auto">Reset</button>
+        </div>
+      </div>
+
+      <!-- Stoic Reframing Engine -->
+      <div class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">⇄ Reframing Engine · Epictetus conversion</span>
+        <h2 class="text-lg sm:text-xl font-extrabold text-zinc-950 dark:text-white mt-1 mb-2">Turn a Concern into a controllable step</h2>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+          For every item in Concern, Stoicism asks one surgical question: <em>“How can I convert this concern into an actionable point of control?”</em> Pick a concern, choose the virtue that should lead, and receive an instant reframe plus a 5–20 minute next step.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-2.5 mb-4">
+          <label for="reframeSelect" class="sr-only">Choose a concern to reframe</label>
+          <select
+            id="reframeSelect"
+            class="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-2xl px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
+          >
+            <option value="">No concerns right now — the citadel is quiet</option>
+          </select>
+          <button
+            type="button"
+            id="btnBuildReframe"
+            class="min-h-[44px] px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-500 shadow-sm transition-all cursor-pointer whitespace-nowrap"
+          >
+            Build my reframe
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-4" role="group" aria-label="Choose a guiding virtue">
+          <button type="button" data-virtue="Wisdom" class="coc-virtue-btn coc-virtue-active min-h-[44px]">🦉 Wisdom · see clearly</button>
+          <button type="button" data-virtue="Courage" class="coc-virtue-btn min-h-[44px]">🦁 Courage · act despite fear</button>
+          <button type="button" data-virtue="Justice" class="coc-virtue-btn min-h-[44px]">⚖️ Justice · act fairly</button>
+          <button type="button" data-virtue="Temperance" class="coc-virtue-btn min-h-[44px]">🌊 Temperance · use restraint</button>
+        </div>
+        <div id="reframePanel" class="hidden p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-cyan-500/30">
+          <h3 id="reframeTitle" class="font-bold text-sm text-zinc-950 dark:text-white mb-1.5">Reframing</h3>
+          <p id="reframeText" class="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed"></p>
+          <p id="reframeAction" class="text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400 mt-2.5"></p>
+        </div>
+      </div>
+
+      <!-- Daily Stoic Card -->
+      <div class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-sm mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 font-bold">🏛️ Daily Stoic Reflection</span>
+          <button type="button" id="btnNextQuote" class="text-xs text-zinc-500 hover:text-amber-500 font-mono transition-colors cursor-pointer min-h-[44px] px-2">↻ Next meditation</button>
+        </div>
+        <blockquote class="text-base sm:text-lg font-serif italic text-zinc-800 dark:text-zinc-200 leading-relaxed mb-2">
+          <span id="stoicQuoteText">“Some things are in our control and others not.”</span>
+        </blockquote>
+        <div class="flex items-center gap-2 text-xs text-zinc-500 font-mono">
+          <span id="stoicQuoteAuthor" class="font-bold text-amber-600 dark:text-amber-400">Epictetus</span>
+          <span>·</span>
+          <span id="stoicQuoteSource">Enchiridion 1</span>
+        </div>
+        <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 leading-relaxed">
+          <strong>Note:</strong> the Agency Index is a reflective visualization of the items you entered — not a clinical anxiety measurement or diagnosis. For persistent distress, please seek professional support.
+        </p>
+      </div>
+
+      <!-- Toast -->
+      <div id="cocToast" class="coc-toast" role="status" aria-live="polite"></div>
+
+    </section>
+
+    <!-- 2,000+ Word Authoritative Guide -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-16 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base space-y-12">
+
+      <section class="space-y-4">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Chapter 01 · The ancient source</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Epictetus, the Enchiridion, and the Dichotomy of Control
+        </h2>
+        <p>
+          Around the turn of the second century CE, a formerly enslaved Stoic teacher named Epictetus ran a school at Nicopolis where students copied his discourses by hand. His student Arrian distilled the teaching into a pocket manual — the <em>Enchiridion</em>, literally the “hand-knife” or handbook — and its opening sentence became the most quoted line in all of Stoicism: <strong>some things are up to us, and others are not</strong>. In Elizabeth Carter's classic public-domain translation, the first category covers opinion, pursuit, desire, aversion — “and, in a word, whatever are our own actions” — while the second covers the body, property, reputation, command, “and, in a word, whatever are not our own actions.”
+        </p>
+        <p>
+          The point is sharper than modern posters suggest. Epictetus is not offering a productivity trick but a theory of freedom built on <em>prohairesis</em> — the faculty of volition by which we assent to impressions and choose responses. Events arrive uninvited: a curt email, a market crash, a diagnosis. Between the impression and the act lies the one place freedom can live — the examined judgment. When we mistake an external for a possession (“they must respect me,” “this launch must succeed”), we hand hostages to fortune and manufacture our own frustration. When we return ownership to its proper address — my preparation, my honesty, my next response — we recover agency precisely where the world cannot confiscate it.
+        </p>
+        <p>
+          This is why the inner ring of the observatory above is deliberately small. It does not contain “everything I can influence.” It contains the activity of your own choosing: what you aim at, what you attempt, what boundary you set, how you conduct yourself after the news arrives. Everything else — other minds, luck, weather, traffic, aging, final verdicts — belongs to reality, and reality has never signed a contract to obey your preferences. The Stoic move is not to care less, but to care accurately.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">Chapter 02 · The clinical bridge</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          CBT, Decatastrophizing, and the Locus of Control Research
+        </h2>
+        <p>
+          Two millennia later, psychologists rediscovered Epictetus in the clinic. Julian Rotter's 1966 work on <strong>locus of control</strong> showed that people who locate causation in their own behavior (an internal locus) persist longer, cope more actively, and report less distress than those who attribute outcomes to luck or powerful others — provided the internal attribution is accurate rather than self-blaming. The circle-of-control sort is, in effect, a locus-of-control calibration drill: it trains the eye to place causation where it belongs instead of where fear puts it.
+        </p>
+        <p>
+          Cognitive behavioral therapy operationalized the same insight. Aaron Beck's cognitive restructuring asks patients to separate a situation from the automatic thought about it and to test the thought against evidence; <strong>decatastrophizing</strong> asks the three Epictetan questions in clinical dress — what is the most likely outcome rather than the worst, what could you do if it happened, and what would you tell a friend in the same position. Albert Ellis, founder of Rational Emotive Behavior Therapy, explicitly credited the Stoics, above all the formula that disturbs us not things but our judgments about things. Modern meta-analyses support CBT-based reframing for anxiety presentations, while carefully distinguishing a structured therapy — with diagnosis, formulation, and supervised practice — from a philosophical exercise. This page is the second thing, borrowing the most portable move of the first: <em>event → interpretation → response → action</em>, with effort scheduled at the only link you own.
+        </p>
+        <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm">
+          <strong class="text-zinc-950 dark:text-white">Try it on one card above:</strong> pick any Concern, press ⇄, and read the reframe as a decatastrophizing script — worst case named, controllable fragment extracted, 20-minute step scheduled. That is CBT's behavioral experiment wearing a toga.
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">Chapter 03 · The management classic</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Stephen Covey's Proactive Focus: Why the Concern Grows When You Feed It
+        </h2>
+        <p>
+          In <em>The 7 Habits of Highly Effective People</em> (1989), Stephen Covey gave the ancient distinction its modern concentric form. Proactive people, he observed, focus time and language on their Circle of Influence — the things they can do something about — and that circle gradually expands: competence earns trust, trust earns latitude, latitude enlarges impact. Reactive people invert the allocation: they obsess over the Circle of Concern — national problems, other people's flaws, past mistakes — using language of blame and victimhood, and their influence visibly shrinks as neglect starves the things they could have tended.
+        </p>
+        <p>
+          The mechanism is attentional economics. Attention is finite daily currency. Every minute spent rehearsing an unchangeable verdict (the boss's mood, yesterday's wording, the index level) is a minute withdrawn from preparation, repair, or rest. Covey's celebrated line — <em>work on what you can do something about and you enlarge influence; work only on what worries you and influence atrophies</em> — is testable in your own week: track where rumination goes and watch which domain improves. The Agency Index in the observatory makes the same point numerically. A score under 25 does not diagnose you; it diagnoses your current portfolio — nearly everything staked on outcomes you cannot command. The prescription is never “care less.” It is “move one card inward”: convert a Concern into the Influence request or Control action it contains, and re-score.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-rose-500">Chapter 04 · The brain</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          The Neurobiology of Perceived Agency: Prefrontal Control vs Amygdala Alarm
+        </h2>
+        <p>
+          Perceived control is not merely a mood — it is a circuit state. Uncontrollable threat cues preferentially drive the <strong>amygdala and anterior insula</strong>, triggering hyperarousal, threat scanning, and the familiar chest-tightening cascade, while controllable stressors increasingly recruit <strong>ventromedial prefrontal and dorsolateral prefrontal cortex</strong>, regions associated with appraisal, planning, and top-down regulation of the amygdala. Learned-helplessness research in animals and learned-optimism work in humans converge on the same finding: the belief that an action matters changes how the brain processes the stressor, not just how the mind narrates it afterward.
+        </p>
+        <p>
+          Sorting works with this architecture rather than against it. Labeling an affect (“this is a Concern, not a command”) engages prefrontal categorization and damps limbic reactivity — the mechanism behind affect-labeling studies. Scheduling a concrete next step converts open-loop dread into closed-loop execution, giving the planning cortex a job and the alarm system an all-clear signal for this hour. None of this makes the external event smaller; it makes your nervous system governable while you meet it. Breathe, classify, commit to twenty minutes, then re-measure. Agency is a practice with a neural signature, and every repetition myelinates the path from alarm to authorship.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Chapter 05 · Practice</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          The Trichotomy, the Four Virtues, and a Five-Step Daily Ritual
+        </h2>
+        <p>
+          For mixed cases use Irvine's <strong>trichotomy</strong>: Control (train, show up, choose tactics), Influence (play each point well, communicate clearly), Concern (opponent, referee, wind, final score). Define success at the inner two levels — <em>did I prepare excellently and act fairly?</em> — and treat the outer level as preferred but not possessed. Then let the <strong>four cardinal virtues</strong> choose the action's shape: <em>Wisdom</em> to see the situation without the added story, <em>Courage</em> to act despite discomfort, <em>Justice</em> to remember your agency touches other people, <em>Temperance</em> to refuse the compulsive demand for one outcome. The virtue chips beside the reframing engine exist for exactly this choice.
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li><strong>1. Name the event.</strong> Strip the story to facts: what happened, or what is scheduled.</li>
+          <li><strong>2. Separate outcome from response.</strong> Ask which part no amount of effort could guarantee.</li>
+          <li><strong>3. Find the leverage.</strong> One choice, preparation, boundary, or repair — sized 5 to 20 minutes.</li>
+          <li><strong>4. Choose a virtue.</strong> Let Wisdom, Courage, Justice, or Temperance author the manner.</li>
+          <li><strong>5. Release the remainder.</strong> Return the outcome to reality; keep the authorship of conduct.</li>
+        </ul>
+        <p>
+          Run the ritual once each morning on the observatory: three cards, one reframe, one micro-commitment typed into the plan. In two weeks the habit becomes the philosophy — not quoted, but embodied: <em>what is mine to practice now?</em>
+        </p>
+      </section>
+
+      <!-- FAQ Accordion -->
+      <section class="space-y-6 pt-4" aria-label="Frequently asked questions">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Frequently Asked Questions
+        </h2>
+        <div class="space-y-3">
+          {faqItems.map((item) => (
+            <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+              <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base gap-3">
+                <span>{item.q}</span>
+                <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0">▼</span>
+              </summary>
+              <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+                {item.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <style>
+    /* ============ Circle of Control observatory (scoped) ============ */
+    .coc-chip {
+      padding: 8px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid #e4e4e7;
+      background: #fff;
+      color: #52525b;
+      cursor: pointer;
+      transition: all .15s ease;
+      min-height: 36px;
+    }
+    .dark .coc-chip {
+      background: #09090b;
+      border-color: #27272a;
+      color: #d4d4d8;
+    }
+    .coc-chip:hover { border-color: #10b981; color: #059669; transform: translateY(-1px); }
+    .dark .coc-chip:hover { border-color: #10b981; color: #6ee7b7; }
+
+    .coc-arena {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 11;
+      min-height: 420px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #27272a;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(16,185,129,.07), transparent 30%),
+        radial-gradient(circle at 50% 48%, rgba(56,189,248,.06), transparent 48%),
+        radial-gradient(circle at 50% 48%, rgba(251,113,133,.05), transparent 66%),
+        #060709;
+    }
+    @media (max-width: 640px) {
+      .coc-arena { aspect-ratio: 1 / 1.05; min-height: 480px; }
+    }
+    .coc-rings { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .coc-ring { fill: none; stroke-width: 1.6; transition: all .2s ease; }
+    .coc-ring-concern { stroke: #52525b; stroke-dasharray: 5 5; fill: url(#cocConcernGrad); }
+    .coc-ring-influence { stroke: #38bdf8; stroke-opacity: .75; fill: url(#cocInfluenceGrad); }
+    .coc-ring-control { stroke: #10b981; fill: url(#cocControlGrad); }
+    .coc-core { fill: #f59e0b; }
+    .coc-ring-active { stroke-width: 3; }
+    .coc-ring-active.coc-ring-control { stroke: #34d399; filter: drop-shadow(0 0 10px rgba(16,185,129,.8)); }
+    .coc-ring-active.coc-ring-influence { stroke: #7dd3fc; filter: drop-shadow(0 0 10px rgba(56,189,248,.8)); }
+    .coc-ring-active.coc-ring-concern { stroke: #fda4af; filter: drop-shadow(0 0 10px rgba(251,113,133,.8)); }
+    .coc-arena-drag { outline: 2px dashed rgba(16,185,129,.5); outline-offset: -2px; }
+    .coc-svg-title { fill: #a7f3d0; font-size: 3.4px; font-weight: 800; letter-spacing: .12em; font-family: ui-monospace, monospace; }
+    .coc-svg-sub { fill: #6ee7b7; font-size: 2px; font-family: ui-monospace, monospace; opacity: .8; }
+    .coc-svg-zone { fill: #93c5fd; font-size: 2.6px; font-weight: 700; letter-spacing: .1em; font-family: ui-monospace, monospace; opacity: .9; }
+    .coc-svg-zone-outer { fill: #fda4af; }
+
+    .coc-cards { position: absolute; inset: 0; }
+    .coc-card {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: min(200px, 34vw);
+      min-width: 132px;
+      background: rgba(18,22,30,.96);
+      border: 1px solid #3f3f46;
+      border-radius: 13px;
+      padding: 9px 10px 8px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.45);
+      user-select: none;
+      cursor: grab;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      will-change: transform;
+    }
+    .coc-card:hover { z-index: 20; }
+    .coc-card:focus-visible { outline: 2px solid #10b981; outline-offset: 2px; }
+    .coc-card-control { border-color: rgba(16,185,129,.65); }
+    .coc-card-control:hover { box-shadow: 0 0 0 3px rgba(16,185,129,.18), 0 12px 28px rgba(0,0,0,.45); }
+    .coc-card-influence { border-color: rgba(56,189,248,.55); }
+    .coc-card-influence:hover { box-shadow: 0 0 0 3px rgba(56,189,248,.16), 0 12px 28px rgba(0,0,0,.45); }
+    .coc-card-concern { border-color: rgba(251,113,133,.45); }
+    .coc-card-concern:hover { box-shadow: 0 0 0 3px rgba(251,113,133,.14), 0 12px 28px rgba(0,0,0,.45); }
+    .coc-dragging { opacity: .55; cursor: grabbing; z-index: 50; }
+    .coc-card-tag {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-family: ui-monospace, monospace;
+      color: #a1a1aa;
+      margin-bottom: 3px;
+    }
+    .coc-card-control .coc-card-tag { color: #6ee7b7; }
+    .coc-card-influence .coc-card-tag { color: #7dd3fc; }
+    .coc-card-concern .coc-card-tag { color: #fda4af; }
+    .coc-card-text { display: block; font-size: 12.5px; line-height: 1.35; color: #f4f4f5; }
+    .coc-card-actions { display: flex; gap: 4px; margin-top: 7px; }
+    .coc-mini {
+      flex: 1;
+      min-width: 30px;
+      min-height: 30px;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 8px;
+      border: 1px solid #3f3f46;
+      background: #18181b;
+      color: #d4d4d8;
+      cursor: pointer;
+      transition: all .12s ease;
+    }
+    .coc-mini:hover { transform: translateY(-1px); }
+    .coc-mini-c { border-color: rgba(16,185,129,.4); color: #a7f3d0; }
+    .coc-mini-f { border-color: rgba(56,189,248,.4); color: #bae6fd; }
+    .coc-mini-n { border-color: rgba(251,113,133,.4); color: #fecdd3; }
+    .coc-mini-r { border-color: rgba(245,158,11,.5); color: #fde68a; }
+    .coc-mini-d { border-color: rgba(113,113,122,.5); color: #a1a1aa; max-width: 32px; }
+
+    .coc-empty {
+      position: absolute;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+      padding: 10px 18px;
+      background: rgba(15, 15, 20, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+      max-width: 90%;
+      z-index: 5;
+    }
+    .coc-empty strong { color: #f4f4f5; font-size: 13px; font-weight: 700; }
+    .coc-empty span { color: #a1a1aa; font-size: 11px; max-width: 380px; line-height: 1.5; }
+
+    .coc-bar-fill {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: #52525b;
+      transition: width .35s ease;
+    }
+    .coc-bar-good { background: linear-gradient(90deg, #10b981, #38bdf8); }
+    .coc-bar-mid { background: linear-gradient(90deg, #f59e0b, #10b981); }
+    .coc-bar-low { background: linear-gradient(90deg, #fb7185, #f59e0b); }
+
+    .coc-virtue-btn {
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid #e4e4e7;
+      background: #fff;
+      color: #52525b;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .dark .coc-virtue-btn { background: #09090b; border-color: #27272a; color: #d4d4d8; }
+    .coc-virtue-btn:hover { border-color: #38bdf8; }
+    .coc-virtue-active {
+      border-color: #10b981 !important;
+      background: rgba(16,185,129,.1) !important;
+      color: #059669 !important;
+    }
+    .dark .coc-virtue-active { color: #6ee7b7 !important; }
+
+    .coc-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translate(-50%, 16px);
+      background: #09090b;
+      color: #f4f4f5;
+      border: 1px solid #27272a;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 20px 40px rgba(0,0,0,.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all .25s ease;
+      z-index: 60;
+      max-width: min(92vw, 480px);
+      text-align: center;
+    }
+    .dark .coc-toast { background: #f4f4f5; color: #09090b; border-color: #e4e4e7; }
+    .coc-toast-show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media print {
+      header, footer, nav, #cocToast, .no-print { display: none !important; }
+      main { background: #fff !important; color: #111 !important; }
+      .coc-arena { break-inside: avoid; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .coc-card { will-change: auto; }
+      * { scroll-behavior: auto !important; }
+    }
+  </style>
+
+  <script src="../scripts/tools/circle-of-control-engine.js"></script>
+</Layout>

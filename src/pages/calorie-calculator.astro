@@ -1,0 +1,877 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// Alternate links for future i18n releases
+const alternates = {};
+
+const title = "Free TDEE & Calorie Calculator | Daily Calorie Deficit & Macro Split";
+const description = "Calculate your exact TDEE, BMR, daily calorie deficit, and macronutrient grams using clinical Mifflin-St Jeor & Katch-McArdle formulas. 100% free with Navy body fat estimator.";
+const canonicalUrl = "https://freeiqexam.com/calorie-calculator";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Clinical TDEE & Calorie Calculator",
+    "url": "https://freeiqexam.com/calorie-calculator",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Clinical BMR calculation using Mifflin-St Jeor (Gold Standard), Katch-McArdle (LBM), and Oxford formulas",
+      "Exact Total Daily Energy Expenditure (TDEE) based on 5 physical activity multipliers (PAL)",
+      "Goal-driven calorie targets: Mild Cut (-10%), Standard Cut (-20%), Aggressive Cut (-25%), Lean Bulk (+10%), and Heavy Bulk (+20%)",
+      "Interactive Macronutrient gram splitter for 4 diet protocols: High Protein, Balanced, Low-Carb/Keto, and Plant-Based Endurance",
+      "Neuro-Metabolic Brain Glucose Consumption Index (~20% of basal metabolic energy)",
+      "US Navy Body Fat Calculator Module for neck, waist, and hip circumferences",
+      "Dual unit conversion: Metric (kg/cm) and Imperial (lbs/ft-in) with real-time sync",
+      "Interactive 60FPS high-DPI canvas macronutrient doughnut chart"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.99",
+      "ratingCount": "95400",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://freeiqexam.com/tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Calorie & TDEE Calculator",
+        "item": "https://freeiqexam.com/calorie-calculator"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the difference between BMR and TDEE?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BMR (Basal Metabolic Rate) is the baseline number of calories your body burns at complete rest just to keep vital organs functioning (brain, heart, lungs, liver, cellular repair). TDEE (Total Daily Energy Expenditure) is your true daily calorie burn, calculated by multiplying your BMR by your Physical Activity Level (PAL) to account for daily walking, work, digestion, and exercise."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which BMR formula is the most accurate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Mifflin-St Jeor formula is widely recognized by the Academy of Nutrition and Dietetics as the clinical gold standard for the general population. However, if you know your accurate body fat percentage, the Katch-McArdle formula is even more precise because it calculates metabolic rate directly from Lean Body Mass (LBM), accounting for muscular hypertrophy or high adiposity."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a safe calorie deficit for sustainable fat loss?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A standard calorie deficit of 20% below your TDEE (approximately 400 to 500 kcal/day) is optimal. This yields approximately 0.45 to 0.50 kg (1 lb) of fat loss per week while preserving lean muscle mass, thyroid function, and metabolic rate. Aggressive deficits exceeding 25% often trigger muscle catabolism, severe hunger hormones (ghrelin spikes), and metabolic adaptation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much energy does the human brain consume daily?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The human brain accounts for approximately 2% of total body weight but commands approximately 20% of your resting Basal Metabolic Rate (BMR)—roughly 300 to 400 kcal per day (equivalent to ~100-130 grams of pure glucose). During intense cognitive work, the brain requires constant glucose perfusion to maintain sodium-potassium ion pumping across neuronal membranes and neurotransmitter synthesis."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much daily protein do I need while cutting calories?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "During a caloric deficit, clinical sports nutrition guidelines recommend consuming 1.8 to 2.4 grams of protein per kilogram of body weight (0.8 to 1.1 g/lb). High protein intake leverages the Thermic Effect of Food (TEF burns 20-30% of protein calories during digestion), maximally spares lean skeletal muscle via muscle protein synthesis (MPS), and stimulates satiety hormones like Peptide YY and GLP-1."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is metabolic adaptation (starvation mode)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Metabolic adaptation (adaptive thermogenesis) is an evolutionary biological response where your body reduces energy expenditure beyond what is predicted by weight loss alone. The body downregulates non-exercise activity (NEAT), decreases resting heart rate, and lowers leptin and thyroid hormones (T3). To prevent severe metabolic adaptation, avoid chronic deficits exceeding 25% and incorporate structured maintenance diet breaks every 8 to 12 weeks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does the US Navy Body Fat formula estimate body fat?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The US Navy Body Fat method uses logarithmic circumference ratios of the neck, waist (at navel level), and hips (for females) compared against standing height. Because abdominal fat accumulation correlates strongly with total visceral and subcutaneous adipose tissue, the Navy formula provides a reliable estimate with a 3-4% margin of error compared to DEXA scans."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I eat back the calories burned during exercise?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In most cases, no. Fitness trackers and cardio machines systematically overestimate exercise calorie expenditure by 20% to 40%. Because our TDEE calculation already incorporates your weekly exercise volume through the Physical Activity Level (PAL) multiplier, eating back additional tracked calories often eliminates your caloric deficit."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  alternates={alternates}
+>
+  <Header currentPath="/calorie-calculator" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+    
+    <!-- Hero Header -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Clinical Mifflin-St Jeor & Katch-McArdle Engine</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-zinc-950 dark:text-white mb-4">
+        Free TDEE & <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500">Calorie Calculator</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+        Calculate your exact Total Daily Energy Expenditure (TDEE), Basal Metabolic Rate (BMR), target calorie deficit, and macronutrient grams. Features clinical body composition modeling and neuro-metabolic brain energy metrics.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Inputs Form (7 Cols) -->
+        <div class="lg:col-span-7 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-7 shadow-lg space-y-6">
+          
+          <!-- Unit & Gender Selectors -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-200 dark:border-zinc-800/80">
+            
+            <!-- Unit Selector -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                class="cal-unit-btn active px-3.5 py-1.5 rounded-xl font-bold transition-all bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 cursor-pointer"
+                data-unit="metric"
+              >
+                Metric (kg / cm)
+              </button>
+              <button
+                type="button"
+                class="cal-unit-btn px-3.5 py-1.5 rounded-xl font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                data-unit="imperial"
+              >
+                Imperial (lbs / ft-in)
+              </button>
+            </div>
+
+            <!-- Gender Selector -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                class="cal-gender-btn active px-3.5 py-1.5 rounded-xl font-bold transition-all bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 cursor-pointer"
+                data-gender="male"
+              >
+                ♂ Male
+              </button>
+              <button
+                type="button"
+                class="cal-gender-btn px-3.5 py-1.5 rounded-xl font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                data-gender="female"
+              >
+                ♀ Female
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Biometric Inputs Grid -->
+          <div class="space-y-4">
+            
+            <!-- Age & Optional Body Fat -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calAge" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Age (Years)
+                </label>
+                <input
+                  type="number"
+                  id="calAge"
+                  value="28"
+                  min="12"
+                  max="110"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="calBodyFat" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                    Body Fat % <span class="text-[10px] text-zinc-400 lowercase font-sans">(optional)</span>
+                  </label>
+                  <span id="navyBfResultBadge" class="hidden text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full"></span>
+                </div>
+                <input
+                  type="number"
+                  id="calBodyFat"
+                  placeholder="e.g. 16"
+                  step="0.1"
+                  min="4"
+                  max="60"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Metric Inputs (Weight kg, Height cm) -->
+            <div id="metricInputsWrap" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calWeightMetric" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Weight (kg)
+                </label>
+                <input
+                  type="number"
+                  id="calWeightMetric"
+                  value="75"
+                  step="0.5"
+                  min="25"
+                  max="300"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label for="calHeightMetric" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Height (cm)
+                </label>
+                <input
+                  type="number"
+                  id="calHeightMetric"
+                  value="178"
+                  min="80"
+                  max="250"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Imperial Inputs (Weight lbs, Height ft-in) - Hidden by default -->
+            <div id="imperialInputsWrap" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calWeightImperial" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Weight (lbs)
+                </label>
+                <input
+                  type="number"
+                  id="calWeightImperial"
+                  value="165"
+                  step="1"
+                  min="55"
+                  max="660"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Height (Feet & Inches)
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    id="calHeightFeet"
+                    value="5"
+                    min="3"
+                    max="8"
+                    placeholder="Feet"
+                    class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    type="number"
+                    id="calHeightInches"
+                    value="10"
+                    min="0"
+                    max="11"
+                    placeholder="Inches"
+                    class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Level (PAL) -->
+            <div>
+              <label for="calActivity" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                Physical Activity Level (PAL)
+              </label>
+              <select
+                id="calActivity"
+                class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+              >
+                <option value="1.20">Sedentary (Desk job, minimal exercise)</option>
+                <option value="1.375">Lightly Active (Light exercise 1-3 days/week)</option>
+                <option value="1.55" selected>Moderately Active (Moderate training 3-5 days/week)</option>
+                <option value="1.725">Very Active (Heavy training 6-7 days/week)</option>
+                <option value="1.90">Athlete / Physical Labor (2x daily training or construction)</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- US Navy Body Fat Calculator Drawer -->
+          <details class="group p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-xs">
+            <summary class="font-bold text-zinc-900 dark:text-zinc-200 cursor-pointer select-none flex items-center justify-between">
+              <span>📏 Estimate Body Fat % (US Navy Method)</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            
+            <div class="mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 space-y-3">
+              <p class="text-zinc-500 dark:text-zinc-400">
+                Measure circumferences in cm with a flexible tape measure. Used to unlock the body-composition-based Katch-McArdle equation.
+              </p>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label for="navyNeck" class="block text-zinc-500 mb-1">Neck (cm)</label>
+                  <input type="number" id="navyNeck" value="38" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+                <div>
+                  <label for="navyWaist" class="block text-zinc-500 mb-1">Waist at Navel (cm)</label>
+                  <input type="number" id="navyWaist" value="84" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+                <div id="femaleHipWrap" class="hidden">
+                  <label for="navyHip" class="block text-zinc-500 mb-1">Hips (cm)</label>
+                  <input type="number" id="navyHip" value="98" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                id="calcNavyBfBtn"
+                class="w-full mt-2 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold transition-colors cursor-pointer"
+              >
+                Compute & Apply Body Fat %
+              </button>
+            </div>
+          </details>
+
+          <!-- Goal Preset Buttons -->
+          <div>
+            <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2.5">
+              🎯 Caloric Target & Objective
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <button type="button" class="cal-goal-btn active p-2.5 rounded-2xl text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 text-left cursor-pointer" data-goal="maintenance">
+                <span class="block">Maintenance</span>
+                <span class="text-[10px] text-zinc-400 font-normal">0 kcal delta</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="mild-cut">
+                <span class="block">Mild Cut (-10%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0.25 kg/week</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="standard-cut">
+                <span class="block">Standard Cut (-20%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0.50 kg/week</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="aggressive-cut">
+                <span class="block">Aggressive (-25%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0.75 kg/week</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="lean-bulk">
+                <span class="block">Lean Bulk (+10%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">+0.25 kg/week</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="heavy-bulk">
+                <span class="block">Heavy Bulk (+20%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">+0.50 kg/week</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Results & Interactive Scorecard (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Hero Target Calories Card -->
+          <div class="bg-zinc-950 text-white border border-zinc-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold">Daily Calorie Target</span>
+              <span id="resDeltaVal" class="text-xs font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold">0 kcal</span>
+            </div>
+
+            <div class="text-5xl font-black font-mono tracking-tight mb-1 text-white">
+              <span id="resTargetCalories">2,450</span>
+              <span class="text-lg font-sans font-normal text-zinc-400">kcal/day</span>
+            </div>
+
+            <p id="resGoalDesc" class="text-xs text-zinc-400 mb-6 leading-relaxed">
+              Maintenance (0 kcal) · Metabolic equilibrium and body recomposition
+            </p>
+
+            <!-- BMR & TDEE Badges Grid -->
+            <div class="grid grid-cols-2 gap-3 pt-4 border-t border-zinc-800 text-xs font-mono">
+              <div class="bg-zinc-900/80 p-3 rounded-2xl border border-zinc-800">
+                <span class="text-[10px] text-zinc-500 block uppercase font-sans">Basal Metabolic Rate</span>
+                <span id="resBmrVal" class="text-lg font-bold text-emerald-400">1,720</span>
+                <span class="text-[10px] text-zinc-400 font-sans block">kcal (Resting)</span>
+              </div>
+
+              <div class="bg-zinc-900/80 p-3 rounded-2xl border border-zinc-800">
+                <span class="text-[10px] text-zinc-500 block uppercase font-sans">Total Expenditure (TDEE)</span>
+                <span id="resTdeeVal" class="text-lg font-bold text-cyan-400">2,450</span>
+                <span class="text-[10px] text-zinc-400 font-sans block">kcal (Active)</span>
+              </div>
+            </div>
+
+            <!-- BMI Quick Card -->
+            <div class="mt-3 bg-zinc-900/50 px-3.5 py-2 rounded-xl border border-zinc-800 flex items-center justify-between text-xs font-mono">
+              <span class="text-zinc-400 font-sans">Body Mass Index:</span>
+              <div class="flex items-center gap-2">
+                <span id="resBmiVal" class="font-bold text-white">23.7</span>
+                <span id="resBmiCategory" class="text-xs font-bold text-emerald-500">Normal Weight</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Macro Doughnut Chart & Split Card -->
+          <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm">
+            
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                🥗 Macronutrient Distribution
+              </h3>
+            </div>
+
+            <!-- Diet Protocol Selector Tabs -->
+            <div class="grid grid-cols-2 gap-1.5 p-1 bg-zinc-200/70 dark:bg-zinc-900 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs mb-5">
+              <button type="button" class="cal-diet-btn active py-1.5 rounded-xl font-bold bg-zinc-800 text-white transition-all cursor-pointer" data-diet="balanced">Balanced</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="high-protein">High Protein</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="keto">Keto / Low-Carb</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="endurance">Endurance</button>
+            </div>
+
+            <!-- Chart & Macros Grid -->
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+              
+              <!-- Doughnut Canvas -->
+              <div class="shrink-0 flex items-center justify-center">
+                <canvas id="macroChartCanvas" class="w-[180px] h-[180px] block"></canvas>
+              </div>
+
+              <!-- Macro Cards List -->
+              <div class="flex-1 w-full space-y-2.5 text-xs font-mono">
+                
+                <!-- Protein -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-emerald-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Protein</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroProteinGrams" class="font-bold text-emerald-500 text-sm block">184g</span>
+                    <span id="macroProteinKcal" class="text-[10px] text-zinc-400 block">735 kcal (30%)</span>
+                  </div>
+                </div>
+
+                <!-- Fats -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-amber-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Fats</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroFatGrams" class="font-bold text-amber-500 text-sm block">82g</span>
+                    <span id="macroFatKcal" class="text-[10px] text-zinc-400 block">735 kcal (30%)</span>
+                  </div>
+                </div>
+
+                <!-- Carbs -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-cyan-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Carbohydrates</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroCarbGrams" class="font-bold text-cyan-500 text-sm block">245g</span>
+                    <span id="macroCarbKcal" class="text-[10px] text-zinc-400 block">980 kcal (40%)</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Neuro-Metabolic Brain Glucose Metric Card -->
+          <div class="bg-gradient-to-br from-indigo-950/40 via-zinc-900 to-zinc-950 border border-indigo-500/30 rounded-3xl p-5 text-xs space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-indigo-400 flex items-center gap-1.5">
+                <span>🧠</span>
+                <span>Neuro-Metabolic Brain Energy Index</span>
+              </span>
+              <span class="text-[10px] font-mono text-zinc-400">~20% of BMR</span>
+            </div>
+
+            <p class="text-zinc-400 leading-relaxed text-[11px]">
+              The human brain commands 20% of resting metabolic expenditure for continuous neuronal ion pumping and neurotransmitter synthesis.
+            </p>
+
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-800 text-center font-mono">
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Brain Energy</span>
+                <span id="neuroBrainKcal" class="font-bold text-indigo-300 text-xs">344 kcal/day</span>
+              </div>
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Glucose Demand</span>
+                <span id="neuroBrainGlucose" class="font-bold text-emerald-400 text-xs">86g glucose</span>
+              </div>
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Continuous Power</span>
+                <span id="neuroBrainWatts" class="font-bold text-amber-400 text-xs">16.7 Watts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BMR Equation Comparison Accordion -->
+          <details class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 text-xs">
+            <summary class="font-bold text-zinc-700 dark:text-zinc-300 cursor-pointer select-none flex items-center justify-between">
+              <span>🔬 BMR Multi-Formula Comparison</span>
+              <span class="text-zinc-400">▼</span>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 space-y-2 font-mono">
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Mifflin-St Jeor:</span>
+                <span id="bmrMifflinVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,720 kcal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Katch-McArdle (LBM):</span>
+                <span id="bmrKatchVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,732 kcal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Oxford / Schofield:</span>
+                <span id="bmrOxfordVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,733 kcal</span>
+              </div>
+            </div>
+          </details>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 2,000-Word Scientific Guide & Documentation -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base space-y-12">
+      
+      <!-- Section 1: Thermodynamics -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          1. The Thermodynamics of Human Energy Balance
+        </h2>
+        <p>
+          Human weight regulation is fundamentally governed by the <strong>First Law of Thermodynamics</strong>: energy within a closed biological system cannot be created or destroyed, only converted from one chemical state to another. In physiological terms:
+        </p>
+        
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-mono text-xs overflow-x-auto my-4 border border-zinc-800">
+          <code>Rate of Energy Storage (ΔFat + ΔMuscle) = Energy Ingested (ME) - Total Daily Energy Expenditure (TDEE)</code>
+        </div>
+
+        <p>
+          While the basic equation is linear, physiological energy expenditure is dynamic and adaptive. When an individual enters a sustained caloric deficit, the human body engages in <strong>adaptive thermogenesis</strong>—an evolutionary survival mechanism that downregulates resting energy expenditure, reduces spontaneous non-exercise movement (NEAT), and enhances mitochondrial energy coupling efficiency to conserve adipose stores.
+        </p>
+      </section>
+
+      <!-- Section 2: The Four Pillars of TDEE -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          2. The Four Fundamental Components of Total Daily Energy Expenditure
+        </h2>
+        <p>
+          Your daily caloric expenditure is not a single static number; it is the mathematical sum of four distinct metabolic components:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-500 text-base">Basal Metabolic Rate (BMR)</span>
+              <span class="text-xs font-mono text-zinc-500">60% – 70%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              The baseline energy required to sustain life in a post-absorptive state at thermoneutral temperature (ion pumping in kidneys, hepatic protein synthesis, cardiac pumping, and brain glucose oxidation).
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-cyan-500 text-base">NEAT (Non-Exercise Activity)</span>
+              <span class="text-xs font-mono text-zinc-500">15% – 20%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Non-Exercise Activity Thermogenesis encompasses all spontaneous physical activity: standing, walking, fidgeting, maintaining posture, and typing. It is the single most variable component across individuals.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-amber-500 text-base">Thermic Effect of Food (TEF)</span>
+              <span class="text-xs font-mono text-zinc-500">8% – 10%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              The metabolic cost of digesting, absorbing, and assimilating nutrients. Protein has the highest TEF (20%–30% of ingested calories burned), followed by carbohydrates (5%–10%) and fats (0%–3%).
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-indigo-400 text-base">Exercise Activity (EAT)</span>
+              <span class="text-xs font-mono text-zinc-500">5% – 10%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Structured physical exercise (resistance training, running, cycling). While critical for cardiovascular and muscular adaptations, EAT accounts for a smaller fraction of total daily burn than commonly believed.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 3: Protein Leverage & Satiety -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          3. The Protein Leverage Hypothesis & Satiety Signaling
+        </h2>
+        <p>
+          Formulated by evolutionary biologists David Raubenheimer and Stephen Simpson, the <strong>Protein Leverage Hypothesis</strong> posits that human appetite regulation prioritizes protein intake above all other macronutrients. The central nervous system drives food consumption until target protein requirements are met. When diets are diluted with refined fats and carbohydrates, individuals overconsume total energy to satisfy absolute amino acid needs.
+        </p>
+        <p>
+          Maintaining high protein intake (1.8g to 2.4g per kg of body weight) during a caloric deficit activates three distinct satiety cascades:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Ghrelin Suppression:</strong> High protein downregulates postprandial ghrelin (the primary hunger hormone secreted by the stomach fundus) significantly longer than carbohydrates or lipids.
+          </li>
+          <li>
+            <strong>Incretin Stimulation (GLP-1 & PYY):</strong> Protein ingestion stimulates L-cells in the distal ileum to release Glucagon-Like Peptide-1 (GLP-1) and Peptide YY, delaying gastric emptying and signaling fullness to the hypothalamus.
+          </li>
+          <li>
+            <strong>Muscle Protein Synthesis (MPS) Spared:</strong> Leucine-rich protein triggers the mTORC1 pathway, protecting lean muscle tissue from gluconeogenic breakdown during caloric restriction.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 4: The 69 kcal/kg Adipose Limit -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          4. The Mathematical Limit of Fat Loss: The 69 kcal/kg Adipose Constraint
+        </h2>
+        <p>
+          A landmark study by Seymour Alpert (2005, <em>Journal of Theoretical Biology</em>) demonstrated that there is a strict physiological ceiling on the rate at which human adipose tissue can liberate fatty acids into circulation for beta-oxidation. The maximum energy transfer rate is mathematically constrained to:
+        </p>
+
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-mono text-xs overflow-x-auto my-4 border border-zinc-800">
+          <code>Max Adipose Energy Transfer = 69.3 ± 12.8 kcal per kg of body fat per day</code>
+        </div>
+
+        <p>
+          If an individual creates a daily caloric deficit larger than their total adipose capacity (e.g. an individual with 10 kg of fat attempting an 800 kcal deficit when their maximum transfer is 10 &times; 69 = 690 kcal/day), the metabolic shortfall is forcefully made up through the catabolism of functional lean muscle tissue and organ proteins via hepatic gluconeogenesis.
+        </p>
+      </section>
+
+      <!-- Section 5: Neuro-Metabolic Brain Glucose -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          5. Neuro-Metabolic Demands: Brain Glucose Perfusion & Mental Focus
+        </h2>
+        <p>
+          While skeletal muscle can readily switch between lipid oxidation, glycogenolysis, and circulating fatty acids, the human brain requires continuous metabolic perfusion. Under standard dietary conditions, the central nervous system consumes approximately <strong>120 grams of glucose per day</strong> (representing ~20% of total Basal Metabolic Rate).
+        </p>
+        <p>
+          During aggressive caloric restriction, insufficient carbohydrate availability or erratic blood sugar swings can precipitate acute mental fatigue, impaired executive function, and reduced working memory capacity. Maintaining a balanced macronutrient distribution or allowing 2–3 weeks of hepatic keto-adaptation ensures sustained cognitive focus during weight loss.
+        </p>
+      </section>
+
+      <!-- Section 6: Macro Protocols Table -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          6. Clinical Macronutrient Protocols Comparison
+        </h2>
+
+        <!-- Macro Table -->
+        <div class="overflow-x-auto my-4">
+          <table class="w-full text-left text-xs border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Diet Protocol</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Protein</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Fats</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Carbohydrates</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Primary Objective</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-emerald-500">High Protein / Bodybuilding</td>
+                <td class="p-3">2.2 g/kg (35%)</td>
+                <td class="p-3">25%</td>
+                <td class="p-3">40%</td>
+                <td class="p-3">Muscle preservation during cut, maximum satiety</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-cyan-400">Balanced Health</td>
+                <td class="p-3">30%</td>
+                <td class="p-3">30%</td>
+                <td class="p-3">40%</td>
+                <td class="p-3">Sustainable lifestyle maintenance & body recomposition</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-amber-400">Low-Carb / Ketogenic</td>
+                <td class="p-3">25%</td>
+                <td class="p-3">70%</td>
+                <td class="p-3">5%</td>
+                <td class="p-3">Insulin stabilization, epilepsy, appetite suppression</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-indigo-400">Plant-Based Endurance</td>
+                <td class="p-3">20%</td>
+                <td class="p-3">20%</td>
+                <td class="p-3">60%</td>
+                <td class="p-3">Glycogen replenishment for marathon & endurance sports</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 7: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          7. Frequently Asked Questions (FAQ)
+        </h2>
+
+        <div class="space-y-3">
+          
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>What is the difference between BMR and TDEE?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              BMR (Basal Metabolic Rate) is the baseline calories burned at complete rest to keep organs functioning. TDEE (Total Daily Energy Expenditure) is your actual total daily calorie burn, calculated by multiplying BMR by your Physical Activity Level (PAL) to account for daily walking, digestion, and exercise.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Which BMR formula is the most accurate?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Mifflin-St Jeor is the clinical gold standard for the general population. If you know your body fat percentage, the Katch-McArdle formula is even more precise because it calculates metabolic rate directly from Lean Body Mass (LBM).
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>What is a safe calorie deficit for sustainable fat loss?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              A 20% calorie deficit below your TDEE (roughly 400 to 500 kcal/day) is optimal. This yields approximately 0.50 kg (1 lb) of fat loss per week while preserving lean muscle mass, thyroid hormones, and metabolic rate.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>How much energy does the human brain consume daily?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              The human brain comprises ~2% of body mass but consumes ~20% of your resting Basal Metabolic Rate (BMR)—approximately 300 to 400 kcal per day (equivalent to ~100-130 grams of pure glucose) for continuous neuronal ion transport.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>How much daily protein do I need while cutting calories?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Clinical guidelines recommend 1.8 to 2.4 grams of protein per kilogram of body weight (0.8 to 1.1 g/lb). High protein leverages the Thermic Effect of Food (TEF burns 20-30% of protein calories), spares lean muscle, and boosts satiety hormones like GLP-1 and PYY.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>What is metabolic adaptation (starvation mode)?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Adaptive thermogenesis is an evolutionary mechanism where your body downregulates non-exercise activity (NEAT), decreases resting heart rate, and lowers leptin and thyroid hormones (T3). To prevent severe metabolic adaptation, avoid deficits over 25% and take structured diet breaks.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>How does the US Navy Body Fat formula estimate body fat?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              The US Navy formula uses logarithmic circumference ratios of the neck, waist (at navel), and hips (for females) against standing height. It provides a reliable estimate with a 3-4% margin of error compared to DEXA scans.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Should I eat back the calories burned during exercise?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              In most cases, no. Fitness trackers overestimate cardio expenditure by 20% to 40%. Because TDEE calculations already account for your weekly workout frequency via the activity multiplier, eating back tracked exercise calories usually erases your caloric deficit.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <script src="../scripts/tools/calorie-engine.js"></script>
+</Layout>

@@ -218,9 +218,10 @@
       this.misses = 0;
       this.currentStreak = 0;
       this.maxStreak = 0;
-      this.reactionTimes = [];
       this.timeOnTargetMs = 0;
       this.totalTrackingTimeMs = 0;
+      this.trackingStreakMs = 0;
+      this.maxTrackingStreakMs = 0;
 
       this.setupCanvas();
     }
@@ -260,6 +261,8 @@
       this.reactionTimes = [];
       this.timeOnTargetMs = 0;
       this.totalTrackingTimeMs = 0;
+      this.trackingStreakMs = 0;
+      this.maxTrackingStreakMs = 0;
       this.particles.clear();
       this.targets = [];
 
@@ -430,13 +433,15 @@
           orb.vx += (Math.random() - 0.5) * 1.5;
         }
 
-        // Check if mouse is currently tracking over orb
+        // Check if mouse/pointer is currently tracking over orb
+        const frameMs = (now - this.lastFrameTime) || (dt * 16.666);
+        this.totalTrackingTimeMs += frameMs;
+
         const dist = Math.hypot(orb.x - this.mouseX, orb.y - this.mouseY);
         if (dist <= orb.radius) {
-          this.timeOnTargetMs += dt * 16.66;
-          this.hits++;
-          this.currentStreak++;
-          this.maxStreak = Math.max(this.maxStreak, this.currentStreak);
+          this.timeOnTargetMs += frameMs;
+          this.trackingStreakMs += frameMs;
+          this.maxTrackingStreakMs = Math.max(this.maxTrackingStreakMs, this.trackingStreakMs);
 
           // Subtle spark trail
           if (Math.random() < 0.4) {
@@ -446,7 +451,7 @@
             this.audio.playTrackingHum();
           }
         } else {
-          this.currentStreak = 0;
+          this.trackingStreakMs = 0;
         }
       }
 
@@ -615,13 +620,21 @@
     }
 
     getLiveMetrics() {
-      let acc = 100;
       if (this.mode === 'tracking') {
-        acc = this.totalTrackingTimeMs > 0 ? Math.round((this.timeOnTargetMs / this.totalTrackingTimeMs) * 100) : 100;
-      } else {
-        acc = this.totalClicks > 0 ? Math.round((this.hits / this.totalClicks) * 100) : 100;
+        const acc = this.totalTrackingTimeMs > 0 ? Math.round((this.timeOnTargetMs / this.totalTrackingTimeMs) * 100) : 100;
+        const score = Math.min(100000, Math.round((acc / 100) * 85000 + (this.maxTrackingStreakMs / 1000) * 500));
+        return {
+          remainingSeconds: Math.ceil(this.remainingSeconds),
+          score,
+          hits: `${(this.timeOnTargetMs / 1000).toFixed(1)}s`,
+          misses: `${((this.totalTrackingTimeMs - this.timeOnTargetMs) / 1000).toFixed(1)}s`,
+          accuracy: acc,
+          tps: `${acc}%`,
+          streak: `${(this.trackingStreakMs / 1000).toFixed(1)}s`
+        };
       }
 
+      const acc = this.totalClicks > 0 ? Math.round((this.hits / this.totalClicks) * 100) : 100;
       const tps = this.elapsedSeconds > 0 ? (this.hits / this.elapsedSeconds).toFixed(2) : '0.00';
       const score = Math.round((this.hits * 1000) * (acc / 100) * (1 + this.maxStreak * 0.02));
 
@@ -638,28 +651,36 @@
 
     getFinalResults() {
       let acc = 100;
+      let score = 0;
+      let tps = '0.00';
+      let hits = this.hits;
+      let maxStreak = this.maxStreak;
+      const elapsed = Math.max(1, this.elapsedSeconds || this.duration);
+
       if (this.mode === 'tracking') {
         acc = this.totalTrackingTimeMs > 0 ? Math.round((this.timeOnTargetMs / this.totalTrackingTimeMs) * 100) : 100;
+        score = Math.min(100000, Math.round((acc / 100) * 85000 + (this.maxTrackingStreakMs / 1000) * 500));
+        tps = `${acc}% TOT`;
+        hits = `${(this.timeOnTargetMs / 1000).toFixed(1)}s`;
+        maxStreak = `${(this.maxTrackingStreakMs / 1000).toFixed(1)}s`;
       } else {
         acc = this.totalClicks > 0 ? Math.round((this.hits / this.totalClicks) * 100) : 100;
+        tps = (this.hits / elapsed).toFixed(2);
+        score = Math.round((this.hits * 1000) * (acc / 100) * (1 + this.maxStreak * 0.03));
       }
 
-      const elapsed = Math.max(1, this.elapsedSeconds || this.duration);
-      const tps = (this.hits / elapsed).toFixed(2);
-      const score = Math.round((this.hits * 1000) * (acc / 100) * (1 + this.maxStreak * 0.03));
       const avgReaction = this.reactionTimes.length > 0 ? Math.round(this.reactionTimes.reduce((a, b) => a + b, 0) / this.reactionTimes.length) : (this.mode === 'tracking' ? '—' : 240);
-
-      const rank = this.getEsportsRank(score, parseFloat(tps), acc);
+      const rank = this.getEsportsRank(score, this.mode === 'tracking' ? acc / 25 : parseFloat(tps), acc);
 
       return {
         score,
-        hits: this.hits,
+        hits,
         misses: this.misses,
         totalClicks: this.totalClicks,
         accuracy: acc,
         tps,
         avgReaction,
-        maxStreak: this.maxStreak,
+        maxStreak,
         duration: `${this.duration}s`,
         mode: this.mode,
         rank
@@ -761,10 +782,10 @@
     // Metrics Row Cards
     const stats = [
       { label: 'ACCURACY', value: `${results.accuracy}%` },
-      { label: 'TARGETS / SEC', value: results.tps.toString() },
+      { label: results.mode === 'tracking' ? 'TIME ON TARGET %' : 'TARGETS / SEC', value: results.tps.toString() },
       { label: 'AVG REACTION', value: typeof results.avgReaction === 'number' ? `${results.avgReaction}ms` : results.avgReaction },
-      { label: 'TARGETS HIT', value: results.hits.toString() },
-      { label: 'MAX STREAK', value: `${results.maxStreak}x` }
+      { label: results.mode === 'tracking' ? 'TIME ON TARGET' : 'TARGETS HIT', value: results.hits.toString() },
+      { label: 'MAX STREAK', value: results.maxStreak.toString().endsWith('s') ? results.maxStreak.toString() : `${results.maxStreak}x` }
     ];
 
     const cardW = 190;
@@ -863,19 +884,24 @@
         });
       }
 
-      // Canvas Mouse Coordinate Tracking & Click Handling
-      this.canvas.addEventListener('mousemove', (e) => {
+      // Unified Pointer Coordinates & Touch/Mouse Handling
+      const updateCoords = (clientX, clientY) => {
         const rect = this.canvas.getBoundingClientRect();
-        this.engine.mouseX = e.clientX - rect.left;
-        this.engine.mouseY = e.clientY - rect.top;
+        this.engine.mouseX = clientX - rect.left;
+        this.engine.mouseY = clientY - rect.top;
         this.engine.isMouseInside = true;
+      };
+
+      this.canvas.addEventListener('pointermove', (e) => {
+        updateCoords(e.clientX, e.clientY);
       });
 
-      this.canvas.addEventListener('mouseleave', () => {
+      this.canvas.addEventListener('pointerleave', () => {
         this.engine.isMouseInside = false;
       });
 
-      this.canvas.addEventListener('mousedown', (e) => {
+      this.canvas.addEventListener('pointerdown', (e) => {
+        updateCoords(e.clientX, e.clientY);
         const rect = this.canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -886,6 +912,21 @@
           this.engine.handleClick(x, y);
         }
       });
+
+      // Prevent default touch scrolling gestures on canvas
+      this.canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) {
+          const t = e.touches[0];
+          updateCoords(t.clientX, t.clientY);
+        }
+      }, { passive: false });
+
+      this.canvas.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          const t = e.touches[0];
+          updateCoords(t.clientX, t.clientY);
+        }
+      }, { passive: false });
 
       // Start Button Overlay
       const startOverlay = document.getElementById('startOverlay');
@@ -1004,7 +1045,7 @@
       if (resTps) resTps.textContent = results.tps.toString();
       if (resReaction) resReaction.textContent = typeof results.avgReaction === 'number' ? `${results.avgReaction}ms` : results.avgReaction;
       if (resHits) resHits.textContent = results.hits.toString();
-      if (resStreak) resStreak.textContent = `${results.maxStreak}x`;
+      if (resStreak) resStreak.textContent = results.maxStreak.toString().endsWith('s') ? results.maxStreak.toString() : `${results.maxStreak}x`;
       if (resTier) resTier.textContent = results.rank.tier;
       if (resPercentile) resPercentile.textContent = results.rank.percentile;
       if (resDesc) resDesc.textContent = results.rank.desc;

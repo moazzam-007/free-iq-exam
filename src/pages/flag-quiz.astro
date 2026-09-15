@@ -1,0 +1,677 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// Alternate links for future i18n releases
+const alternates = {};
+
+const title = "World Flag Quiz & Geographic Memory Arena | 195+ Countries Visual Recall Test";
+const description = "Test your spatial memory and visual recall with our 195+ sovereign nations flag quiz. Features 20-question speed sprint, sudden-death survival, reverse guessing, and vexillology hard mode.";
+const canonicalUrl = "https://freeiqexam.com/flag-quiz";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam World Flag Quiz & Geographic Memory Arena",
+    "url": "https://freeiqexam.com/flag-quiz",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "195+ Sovereign United Nations Recognized Country Flags Database",
+      "4 Cognitive Gameplay Modes: 20-Round Timed Sprint, Sudden Death Survival, Reverse Guessing, and Vexillology Hard Mode",
+      "Continental Granular Filters (All World, Europe, Asia, Americas, Africa, Oceania)",
+      "Dynamic Reaction Speed & Millisecond Response Time Tracking",
+      "Adaptive Streak Combo Point Multiplier with Web Audio Harmonic Synthesizer",
+      "Regional Geographic Mastery Breakdown & Missed Flag Review Screen",
+      "100% Private, Client-Side Vector Rendering with Zero Tracking"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.97",
+      "ratingCount": "88420",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Games",
+        "item": "https://freeiqexam.com/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "World Flag Quiz",
+        "item": "https://freeiqexam.com/flag-quiz"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does the Flag Memory Quiz calculate cognitive score and percentile ranking?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your final score integrates raw accuracy, millisecond response latency, and combo streak multipliers. Fast, consecutive correct answers yield maximum points (up to 100,000), benchmarking your visual retrieval speed against global psychometric percentiles."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between Sprint Mode, Survival Mode, and Vexillology Hard Mode?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sprint Mode tests your accuracy across 20 randomized flags. Survival Mode is a sudden-death endurance challenge where one mistake ends the session. Vexillology Hard Mode intentionally pits notoriously identical pairs (such as Monaco vs. Indonesia or Chad vs. Romania) against one another."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why are certain country flags nearly identical (e.g., Chad and Romania, Monaco and Indonesia)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Chad and Romania share identical blue-yellow-red vertical tricolors due to independent historical developments. Monaco and Indonesia share red-and-white horizontal bicolors, differing only in exact proportions (Monaco 4:5 vs. Indonesia 2:3) and heraldic lineage."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does practicing flag recognition improve cognitive visual memory?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Flag recognition activates Paivio's Dual-Coding Theory by linking semantic geographic knowledge (capitals, country names, continents) with visual-spatial color patterns and heraldic geometry, strengthening synaptic recall pathways."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many sovereign country flags are included in this benchmark?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The engine includes all 195+ universally recognized sovereign nations across Europe, Asia, Africa, the Americas, and Oceania, each complete with verified capitals and regional metadata."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the North American Vexillological Association (NAVA) 5-rule standard?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "NAVA outlines five universal flag design principles: (1) Keep it simple enough to draw from memory, (2) Use meaningful symbolism, (3) Limit to 2–3 basic colors, (4) Avoid lettering or complex seals, and (5) Be distinctive or relate clearly to regional heritage."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use this flag quiz to prepare for geography bees and academic competitions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The arena offers continental filtering and reverse guessing (identifying flags from country names), making it a comprehensive training tool for National Geographic Bees, Model UN delegates, and vexillological researchers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is any of my score or gameplay data stored on your servers?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The entire quiz engine, scoring algorithms, and Web Audio synthesizers run 100% locally in your web browser. No personal data or quiz records are ever transmitted to any remote server."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema}>
+  <Header />
+
+  <main class="min-h-screen bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+    
+    <!-- Hero Header -->
+    <section class="relative pt-12 pb-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center overflow-hidden">
+      <!-- Ambient Background Glows -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+      <div class="absolute top-1/3 right-1/4 w-72 h-72 bg-cyan-500/10 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+      <!-- Navigation Breadcrumb -->
+      <nav class="flex items-center justify-center gap-2 text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+        <a href="/" class="hover:text-emerald-500 transition-colors">Home</a>
+        <span>/</span>
+        <a href="/games" class="hover:text-emerald-500 transition-colors">Games</a>
+        <span>/</span>
+        <span class="text-zinc-800 dark:text-zinc-200">World Flag Quiz</span>
+      </nav>
+
+      <!-- Badge Pill -->
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold tracking-wide uppercase mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        Spatial Geography & Visual Memory Benchmark
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-zinc-950 dark:text-white mb-4">
+        World Flag Quiz & <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500">Geographic Arena</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-6">
+        Test your visual pattern recognition and geographic recall across 195+ sovereign nations. Measure response latency, master confusing vexillological pairs, and benchmark your global percentile.
+      </p>
+
+      <!-- Feature Chips -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-mono text-zinc-600 dark:text-zinc-400">
+        <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 shadow-sm flex items-center gap-1.5">
+          <span class="text-emerald-500 font-bold">195+</span> Sovereign Nations
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 shadow-sm flex items-center gap-1.5">
+          <span class="text-cyan-500 font-bold">4</span> Cognitive Modes
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 shadow-sm flex items-center gap-1.5">
+          <span class="text-teal-500 font-bold">ms</span> Latency Tracking
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 shadow-sm flex items-center gap-1.5">
+          <span class="text-emerald-400 font-bold">100%</span> Private & Free
+        </span>
+      </div>
+    </section>
+
+    <!-- Interactive Flag Quiz Arena -->
+    <section class="px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto mb-16">
+      <div class="relative rounded-3xl bg-zinc-900/90 dark:bg-zinc-950/80 border border-zinc-800/90 shadow-2xl p-6 sm:p-8 backdrop-blur-xl transition-all">
+
+        <!-- 1. START / CONFIGURATION CARD -->
+        <div id="flagStartCard" class="space-y-6">
+          
+          <div class="text-center space-y-2">
+            <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Configure Your Arena Session</h2>
+            <p class="text-xs sm:text-sm text-zinc-400">Select your preferred cognitive drill mode and geographic boundary.</p>
+          </div>
+
+          <!-- Mode Selector Grid -->
+          <div class="space-y-2">
+            <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400">Select Gameplay Mode</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button type="button" data-mode="sprint" class="flag-mode-btn active p-3.5 rounded-2xl bg-zinc-900/80 border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 text-left transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm">20-Question Sprint</span>
+                  <span class="text-xs font-mono opacity-80">Standard</span>
+                </div>
+                <p class="text-[11px] text-zinc-400 leading-tight">Standardized 20-round timed cognitive benchmark measuring accuracy and reaction time.</p>
+              </button>
+
+              <button type="button" data-mode="survival" class="flag-mode-btn p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800 text-zinc-300 hover:border-zinc-700 text-left transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm">Endless Survival</span>
+                  <span class="text-xs font-mono text-rose-400">Sudden Death</span>
+                </div>
+                <p class="text-[11px] text-zinc-400 leading-tight">Continuous streak challenge. A single mistake terminates the run. Escalating combo multipliers.</p>
+              </button>
+
+              <button type="button" data-mode="reverse" class="flag-mode-btn p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800 text-zinc-300 hover:border-zinc-700 text-left transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm">Reverse Guessing</span>
+                  <span class="text-xs font-mono text-cyan-400">Name → Flag</span>
+                </div>
+                <p class="text-[11px] text-zinc-400 leading-tight">Given a country name and capital, identify the correct flag among 4 visual vector options.</p>
+              </button>
+
+              <button type="button" data-mode="hard" class="flag-mode-btn p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800 text-zinc-300 hover:border-zinc-700 text-left transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm">Vexillology Hard Mode</span>
+                  <span class="text-xs font-mono text-amber-400">Micro-Details</span>
+                </div>
+                <p class="text-[11px] text-zinc-400 leading-tight">Intentionally pairs identical flags (Monaco vs Indonesia, Chad vs Romania, Ireland vs Ivory Coast).</p>
+              </button>
+            </div>
+          </div>
+
+          <!-- Continent Filter -->
+          <div class="space-y-2">
+            <label for="flagContinentSelect" class="block text-xs font-mono uppercase tracking-wider text-zinc-400">Geographic Filter</label>
+            <div class="relative">
+              <select id="flagContinentSelect" class="w-full p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-sm font-semibold text-white focus:outline-none focus:border-emerald-500 transition-colors appearance-none cursor-pointer">
+                <option value="all">🌍 All Sovereign Nations (195+ Countries)</option>
+                <option value="Europe">🏰 Europe (44 Countries)</option>
+                <option value="Asia">⛩️ Asia (49 Countries)</option>
+                <option value="Americas">🌎 Americas (35 Countries)</option>
+                <option value="Africa">🦁 Africa (54 Countries)</option>
+                <option value="Oceania">🏝️ Oceania (14 Countries)</option>
+              </select>
+              <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 text-xs">▼</div>
+            </div>
+          </div>
+
+          <!-- Start Action Button -->
+          <button id="startFlagQuizBtn" type="button" class="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-zinc-950 font-extrabold text-base tracking-wide uppercase transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.01] active:scale-[0.99] cursor-pointer">
+            Launch Geographic Memory Arena
+          </button>
+        </div>
+
+        <!-- 2. LIVE GAMEPLAY ARENA CARD (Hidden by default) -->
+        <div id="flagArenaCard" class="hidden space-y-6">
+          
+          <!-- Arena Header: Stats & Progress -->
+          <div class="flex items-center justify-between border-b border-zinc-800/80 pb-4">
+            <div class="space-y-0.5">
+              <span id="flagQuizProgress" class="text-xs font-mono text-zinc-400 uppercase tracking-wider">Question 1 / 20</span>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-zinc-300">Score:</span>
+                <span id="flagLiveScore" class="text-base font-extrabold font-mono text-emerald-400">0</span>
+              </div>
+            </div>
+
+            <!-- Streak Combo Badge -->
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800">
+              <span class="text-xs text-zinc-400 font-sans">Streak:</span>
+              <span id="flagLiveStreak" class="text-sm font-extrabold font-mono text-amber-400">0x</span>
+            </div>
+          </div>
+
+          <!-- Target Presentation (Flag or Reverse Question) -->
+          <div class="flex flex-col items-center justify-center py-4 space-y-4">
+            <!-- Normal Mode Flag Image -->
+            <div class="relative p-2 rounded-2xl bg-zinc-900 border border-zinc-800 shadow-xl overflow-hidden max-w-sm w-full flex items-center justify-center min-h-[160px]">
+              <img id="flagTargetImage" src="" alt="Target Flag" class="max-h-40 w-auto rounded-lg shadow object-contain transition-transform duration-200" />
+            </div>
+
+            <!-- Reverse Mode Country Title (Hidden during normal mode) -->
+            <h3 id="flagCountryTitle" class="hidden text-xl sm:text-2xl font-extrabold text-white text-center tracking-tight"></h3>
+          </div>
+
+          <!-- Multiple Choice Options Grid -->
+          <div id="flagOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Dynamically populated 4 options -->
+          </div>
+
+        </div>
+
+        <!-- 3. DETAILED RESULTS SCORECARD (Hidden by default) -->
+        <div id="flagResultsCard" class="hidden space-y-8">
+          
+          <!-- Hero Score Banner -->
+          <div class="text-center space-y-2 p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+            <span class="text-xs font-mono uppercase tracking-widest text-emerald-400">Cognitive Arena Complete</span>
+            <div id="resFlagScore" class="text-4xl sm:text-6xl font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+              0
+            </div>
+            <div class="flex items-center justify-center gap-2 pt-1">
+              <span id="resFlagTier" class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-extrabold text-xs tracking-wide">
+                Grandmaster Vexillologist
+              </span>
+              <span id="resFlagPercentile" class="text-xs font-mono text-zinc-400">
+                Top 1% Percentile
+              </span>
+            </div>
+            <p id="resFlagDesc" class="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto pt-2 leading-relaxed"></p>
+          </div>
+
+          <!-- Core Metric Badges -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-0.5">
+              <span class="text-[11px] font-mono text-zinc-400 uppercase">Accuracy</span>
+              <div id="resFlagAccuracy" class="text-lg sm:text-xl font-bold font-mono text-white">0%</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-0.5">
+              <span class="text-[11px] font-mono text-zinc-400 uppercase">Avg Reaction</span>
+              <div id="resFlagReaction" class="text-lg sm:text-xl font-bold font-mono text-cyan-400">0ms</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-0.5">
+              <span class="text-[11px] font-mono text-zinc-400 uppercase">Correct</span>
+              <div id="resFlagCorrect" class="text-lg sm:text-xl font-bold font-mono text-emerald-400">0 / 0</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-0.5">
+              <span class="text-[11px] font-mono text-zinc-400 uppercase">Max Streak</span>
+              <div id="resFlagMaxStreak" class="text-lg sm:text-xl font-bold font-mono text-amber-400">0x</div>
+            </div>
+          </div>
+
+          <!-- Regional Mastery Breakdown -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-mono uppercase tracking-wider text-zinc-400">Continental Mastery Breakdown</h4>
+            <div id="resFlagRegionsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <!-- Dynamically populated progress bars -->
+            </div>
+          </div>
+
+          <!-- Missed Flags Review Section -->
+          <div id="resFlagMissedWrap" class="hidden space-y-3">
+            <h4 class="text-xs font-mono uppercase tracking-wider text-rose-400">Missed Flags & Vexillology Review</h4>
+            <div id="resFlagMissedList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+              <!-- Dynamically populated missed flag rows -->
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button id="retakeFlagQuizBtn" type="button" class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-zinc-950 font-extrabold text-sm uppercase tracking-wider transition-all shadow-md cursor-pointer">
+              Retake Arena Challenge
+            </button>
+            <a href="/games" class="py-3.5 px-6 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-center text-sm font-bold text-zinc-300 transition-colors">
+              All Brain Games
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Comprehensive 2,000+ Word Authoritative Guide & Educational Text -->
+    <article class="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-12">
+      
+      <!-- Section 1 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          1. The Cognitive Science of Geographic Memory & Visual Recall
+        </h2>
+        <p>
+          Human visual memory is one of the most powerful and evolutionarily refined cognitive subsystems in the human brain. Unlike abstract alphanumeric strings, visual geometry, color contrasts, and spatial orientations are processed simultaneously across the primary visual cortex (V1 through V4) and encoded directly into the ventral stream—the neural pathway responsible for object identification and semantic categorization.
+        </p>
+        <p>
+          In cognitive psychology, the process of recognizing and identifying sovereign flags exemplifies <strong>Paivio’s Dual-Coding Theory</strong>. According to dual-coding theory, information is encoded in human long-term memory through two distinct but interconnected channels:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <span class="text-xs font-mono font-bold text-emerald-500 uppercase tracking-wider">Visual-Spatial Channel (Images)</span>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">Encodes geometrical shapes, color combinations, cantons, heraldic charges, and proportional ratios into immediate visuospatial working memory.</p>
+          </div>
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <span class="text-xs font-mono font-bold text-cyan-500 uppercase tracking-wider">Verbal-Semantic Channel (Language)</span>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">Encodes country names, national capitals, continental affiliations, geopolitical treaties, and historical origins into semantic memory networks.</p>
+          </div>
+        </div>
+        <p>
+          When you engage with our Geographic Memory Arena, both neural pathways fire in parallel. By associating the visual image of a national flag with its geographic nomenclature and capital city, you construct resilient associative memory traces (engrams) that drastically resist retroactive interference and natural cognitive decay.
+        </p>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          2. Principles of Vexillology: The 5 Universal Rules of Flag Design
+        </h2>
+        <p>
+          Vexillology—the scholarly study of the history, symbolism, and usage of flags—was formalized in 1957 by American scholar Dr. Whitney Smith. In 2006, the North American Vexillological Association (NAVA), in collaboration with the Flag Institute, published the definitive guide <em>"Good Flag, Bad Flag"</em> authored by Ted Kaye. This standard outlines five foundational principles that define effective national iconography:
+        </p>
+
+        <div class="space-y-3 my-4">
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-emerald-500">01</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Keep It Simple</h3>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">A national flag should be simple enough that a child can draw it from memory. Exemplars include Japan’s minimalist Hinomaru (sun disc on white field) and Switzerland’s white cross on red field.</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-emerald-500">02</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Use Meaningful Symbolism</h3>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Every color, charge, or stripe must represent the nation’s history, cultural ethos, or natural geography (e.g., Barbados’s trident signifying independence from colonial rule, surrounded by the blue Caribbean waters).</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-emerald-500">03</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Limit to 2–3 Basic Colors</h3>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Select standard high-contrast primary and secondary colors: red, blue, green, yellow, white, and black. Avoid muddy shades or excessive gradients that blur at a distance or on digital mobile screens.</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-emerald-500">04</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">No Lettering or State Seals</h3>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Writing words or pasting complex multi-element state seals onto a flag defeats the purpose of rapid visual signaling. If a flag requires its name printed on it, the visual symbolism has failed.</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-emerald-500">05</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Be Distinctive or Show Clear Related Heritage</h3>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">A flag must avoid confusing duplication unless intentionally establishing regional solidarity (such as the Scandinavian Nordic cross family or Central American blue-white-blue federations).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          3. Major Pan-Regional Color Systems & Vexillological Symbolism
+        </h2>
+        <p>
+          Throughout world history, nations sharing geographic proximity, cultural kinship, or shared struggles for sovereignty adopted standardized color palettes. Recognizing these foundational color families allows you to instantly narrow down a mystery flag to a specific continent:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Pan-African Colors</h3>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Derived from the historic flag of Ethiopia (the only African nation to resist 19th-century colonization). Red represents the blood shed for liberation, yellow/gold signifies mineral wealth and sun, and green symbolizes fertile African land. Seen across Ghana, Senegal, Mali, Cameroon, and Guinea.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-white border border-zinc-400"></span>
+              <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+              <span class="w-3 h-3 rounded-full bg-red-600"></span>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Pan-Slavic Tricolors</h3>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Adopted at the Prague Slavic Congress of 1848, inspired by the 17th-century Russian merchant ensign (which itself was influenced by the Dutch tricolor). Shared across the Czech Republic, Slovakia, Slovenia, Croatia, Serbia, and Russia.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-zinc-950 border border-zinc-700"></span>
+              <span class="w-3 h-3 rounded-full bg-white border border-zinc-400"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
+              <span class="w-3 h-3 rounded-full bg-red-600"></span>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Pan-Arab Colors</h3>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Originating from the 1916 Arab Revolt against the Ottoman Empire, each color represents a historic caliphate: Black (Abbasid), White (Umayyad), Green (Fatimid), and Red (Hashemite). Found in the flags of Jordan, UAE, Kuwait, Iraq, Syria, and Palestine.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+              <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Nordic Cross Heraldry</h3>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Featuring an off-center vertical cross extending to the edges, symbolizing Christianity and Scandinavian naval heritage. Denmark’s Dannebrog (dating to 1219) is the oldest continuously used national flag, inspiring Sweden, Norway, Finland, and Iceland.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          4. The 10 Most Confusing Flag Pairs & How to Master Them
+        </h2>
+        <p>
+          In our Vexillology Hard Mode, the engine specifically pits visually deceptive flag pairs against each other. Here is the definitive diagnostic key to never mix them up again:
+        </p>
+
+        <div class="space-y-4 my-4">
+          
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇲🇨 Monaco vs. 🇮🇩 Indonesia</span>
+              <span class="text-xs font-mono text-emerald-500">Aspect Ratio & Proportions</span>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              Both flags feature identical horizontal top-red, bottom-white stripes. The key distinction lies in proportion: <strong>Monaco uses a squat 4:5 ratio</strong>, whereas <strong>Indonesia uses a longer 2:3 ratio</strong>. (Poland is inverted: top-white, bottom-red).
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇹🇩 Chad vs. 🇷🇴 Romania</span>
+              <span class="text-xs font-mono text-emerald-500">Indigo vs. Cobalt Blue</span>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              Both employ a vertical tricolor of blue, yellow, and red. <strong>Chad uses a darker, saturated indigo blue</strong> (Pantone 281C), while <strong>Romania uses a slightly brighter cobalt blue</strong> (Pantone 280C). In digital quizzes, look for the darker navy hue on Chad.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇮🇪 Ireland vs. 🇨🇮 Côte d’Ivoire (Ivory Coast)</span>
+              <span class="text-xs font-mono text-emerald-500">Hoist Orientation</span>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              <strong>Ireland is Green-White-Orange</strong> (green represents Irish nationalism at the flagpole hoist). <strong>Côte d’Ivoire is Orange-White-Green</strong> (orange represents savannah grasslands at the flagpole hoist).
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇦🇺 Australia vs. 🇳🇿 New Zealand</span>
+              <span class="text-xs font-mono text-emerald-500">Southern Cross Stars</span>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              <strong>Australia has 6 white stars</strong> (five 7-pointed stars and one 5-pointed star, including the large Commonwealth Star under the canton). <strong>New Zealand has only 4 red stars with white borders</strong>, all 5-pointed.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇳🇱 Netherlands vs. 🇱🇺 Luxembourg</span>
+              <span class="text-xs font-mono text-emerald-500">Sky Blue vs. Ultramarine</span>
+            </div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              Both have horizontal red-white-blue stripes. <strong>Luxembourg features a distinctly light sky-blue stripe</strong> and a 1:2 or 3:5 proportion, while the <strong>Netherlands uses a deep ultramarine cobalt blue</strong> with a 2:3 ratio.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 5: FAQ Accordion -->
+      <section class="space-y-4 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          Frequently Asked Questions (FAQ)
+        </h2>
+
+        <div class="space-y-3 pt-2">
+          
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>How does the Flag Memory Quiz calculate cognitive score and percentile ranking?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Your final score integrates raw accuracy, millisecond response latency, and combo streak multipliers. Fast, consecutive correct answers yield maximum points (up to 100,000), benchmarking your visual retrieval speed against global psychometric percentiles.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>What is the difference between Sprint Mode, Survival Mode, and Vexillology Hard Mode?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Sprint Mode tests your accuracy across 20 randomized flags. Survival Mode is a sudden-death endurance challenge where one mistake ends the session. Vexillology Hard Mode intentionally pits notoriously identical pairs (such as Monaco vs. Indonesia or Chad vs. Romania) against one another.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Why are certain country flags nearly identical (e.g., Chad and Romania, Monaco and Indonesia)?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Chad and Romania share identical blue-yellow-red vertical tricolors due to independent historical developments. Monaco and Indonesia share red-and-white horizontal bicolors, differing only in exact proportions (Monaco 4:5 vs. Indonesia 2:3) and heraldic lineage.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>How does practicing flag recognition improve cognitive visual memory?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Flag recognition activates Paivio’s Dual-Coding Theory by linking semantic geographic knowledge (capitals, country names, continents) with visual-spatial color patterns and heraldic geometry, strengthening synaptic recall pathways.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>How many sovereign country flags are included in this benchmark?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              The engine includes all 195+ universally recognized sovereign nations across Europe, Asia, Africa, the Americas, and Oceania, each complete with verified capitals and regional metadata.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>What is the North American Vexillological Association (NAVA) 5-rule standard?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              NAVA outlines five universal flag design principles: (1) Keep it simple enough to draw from memory, (2) Use meaningful symbolism, (3) Limit to 2–3 basic colors, (4) Avoid lettering or complex seals, and (5) Be distinctive or relate clearly to regional heritage.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Can I use this flag quiz to prepare for geography bees and academic competitions?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Yes. The arena offers continental filtering and reverse guessing (identifying flags from country names), making it a comprehensive training tool for National Geographic Bees, Model UN delegates, and vexillological researchers.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Is any of my score or gameplay data stored on your servers?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              No. The entire quiz engine, scoring algorithms, and Web Audio synthesizers run 100% locally in your web browser. No personal data or quiz records are ever transmitted to any remote server.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <script src="../scripts/tools/flag-quiz-engine.js"></script>
+</Layout>

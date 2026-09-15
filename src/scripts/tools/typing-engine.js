@@ -799,9 +799,10 @@
         });
       }
 
-      // Keydown Handling on Hidden Input
+      // Keydown & Input Handling on Input (Supports Desktop & Mobile Virtual IME Keyboards)
       if (this.hiddenInput) {
         this.hiddenInput.addEventListener('keydown', (e) => this.onKeyDown(e));
+        this.hiddenInput.addEventListener('input', (e) => this.onInput(e));
       }
 
       // Global Shortcuts: Tab + Enter or Esc to Restart
@@ -894,11 +895,12 @@
           this.updateWordDOM();
           this.updateCaret();
         }
+        if (this.hiddenInput) this.hiddenInput.value = '';
         return;
       }
 
       // Filter out non-character keys (Shift, Alt, Ctrl, Arrow keys, etc.)
-      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      if (e.key.length === 1 && e.key !== 'Unidentified' && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault();
         const res = this.engine.handleKey(
           e.key,
@@ -909,6 +911,35 @@
           this.updateWordDOM();
           this.updateCaret();
         }
+        if (this.hiddenInput) this.hiddenInput.value = '';
+      }
+    },
+
+    onInput(e) {
+      if (e.inputType === 'deleteContentBackward') {
+        const res = this.engine.handleBackspace();
+        if (res) {
+          this.updateWordDOM();
+          this.updateCaret();
+        }
+        if (this.hiddenInput) this.hiddenInput.value = '';
+        return;
+      }
+
+      const val = e.data || (this.hiddenInput ? this.hiddenInput.value : '');
+      if (val && val.length > 0) {
+        for (let char of val) {
+          const res = this.engine.handleKey(
+            char,
+            (tickData) => this.onTick(tickData),
+            (results) => this.onComplete(results)
+          );
+          if (res) {
+            this.updateWordDOM();
+            this.updateCaret();
+          }
+        }
+        if (this.hiddenInput) this.hiddenInput.value = '';
       }
     },
 

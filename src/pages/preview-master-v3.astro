@@ -247,6 +247,162 @@ const schema = [
         0px 0px 36px 4px rgba(59, 130, 246, 0.25),
         0 0 0 1px rgba(255, 255, 255, 0.12) inset;
     }
+
+    /* ==========================================================================
+       RAYCAST 3D HORIZONTAL SLIDING CARD REEL & MULTI-INPUT GESTURE CONTROLLER
+       ========================================================================== */
+    .raycast-reel-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: visible;
+      perspective: 1400px;
+    }
+
+    .raycast-reel-viewport {
+      display: flex;
+      gap: 24px;
+      width: 100%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      padding: 20px 8px 36px 8px;
+      mask-image: linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%);
+    }
+
+    .raycast-reel-viewport::-webkit-scrollbar {
+      display: none;
+    }
+
+    .raycast-reel-viewport.is-dragging {
+      cursor: grabbing !important;
+      scroll-behavior: auto !important;
+      scroll-snap-type: none !important;
+      user-select: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .raycast-reel-viewport {
+        mask-image: none;
+        -webkit-mask-image: none;
+        padding: 16px 4px 28px 4px;
+      }
+    }
+
+    .raycast-reel-card {
+      flex: 0 0 350px;
+      width: 350px;
+      min-height: 505px;
+      scroll-snap-align: start;
+      scroll-snap-stop: normal;
+      border-radius: 1.75rem;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  border-color 0.3s ease;
+      will-change: transform;
+    }
+
+    .raycast-reel-card:hover {
+      transform: translateY(-8px) scale(1.015);
+      z-index: 10;
+    }
+
+    @media (max-width: 640px) {
+      .raycast-reel-card {
+        flex: 0 0 84vw;
+        width: 84vw;
+        min-height: 470px;
+      }
+    }
+
+    .raycast-nav-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(244, 244, 245, 0.95);
+      border: 1px solid rgba(228, 228, 231, 0.9);
+      color: #18181b;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .dark .raycast-nav-btn {
+      background: rgba(24, 24, 27, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #f4f4f5;
+    }
+
+    .raycast-nav-btn:hover:not(:disabled) {
+      background: #e4e4e7;
+      transform: scale(1.08);
+    }
+
+    .dark .raycast-nav-btn:hover:not(:disabled) {
+      background: rgba(39, 39, 42, 1);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.08);
+    }
+
+    .raycast-nav-btn:disabled {
+      opacity: 0.2;
+      cursor: not-allowed;
+      pointer-events: none;
+      transform: none !important;
+    }
+
+    .raycast-tab-btn {
+      position: relative;
+      z-index: 2;
+      padding: 7px 16px;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #71717a;
+      transition: color 0.25s ease;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .dark .raycast-tab-btn {
+      color: #a1a1aa;
+    }
+
+    .raycast-tab-btn.active {
+      color: #09090b;
+      font-weight: 600;
+    }
+
+    .dark .raycast-tab-btn.active {
+      color: #ffffff;
+    }
+
+    .raycast-tab-backdrop {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      border-radius: 9999px;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .dark .raycast-tab-backdrop {
+      background: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1) inset;
+    }
   </style>
 
   <!-- Shared Global Navigation Header -->
@@ -569,165 +725,514 @@ const schema = [
       </div>
     </section>
 
-    <!-- COGNITIVE TRAINING & BRAIN GAMES SHOWCASE — Pastel playful (light pastel, dark subtle) -->
-    <section id="cognitive-drills" class="pastel-home py-14 sm:py-18 transition-colors">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 reveal-on-scroll">
-        <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div class="pastel-eyebrow pastel-eyebrow-mint mb-3">
-            <span class="w-1.5 h-1.5 rounded-full bg-[var(--pastel-mint-ink)] animate-pulse"></span>
-            EVIDENCE-BASED BRAIN TRAINING
-          </div>
-          <h2 class="font-heading font-bold text-3xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
-            Boost Your IQ Score & Mental Speed With Daily Drills
-          </h2>
-          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
-            Targeted practice sharpens working memory, processing speed, and pattern recognition. Train with 10 interactive neurocognitive games to maximize your assessment performance.
-          </p>
-        </div>
-
-        <!-- 4 Featured Game Cards Grid — Raycast Premium Glass Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
-          <!-- Game 1: Dual N-Back — mint -->
-          <div class="raycast-card raycast-glow-mint p-6 sm:p-7 flex flex-col justify-between group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="pastel-icon pastel-icon-mint" aria-hidden="true">N</div>
-                  <span class="pastel-tag pastel-tag-mint">Gwm - Working Memory</span>
-                </div>
-                <span class="text-xs font-mono text-zinc-400 shrink-0">Jaeggi (2008)</span>
-              </div>
-              <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2 group-hover:text-[var(--pastel-mint-ink)] dark:group-hover:text-[#7ab5a0] transition-colors">
-                Dual N-Back Memory
-              </h3>
-              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Track simultaneous auditory letter streams and spatial square coordinates to expand working memory buffer capacity.
-              </p>
+    <!-- RAYCAST HORIZONTAL SLIDING CARD REEL — COMPLETE COGNITIVE & CLINICAL ECOSYSTEM -->
+    <section id="cognitive-drills" class="py-16 sm:py-24 bg-white dark:bg-black transition-colors overflow-hidden border-t border-zinc-100 dark:border-zinc-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <!-- Section Header with Category Tabs Switcher -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+          <div class="max-w-2xl">
+            <div class="inline-flex items-center gap-2 text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">
+              <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+              Comprehensive Psychometric &amp; Clinical Suite
             </div>
-            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-              <span class="pastel-tag pastel-tag-mint !py-1 !text-[11px]">Multimodal Buffer &bull; Calm + focused</span>
-              <a
-                href="/games/n-back"
-                class="min-h-[44px] inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--pastel-mint-ink)] dark:text-[#7ab5a0] hover:opacity-80 group-hover:translate-x-0.5 transition-all cursor-pointer"
-              >
-                <span>Play Drill</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
+            <h2 class="font-heading font-extrabold text-3xl sm:text-4xl md:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight">
+              There's a cognitive test for that.
+            </h2>
+            <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 mt-2 leading-relaxed">
+              Explore 29+ calibrated assessments, screeners, and neurocognitive drills to evaluate and sharpen every cognitive domain.
+            </p>
           </div>
 
-          <!-- Game 2: Memory Matrix Span — cyan -->
-          <div class="raycast-card raycast-glow-cyan p-6 sm:p-7 flex flex-col justify-between group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="pastel-icon pastel-icon-cyan" aria-hidden="true">▦</div>
-                  <span class="pastel-tag pastel-tag-cyan">Gwm / Gv - Visuospatial</span>
-                </div>
-                <span class="text-xs font-mono text-zinc-400 shrink-0">Corsi (1972)</span>
-              </div>
-              <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2 group-hover:text-[var(--pastel-cyan-ink)] dark:group-hover:text-[#7fb8c5] transition-colors">
-                Memory Matrix Span
-              </h3>
-              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Observe brief illuminated target tiles in escalating 3x3, 4x4, and 5x5 grids, then recall exact spatial coordinates.
-              </p>
-            </div>
-            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-              <span class="pastel-tag pastel-tag-cyan !py-1 !text-[11px]">Spatial Retention &bull; Fresh + visual</span>
-              <a
-                href="/games/memory-matrix"
-                class="min-h-[44px] inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--pastel-cyan-ink)] dark:text-[#7fb8c5] hover:opacity-80 group-hover:translate-x-0.5 transition-all cursor-pointer"
-              >
-                <span>Play Drill</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Game 3: Speed Math Sprint — yellow -->
-          <div class="raycast-card raycast-glow-yellow p-6 sm:p-7 flex flex-col justify-between group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="pastel-icon pastel-icon-yellow" aria-hidden="true">+</div>
-                  <span class="pastel-tag pastel-tag-yellow">Gs / Gq - Speed</span>
-                </div>
-                <span class="text-xs font-mono text-zinc-400 shrink-0">Fluency &bull; 60s</span>
-              </div>
-              <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2 group-hover:text-[var(--pastel-yellow-ink)] dark:group-hover:text-[#c2a84a] transition-colors">
-                Speed Math Sprint
-              </h3>
-              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Race against the 60-second timer solving mental arithmetic operations, maintaining high accuracy streaks under time pressure.
-              </p>
-            </div>
-            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-              <span class="pastel-tag pastel-tag-yellow !py-1 !text-[11px]">Mental Arithmetic &bull; Bright + energetic</span>
-              <a
-                href="/games/math-sprint"
-                class="min-h-[44px] inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--pastel-yellow-ink)] dark:text-[#c2a84a] hover:opacity-80 group-hover:translate-x-0.5 transition-all cursor-pointer"
-              >
-                <span>Play Drill</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Game 4: Stroop Color Clash — coral -->
-          <div class="raycast-card raycast-glow-coral p-6 sm:p-7 flex flex-col justify-between group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="pastel-icon pastel-icon-coral" aria-hidden="true">S</div>
-                  <span class="pastel-tag pastel-tag-coral">Gf / Gs - Inhibitory</span>
-                </div>
-                <span class="text-xs font-mono text-zinc-400 shrink-0">Stroop (1935)</span>
-              </div>
-              <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2 group-hover:text-[var(--pastel-coral-ink)] dark:group-hover:text-[#d89b94] transition-colors">
-                Stroop Color Clash
-              </h3>
-              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Identify the font color of conflicting words. Overcome automatic semantic interference and sharpen cognitive inhibition.
-              </p>
-            </div>
-            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-              <span class="pastel-tag pastel-tag-coral !py-1 !text-[11px]">Interference Cost &bull; Bold + focused</span>
-              <a
-                href="/games/stroop-clash"
-                class="min-h-[44px] inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--pastel-coral-ink)] dark:text-[#d89b94] hover:opacity-80 group-hover:translate-x-0.5 transition-all cursor-pointer"
-              >
-                <span>Play Drill</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
+          <!-- Raycast Category Filter Tabs with Sliding Active Indicator Pill -->
+          <div class="relative p-1 rounded-full bg-zinc-100/90 dark:bg-zinc-900/90 border border-zinc-200/80 dark:border-zinc-800 self-start lg:self-end flex items-center overflow-x-auto max-w-full scrollbar-none shadow-xs">
+            <div id="raycast-tab-backdrop" class="raycast-tab-backdrop"></div>
+            <button
+              type="button"
+              class="raycast-tab-btn active"
+              data-category="all"
+              id="tab-all"
+            >
+              All Tools (8)
+            </button>
+            <button
+              type="button"
+              class="raycast-tab-btn"
+              data-category="training"
+              id="tab-training"
+            >
+              Brain Training
+            </button>
+            <button
+              type="button"
+              class="raycast-tab-btn"
+              data-category="clinical"
+              id="tab-clinical"
+            >
+              Clinical Screeners
+            </button>
+            <button
+              type="button"
+              class="raycast-tab-btn"
+              data-category="reflex"
+              id="tab-reflex"
+            >
+              Reflex &amp; Speed
+            </button>
+            <button
+              type="button"
+              class="raycast-tab-btn"
+              data-category="psychometrics"
+              id="tab-psychometrics"
+            >
+              Psychometrics
+            </button>
           </div>
         </div>
 
-        <!-- Section Footer Link to All 10 Games — Raycast Glass Banner -->
-        <div class="raycast-card raycast-glow-purple p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-3.5">
-            <div class="pastel-icon pastel-icon-lav w-11 h-11 rounded-2xl shrink-0" aria-hidden="true">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-              </svg>
-            </div>
-            <div>
-              <div class="font-heading font-bold text-base text-zinc-950 dark:text-white">
-                Explore All 10 Cognitive Mini-Games
+        <!-- Raycast 3D Horizontal Card Reel Viewport (Native Touch + Trackpad + Mouse Drag) -->
+        <div class="raycast-reel-wrapper">
+          <div class="raycast-reel-viewport" id="raycast-reel-viewport">
+            
+            <!-- CARD 1: Matrix Reasoning Guide (Cosmic Indigo - Linear Style) -->
+            <div class="raycast-reel-card raycast-card raycast-glow-blue p-6 sm:p-7 flex flex-col justify-between group" data-category="psychometrics">
+              <div>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-blue-500/15 border border-blue-500/30 text-blue-500 font-heading font-black text-xl flex items-center justify-center shrink-0 shadow-inner">
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25V6z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white leading-tight">Matrix Reasoning</h3>
+                      <span class="text-[11px] font-mono font-medium text-blue-500 dark:text-blue-400">Gf &bull; Pattern Induction</span>
+                    </div>
+                  </div>
+                  <a href="/matrix-reasoning-test" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/90 text-zinc-600 dark:text-zinc-300 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-xs" aria-label="Open Matrix Guide">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                  </a>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4 line-clamp-2">
+                  Master Carpenter transformation rules, XOR cancellation, and non-verbal pattern induction.
+                </p>
+
+                <!-- Visual Art: Cosmic Linear Orb + Status Toggles -->
+                <div class="relative w-full h-48 rounded-2xl bg-zinc-900/95 border border-white/10 p-4 flex flex-col justify-between overflow-hidden shadow-2xl">
+                  <div class="absolute -top-12 -left-12 w-36 h-36 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
+                  <div class="flex items-center justify-between text-[11px] font-mono text-zinc-400 z-10">
+                    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Rule 4 of 5</span>
+                    <span class="text-blue-400 font-bold">XOR Logic</span>
+                  </div>
+                  <!-- Celestial Ring / Orb Graphic -->
+                  <div class="relative w-28 h-28 mx-auto my-auto flex items-center justify-center">
+                    <div class="w-24 h-24 rounded-full border border-blue-500/30 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                      <div class="w-16 h-16 rounded-full border border-dashed border-blue-400/50 flex items-center justify-center">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/40 blur-xs"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 4 Bottom Toggles -->
+                  <div class="flex items-center justify-center gap-3 z-10">
+                    <span class="w-5 h-5 rounded-full border border-blue-400/80 bg-blue-500/30 flex items-center justify-center text-[10px] text-white">&bull;</span>
+                    <span class="w-5 h-5 rounded-full border border-zinc-700 bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-400">&cir;</span>
+                    <span class="w-5 h-5 rounded-full border border-amber-400/80 bg-amber-500/30 flex items-center justify-center text-[10px] text-amber-300">&part;</span>
+                    <span class="w-5 h-5 rounded-full border border-teal-400/80 bg-teal-500/30 flex items-center justify-center text-[10px] text-teal-300">&check;</span>
+                  </div>
+                </div>
               </div>
-              <div class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
-                Including Wechsler Digit Span, Eriksen Flanker Blitz, Sequence Rush, and 3D Rotation.
+
+              <div class="pt-4 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-xs">
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">Carpenter Rules</span>
+                <a href="/matrix-reasoning-test" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+                  Explore Guide &rarr;
+                </a>
               </div>
             </div>
+
+            <!-- CARD 2: Dual N-Back Memory (Spotify Emerald Style) -->
+            <div class="raycast-reel-card raycast-card raycast-glow-mint p-6 sm:p-7 flex flex-col justify-between group" data-category="training">
+              <div>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-teal-500/15 border border-teal-500/30 text-teal-500 font-heading font-black text-xl flex items-center justify-center shrink-0 shadow-inner">
+                      N
+                    </div>
+                    <div>
+                      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white leading-tight">Dual N-Back</h3>
+                      <span class="text-[11px] font-mono font-medium text-teal-500 dark:text-teal-400">Gwm &bull; Working Memory</span>
+                    </div>
+                  </div>
+                  <a href="/games/n-back" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/90 text-zinc-600 dark:text-zinc-300 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-white transition-all shadow-xs" aria-label="Open Dual N-Back">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                  </a>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4 line-clamp-2">
+                  Track simultaneous auditory letter streams and spatial square coordinates to expand working memory capacity.
+                </p>
+
+                <!-- Visual Art: Emerald Aura + Vinyl Player Controls -->
+                <div class="relative w-full h-48 rounded-2xl bg-zinc-900/95 border border-white/10 p-4 flex flex-col justify-between overflow-hidden shadow-2xl">
+                  <div class="absolute -top-10 -right-10 w-36 h-36 bg-teal-500/25 rounded-full blur-2xl pointer-events-none"></div>
+                  <div class="flex items-center justify-between text-[11px] font-mono text-zinc-400 z-10">
+                    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span> Audio: [L]</span>
+                    <span class="text-teal-400 font-bold">2-Back Match</span>
+                  </div>
+                  <!-- 3x3 Spatial Grid -->
+                  <div class="grid grid-cols-3 gap-2 w-24 mx-auto my-auto aspect-square z-10">
+                    <div class="rounded-lg bg-zinc-800 border border-white/5"></div>
+                    <div class="rounded-lg bg-teal-400 shadow-lg shadow-teal-400/50 animate-pulse"></div>
+                    <div class="rounded-lg bg-zinc-800 border border-white/5"></div>
+                    <div class="rounded-lg bg-zinc-800 border border-white/5"></div>
+                    <div class="rounded-lg bg-zinc-800 border border-white/5"></div>
+                    <div class="rounded-lg bg-zinc-800 border border-white/5"></div>
+                    <div class="rounded-lg bg-zinc-800 border border-white/5"></div>
+                    <div class="rounded-lg bg-zinc-800 border border-white/5"></div>
+                    <div class="rounded-lg bg-zinc-800 border border-white/5"></div>
+                  </div>
+                  <!-- Audio Media Controls -->
+                  <div class="flex items-center justify-center gap-4 text-zinc-300 z-10">
+                    <span class="text-xs font-mono text-zinc-500">|&blacktriangleleft;</span>
+                    <span class="w-7 h-7 rounded-full bg-teal-500 text-black flex items-center justify-center font-bold text-xs shadow-md shadow-teal-500/30">&blacktriangleright;</span>
+                    <span class="text-xs font-mono text-zinc-500">&blacktriangleright;|</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-xs">
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">Jaeggi (2008)</span>
+                <a href="/games/n-back" class="font-semibold text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
+                  Play Drill &rarr;
+                </a>
+              </div>
+            </div>
+
+            <!-- CARD 3: Verbal Comprehension (Google Translate Cascading Multilingual Phrases Style) -->
+            <div class="raycast-reel-card raycast-card raycast-glow-yellow p-6 sm:p-7 flex flex-col justify-between group" data-category="psychometrics">
+              <div>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-500 font-heading font-black text-xl flex items-center justify-center shrink-0 shadow-inner">
+                      Gc
+                    </div>
+                    <div>
+                      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white leading-tight">Verbal Reasoning</h3>
+                      <span class="text-[11px] font-mono font-medium text-amber-500 dark:text-amber-400">Gc &bull; Semantic Taxonomy</span>
+                    </div>
+                  </div>
+                  <a href="/verbal-reasoning-test" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/90 text-zinc-600 dark:text-zinc-300 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all shadow-xs" aria-label="Open Verbal Reasoning">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                  </a>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4 line-clamp-2">
+                  Evaluate semantic analogies, abstract categorization, and lexical relationships with precision.
+                </p>
+
+                <!-- Visual Art: Cascading Lexical Phrases -->
+                <div class="relative w-full h-48 rounded-2xl bg-zinc-900/95 border border-white/10 p-4 flex flex-col justify-center overflow-hidden shadow-2xl text-left">
+                  <div class="absolute inset-0 bg-gradient-to-b from-zinc-900/90 via-transparent to-zinc-900/90 pointer-events-none z-10"></div>
+                  <div class="space-y-1.5 font-heading text-sm sm:text-base leading-tight">
+                    <div class="text-zinc-600 font-semibold">Semantic Induction <span class="text-xs font-mono opacity-50">&bull; Gc</span></div>
+                    <div class="text-zinc-400 font-bold">Analogical Synthesis</div>
+                    <div class="text-amber-300 font-black text-lg">Abstract Taxonomy</div>
+                    <div class="text-zinc-300 font-bold">Verbal Deduction</div>
+                    <div class="text-zinc-500 font-medium">Lexical Classification</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-xs">
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">CHC Construct</span>
+                <a href="/verbal-reasoning-test" class="font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
+                  Explore Battery &rarr;
+                </a>
+              </div>
+            </div>
+
+            <!-- CARD 4: 3D Mental Rotation (Arc Style Neon Ribbon + Spaces Popup) -->
+            <div class="raycast-reel-card raycast-card raycast-glow-purple p-6 sm:p-7 flex flex-col justify-between group" data-category="psychometrics">
+              <div>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-500 font-heading font-black text-xl flex items-center justify-center shrink-0 shadow-inner">
+                      🧊
+                    </div>
+                    <div>
+                      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white leading-tight">3D Spatial Rotation</h3>
+                      <span class="text-[11px] font-mono font-medium text-purple-500 dark:text-purple-400">Gv &bull; Shepard-Metzler</span>
+                    </div>
+                  </div>
+                  <a href="/spatial-reasoning-test" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/90 text-zinc-600 dark:text-zinc-300 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all shadow-xs" aria-label="Open 3D Spatial Test">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                  </a>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4 line-clamp-2">
+                  Manipulate 3D isometric cube blocks, Euler angle transformations, and folding net surfaces.
+                </p>
+
+                <!-- Visual Art: Arc-Style Neon Flow Ribbon & Spaces Submenu -->
+                <div class="relative w-full h-48 rounded-2xl bg-zinc-900/95 border border-white/10 p-3.5 flex items-center justify-between overflow-hidden shadow-2xl">
+                  <div class="absolute -top-8 -left-8 w-36 h-36 bg-purple-500/30 rounded-full blur-2xl pointer-events-none"></div>
+                  <!-- Glowing Neon Ribbon Loop -->
+                  <div class="relative w-24 h-24 flex items-center justify-center">
+                    <div class="w-20 h-20 border-3 border-purple-400 rounded-2xl transform rotate-12 skew-x-6 shadow-xl shadow-purple-500/40"></div>
+                    <div class="absolute w-16 h-16 border-2 border-rose-400 rounded-xl transform -rotate-12 skew-y-6 opacity-70"></div>
+                  </div>
+                  <!-- Floating Glass Submenu (Arc Spaces Style) -->
+                  <div class="w-28 rounded-xl bg-zinc-800/85 backdrop-blur-md border border-white/15 p-2 text-left shadow-lg">
+                    <div class="text-[10px] font-mono font-bold text-zinc-400 mb-1">Rotation Axes</div>
+                    <div class="text-[11px] font-semibold text-purple-300 py-0.5">Pitch: 45&deg;</div>
+                    <div class="text-[11px] font-medium text-zinc-300 py-0.5">Yaw: 90&deg;</div>
+                    <div class="text-[11px] font-medium text-zinc-400 py-0.5">Roll: 180&deg;</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-xs">
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">16 Item Battery</span>
+                <a href="/spatial-reasoning-test" class="font-semibold text-purple-600 dark:text-purple-400 hover:underline flex items-center gap-1">
+                  Explore Battery &rarr;
+                </a>
+              </div>
+            </div>
+
+            <!-- CARD 5: Millisecond Reaction Time (TinyPNG Frosted Badge Style) -->
+            <div class="raycast-reel-card raycast-card raycast-glow-yellow p-6 sm:p-7 flex flex-col justify-between group" data-category="reflex">
+              <div>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-500 font-heading font-black text-xl flex items-center justify-center shrink-0 shadow-inner">
+                      ⚡
+                    </div>
+                    <div>
+                      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white leading-tight">Reaction Time</h3>
+                      <span class="text-[11px] font-mono font-medium text-amber-500 dark:text-amber-400">Gs &bull; Latency Gauge</span>
+                    </div>
+                  </div>
+                  <a href="/reaction-time-test" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/90 text-zinc-600 dark:text-zinc-300 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all shadow-xs" aria-label="Open Reaction Test">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                  </a>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4 line-clamp-2">
+                  Benchmark your visual motor reflex latency down to single millisecond precision with hardware timestamps.
+                </p>
+
+                <!-- Visual Art: TinyPNG Frosted Glass Pill Badge -->
+                <div class="relative w-full h-48 rounded-2xl bg-zinc-900/95 border border-white/10 p-4 flex flex-col justify-between overflow-hidden shadow-2xl">
+                  <div class="absolute -top-10 -left-10 w-36 h-36 bg-amber-500/20 rounded-full blur-2xl pointer-events-none"></div>
+                  <!-- Frosted Floating Value Pill (182 ms) -->
+                  <div class="w-full py-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center shadow-inner my-auto">
+                    <span class="font-heading font-black text-3xl sm:text-4xl text-amber-400 tracking-tight">182 ms</span>
+                  </div>
+                  <!-- Bottom Badge -->
+                  <div class="flex items-center gap-2 p-2 rounded-xl bg-zinc-800/80 border border-white/10">
+                    <span class="w-5 h-5 rounded-full bg-amber-400/20 text-amber-400 flex items-center justify-center text-xs">⚡</span>
+                    <span class="text-xs font-semibold text-zinc-200">Top 1.2% &bull; Superhuman Reflex</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-xs">
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">Simple Reaction Time</span>
+                <a href="/reaction-time-test" class="font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
+                  Take Test &rarr;
+                </a>
+              </div>
+            </div>
+
+            <!-- CARD 6: Memory Matrix Span (1Password Security Dots Style) -->
+            <div class="raycast-reel-card raycast-card raycast-glow-cyan p-6 sm:p-7 flex flex-col justify-between group" data-category="training">
+              <div>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-500 font-heading font-black text-xl flex items-center justify-center shrink-0 shadow-inner">
+                      ▦
+                    </div>
+                    <div>
+                      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white leading-tight">Memory Matrix</h3>
+                      <span class="text-[11px] font-mono font-medium text-sky-500 dark:text-sky-400">Gv &bull; Spatial Recall</span>
+                    </div>
+                  </div>
+                  <a href="/games/memory-matrix" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/90 text-zinc-600 dark:text-zinc-300 flex items-center justify-center group-hover:bg-sky-500 group-hover:text-white transition-all shadow-xs" aria-label="Open Memory Matrix">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                  </a>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4 line-clamp-2">
+                  Observe brief illuminated target tiles in escalating grids, then recall exact spatial coordinates.
+                </p>
+
+                <!-- Visual Art: 1Password Style Security Dot Matrix -->
+                <div class="relative w-full h-48 rounded-2xl bg-zinc-900/95 border border-white/10 p-4 flex flex-col justify-between overflow-hidden shadow-2xl">
+                  <div class="absolute -top-10 -right-10 w-36 h-36 bg-sky-500/25 rounded-full blur-2xl pointer-events-none"></div>
+                  <!-- Glowing Passcode Indicator Stream -->
+                  <div class="w-full py-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center gap-3.5 my-auto shadow-inner">
+                    <span class="w-3 h-3 rounded-full bg-sky-400 shadow-md shadow-sky-400/80"></span>
+                    <span class="w-3 h-3 rounded-full bg-sky-400 shadow-md shadow-sky-400/80"></span>
+                    <span class="w-3 h-3 rounded-full bg-sky-400 shadow-md shadow-sky-400/80"></span>
+                    <span class="w-3 h-3 rounded-full bg-sky-400 shadow-md shadow-sky-400/80"></span>
+                    <span class="w-3 h-3 rounded-full bg-zinc-700"></span>
+                    <span class="w-3 h-3 rounded-full bg-zinc-700"></span>
+                  </div>
+                  <!-- Bottom Security Category Icons -->
+                  <div class="flex items-center justify-around text-zinc-400 text-xs py-1 border-t border-white/5">
+                    <span title="Corsi Block">💳 Corsi</span>
+                    <span title="Spatial Recall">🔍 Spatial</span>
+                    <span title="750ms Flash">⏱ 750ms</span>
+                    <span title="Level 7">🎯 Lvl 7</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-xs">
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">Visuospatial Span</span>
+                <a href="/games/memory-matrix" class="font-semibold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1">
+                  Play Drill &rarr;
+                </a>
+              </div>
+            </div>
+
+            <!-- CARD 7: Stroop Color Clash (JIRA Geometric Polygon Style) -->
+            <div class="raycast-reel-card raycast-card raycast-glow-coral p-6 sm:p-7 flex flex-col justify-between group" data-category="training">
+              <div>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-500 font-heading font-black text-xl flex items-center justify-center shrink-0 shadow-inner">
+                      S
+                    </div>
+                    <div>
+                      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white leading-tight">Stroop Inhibition</h3>
+                      <span class="text-[11px] font-mono font-medium text-rose-500 dark:text-rose-400">Gf &bull; Cognitive Inhibition</span>
+                    </div>
+                  </div>
+                  <a href="/games/stroop-clash" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/90 text-zinc-600 dark:text-zinc-300 flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-all shadow-xs" aria-label="Open Stroop Test">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                  </a>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4 line-clamp-2">
+                  Identify font colors of conflicting semantic words to test and train executive cognitive inhibition.
+                </p>
+
+                <!-- Visual Art: JIRA Polygon Diamond + Color Interference -->
+                <div class="relative w-full h-48 rounded-2xl bg-zinc-900/95 border border-white/10 p-4 flex flex-col justify-between overflow-hidden shadow-2xl">
+                  <div class="absolute -top-10 -left-10 w-36 h-36 bg-rose-500/25 rounded-full blur-2xl pointer-events-none"></div>
+                  <!-- Glowing Diamond Outline -->
+                  <div class="relative w-20 h-20 mx-auto my-auto flex items-center justify-center">
+                    <div class="w-16 h-16 border-2 border-rose-400 transform rotate-45 flex items-center justify-center shadow-lg shadow-rose-500/30">
+                      <span class="font-heading font-black text-xs text-blue-400 transform -rotate-45">RED</span>
+                    </div>
+                  </div>
+                  <!-- Bottom JIRA-style Feature Badges -->
+                  <div class="flex items-center justify-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center text-xs text-amber-400">💡</span>
+                    <span class="w-7 h-7 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center text-xs text-purple-400">⚡</span>
+                    <span class="w-7 h-7 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center text-xs text-teal-400">&check;</span>
+                    <span class="w-7 h-7 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center text-xs text-rose-400">⏱</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-xs">
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">Stroop (1935)</span>
+                <a href="/games/stroop-clash" class="font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1">
+                  Play Drill &rarr;
+                </a>
+              </div>
+            </div>
+
+            <!-- CARD 8: ADHD Clinical Screener (Clinical Screeners - Teal Style) -->
+            <div class="raycast-reel-card raycast-card raycast-glow-mint p-6 sm:p-7 flex flex-col justify-between group" data-category="clinical">
+              <div>
+                <div class="flex items-center justify-between gap-3 mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-teal-500/15 border border-teal-500/30 text-teal-500 font-heading font-black text-xl flex items-center justify-center shrink-0 shadow-inner">
+                      📋
+                    </div>
+                    <div>
+                      <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white leading-tight">ADHD Screener</h3>
+                      <span class="text-[11px] font-mono font-medium text-teal-500 dark:text-teal-400">Clinical &bull; WHO ASRS v1.1</span>
+                    </div>
+                  </div>
+                  <a href="/adhd-test" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/90 text-zinc-600 dark:text-zinc-300 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-white transition-all shadow-xs" aria-label="Open ADHD Screener">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                  </a>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4 line-clamp-2">
+                  Standardized 18-question clinical self-report screener evaluating attention spectrum and hyperactivity.
+                </p>
+
+                <!-- Visual Art: Clinical Progress Metric Bars -->
+                <div class="relative w-full h-48 rounded-2xl bg-zinc-900/95 border border-white/10 p-4 flex flex-col justify-between overflow-hidden shadow-2xl">
+                  <div class="flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                    <span>Part A Screener</span>
+                    <span class="text-teal-400 font-bold">4 of 6 Positive</span>
+                  </div>
+                  <div class="space-y-2.5 my-auto">
+                    <div>
+                      <div class="flex justify-between text-[10px] font-mono text-zinc-300 mb-1">
+                        <span>Inattention Spectrum</span>
+                        <span>85%</span>
+                      </div>
+                      <div class="w-full bg-zinc-800 rounded-full h-1.5"><div class="bg-teal-400 h-full rounded-full" style="width: 85%"></div></div>
+                    </div>
+                    <div>
+                      <div class="flex justify-between text-[10px] font-mono text-zinc-300 mb-1">
+                        <span>Executive Control</span>
+                        <span>60%</span>
+                      </div>
+                      <div class="w-full bg-zinc-800 rounded-full h-1.5"><div class="bg-teal-400 h-full rounded-full" style="width: 60%"></div></div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between text-[10px] font-mono text-zinc-500">
+                    <span>DSM-5 Aligned</span>
+                    <span>100% Private</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-xs">
+                <span class="font-mono text-zinc-500 dark:text-zinc-400">Clinical Screener</span>
+                <a href="/adhd-test" class="font-semibold text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
+                  Take Screener &rarr;
+                </a>
+              </div>
+            </div>
+
           </div>
+        </div>
+
+        <!-- Section Footer with Browse More Link & Circular Navigation Arrows -->
+        <div class="flex items-center justify-between mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-900">
           <a
             href="/games"
-            class="pastel-play w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm text-center whitespace-nowrap cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all"
+            class="inline-flex items-center gap-2 text-sm sm:text-base font-semibold text-zinc-800 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer group"
           >
-            Open Training Hub &rarr;
+            <span>Browse all 29+ cognitive tools &amp; mini-games</span>
+            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
           </a>
+
+          <!-- Raycast Circular Pagination Buttons -->
+          <div class="flex items-center gap-2.5">
+            <button
+              type="button"
+              id="raycast-prev-btn"
+              class="raycast-nav-btn"
+              aria-label="Previous cards"
+              disabled
+            >
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              id="raycast-next-btn"
+              class="raycast-nav-btn"
+              aria-label="Next cards"
+            >
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -1699,6 +2204,152 @@ const schema = [
 
     // Initial render
     renderActiveQuestion();
+  })();
+
+  // ============================================================================
+  // RAYCAST-STYLE HORIZONTAL SLIDING CARD REEL CONTROLLER
+  // ============================================================================
+  (function initRaycastReel() {
+    var viewport = document.getElementById('raycast-reel-viewport');
+    var prevBtn = document.getElementById('raycast-prev-btn');
+    var nextBtn = document.getElementById('raycast-next-btn');
+    var tabBtns = document.querySelectorAll('.raycast-tab-btn');
+    var backdrop = document.getElementById('raycast-tab-backdrop');
+
+    if (!viewport || !prevBtn || !nextBtn) return;
+
+    var isDown = false;
+    var startX = 0;
+    var scrollLeft = 0;
+    var hasMoved = false;
+
+    function getCardShiftStep() {
+      var card = viewport.querySelector('.raycast-reel-card');
+      if (!card) return 374;
+      var cardWidth = card.getBoundingClientRect().width;
+      return cardWidth + 24; // width + gap
+    }
+
+    function updateNavButtons() {
+      var maxScroll = viewport.scrollWidth - viewport.clientWidth - 10;
+      if (viewport.scrollLeft <= 10) {
+        prevBtn.setAttribute('disabled', 'true');
+      } else {
+        prevBtn.removeAttribute('disabled');
+      }
+
+      if (viewport.scrollLeft >= maxScroll) {
+        nextBtn.setAttribute('disabled', 'true');
+      } else {
+        nextBtn.removeAttribute('disabled');
+      }
+    }
+
+    // Programmatic Button Clicks
+    prevBtn.addEventListener('click', function() {
+      var step = getCardShiftStep();
+      viewport.scrollBy({ left: -step, behavior: 'smooth' });
+    });
+
+    nextBtn.addEventListener('click', function() {
+      var step = getCardShiftStep();
+      viewport.scrollBy({ left: step, behavior: 'smooth' });
+    });
+
+    // Native scroll event listener to update buttons in real time
+    viewport.addEventListener('scroll', updateNavButtons, { passive: true });
+
+    // Mouse Drag-to-Scroll (Physics Grabbing)
+    viewport.addEventListener('mousedown', function(e) {
+      if (e.target.closest('button')) return;
+      isDown = true;
+      hasMoved = false;
+      viewport.classList.add('is-dragging');
+      startX = e.pageX - viewport.offsetLeft;
+      scrollLeft = viewport.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', function() {
+      if (!isDown) return;
+      isDown = false;
+      viewport.classList.remove('is-dragging');
+    });
+
+    window.addEventListener('mousemove', function(e) {
+      if (!isDown) return;
+      var x = e.pageX - viewport.offsetLeft;
+      var walk = (x - startX) * 1.35;
+      if (Math.abs(walk) > 4) {
+        hasMoved = true;
+      }
+      viewport.scrollLeft = scrollLeft - walk;
+    });
+
+    // Prevent accidental navigation when dragging cards
+    viewport.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        if (hasMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+    });
+
+    // Category Tabs & Dynamic Pill Backdrop
+    function positionBackdrop(btn) {
+      if (!backdrop || !btn) return;
+      var parentLeft = btn.parentElement.getBoundingClientRect().left;
+      var btnRect = btn.getBoundingClientRect();
+      var offsetLeft = btnRect.left - parentLeft;
+      backdrop.style.transform = 'translateX(' + offsetLeft + 'px)';
+      backdrop.style.width = btnRect.width + 'px';
+    }
+
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        tabBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        positionBackdrop(btn);
+
+        var category = btn.getAttribute('data-category') || 'all';
+        var allCards = viewport.querySelectorAll('.raycast-reel-card');
+
+        if (category === 'all') {
+          allCards.forEach(function(card) {
+            card.style.display = 'flex';
+          });
+          viewport.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          allCards.forEach(function(card) {
+            var cardCat = card.getAttribute('data-category');
+            if (cardCat === category) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          viewport.scrollTo({ left: 0, behavior: 'smooth' });
+        }
+
+        setTimeout(updateNavButtons, 250);
+      });
+    });
+
+    // Initialize backdrop pill
+    var activeTab = document.querySelector('.raycast-tab-btn.active');
+    if (activeTab) {
+      setTimeout(function() { positionBackdrop(activeTab); }, 60);
+    }
+
+    // Resize event
+    window.addEventListener('resize', function() {
+      var currentActive = document.querySelector('.raycast-tab-btn.active');
+      if (currentActive) positionBackdrop(currentActive);
+      updateNavButtons();
+    });
+
+    // Initial button state
+    updateNavButtons();
   })();
 
   // Scroll Reveal Observer for Homepage Sections

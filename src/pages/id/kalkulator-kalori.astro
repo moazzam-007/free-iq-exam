@@ -1,0 +1,36 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+const title = 'Kalkulator Kalori dan Makro TDEE | FreeIQExam';
+const description = 'Hitung BMR, TDEE, target kalori, BMI, dan pembagian makronutrien dengan formula Mifflin-St Jeor.';
+const canonicalUrl = 'https://freeiqexam.com/id/kalkulator-kalori';
+---
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/calorie-calculator">
+  <Header currentPath="/id/kalkulator-kalori" enPath="/calorie-calculator" />
+  <main class="flex-1 bg-white px-4 py-10 text-zinc-950 dark:bg-black dark:text-white sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-4xl">
+      <header class="mb-8 text-center">
+        <span class="fx-tag">Kesehatan metabolik</span>
+        <h1 class="mt-5 text-4xl font-extrabold tracking-[-0.025em] sm:text-5xl">Kalkulator Kalori dan Makro</h1>
+        <p class="mx-auto mt-4 max-w-2xl text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-300 sm:text-lg">Hitung kebutuhan energi harian, target kalori, BMI, dan makronutrien berdasarkan data tubuh dan aktivitas Anda.</p>
+      </header>
+      <section class="rounded-3xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label>Usia<input id="calAge" type="number" value="28" min="13" class="mt-2 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900" /></label>
+          <label>Aktivitas<select id="calActivity" class="mt-2 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900"><option value="1.2">Sangat ringan</option><option value="1.375">Ringan</option><option value="1.55" selected>Sedang</option><option value="1.725">Tinggi</option></select></label>
+          <label>Berat (kg)<input id="calWeightMetric" type="number" value="75" class="mt-2 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900" /></label>
+          <label>Tinggi (cm)<input id="calHeightMetric" type="number" value="178" class="mt-2 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900" /></label>
+          <input id="calBodyFat" type="hidden" value="" />
+        </div>
+        <div class="mt-6 flex flex-wrap gap-3"><button type="button" class="cal-gender-btn fx-tag" data-gender="male">Pria</button><button type="button" class="cal-gender-btn fx-tag" data-gender="female">Wanita</button><button type="button" class="cal-goal-btn fx-tag" data-goal="maintenance">Pertahankan</button></div>
+        <div class="hidden"><div id="metricInputsWrap"></div><div id="imperialInputsWrap"></div><div id="femaleHipWrap"></div><input id="calWeightImperial" value="165" /><input id="calHeightFeet" value="5" /><input id="calHeightInches" value="10" /><input id="navyNeck" value="38" /><input id="navyWaist" value="84" /><input id="navyHip" value="98" /><button id="calcNavyBfBtn" type="button"></button><span id="navyBfResultBadge"></span></div>
+        <div class="mt-8 grid gap-4 sm:grid-cols-3"><article class="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><span class="text-sm text-zinc-500">BMR</span><strong id="resBmrVal" class="mt-2 block text-2xl">-</strong></article><article class="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><span class="text-sm text-zinc-500">TDEE</span><strong id="resTdeeVal" class="mt-2 block text-2xl text-[#0066cc] dark:text-[#2997ff]">-</strong></article><article class="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><span class="text-sm text-zinc-500">Target kalori</span><strong id="resTargetCalories" class="mt-2 block text-2xl">-</strong></article></div>
+        <p id="resGoalDesc" class="mt-5 text-zinc-600 dark:text-zinc-300"></p><canvas id="macroChartCanvas" class="mx-auto mt-6 h-[180px] w-[180px]"></canvas>
+        <div class="hidden"><span id="resDeltaVal"></span><span id="bmrMifflinVal"></span><span id="bmrKatchVal"></span><span id="bmrOxfordVal"></span><span id="resBmiVal"></span><span id="resBmiCategory"></span><span id="macroProteinGrams"></span><span id="macroProteinKcal"></span><span id="macroFatGrams"></span><span id="macroFatKcal"></span><span id="macroCarbGrams"></span><span id="macroCarbKcal"></span><span id="neuroBrainKcal"></span><span id="neuroBrainGlucose"></span><span id="neuroBrainWatts"></span><button class="cal-unit-btn" data-unit="metric" type="button"></button><button class="cal-diet-btn" data-diet="balanced" type="button"></button></div>
+      </section>
+    </div>
+  </main>
+  <Footer />
+  <script src="../../scripts/tools/calorie-engine.js"></script>
+</Layout>

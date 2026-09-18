@@ -1,0 +1,907 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const alternates = {};
+
+const title = "Tes Buta Warna Online - Skrining 22 Pelat Ishihara | FreeIQExam";
+const description = "Lakukan skrining penglihatan warna gaya Ishihara secara gratis. Periksa defisiensi merah-hijau, protanopia, dan deuteranopia dengan 22 pelat serta mode anak.";
+const canonicalUrl = "https://freeiqexam.com/id/tes-buta-warna";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tes Buta Warna Ishihara Online",
+    "description": "Skrining gaya Ishihara 22 pelat untuk defisiensi penglihatan warna merah-hijau (Deuteranopia, Protanopia).",
+    "url": canonicalUrl,
+    "medicalAudience": "Patient",
+    "aspect": "Screening"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tes Buta Warna Online FreeIQExam",
+    "url": canonicalUrl,
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Memerlukan dukungan JavaScript dan HTML5 Canvas/SVG",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Skrining Penglihatan Warna 22 Pelat Gaya Ishihara",
+      "Skrining untuk Deuteranopia dan Protanopia (Defisiensi Merah-Hijau)",
+      "Simulator Defisiensi Penglihatan Warna Interaktif",
+      "Mode Anak & Simbol Geometri untuk pengujian pediatrik",
+      "Persentase Sensitivitas Sel Kerucut L, M, dan S",
+      "Laporan skrining instan tanpa syarat pendaftaran atau email"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Alat",
+        "item": "https://freeiqexam.com/id/tes"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Tes Buta Warna",
+        "item": canonicalUrl
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Apa nama tes buta warna klinis yang umum digunakan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tes buta warna klinis yang paling terkenal adalah Tes Ishihara, dinamai sesuai penemunya Dr. Shinobu Ishihara (dokter mata asal Jepang) pada tahun 1917. Instrumen diagnostik lainnya mencakup Tes Farnsworth D-15 / 100-Hue, Anomaloskop Nagel (baku emas diagnostik kuantitatif), tes HRR (Hardy-Rand-Rittler), dan tes lentera penerbangan seperti Farnsworth Lantern (Falant)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara melakukan tes buta warna di rumah?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Untuk melakukan skrining mandiri di rumah: 1) Atur kecerahan layar antara 80% hingga 100%, 2) Matikan fitur filter cahaya biru seperti Night Shift, TrueTone, f.lux, atau pelindung layar kuning, 3) Posisikan mata sejauh rentang lengan (~50–75 cm) dari layar, dan 4) Jawab ke-22 pelat Ishihara secara spontan tanpa menebak. Tes ini mengevaluasi sumbu kebingungan warna merah-hijau secara instan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu pelat buta warna terbalik (reverse color blind test)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pelat buta warna terbalik (reverse plate) menggunakan titik-titik pseudo-isokromatik yang dirancang khusus sehingga individu dengan penglihatan normal hanya melihat pola acak, sementara individu dengan buta warna merah-hijau dapat membaca angka tersembunyi dengan jelas. Hal ini terjadi karena mata buta warna tidak terdistraksi oleh kamuflase warna dan mendeteksi kontur perbedaan terang-gelap (luminansi) yang terlewatkan oleh trikromat normal."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara menguji buta warna pada anak-anak kecil?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pelat Ishihara standar mengharuskan membaca angka Arab, yang belum tentu dikuasai balita atau anak prasekolah. Untuk pengujian pediatrik, gunakan mode simbol anak yang menggunakan bentuk geometris sederhana (Lingkaran, Persegi, Segitiga, Bintang). Anak cukup menunjuk bentuk yang dilihat, memungkinkan skrining akurat sejak usia 3 hingga 4 tahun."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah tes buta warna Ishihara bisa dicurangi atau diakali?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tes buta warna klinis tidak dapat dicurangi karena responsnya bergantung pada fotopigmen biologis sel kerucut retina. Ujian dinas resmi (seperti penerbangan, maritim, dan militer) menggunakan urutan pelat acak atau alat lentera mekanis di mana hafalan tidak berguna. Kacamata pengoreksi warna (seperti EnChroma) secara ketat dilarang dalam tes sertifikasi resmi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa perbedaan antara kacamata buta warna EnChroma dan Pilestone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "EnChroma dan Pilestone adalah produsen kacamata filter optik khusus buta warna. Kacamata ini menggunakan lapisan optik multi-notch yang menyaring panjang gelombang cahaya yang tumpang tindih antara reseptor merah dan hijau, sehingga meningkatkan kontras warna bagi trikromat anomali (Deuteranomali dan Protanomali). Namun kacamata ini tidak menyembuhkan buta warna dan tidak bekerja pada dikromat total yang kehilangan fotopigmen kerucut sepenuhnya."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa yang sebenarnya dilihat oleh orang buta warna merah-hijau?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Orang dengan buta warna merah-hijau tidak melihat dunia dalam hitam-putih. Sebaliknya, warna merah, hijau, oranye, dan cokelat tampak sebagai variasi warna kuning, khaki, zaitun, dan abu-abu. Bagi protanopia (buta merah), warna merah tampak jauh lebih redup atau hampir hitam. Bagi deuteranopia (buta hijau), warna hijau dan merah memiliki kecerahan normal tetapi dengan corak warna kecokelatan yang serupa."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bisakah seseorang menjadi pilot maskapai penerbangan komersial jika buta warna?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bisa dengan syarat khusus. Otoritas penerbangan sipil internasional (seperti FAA atau Kemenhub RI) mensyaratkan sertifikat medis Kelas 1. Jika gagal pada pelat Ishihara standar, kandidat dapat mengajukan tes operasional alternatif (Operational Color Vision Test / OCVT), termasuk tes sinyal pistol cahaya menara kontrol dan uji terbang medis untuk memperoleh dispensasi (Letter of Evidence)."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+>
+  <Header />
+
+  <!-- CVD SVG Simulation Filter Matrices (Hidden in DOM, referenced by CSS) -->
+  <svg class="hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <filter id="deutan-filter">
+      <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="protan-filter">
+      <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="tritan-filter">
+      <feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" />
+    </filter>
+  </svg>
+
+  <style>
+    .plate-container {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    @keyframes pilestonePop {
+      0% { transform: scale(1); }
+      30% { transform: scale(0.96); opacity: 0.9; }
+      70% { transform: scale(1.02); opacity: 0.98; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .pilestone-transition {
+      animation: pilestonePop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .timeline-dot {
+      transition: all 0.25s ease;
+    }
+
+    .plate-dot {
+      vector-effect: non-scaling-stroke;
+      shape-rendering: geometricPrecision;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Simulation filters */
+    .filter-normal { filter: none; }
+    .filter-deutan { filter: url('#deutan-filter'); }
+    .filter-protan { filter: url('#protan-filter'); }
+    .filter-tritan { filter: url('#tritan-filter'); }
+    .filter-achroma { filter: grayscale(100%); }
+
+    .cb-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    :global(.dark) .cb-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    #test-card .key-btn:active, #test-card .shape-btn:active, .sim-filter-btn:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+    @media (prefers-reduced-motion: reduce) { .cb-hero-glow { display: none; } }
+
+    @media print {
+      header, footer, #calibration-banner, #keypad-numbers, #keypad-kids, .mode-toggle-container, #btn-restart-link, .no-print {
+        display: none !important;
+      }
+      #results-view {
+        display: flex !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Beranda</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <a href="/id/tes" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Alat</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Tes Buta Warna</span>
+    </nav>
+
+    <!-- Page Header & Eyebrow -->
+    <header class="relative text-center max-w-3xl mx-auto mb-10">
+      <div class="cb-hero-glow" aria-hidden="true"></div>
+      <div class="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[13px] sm:text-sm font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Skrining 22 Pelat Ishihara • Evaluasi Penglihatan Warna</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-[-0.025em] leading-[1.08] mb-4">
+        Tes Buta Warna Online
+      </h1>
+      <p class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-300 leading-[1.62] max-w-2xl mx-auto">
+        Evaluasi persepsi warna Anda dengan matriks <strong class="text-zinc-900 dark:text-zinc-100 font-semibold">22 pelat Ishihara autentik</strong>. Titik-titik beresolusi tinggi mendeteksi <strong class="text-emerald-600 dark:text-emerald-400 font-bold">Deuteranopia</strong> dan <strong class="text-rose-600 dark:text-rose-400 font-bold">Protanopia</strong> (defisiensi merah-hijau) secara gratis dan privat.
+      </p>
+    </header>
+
+    <!-- PRE-TEST DISPLAY CALIBRATION ADVISORY -->
+    <div id="calibration-banner" class="max-w-3xl mx-auto mb-8 p-5 rounded-3xl bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-amber-900 dark:text-amber-200 text-sm shadow-xs transition-all">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3">
+          <span class="text-2xl shrink-0">⚠️</span>
+          <div class="space-y-1">
+            <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Kalibrasi Layar Sebelum Tes</h4>
+            <p class="text-amber-800 dark:text-amber-300/90 text-sm leading-relaxed">
+              Demi akurasi pengujian: <strong>1)</strong> Atur kecerahan layar antara 80%–100%, <strong>2)</strong> Matikan Night Shift, TrueTone, f.lux, atau filter layar kuning, dan <strong>3)</strong> Jaga jarak pandang rentang lengan (~50–75 cm).
+            </p>
+          </div>
+        </div>
+        <button id="btn-dismiss-calibration" type="button" class="text-amber-600 dark:text-amber-400 hover:text-amber-950 dark:hover:text-white p-1 cursor-pointer text-lg" aria-label="Tutup saran kalibrasi">✕</button>
+      </div>
+    </div>
+
+    <!-- TEST MODE TOGGLE (STANDARD NUMBERS VS KIDS SHAPES) -->
+    <div class="mode-toggle-container max-w-md mx-auto mb-8 flex items-center justify-center p-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs font-medium text-[13px] sm:text-sm">
+      <button id="mode-btn-numbers" type="button" class="flex-1 min-h-[44px] py-3 px-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-bold shadow-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer">
+        <span>🔢</span><span>Angka Standar (22 Pelat)</span>
+      </button>
+      <button id="mode-btn-kids" type="button" class="flex-1 min-h-[44px] py-3 px-4 rounded-full text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer">
+        <span>⭐</span><span>Mode Anak &amp; Simbol</span>
+      </button>
+    </div>
+
+    <!-- INTERACTIVE TEST ARENA CARD -->
+    <div class="relative w-full max-w-4xl mx-auto">
+      <div id="test-card" class="plate-container w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col items-center">
+        
+        <!-- Header Bar with Brand & Plate Progress -->
+        <div class="w-full flex items-center justify-between pb-4 mb-6 text-[13px] sm:text-sm font-mono border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400">
+          <div class="flex items-center gap-2">
+            <span class="font-heading font-extrabold tracking-wider uppercase text-zinc-900 dark:text-zinc-100 text-[13px] sm:text-sm">
+              FREE<span class="text-blue-600 dark:text-blue-500">IQ</span>EXAM <span class="text-zinc-400 dark:text-zinc-500 font-normal">ISHIHARA</span>
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="plate-counter-badge" class="px-3 py-1 rounded-full text-[13px] font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-zinc-200 dark:border-zinc-700">
+              PELAT 1 DARI 22
+            </span>
+          </div>
+        </div>
+
+        <!-- 22-Plate Connected Timeline Progress Bar -->
+        <div class="w-full mb-8 px-1 sm:px-4">
+          <div id="timeline-chain" class="relative flex items-center justify-between w-full h-8">
+            <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 h-[2px] bg-zinc-200 dark:bg-zinc-800 z-0"></div>
+            <div id="timeline-dots" class="relative z-10 flex items-center justify-between w-full"></div>
+          </div>
+        </div>
+
+        <!-- ACTIVE TESTING ARENA (SIDE-BY-SIDE ON DESKTOP, STACKED ON MOBILE) -->
+        <div id="active-test-view" class="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 my-2">
+          
+          <!-- High-DPI Procedural 764-Circle Ishihara SVG Stage -->
+          <div id="plate-stage" class="relative w-[300px] sm:w-[380px] lg:w-[440px] aspect-square rounded-full bg-zinc-100 dark:bg-[#18181c] p-2 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center shrink-0">
+            <svg id="plate-svg" class="w-full h-full rounded-full block cursor-pointer select-none" viewBox="0 0 666 666" role="img" aria-label="Pelat tes buta warna Ishihara autentik" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="333" cy="333" r="328" fill="#121215"></circle>
+              <g id="plate-dots"></g>
+            </svg>
+          </div>
+
+          <!-- Keypad & Touch Controls Column -->
+          <div class="flex flex-col items-center justify-center w-full max-w-[300px]">
+            <!-- Instruction Prompt -->
+            <div class="text-center mb-5">
+              <p id="prompt-main-text" class="text-[13px] sm:text-sm font-mono uppercase tracking-wider text-zinc-600 dark:text-zinc-300 font-semibold mb-1">Pilih Angka yang Anda Lihat</p>
+              <p id="prompt-sub-text" class="text-[13px] text-zinc-400 dark:text-zinc-500">Papan ketik: [1-9], [N] Tidak Ada, [U] Ragu</p>
+            </div>
+
+            <!-- NUMBERS MODE KEYPAD (1-9, NOTHING, NOT SURE) -->
+            <div id="keypad-numbers" class="w-full flex flex-col items-center">
+              <div class="grid grid-cols-3 gap-3 w-full mb-3">
+                <button type="button" data-val="1" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">1</button>
+                <button type="button" data-val="2" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">2</button>
+                <button type="button" data-val="3" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">3</button>
+                <button type="button" data-val="4" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">4</button>
+                <button type="button" data-val="5" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">5</button>
+                <button type="button" data-val="6" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">6</button>
+                <button type="button" data-val="7" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">7</button>
+                <button type="button" data-val="8" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">8</button>
+                <button type="button" data-val="9" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">9</button>
+              </div>
+
+              <!-- Action Row: NOTHING / NOT SURE -->
+              <div class="grid grid-cols-2 gap-3 w-full mb-4">
+                <button type="button" data-val="nothing" class="key-btn h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-[13px] sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center cursor-pointer">
+                  TIDAK ADA
+                </button>
+                <button type="button" data-val="unsure" class="key-btn h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-[13px] sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center cursor-pointer">
+                  RAGU-RAGU
+                </button>
+              </div>
+            </div>
+
+            <!-- KIDS & SHAPES MODE KEYPAD (CIRCLE, SQUARE, TRIANGLE, STAR) -->
+            <div id="keypad-kids" class="w-full flex flex-col items-center hidden">
+              <div class="grid grid-cols-2 gap-3 w-full mb-4">
+                <button type="button" data-val="Circle" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border-2 border-emerald-500/40 hover:border-emerald-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-2xl text-emerald-500">●</span><span>Lingkaran</span>
+                </button>
+                <button type="button" data-val="Square" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border-2 border-blue-500/40 hover:border-blue-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-2xl text-blue-500">■</span><span>Persegi</span>
+                </button>
+                <button type="button" data-val="Triangle" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border-2 border-amber-500/40 hover:border-amber-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-2xl text-amber-500">▲</span><span>Segitiga</span>
+                </button>
+                <button type="button" data-val="Star" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border-2 border-purple-500/40 hover:border-purple-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-2xl text-[#0066cc] dark:text-[#2997ff]">★</span><span>Bintang</span>
+                </button>
+              </div>
+
+              <button type="button" data-val="nothing" class="shape-btn w-full h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-[13px] sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center mb-4 cursor-pointer">
+                🚫 Tidak Melihat Bentuk Apapun
+              </button>
+            </div>
+
+            <!-- Restart Test Link -->
+            <button id="btn-restart-link" type="button" class="text-[13px] sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline underline-offset-4 transition-colors cursor-pointer py-1">
+              Ulangi Asesmen
+            </button>
+          </div>
+        </div>
+
+        <!-- DIAGNOSTIC RESULTS REPORT VIEWPORT -->
+        <div id="results-view" class="w-full hidden flex flex-col items-center">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 flex items-center justify-center mb-4 shadow-lg">
+            <svg class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+
+          <h3 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white text-center mb-1">
+            Asesmen Penglihatan Warna Selesai
+          </h3>
+          <p class="text-[13px] sm:text-sm text-zinc-500 dark:text-zinc-400 font-mono text-center mb-8">
+            Dievaluasi Berdasarkan Matriks Pelat Pseudo-Isokromatik Ishihara Autentik
+          </p>
+
+          <!-- Overall Diagnosis Banner Card -->
+          <div class="w-full p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm text-center mb-8">
+            <div class="text-[13px] sm:text-sm font-mono font-semibold text-zinc-500 uppercase tracking-wider mb-2">Klasifikasi Skrining</div>
+            <div id="diag-title" class="text-2xl sm:text-4xl font-heading font-extrabold text-emerald-600 dark:text-emerald-400 mb-3">
+              Penglihatan Trikromatik Normal
+            </div>
+            <p id="diag-desc" class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+              Respons Anda menunjukkan aktivitas fungsional standar pada fotoreseptor kerucut merah-hijau (kerucut L dan M) tanpa defisiensi penglihatan warna merah-hijau.
+            </p>
+          </div>
+
+          <!-- 3-Cone Sensitivity Breakdown Meters -->
+          <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 font-mono text-[13px] sm:text-sm">
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>Kerucut L (Merah / 560nm)</span>
+                <span id="cone-l-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-l-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>Kerucut M (Hijau / 530nm)</span>
+                <span id="cone-m-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-m-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>Kerucut S (Biru / 420nm)</span>
+                <span id="cone-s-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-s-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- VIRAL SIMULATOR: INTERACTIVE COLOR VISION DEFICIENCY SIMULATOR -->
+          <div class="w-full p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8">
+            <div class="text-center max-w-md mx-auto mb-6">
+              <span class="px-3 py-1 rounded-full text-[13px] font-mono font-bold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+                SIMULATOR DEFISIENSI PENGLIHATAN WARNA
+              </span>
+              <h4 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mt-2 mb-1">
+                Bagaimana Mata Lain Melihat Dunia
+              </h4>
+              <p class="text-[13px] sm:text-sm text-zinc-500 dark:text-zinc-400">
+                Klik salah satu mode di bawah untuk mensimulasikan defisiensi penglihatan warna pada lampu lalu lintas dan spektrum warna alami.
+              </p>
+            </div>
+
+            <!-- Simulator Mode Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-6 text-[13px] sm:text-sm font-semibold">
+              <button type="button" data-filter="normal" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-blue-600 text-white shadow-xs cursor-pointer">Normal</button>
+              <button type="button" data-filter="deutan" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Deuteranopia (Hijau)</button>
+              <button type="button" data-filter="protan" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Protanopia (Merah)</button>
+              <button type="button" data-filter="tritan" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Tritanopia (Biru)</button>
+              <button type="button" data-filter="achroma" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Monokromasi (Total)</button>
+            </div>
+
+            <!-- Simulated Graphic Display -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-8 p-6 rounded-3xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+              <div id="sim-target" class="flex items-center gap-6 transition-all duration-300 filter-normal">
+                <!-- Traffic Light Container -->
+                <div class="w-16 p-2.5 rounded-3xl bg-zinc-900 border-2 border-zinc-800 flex flex-col items-center gap-2.5 shadow-md">
+                  <div class="w-10 h-10 rounded-full bg-red-600 shadow-sm"></div>
+                  <div class="w-10 h-10 rounded-full bg-amber-400 shadow-sm"></div>
+                  <div class="w-10 h-10 rounded-full bg-emerald-500 shadow-sm"></div>
+                </div>
+                <!-- Natural Spectrum Legend -->
+                <div class="space-y-1.5 text-[13px] sm:text-sm font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-red-500 shrink-0"></span><span>Merah (Stroberi)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-amber-400 shrink-0"></span><span>Kuning (Pisang)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-emerald-500 shrink-0"></span><span>Hijau (Apel / Jeruk Nipis)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-blue-500 shrink-0"></span><span>Biru (Langit)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DETAILED PLATE-BY-PLATE REVIEW ACCORDION / MATRIX -->
+          <details class="w-full rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8 p-6 overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+              <div class="flex items-center gap-2.5">
+                <span>📋</span>
+                <span>Matriks Tinjauan Diagnostik Pelat Demi Pelat</span>
+              </div>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-6 overflow-x-auto border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              <table class="w-full text-left border-collapse text-[13px] sm:text-sm">
+                <thead>
+                  <tr class="bg-zinc-100/80 dark:bg-zinc-800/80 text-zinc-950 dark:text-white font-mono uppercase text-[13px]">
+                    <th class="py-3 px-4">Pelat</th>
+                    <th class="py-3 px-4">Tipe / Fungsi</th>
+                    <th class="py-3 px-4">Penglihatan Normal</th>
+                    <th class="py-3 px-4">Mata Buta Warna</th>
+                    <th class="py-3 px-4">Jawaban Anda</th>
+                    <th class="py-3 px-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="review-matrix-body" class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                  <!-- Injected dynamically via JS engine -->
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <!-- Share & Restart Actions -->
+          <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button id="btn-copy-summary" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-semibold text-base shadow-md active:scale-[0.97] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <span>📋</span><span>Salin Ringkasan Klinis</span>
+            </button>
+            <button id="btn-print-report" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-semibold text-base shadow-md active:scale-[0.97] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <span>🖨️</span><span>Cetak / Simpan Laporan PDF</span>
+            </button>
+            <button id="btn-restart-test" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-semibold text-base active:scale-[0.97] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <span>🔄</span><span>Ulangi Tes</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Share Toast Notification -->
+      <div id="share-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium border border-zinc-800 dark:border-zinc-200">
+        <span>✓</span>
+        <span>Ringkasan tes berhasil disalin ke papan klip!</span>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- PANDUAN KLINIS & EDUKASI KOMPREHENSIF                              -->
+    <!-- ================================================================= -->
+    <section class="mt-20 sm:mt-28 space-y-16 border-t border-zinc-200 dark:border-zinc-800/80 pt-16">
+
+      <!-- SECTION 1: THE CLINICAL SCIENCE OF COLOR VISION -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Fotobiologi Retina &amp; Jalur Kromatik
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Apa itu Defisiensi Penglihatan Warna (CVD)?
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <strong>Defisiensi penglihatan warna (Color Vision Deficiency / CVD)</strong>, yang umum dikenal sebagai <strong>buta warna</strong> atau <em>daltonisme</em>, adalah kondisi sensorik di mana mata mengalami penurunan kemampuan dalam membedakan corak warna tertentu pada spektrum tampak. Istilah <em>daltonisme</em> merujuk pada ilmuwan kimia John Dalton yang mempublikasikan makalah ilmiah pertama tentang buta warna pada tahun 1794 setelah menyadari bahwa ia dan saudara laki-lakinya tidak dapat membedakan buah ceri matang dari daun hijau. Berbeda dengan mitos populer, penderita buta warna sangat jarang melihat dunia secara monokrom (hitam-putih); melainkan ruang warna mereka menyempit atau mengalami pergeseran diskriminasi panjang gelombang.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Persepsi warna manusia bergantung pada fotoreseptor khusus pada retina: sekitar <strong>120 juta sel batang (rods)</strong> untuk penglihatan malam dan tingkat kecerahan, serta <strong>6 hingga 7 juta sel kerucut (cones)</strong> yang terkonsentrasi di area <em>fovea centralis</em> untuk penglihatan warna beresolusi tinggi. Pada penglihatan <strong>trikromatik normal</strong>, mata didukung oleh tiga kelas fotopigmen kerucut yang memiliki puncak absorpsi panjang gelombang berbeda:
+        </p>
+
+        <!-- 3 Cone Classes Card Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              Kerucut L
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Eritrolab (Panjang Gelombang Panjang)</h3>
+            <div class="text-[13px] sm:text-sm font-mono text-rose-600 dark:text-rose-400 font-bold mb-3">Puncak Absorpsi: ~560 nm (Merah)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Diprogram oleh gen <em>OPN1LW</em> pada kromosom X. Mutasi atau ketidakhadiran gen ini menyebabkan Protanomali (kelemahan merah) atau Protanopia (buta merah total).
+            </p>
+          </div>
+
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              Kerucut M
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Klorolab (Panjang Gelombang Sedang)</h3>
+            <div class="text-[13px] sm:text-sm font-mono text-emerald-600 dark:text-emerald-400 font-bold mb-3">Puncak Absorpsi: ~530 nm (Hijau)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Diprogram oleh kelompok gen <em>OPN1MW</em> pada kromosom X. Defisit memicu Deuteranomali (kelemahan hijau) atau Deuteranopia (buta hijau total) - mencakup ~75% dari seluruh kasus CVD.
+            </p>
+          </div>
+
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              Kerucut S
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Sianolab (Panjang Gelombang Pendek)</h3>
+            <div class="text-[13px] sm:text-sm font-mono text-blue-600 dark:text-blue-400 font-bold mb-3">Puncak Absorpsi: ~420 nm (Biru)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Diprogram oleh gen <em>OPN1SW</em> pada kromosom autosomal 7. Mutasi memicu Tritanomali atau Tritanopia (kebingungan biru-kuning), memengaruhi pria dan wanita dalam proporsi yang setara.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- SECTION 2: THE 7 TYPES OF COLOR BLINDNESS EXPLAINED -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Klasifikasi &amp; Fenotipe Kromatik
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          7 Jenis Buta Warna dan Karakteristiknya
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Klinisi mengklasifikasikan defisiensi warna berdasarkan apakah fotopigmen kerucut mengalami pergeseran spektral (<strong>anomali trikromatik</strong>) atau tidak berfungsi sama sekali (<strong>dikromasi / monokromasi</strong>).
+        </p>
+
+        <!-- Structured Table of 7 CVD Types -->
+        <div class="w-full overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-zinc-100 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white font-mono text-[13px] uppercase">
+                <th class="py-4 px-5">Kondisi</th>
+                <th class="py-4 px-5">Klasifikasi</th>
+                <th class="py-4 px-5">Prevalensi</th>
+                <th class="py-4 px-5">Kerucut Terdampak</th>
+                <th class="py-4 px-5">Dampak Visual Klinis</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Deuteranomali</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Trikromasi Anomali</td>
+                <td class="py-4 px-5 font-mono text-emerald-600 dark:text-emerald-400 font-bold">~5,0% Pria, 0,35% Wanita</td>
+                <td class="py-4 px-5 font-mono">Kerucut M (Bergeser)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Kelemahan warna hijau; pembedaan corak merah-hijau sulit pada kontras rendah atau cahaya temaram.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Deuteranopia</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Dikromasi</td>
+                <td class="py-4 px-5 font-mono text-emerald-600 dark:text-emerald-400 font-bold">~1,0% Pria, 0,01% Wanita</td>
+                <td class="py-4 px-5 font-mono">Kerucut M (Absen)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Buta hijau total; warna hijau, kuning, dan oranye terlihat sebagai nuansa cokelat-krem serupa.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Protanomali</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Trikromasi Anomali</td>
+                <td class="py-4 px-5 font-mono text-rose-600 dark:text-rose-400 font-bold">~1,0% Pria, 0,02% Wanita</td>
+                <td class="py-4 px-5 font-mono">Kerucut L (Bergeser)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Kelemahan warna merah; warna merah tampak kusam dan merah muda gelap tampak keabu-abuan.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Protanopia</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Dikromasi</td>
+                <td class="py-4 px-5 font-mono text-rose-600 dark:text-rose-400 font-bold">~1,0% Pria, 0,02% Wanita</td>
+                <td class="py-4 px-5 font-mono">Kerucut L (Absen)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Buta merah total; cahaya merah tampak sangat redup atau hitam pekat (risiko keselamatan lalu lintas).</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Tritanomali</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Trikromasi Anomali</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">&lt;0,001% (Sangat Langka)</td>
+                <td class="py-4 px-5 font-mono">Kerucut S (Bergeser)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Kelemahan biru-kuning; warna biru tampak kehijauan dan kuning tertukar dengan ungu.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Tritanopia</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Dikromasi</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">~0,003% (Setara Pria &amp; Wanita)</td>
+                <td class="py-4 px-5 font-mono">Kerucut S (Absen)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Buta biru-kuning total; mempersepsikan dunia dalam nuansa merah, merah muda, dan toska.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Akromatopsia</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Monokromasi Total</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">1 dari 33.000 (0,003%)</td>
+                <td class="py-4 px-5 font-mono">Ketiga Kerucut Tidak Berfungsi</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Ketiadaan total persepsi warna; disertai fotofobia parah di siang hari dan nistagmus.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- SECTION 3: DR. ISHIHARA'S BREAKTHROUGH (1917) -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Psikometri Historis &amp; Kategori Pelat Fungsional
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Inovasi Dr. Shinobu Ishihara (1917)
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Pada tahun 1917, Dr. Shinobu Ishihara, seorang dokter mata militer dan profesor di Universitas Tokyo, menerbitkan seri pelat pseudo-isokromatik pertamanya untuk merekrut tentara. Keunggulan metodologisnya terletak pada pemahaman bahwa tes buta warna tidak bisa menggunakan kartu warna seragam karena variasi kecerahan memungkinkan orang menebak warna secara cerdik.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Ishihara merancang <strong>4 kategori pelat fungsional</strong> untuk mengisolasi respons reseptor kerucut secara presisi:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">1. Pelat Demonstrasi</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Pelat kontras tinggi (misalnya Pelat 1, angka "9" atau "12") yang dapat dibaca jelas oleh semua orang, baik penglihatan normal maupun penderita buta warna total. Berfungsi menguji pemahaman instruksi.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">2. Pelat Transformasi</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Pelat di mana mata normal membaca satu angka (misalnya "8"), sedangkan mata buta warna membaca angka berbeda sama sekali (misalnya "3"). Pola titik menggabungkan kontur warna dan luminansi khusus.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">3. Pelat Menghilang (Vanishing Plates)</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Pelat dengan angka yang terletak pada garis kebingungan merah-hijau iso-luminan. Mata normal melihat angka secara instan, sedangkan mata buta warna hanya melihat bidang bintik-bintik acak.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">4. Pelat Angka Tersembunyi (Reverse Plates)</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Pelat di mana mata normal tidak melihat angka apapun, tetapi mata buta warna merah-hijau dapat membaca angka tersembunyi dengan jelas karena tidak terganggu oleh kamuflase warna.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- SECTION 4: THE GENETICS OF COLOR BLINDNESS -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Genetika Resesif Terkait Kromosom X
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Genetika Buta Warna: Mengapa Pria Jauh Lebih Rentan?
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Ketimpangan prevalensi yang sangat mencolok - memengaruhi sekitar <strong>1 dari 12 pria (8,0%)</strong> dibandingkan hanya <strong>1 dari 200 wanita (0,5%)</strong> - dijelaskan secara langsung oleh hukum genetika Mendel pola resesif terikat kromosom X.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Gen fotopigmen merah (<em>OPN1LW</em>) dan hijau (<em>OPN1MW</em>) terletak berdampingan pada lengan panjang kromosom X (lokus <strong>Xq28</strong>). Karena pria hanya memiliki satu kromosom X (XY yang diwarisi dari ibu), mutasi pada kromosom tunggal tersebut langsung bermanifestasi sebagai buta warna klinis. Wanita memiliki dua kromosom X (XX), sehingga salinan gen sehat pada kromosom X kedua dapat mengompensasi gen yang bermutasi.
+        </p>
+      </article>
+
+      <!-- SECTION 5: REAL-WORLD IMPACTS & VOCATIONAL STANDARDS -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Standar Profesi &amp; Regulasi Keselamatan Kerja
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Dampak Nyata &amp; Standar Buta Warna dalam Karier
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Karena sistem keselamatan vital bergantung pada sinyal visual (merah = bahaya/berhenti, hijau = aman/jalan, kuning = waspada), berbagai profesi keselamatan menerapkan regulasi ketat:
+        </p>
+
+        <!-- Career Table -->
+        <div class="w-full overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-zinc-100 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white font-mono text-[13px] uppercase">
+                <th class="py-4 px-5">Profesi / Industri</th>
+                <th class="py-4 px-5">Tingkat Kewajiban</th>
+                <th class="py-4 px-5">Tes Standar</th>
+                <th class="py-4 px-5">Rasional Regulasi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Pilot Maskapai Penerbangan (Kelas 1)</td>
+                <td class="py-4 px-5 font-mono text-rose-600 font-bold">Wajib Mutlak</td>
+                <td class="py-4 px-5">Ishihara / Lentera Farnsworth / Richmond HRR</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Instrumen kokpit, lampu landasan pacu, dan sinyal pistol cahaya menara pemandu lalu lintas udara.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Pelaut / Perwira Kapal Maritim</td>
+                <td class="py-4 px-5 font-mono text-rose-600 font-bold">Wajib Mutlak</td>
+                <td class="py-4 px-5">Lentera Farnsworth / Ishihara 14 Pelat</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Navigasi malam hari di laut memerlukan pembedaan lampu navigasi lambung kiri (merah) dan kanan (hijau).</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Teknisi Listrik / Elektronika</td>
+                <td class="py-4 px-5 font-mono text-amber-600 font-bold">Sangat Penting</td>
+                <td class="py-4 px-5">Ishihara / Uji Praktik Sortir Kabel</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Kode warna kabel instalasi listrik (Fasa, Netral, Ground). Salah sambung memicu bahaya sengatan fatal dan kebakaran.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Masinis Kereta Api</td>
+                <td class="py-4 px-5 font-mono text-rose-600 font-bold">Wajib Mutlak</td>
+                <td class="py-4 px-5">Ishihara / Tes Lentera Sinyal</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Toleransi nol terhadap kesalahan sinyal blok lintasan rel, wesel jalur, dan tanda bendera bahaya.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- SECTION 6: TESTING CONDITIONS & DISPLAY CALIBRATION -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Protokol Pengujian Terstandarisasi
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Kondisi Pengujian &amp; Kalibrasi Layar
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Saat melakukan tes online, perangkat keras layar dan pencahayaan ruangan merupakan faktor lingkungan yang perlu dikontrol untuk menghindari hasil positif palsu:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl mb-2">☀️</div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">1. Kecerahan Layar</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Atur kecerahan layar monitor antara 80% hingga 100%. Layar yang redup menurunkan kontras luminansi kromatik titik Ishihara.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl mb-2">🚫</div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">2. Matikan Filter Biru</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Matikan Night Shift, Apple TrueTone, f.lux, atau Pelindung Mata Android. Filter kuning mendistorsi spektrum warna pelat.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl mb-2">📏</div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">3. Jarak Pandang</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Posisikan mata sejauh 50 hingga 75 cm dari layar monitor sejajar pandangan. Hindari pantulan silau lampu langsung pada kaca layar.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- SECTION 7: FREQUENTLY ASKED QUESTIONS ACCORDION -->
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Pertanyaan yang Sering Diajukan
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          FAQ Seputar Tes Buta Warna Ishihara
+        </h2>
+
+        <div class="space-y-4">
+          <!-- Q1 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Bisakah seseorang gagal tes buta warna online akibat kecerahan layar yang salah?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Ya. Kecerahan layar yang terlalu rendah, pantulan silau, atau filter cahaya biru (seperti TrueTone atau Night Shift) dapat mendistorsi saturasi kromatik bintik-bintik pelat. Hal ini dapat membuat mata normal kesulitan membaca pelat yang halus. Selalu kalibrasi layar ke kecerahan optimal sebelum pengujian.
+            </div>
+          </details>
+
+          <!-- Q2 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Apakah buta warna bawaan lahir bisa disembuhkan?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Buta warna bawaan (kongenital) disebabkan oleh mutasi genetik pada fotopigmen sel kerucut dan saat ini belum memiliki obat medis yang disetujui untuk manusia. Namun, penelitian terapi gen (rAAV) pada hewan primata telah berhasil memulihkan penglihatan warna trikromatik, membuka peluang terapi genetik di masa depan.
+            </div>
+          </details>
+
+          <!-- Q3 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Apakah kacamata buta warna (EnChroma atau Pilestone) menyembuhkan buta warna?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Tidak. Kacamata buta warna tidak menyembuhkan cacat biologis dan tidak dapat menciptakan sel fotoreseptor yang tidak ada. Kacamata ini menggunakan lapisan optik khusus untuk menyaring spektrum tumpang tindih antara reseptor merah dan hijau, meningkatkan kontras warna bagi penderita trikromasi anomali ringan. Kacamata ini dilarang digunakan saat ujian resmi.
+            </div>
+          </details>
+
+          <!-- Q4 -->
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Bagaimana cara kerja Mode Anak untuk balita yang belum mengenal angka?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Mode Anak menggantikan angka dengan 4 bentuk geometri universal (Lingkaran, Persegi, Segitiga, Bintang) yang menggunakan palet titik pseudo-isokromatik klinis yang sama. Anak cukup menyentuh simbol yang cocok di layar, memungkinkan skrining akurat pada anak usia 3 hingga 4 tahun.
+            </div>
+          </details>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <Footer />
+
+  <!-- Engine Script Import -->
+  <script src="../../scripts/tools/color-blind-engine-id.js"></script>
+
+  <!-- Persist monitor-calibration banner dismissal across visits -->
+  <script is:inline>
+    (function () {
+      try {
+        var KEY = 'fiq_cb_calibrated';
+        var banner = document.getElementById('calibration-banner');
+        var btn = document.getElementById('btn-dismiss-calibration');
+        if (banner && localStorage.getItem(KEY) === 'true') banner.classList.add('hidden');
+        if (btn && banner) btn.addEventListener('click', function () {
+          try { localStorage.setItem(KEY, 'true'); } catch (e) {}
+          banner.classList.add('hidden');
+        });
+      } catch (e) {}
+    })();
+  </script>
+</Layout>

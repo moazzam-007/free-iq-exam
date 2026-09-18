@@ -1,0 +1,918 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+// Alternate links for i18n
+const alternates = {
+  en: "https://freeiqexam.com/hearing-test",
+  id: "https://freeiqexam.com/id/tes-pendengaran"
+};
+
+const title = "Tes Pendengaran Online & Kalkulator Usia Telinga | Audiometri Frekuensi";
+const description = "Uji pendengaran online gratis dengan audiometer nada murni klinis (125–8.000 Hz) dan sapuan frekuensi referensi nada tinggi (8–20 kHz). Dilengkapi isolasi telinga kiri/kanan, grafik speech banana, dan estimasi usia biologis telinga.";
+const canonicalUrl = "https://freeiqexam.com/id/tes-pendengaran";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Tes Pendengaran Nada Murni Klinis & Frekuensi Referensi Nada Tinggi",
+    "description": "Skrining pendengaran klinis online dengan audiometri nada murni Hughson-Westlake (125 Hz – 8.000 Hz) dan analisis usia telinga presbikusis frekuensi tinggi (8.000 Hz – 20.000 Hz).",
+    "url": "https://freeiqexam.com/id/tes-pendengaran",
+    "medicalAudience": "Patient",
+    "aspect": "Screening"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Tes Pendengaran Online & Kalkulator Usia Telinga",
+    "url": "https://freeiqexam.com/id/tes-pendengaran",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Memerlukan dukungan Web Audio API dan headphone stereo",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Skrining Audiometri Nada Murni (125 Hz hingga 8.000 Hz) dengan metode tangga klinis Hughson-Westlake",
+      "Sapuan Frekuensi Referensi Nada Tinggi (8.000 Hz hingga 20.000 Hz) memetakan degradasi presbikusis",
+      "Isolasi kanal stereo untuk evaluasi independen telinga kiri dan kanan",
+      "Audiogram kanvas interaktif real-time dengan hamparan zona speech banana",
+      "Amplop penguatan eksponensial anti-popping 15ms untuk perlindungan transduser akustik",
+      "Ringkasan skrining yang dapat diunduh dan audiogram klinis yang dibuat di peramban",
+      "100% gratis, tanpa registrasi email, sintesis Web Audio murni langsung di peramban"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Alat",
+        "item": "https://freeiqexam.com/id/tes-pendengaran"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Tes Pendengaran & Usia Telinga",
+        "item": "https://freeiqexam.com/id/tes-pendengaran"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Seberapa akurat tes pendengaran online ini?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tes pendengaran online berbasis Web Audio API berfungsi sebagai instrumen skrining deteksi dini. Meskipun tidak menggantikan pemeriksaan audiometri nada murni di bilik kedap suara (sound-treated booth) bersertifikasi ISO dengan transduser terkalibrasi, tes ini memberikan indikasi sensitif mengenai asimetri pendengaran telinga kiri/kanan dan ambang batas frekuensi tinggi yang sangat berguna sebelum berkonsultasi dengan dokter THT atau audiolog."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah saya wajib menggunakan headphone untuk tes pendengaran ini?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya, headphone stereo atau in-ear monitor (IEM) mutlak diperlukan. Pengeras suara (speaker) laptop atau ponsel mencampurkan gelombang suara kanal kiri dan kanan secara akustik di udara ruangan, sehingga mustahil mengevaluasi telinga kiri dan kanan secara terisolasi. Gunakan headphone berkabel, nonaktifkan fitur surround sound/Dolby Atmos, dan atur volume awal ke level sedang (50%)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu usia biologis telinga (ear age) dan bagaimana cara perhitungannya?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Usia telinga adalah estimasi keausan fisiologis koklea berdasarkan batas frekuensi tertinggi yang masih dapat dideteksi. Bayi baru lahir memiliki sekitar 16.000 sel rambut koklea dan mampu mendengar hingga 20.000 Hz. Seiring bertambahnya usia, paparan bising kumulatif merusak sel rambut di pangkal koklea: 19 kHz mewakili usia <18 tahun, 17 kHz mewakili ~24 tahun, 15 kHz mewakili ~34 tahun, 14 kHz mewakili ~44 tahun, 12 kHz mewakili ~54 tahun, dan 8 kHz mewakili 65+ tahun."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa perbedaan antara Hertz (Hz) dan Desibel (dB)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Hertz (Hz) mengukur frekuensi atau nada nada-seberapa cepat gelombang suara bergetar per detik (nada bass rendah di 250 Hz vs nada jangkrik/nyamuk tinggi di 17.000 Hz). Desibel (dB) mengukur amplitudo atau kekuatan volume suara pada skala logaritmik. Dalam audiologi klinis, dB HL (Hearing Level) mengukur ambang dengar relatif terhadap pendengaran normal manusia muda (0 dB HL)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mengapa anak muda bisa mendengar nada nyamuk (mosquito tone) sedangkan orang tua tidak?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nada nyamuk bekerja pada frekuensi sekitar 17.400 Hz (17,4 kHz). Sel-sel rambut sensorik yang bertugas mendeteksi nada ultra-tinggi ini terletak tepat di pintu masuk (basis) koklea dan menerima tekanan hidrodinamik terbesar sepanjang hidup. Menginjak usia 25 tahun, sebagian besar manusia mengalami atrisi sel rambut alami (presbikusis) sehingga nada di atas 16 kHz tidak lagi terdeteksi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa yang dimaksud dengan 'speech banana' pada grafik audiogram?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Speech banana (zona pisang wicara) adalah area berbentuk pisang pada audiogram klinis antara frekuensi 250 Hz hingga 6.000 Hz dan intensitas 20 hingga 55 dB HL, di mana seluruh fonem percakapan manusia berada. Vokal (A, E, I, O, U) berada pada frekuensi rendah, sedangkan konsonan penting (S, F, TH, K, T) berada pada frekuensi tinggi. Gangguan pendengaran yang memotong zona ini menyebabkan ucapan terdengar samar dan sulit dipahami."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu aturan aman mendengarkan 60/60 dari WHO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pedoman WHO 60/60 menganjurkan agar mendengarkan audio melalui earphone/headphone pada volume maksimal tidak melebihi 60% dan durasi mendengarkan dibatasi hingga 60 menit per sesi, diikuti dengan istirahat hening minimal 10-15 menit untuk mencegah stres oksidatif pada sel rambut koklea dan mencegah gangguan pendengaran akibat kebisingan (NIHL)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah gangguan pendengaran permanen dapat disembuhkan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Gangguan pendengaran sensorineural (kerusakan sel rambut koklea atau saraf pendengaran) bersifat permanen karena sel rambut mamalia tidak beregenerasi. Namun, dapat direhabilitasi secara efektif melalui alat bantu dengar (hearing aid) modern atau implan koklea. Sebaliknya, gangguan konduktif (seperti penumpukan serumen atau infeksi telinga tengah) umumnya dapat disembuhkan secara medis."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+>
+  <Header />
+
+  <style>
+    /* Custom acoustic waveform bar animations */
+    .earage-waveform {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 64px;
+      margin: 24px 0;
+    }
+
+    .earage-waveform .bar {
+      width: 4px;
+      background: #0066cc;
+      border-radius: 9999px;
+      height: 8px;
+      transition: height 0.1s ease;
+    }
+    :global(.dark) .earage-waveform .bar { background: #2997ff; }
+
+    .earage-waveform.active .bar {
+      animation: waveBar 0.8s infinite ease-in-out;
+    }
+
+    .earage-waveform.active .bar:nth-child(2) { animation-delay: 0.05s; }
+    .earage-waveform.active .bar:nth-child(3) { animation-delay: 0.10s; }
+    .earage-waveform.active .bar:nth-child(4) { animation-delay: 0.15s; }
+    .earage-waveform.active .bar:nth-child(5) { animation-delay: 0.20s; }
+    .earage-waveform.active .bar:nth-child(6) { animation-delay: 0.25s; }
+    .earage-waveform.active .bar:nth-child(7) { animation-delay: 0.30s; }
+    .earage-waveform.active .bar:nth-child(8) { animation-delay: 0.35s; }
+    .earage-waveform.active .bar:nth-child(9) { animation-delay: 0.40s; }
+    .earage-waveform.active .bar:nth-child(10) { animation-delay: 0.45s; }
+    .earage-waveform.active .bar:nth-child(11) { animation-delay: 0.50s; }
+    .earage-waveform.active .bar:nth-child(12) { animation-delay: 0.55s; }
+    .earage-waveform.active .bar:nth-child(13) { animation-delay: 0.60s; }
+    .earage-waveform.active .bar:nth-child(14) { animation-delay: 0.65s; }
+    .earage-waveform.active .bar:nth-child(15) { animation-delay: 0.70s; }
+    .earage-waveform.active .bar:nth-child(16) { animation-delay: 0.75s; }
+    .earage-waveform.active .bar:nth-child(17) { animation-delay: 0.80s; }
+    .earage-waveform.active .bar:nth-child(18) { animation-delay: 0.85s; }
+    .earage-waveform.active .bar:nth-child(19) { animation-delay: 0.90s; }
+    .earage-waveform.active .bar:nth-child(20) { animation-delay: 0.95s; }
+
+    @keyframes waveBar {
+      0%, 100% { height: 10px; }
+      50% { height: 58px; }
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .hear-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    :global(.dark) .hear-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    #test-arena button { min-height: 44px; }
+    #test-arena button:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+    #test-arena .hearing-mode-card:hover { transform: translateY(-2px); }
+    #test-arena .hearing-mode-card:active { transform: scale(0.97); }
+    @media (prefers-reduced-motion: reduce) { .hear-hero-glow { display: none; } }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    @media print {
+      header, footer, #calibrationPanel, .no-print {
+        display: none !important;
+      }
+      #resultsWrap {
+        display: block !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Beranda</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Alat</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Tes Pendengaran & Usia Telinga</span>
+    </nav>
+
+    <!-- Header & Hero Section -->
+    <header class="relative text-center max-w-3xl mx-auto mb-10">
+      <div class="hear-hero-glow" aria-hidden="true"></div>
+      <div class="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[13px] sm:text-sm font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Audiometri Nada Murni Klinis • Sapuan Frekuensi Referensi</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-[-0.025em] leading-[1.08] mb-4">
+        Tes Pendengaran Online & Kalkulator Usia Telinga
+      </h1>
+      <p class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-300 leading-[1.62] max-w-2xl mx-auto">
+        Uji ketajaman auditori Anda dengan presisi klinis. Lakukan sapuan nada tinggi (8–20 kHz) untuk mengukur usia biologis telinga atau lakukan audiometri nada murni lengkap (125–8.000 Hz) dengan isolasi stereo kiri dan kanan.
+      </p>
+    </header>
+
+    <!-- ACOUSTIC SAFETY & CALIBRATION ADVISORY -->
+    <div class="max-w-3xl mx-auto mb-10 p-5 rounded-3xl bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-amber-900 dark:text-amber-200 text-sm shadow-xs transition-all">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl shrink-0">🎧</span>
+        <div class="space-y-1">
+          <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Keselamatan Akustik & Persyaratan Headphone</h4>
+          <p class="text-amber-800 dark:text-amber-300/90 text-[13px] sm:text-sm leading-relaxed">
+            <strong>1)</strong> Kenakan headphone stereo berkualitas baik. <strong>2)</strong> Jangan menyetel volume ke level maksimal; mulailah dari volume 50% dan gunakan nada kalibrasi 1.000 Hz kami untuk memastikan suara terdengar nyaman. <strong>3)</strong> Nonaktifkan spatial audio, Dolby Atmos, dan equalizer agar akurasi tetap terjaga. Rentang konduksi udara klinis: 125 Hz – 20.000 Hz. Hasil dapat bervariasi tergantung headphone dan perangkat yang digunakan dan bukan pengganti audiometri klinis terkalibrasi.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TESTING ARENA -->
+    <section id="test-arena" class="relative w-full max-w-4xl mx-auto mb-16 scroll-mt-6">
+      
+      <!-- MODE SELECTOR CARDS -->
+      <div id="modeSelector" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Card 1: Ear Age Test -->
+        <button
+          type="button"
+          data-mode="ear-age"
+          class="hearing-mode-card group relative p-8 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 dark:hover:border-blue-400/50 shadow-xl hover:shadow-2xl transition-all duration-300 text-left flex flex-col justify-between cursor-pointer overflow-hidden"
+        >
+          <div class="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-all"></div>
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-[#0066cc]/10 border border-[#0066cc]/20 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center font-mono font-bold text-xl mb-6 transition-transform">
+              ⚡
+            </div>
+            <div class="text-[13px] font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
+              Sapuan Nada Tinggi (8–20 kHz)
+            </div>
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              Tes Usia Telinga Biologis
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Temukan frekuensi tertinggi yang masih dapat didengar telinga Anda. Memetakan batas pendengaran terhadap data presbikusis populasi untuk menghitung usia telinga.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+            <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">Durasi: ~60 Detik</span>
+            <span class="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              Mulai Tes Usia Telinga →
+            </span>
+          </div>
+        </button>
+
+        <!-- Card 2: Pure-Tone Audiometry -->
+        <button
+          type="button"
+          data-mode="audiometry"
+          class="hearing-mode-card group relative p-8 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 dark:hover:border-blue-400/50 shadow-xl hover:shadow-2xl transition-all duration-300 text-left flex flex-col justify-between cursor-pointer overflow-hidden"
+        >
+          <div class="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-all"></div>
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-[#0066cc]/10 border border-[#0066cc]/20 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center font-mono font-bold text-xl mb-6 transition-transform">
+              📊
+            </div>
+            <div class="text-[13px] font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
+              Protokol Klinis Hughson-Westlake
+            </div>
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              Audiometri Nada Murni
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Skrining klinis standar yang mengevaluasi frekuensi 125 Hz hingga 8.000 Hz secara independen pada telinga kiri dan kanan. Memetakan audiogram resmi.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+            <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">Durasi: ~3 Menit</span>
+            <span class="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              Mulai Audiometri →
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <!-- ACTIVE WORKSPACE WRAPPER -->
+      <div id="workspace" class="hidden rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+        <!-- Workspace Header Status -->
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-8">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
+            <h2 id="workspaceTitle" class="font-heading font-bold text-lg sm:text-xl text-zinc-900 dark:text-white">
+              Pengujian Akustik
+            </h2>
+          </div>
+          <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+            Langkah <span id="stepNum" class="font-bold text-blue-600 dark:text-blue-400">1</span> dari 3
+          </div>
+        </div>
+
+        <!-- STEP 1: CALIBRATION PANEL -->
+        <div id="calibrationPanel" class="max-w-xl mx-auto text-center space-y-6">
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl">
+            🔊
+          </div>
+          <div class="space-y-2">
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white">
+              Kalibrasi Volume Referensi
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Kami akan memainkan nada referensi 1.000 Hz yang aman. Sesuaikan volume perangkat Anda hingga nada terdengar jelas, nyaman, dan tidak memekakkan telinga.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 space-y-4">
+            <div class="flex items-center justify-between text-[13px] font-mono font-semibold text-zinc-500 dark:text-zinc-400">
+              <span>Tingkat Kalibrasi</span>
+              <span id="calibDbDisplay" class="text-blue-600 dark:text-blue-400 font-bold">40 dB HL</span>
+            </div>
+            <input
+              id="calibSlider"
+              type="range"
+              min="20"
+              max="80"
+              step="5"
+              value="40"
+              class="w-full h-2 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+            />
+            <div class="flex gap-3 justify-center pt-2">
+              <button
+                id="calibPlayBtn"
+                type="button"
+                class="px-5 py-2.5 rounded-full bg-[#0066cc]/10 hover:bg-[#0066cc]/20 text-[#0066cc] dark:text-[#2997ff] border border-[#0066cc]/30 text-[13px] sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+              >
+                <span>▶</span> Uji Nada (1 kHz)
+              </button>
+              <button
+                id="calibStopBtn"
+                type="button"
+                class="px-5 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 text-[13px] sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+              >
+                <span>⏹</span> Berhenti
+              </button>
+            </div>
+          </div>
+
+          <button
+            id="startTestBtn"
+            type="button"
+            class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-heading font-bold text-base shadow-lg hover:shadow-blue-600/25 active:scale-[0.97] min-h-[44px] transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+          >
+            <span>Volume Sesuai · Mulai Pengujian</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- STEP 2A: BIOLOGICAL EAR AGE PANEL -->
+        <div id="earAgePanel" class="hidden max-w-xl mx-auto text-center space-y-6">
+          <div class="space-y-1">
+            <div class="text-[13px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Frekuensi Nada Saat Ini</div>
+            <div class="flex items-baseline justify-center gap-2 font-mono font-extrabold text-5xl sm:text-6xl text-blue-600 dark:text-blue-400 tracking-tight">
+              <span id="earAgeFreq">20,000</span>
+              <span class="text-2xl text-zinc-400 font-bold">Hz</span>
+            </div>
+            <p id="earAgeStatus" class="text-sm text-zinc-600 dark:text-zinc-400 pt-1">
+              Dengarkan baik-baik. Apakah Anda dapat mendengar nada berfrekuensi tinggi ini?
+            </p>
+          </div>
+
+          <!-- Animated Sound Waveform -->
+          <div class="earage-waveform active" id="earAgeWave">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-zinc-100 dark:bg-zinc-800/80 rounded-full h-2 overflow-hidden">
+            <div id="earAgeProgress" class="bg-[#0066cc] dark:bg-[#2997ff] h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+
+          <!-- Tactile Responses -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+            <button
+              id="earAgeHearBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-3 shadow-xs"
+            >
+              <span class="text-lg">✓</span>
+              <span>Saya Mendengarnya</span>
+            </button>
+            <button
+              id="earAgeNoHearBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-3 shadow-xs"
+            >
+              <span class="text-lg">✕</span>
+              <span>Tidak Terdengar</span>
+            </button>
+          </div>
+
+          <div class="pt-2">
+            <button
+              id="earAgeReplayBtn"
+              type="button"
+              class="text-[13px] font-mono text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>↻</span> Putar Ulang Frekuensi Ini
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2B: AUDIOMETRY PANEL -->
+        <div id="audiometryPanel" class="hidden max-w-xl mx-auto text-center space-y-6">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-4 text-left">
+              <div id="audEarIndicator" class="w-12 h-12 rounded-full flex items-center justify-center border-2 border-blue-500 bg-blue-500/10 text-blue-500 font-bold font-mono text-lg">
+                L
+              </div>
+              <div>
+                <div id="audEarLabel" class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  Telinga Kiri (Biru)
+                </div>
+                <div id="audFreqValue" class="font-heading font-extrabold text-2xl text-zinc-900 dark:text-white">
+                  1.000 Hz
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                Intensitas Nada
+              </div>
+              <div class="font-mono font-extrabold text-2xl text-blue-600 dark:text-blue-400">
+                <span id="audDbValue">40</span> <span class="text-sm font-normal text-zinc-400">dB HL</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step Progression Dots -->
+          <div id="audProgress" class="flex items-center gap-1.5 w-full"></div>
+
+          <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Nada akan dimainkan selama 1,5 detik. Tekan tombol sesuai dengan apa yang Anda dengar.
+          </p>
+
+          <!-- Response Buttons -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              id="audYesBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <span>✓</span>
+              <span>Ya, Terdengar Jelas</span>
+            </button>
+            <button
+              id="audNoBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <span>✕</span>
+              <span>Tidak Terdengar</span>
+            </button>
+          </div>
+
+          <div class="pt-2">
+            <button
+              id="audReplayBtn"
+              type="button"
+              class="text-[13px] font-mono text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>↻</span> Putar Ulang Nada
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RESULTS SECTION WRAPPER -->
+      <div id="resultsWrap" class="hidden mt-12 space-y-8">
+        
+        <!-- EAR AGE RESULTS CARD -->
+        <div id="panel-earage" class="hidden p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl text-center space-y-8">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+            Hasil Penilaian Kesehatan Auditori
+          </div>
+          
+          <div class="space-y-2">
+            <div class="text-[13px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Estimasi Usia Biologis Telinga</div>
+            <div class="font-heading font-black text-6xl sm:text-7xl md:text-8xl text-zinc-950 dark:text-white tracking-tight">
+              <span id="resultEarAge">--</span>
+            </div>
+            <p id="resultEarAgeDesc" class="text-base text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed pt-2">
+              --
+            </p>
+          </div>
+
+          <!-- Metrics Breakdown -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Batas Frekuensi Tertinggi</div>
+              <div class="font-mono font-bold text-2xl text-blue-600 dark:text-blue-400">
+                <span id="resultMaxFreq">--</span> Hz
+              </div>
+            </div>
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Indeks Ketajaman</div>
+              <div class="font-mono font-bold text-2xl text-emerald-600 dark:text-emerald-400">
+                <span id="resultScore">--</span>/100
+              </div>
+            </div>
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Peringkat</div>
+              <div id="resultRating" class="font-heading font-bold text-xl text-zinc-900 dark:text-white">
+                --
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              id="downloadEarAgeBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-heading font-bold text-sm shadow-lg hover:shadow-blue-600/25 active:scale-[0.97] min-h-[44px] transition-all cursor-pointer flex items-center gap-2"
+            >
+              <span>⬇</span> Unduh Ringkasan Usia Telinga
+            </button>
+            <button
+              id="retakeEarAgeBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Ulangi Tes
+            </button>
+            <button
+              id="tryOtherBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Coba Audiometri Nada Murni →
+            </button>
+          </div>
+        </div>
+
+        <!-- AUDIOMETRY RESULTS CARD -->
+        <div id="panel-audiogram" class="hidden p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-8">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-zinc-100 dark:border-zinc-800/80 pb-6">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">
+                Audiogram Nada Murni
+              </div>
+              <h3 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                Grafik Ambang Batas Klinis
+              </h3>
+            </div>
+            <div class="flex items-center gap-6 font-mono text-[13px] font-semibold">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                <span class="text-zinc-700 dark:text-zinc-300">Telinga Kiri (X)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                <span class="text-zinc-700 dark:text-zinc-300">Telinga Kanan (O)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas Audiogram -->
+          <div class="w-full overflow-x-auto rounded-2xl bg-zinc-50 dark:bg-[#09090b] p-4 border border-zinc-200 dark:border-zinc-800">
+            <canvas id="audiogramCanvas" width="820" height="500" class="w-full max-w-[820px] mx-auto block"></canvas>
+          </div>
+
+          <!-- Summary & PTA Cards -->
+          <div id="audiogramSummary" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+          <!-- Audiogram Actions -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
+            <button
+              id="downloadAudiogramBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-heading font-bold text-sm shadow-lg hover:shadow-blue-600/25 active:scale-[0.97] min-h-[44px] transition-all cursor-pointer flex items-center gap-2"
+            >
+              <span>⬇</span> Unduh Audiogram Klinis (PNG)
+            </button>
+            <button
+              id="retakeAudBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Ulangi Audiometri
+            </button>
+            <button
+              id="tryEarAgeBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Periksa Usia Telinga →
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 2,000-WORD CLINICAL & SCIENTIFIC AUDIOLOGICAL GUIDE IN BAHASA INDONESIA -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+      
+      <!-- Section 1: Anatomi & Organisasi Tonotopik Koklea -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 1 · Fisiologi Pendengaran
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Anatomi Pendengaran & Organisasi Tonotopik Koklea
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Pendengaran manusia merupakan rangkaian transduksi biomekanis yang sangat canggih, mengubah fluktuasi mikroskopis tekanan udara menjadi impuls saraf terkoordinasi. Sistem auditori perifer terdiri atas tiga kompartemen anatomis utama: <strong>telinga luar</strong> (aurikula dan saluran telinga luar), <strong>telinga tengah</strong> (membran timpani dan rangkaian tulang pendengaran osikel), serta <strong>telinga dalam</strong> (koklea berbentuk rumah siput dan aparatus vestibular).
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Gelombang suara yang ditangkap oleh daun telinga merambat melalui liang telinga dan menggetarkan membran timpani (gendang telinga). Getaran ini diperkuat secara mekanis oleh tiga tulang terkecil di tubuh manusia-maleus (martil), inkus (landasan), dan stapes (sanggurdi). Plat dasar stapes kemudian berosilasi ritmis pada jendela oval (oval window) koklea, membangkitkan gelombang hidrolik di dalam cairan perilimfe dan endolimfe.
+        </p>
+        
+        <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+          <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+            <span>🔬</span> Biomekanika Tonotopi Sel Rambut
+          </h4>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Pusat sensorik pendengaran terletak pada <strong>Organ Corti</strong> di sepanjang membran basilaris di dalam koklea. Manusia terlahir dengan sekitar 16.000 sel rambut sensorik per telinga: sel rambut dalam (mentransmisikan 95% sinyal sensorik ke korteks auditori melalui saraf kranial VIII) dan sel rambut luar (berfungsi sebagai penguat elektromotil aktif). Membran basilaris memiliki gradien kekakuan yang terstruktur dari pangkal hingga puncak, menciptakan peta spasial frekuensi yang disebut <strong>tonotopi</strong>:
+          </p>
+          <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-zinc-700 dark:text-zinc-300 pt-2">
+            <li class="p-3 rounded-xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+              <strong class="text-blue-600 dark:text-blue-400">Basis Koklea (Pangkal):</strong> Kaku, sempit, dan tegang. Merespons secara selektif terhadap nada frekuensi ultra-tinggi (10.000 Hz hingga 20.000 Hz).
+            </li>
+            <li class="p-3 rounded-xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+              <strong class="text-blue-600 dark:text-blue-400">Apeks Koklea (Puncak):</strong> Lebar, lentur, dan fleksibel. Merespons secara selektif terhadap nada frekuensi rendah (20 Hz hingga 500 Hz).
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Section 2: Mengapa Nada Tinggi Mengalami Penurunan Terlebih Dahulu -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 2 · Mekanisme Presbikusis
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Mengapa Nada Tinggi Menurun Terlebih Dahulu: Biologi Presbikusis
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Penurunan pendengaran terkait usia, atau <strong>presbikusis</strong>, merupakan bentuk gangguan sensori paling umum di dunia, memengaruhi lebih dari satu dari tiga orang dewasa di atas usia 65 tahun. Ciri khas presbikusis adalah penurunan bilateral simetris yang selalu dimulai pada frekuensi tertinggi (di atas 8.000 Hz) sebelum secara bertahap merambat turun ke frekuensi bicara utama.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Kerentanan biologis pendengaran frekuensi tinggi berasal langsung dari arsitektur hidrodinamik koklea:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl">🌊</div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Garis Depan Hidrolik</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Karena gelombang cairan memasuki koklea tepat di dekat jendela oval pada pangkal, sel-sel rambut basal mengalami pergeseran mekanis untuk <em>setiap</em> suara yang masuk, terlepas dari frekuensinya.
+            </p>
+          </div>
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl">⚡</div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Keletihan Metabolik</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Sel rambut basal berosilasi dengan kecepatan hingga 20.000 kali per detik, menghasilkan radikal bebas reaktif (ROS) ekstrem dan stres oksidatif mitokondria yang tinggi.
+            </p>
+          </div>
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl">🚫</div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Tanpa Regenerasi Alami</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Berbeda dengan sel rambut pada burung atau ikan, stereosilia mamalia tidak dapat tumbuh kembali setelah rusak atau mati. Kehilangan sel ini bersifat permanen.
+            </p>
+          </div>
+        </div>
+
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Realitas fisiologis ini melahirkan fenomena terkenal nada dering nyamuk <strong>"Mosquito Ringtone"</strong> (17,4 kHz). Remaja dapat mendengar nada nyamuk berfrekuensi tinggi dengan jelas, sementara orang dewasa di atas usia 30 tahun sering kali tidak mendengar apa pun karena sel rambut basal mereka telah aus secara alami.
+        </p>
+      </section>
+
+      <!-- Section 3: Membaca Audiogram Klinis -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 3 · Interpretasi Klinis
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Membaca Audiogram Klinis: Desibel HL dan Zona Speech Banana
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Audiogram nada murni adalah grafik standar emas yang digunakan dokter spesialis THT dan audiolog di seluruh dunia. Grafik ini menggunakan <strong>sumbu vertikal terbalik</strong> yang menunjukkan intensitas dalam <strong>desibel Hearing Level (dB HL)</strong>. Nilai 0 dB HL bukan berarti hening mutlak, melainkan ambang dengar rata-rata telinga manusia muda yang sehat.
+        </p>
+
+        <!-- Audiometric Severity Reference Table -->
+        <div class="overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-2">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-mono text-[13px] uppercase">
+                <th class="p-4">Tingkat Derajat Pendengaran</th>
+                <th class="p-4">Rentang dB HL</th>
+                <th class="p-4">Dampak Nyata pada Pemahaman Wicara</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr>
+                <td class="p-4 font-bold text-emerald-600 dark:text-emerald-400">Normal (Sangat Baik)</td>
+                <td class="p-4 font-mono font-bold">-10 hingga 20 dB HL</td>
+                <td class="p-4">Mampu mendengar bisikan lembut, gemerisik dedaunan, dan nuansa artikulasi kata dalam segala situasi.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-blue-600 dark:text-blue-400">Ringan (Mild)</td>
+                <td class="p-4 font-mono font-bold">21 hingga 40 dB HL</td>
+                <td class="p-4">Kesulitan mendengar suara lirih atau dari kejauhan; konsonan nada tinggi (s, f, th, k) mulai terdengar samar.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-amber-600 dark:text-amber-400">Sedang (Moderate)</td>
+                <td class="p-4 font-mono font-bold">41 hingga 70 dB HL</td>
+                <td class="p-4">Percakapan normal sulit diikuti tanpa bantuan visual/membaca bibir. Alat bantu dengar memberikan manfaat signifikan.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-rose-600 dark:text-rose-400">Berat (Severe)</td>
+                <td class="p-4 font-mono font-bold">71 hingga 90 dB HL</td>
+                <td class="p-4">Tidak dapat mendengar percakapan biasa; hanya suara teriakan atau bunyi lingkungan keras yang terdengar.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-rose-700 dark:text-rose-300">Sangat Berat (Profound)</td>
+                <td class="p-4 font-mono font-bold">91+ dB HL</td>
+                <td class="p-4">Gangguan ekstrem. Sebagian besar suara tidak terdengar; diperlukan evaluasi implan koklea.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="space-y-4 pt-2">
+          <h3 class="font-heading font-bold text-xl text-zinc-900 dark:text-white">
+            Zona Speech Banana & Kejernihan Konsonan
+          </h3>
+          <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            <strong>Speech banana</strong> menggambarkan zona penting pada audiogram antara frekuensi 250 Hz hingga 6.000 Hz pada intensitas 20 hingga 55 dB HL tempat seluruh fonem suara manusia berada. Vokal (A, E, I, O, U) bersuara rendah (250–1.000 Hz) dan membawa 90% volume suara akustik. Sebaliknya, konsonan tak bersuara (S, F, TH, P, T, K) bersuara tinggi (2.000–6.000 Hz) membawa sedikit energi tetapi menyumbang lebih dari 90% <em>kejelasan dan daya tangkap arti kata</em>.
+          </p>
+          <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Ketika presbikusis nada tinggi terjadi, penderita sering mengeluh: <em>"Saya mendengar orang berbicara, tetapi saya tidak mengerti apa yang mereka katakan karena suaranya terasa bergumam."</em>
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 4: Perbandingan Dua Metode Pengujian -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 4 · Perbandingan Diagnostik
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Usia Telinga Biologis vs Audiometri Nada Murni Klinis
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Kedua metode pengujian ini mengevaluasi kesehatan sistem pendengaran namun menjawab tujuan yang berbeda:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+            <h3 class="font-heading font-bold text-xl text-blue-600 dark:text-blue-400">
+              1. Tes Usia Telinga (Sapuan Frekuensi Tinggi 8–20 kHz)
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Mengevaluasi batas atas pendengaran pada pita ultra-tinggi. Bekerja sebagai <strong>radar peringatan dini</strong> terhadap kerusakan bising kumulatif seumur hidup sebelum merambat ke rentang bicara normal.
+            </p>
+            <div class="font-mono text-[13px] text-zinc-500 dark:text-zinc-400">
+              Metrik Utama: Batas Frekuensi Teratas yang Terdengar (Hz)
+            </div>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+            <h3 class="font-heading font-bold text-xl text-blue-600 dark:text-blue-400">
+              2. Audiometri Nada Murni (Rentang Bicara Klinis)
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Berfokus pada 125 Hz, 250 Hz, 500 Hz, 1.000 Hz, 2.000 Hz, 4.000 Hz, dan 8.000 Hz menggunakan protokol klinis <strong>Hughson-Westlake</strong>. Mengevaluasi hambatan komunikasi nyata dan asimetri antara telinga kiri dan kanan.
+            </p>
+            <div class="font-mono text-[13px] text-zinc-500 dark:text-zinc-400">
+              Metrik Utama: Ambang Intensitas per Frekuensi (dB HL)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Kesehatan & Konservasi Pendengaran -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 5 · Konservasi Pendengaran
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Panduan Kesehatan Pendengaran & Pencegahan Gangguan Bising (NIHL)
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Menurut Organisasi Kesehatan Dunia (WHO), lebih dari 1,1 miliar generasi muda di seluruh dunia berisiko mengalami gangguan pendengaran permanen akibat penggunaan earphone/headphone dengan volume berbahaya. Trauma akustik merusak ujung stereosilia dan memutuskan sinapsis neuron ganglion spiral koklea (dikenal sebagai <em>gangguan pendengaran tersembunyi</em> atau sinaptopati koklear).
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+              <span>⏱</span> Aturan 60/60 WHO
+            </h4>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Batasi volume perangkat maksimal hingga <strong>60% volume</strong> dan dengarkan paling lama <strong>60 menit berturut-turut</strong>. Setelah satu jam, berikan waktu jeda hening 15 menit agar sel rambut koklea dapat beristirahat.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+              <span>🔔</span> Tinitus: Sinyal Bahaya Koklea
+            </h4>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Tinitus (suara berdenging, berdengung, atau berdesis di telinga tanpa sumber luar) merupakan tanda awal kerusakan stereosilia basal. Otak berusaha menaikkan kepekaan saraf untuk mengompensasi frekuensi yang hilang, menghasilkan sensasi denging konstan.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/60 space-y-2">
+          <h4 class="font-heading font-bold text-base text-blue-950 dark:text-blue-200">
+            Peringatan Medis: Kehilangan Pendengaran Mendadak (SSNHL)
+          </h4>
+          <p class="text-sm text-blue-900 dark:text-blue-300/90 leading-relaxed">
+            Jika Anda mengalami penurunan pendengaran mendadak pada satu telinga (disertai rasa penuh, tersumbat, atau tinitus mendadak), anggap hal ini sebagai <strong>kondisi gawat darurat medis</strong>. Segera kunjungi dokter spesialis THT dalam kurun waktu &lt;72 jam untuk mendapatkan terapi kortikosteroid sebelum kerusakan menjadi permanen.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 6: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 6 · Tanya Jawab Umum
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Pertanyaan Umum Seputar Pendengaran & Usia Telinga
+        </h2>
+
+        <div class="space-y-4 pt-4">
+          {schema[3].mainEntity.map((item) => (
+            <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+              <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+                <span>{item.name}</span>
+                <span class="faq-chevron ml-4 text-blue-600 dark:text-blue-400 transition-transform duration-200 font-mono text-xl">
+                  ↓
+                </span>
+              </summary>
+              <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                {item.acceptedAnswer.text}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+
+  <!-- Pure Web Audio Client Engine Script -->
+  <script src="../../scripts/tools/hearing-engine-id.js"></script>
+</Layout>

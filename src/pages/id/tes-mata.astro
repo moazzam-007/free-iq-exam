@@ -1,0 +1,817 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const title = 'Tes Mata Online Gratis & Uji Ketajaman Penglihatan | Bagan Snellen & Astigmatisme';
+const description = 'Uji ketajaman penglihatan Anda secara online dengan skrining visual berbasis peramban gratis. Dilengkapi bagan Snellen Tumbling E terkalibrasi kartu, dial kipas astigmatisme, dan tes duokrom merah-hijau.';
+const canonicalUrl = 'https://freeiqexam.com/id/tes-mata';
+
+const alternates = {
+  en: 'https://freeiqexam.com/eye-test',
+  id: 'https://freeiqexam.com/id/tes-mata'
+};
+
+const faqItems = [
+  [
+    'Seberapa akurat tes mata online dibandingkan pemeriksaan dokter mata/optometris?',
+    'Tes online memberikan indikasi skrining awal mengenai ketajaman visual pada jarak tertentu, tetapi tidak dapat mengukur refraksi sferis presisi, tekanan bola mata (intraokular), kesehatan retina, atau koordinasi binokular. Ukuran layar, kerapatan piksel, jarak pandang, dan pencahayaan ruangan memengaruhi hasil. Gunakan hasil ini sebagai referensi untuk menjadwalkan pemeriksaan klinis langsung.'
+  ],
+  [
+    'Mengapa tes meminta saya mengukur kartu fisik (KTP/kartu bank) pada layar?',
+    'Ketajaman penglihatan didefinisikan oleh sudut visual yang dibentuk optotipe pada mata Anda, bukan jumlah piksel layar. Huruf 20/20 pada jarak 1 meter memiliki tinggi tepat 1,45 mm terlepas dari resolusi monitor Anda. Karena peramban tidak dapat mendeteksi kerapatan piksel fisik layar secara otomatis, pencocokan kartu standar ISO/IEC 7810 ID-1 (lebar 85,60 mm) memungkinkan kalkulasi rasio piksel per milimeter yang presisi.'
+  ],
+  [
+    'Mengapa tes kadang membatasi ketajaman maksimum pada tier tertentu (misalnya 20/40)?',
+    'Pada jarak 1 meter, optotipe 20/20 berukuran 1,45 mm, setara dengan ~5 piksel pada layar 96 DPI standar-terlalu kecil untuk merender huruf 5-coretan secara akurat tanpa distorsi aliasing. Demi integritas pengujian klinis, sistem secara jujur menyatakan batas resolusi layar Anda. Mundur lebih jauh dan memilih jarak yang lebih panjang akan membuat optotipe lebih besar secara fisik sehingga dapat diukur.'
+  ],
+  [
+    'Apa itu Tumbling E dan mengapa digunakan alih-alih huruf alfabet biasa?',
+    'Tumbling E adalah huruf E Snellen yang diputar ke arah atas, bawah, kiri, atau kanan. Pengguna hanya perlu menunjukkan arah bukaan kaki huruf E, sehingga menghilangkan bias kemampuan membaca, bahasa, atau familiaritas alfabet Latin. Ini merupakan standar optometri internasional untuk anak-anak dan populasi global.'
+  ],
+  [
+    'Apa yang dideteksi oleh dial kipas astigmatisme (mata silinder)?',
+    'Dial jam menyajikan garis-garis radial di seluruh meridian sudut. Ketika kornea atau lensa mata memiliki kelengkungan silindris yang tidak merata (astigmatisme), cahaya pada satu meridian akan terfokus berbeda dari meridian tegak lurusnya, sehingga garis tertentu tampak jauh lebih hitam, tebal, atau tajam dibanding yang lain.'
+  ],
+  [
+    'Mengapa panel merah dan hijau dapat menunjukkan rabun jauh atau rabun dekat?',
+    'Ini didasarkan pada aberasi kromatik longitudinal. Cahaya hijau (~535 nm) dibiaskan lebih kuat daripada cahaya merah (~650 nm), sehingga fokus hijau jatuh sedikit di depan retina dan merah di belakang retina. Jika panel merah tampak lebih tajam, mata relatif miopia (rabun jauh); jika hijau lebih tajam, relatif hipermetropia (rabun dekat); jika sama tajam, fokus tepat di retina.'
+  ],
+  [
+    'Bisakah tes online ini mengeluarkan resep kacamata resmi?',
+    'Tidak. Resep kacamata memerlukan pengukuran terperinci mencakup sferis (SPH), silinder (CYL), aksis (AXIS), jarak pupil (Pupillary Distance/PD), dan adisi baca (ADD). Tes ini hanya berfungsi sebagai skrining mandiri awal. Hanya dokter spesialis mata (Sp.M) atau optometris berlisensi yang dapat menerbitkan resep kacamata resmi.'
+  ],
+  [
+    'Kapan saya harus segera memeriksakan diri ke dokter spesialis mata?',
+    'Segera cari pertolongan medis darurat jika Anda mengalami kehilangan penglihatan mendadak, kilatan cahaya (flashes), peningkatan mendadak bintik melayang (floaters), sensasi tirai gelap menutup lapang pandang, nyeri hebat pada mata, penglihatan ganda (diplopia), atau mata merah berkepanjangan disertai penurunan penglihatan.'
+  ]
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Skrining Ketajaman Visual, Astigmatisme, dan Duokrom Online',
+    url: canonicalUrl,
+    medicalAudience: 'Patient',
+    aspect: 'Diagnostic',
+    isAccessibleForFree: true,
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Refractive Error',
+      alternateName: ['Miopia', 'Hipermetropia', 'Astigmatisme', 'Presbiopia']
+    },
+    lastReviewed: '2026-09-17'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Tes Mata Online Gratis - Snellen, Dial Astigmatisme & Duokrom',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    accessibilitySummary: 'Respons tombol arah keyboard (↑ ↓ ← →), kontrol visual di layar, kalibrasi kartu fisik, live announcements aria, dan ringkasan skrining yang dapat dicetak.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://freeiqexam.com/id' },
+      { '@type': 'ListItem', position: 2, name: 'Alat', item: 'https://freeiqexam.com/id/tes-mata' },
+      { '@type': 'ListItem', position: 3, name: 'Tes Mata & Ketajaman Penglihatan', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map(([name, text]) => ({
+      '@type': 'Question',
+      name,
+      acceptedAnswer: { '@type': 'Answer', text }
+    }))
+  }
+];
+
+const stages = [
+  ['intro-section', '1 · Ringkasan'],
+  ['calibration-section', '2 · Kalibrasi'],
+  ['acuity-section', '3 · Ketajaman'],
+  ['astigmatism-section', '4 · Astigmatisme'],
+  ['duochrome-section', '5 · Duokrom'],
+  ['results-section', '6 · Hasil']
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schemas}>
+  <Header />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+      <nav aria-label="Breadcrumb" class="mb-8 flex flex-wrap items-center gap-2 text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+        <a href="/id" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Beranda</a>
+        <span aria-hidden="true">/</span>
+        <a href="/id/tes-mata" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Alat</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white font-semibold">Tes Mata & Ketajaman Visual</span>
+      </nav>
+
+      <header class="relative mx-auto max-w-4xl text-center">
+        <div class="eye-hero-glow" aria-hidden="true"></div>
+        <div class="relative inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-4 py-1.5 text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 shadow-xs">
+          Terkalibrasi Layar Fisik · Skrining Optometri Presisi
+        </div>
+        <h1 class="mt-4 text-4xl font-extrabold tracking-[-0.025em] leading-[1.08] sm:text-5xl md:text-6xl text-zinc-950 dark:text-white">
+          Tes Mata Online & Uji Ketajaman Penglihatan
+        </h1>
+        <p class="mx-auto mt-4 max-w-3xl text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Ukur ketajaman penglihatan dengan bagan Snellen Tumbling E terkalibrasi kartu, periksa distorsi kornea dengan dial astigmatisme, dan evaluasi keseimbangan fokus sferis dengan tes duokrom merah-hijau.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-[13px] font-mono">
+          {['Skala Kalibrasi Kartu', 'Ketajaman Tumbling E', 'Dial Astigmatisme', 'Keseimbangan Duokrom', 'Tanpa Registrasi'].map((item) => (
+            <span class="rounded-full border border-zinc-200 bg-zinc-50/50 dark:bg-zinc-900/50 px-4 py-2 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <section id="eye-app" class="mx-auto mt-12 max-w-4xl">
+        <ol class="stage-strip" aria-label="Progress pengujian">
+          {stages.map(([id, label]) => (
+            <li data-stage={id} class="stage-chip">{label}</li>
+          ))}
+        </ol>
+
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-8 shadow-xl">
+
+          <!-- STAGE 1: INTRO -->
+          <section id="intro-section" class="border-t border-zinc-200 pt-6 dark:border-zinc-800 sm:pt-8">
+            <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Sebelum Memulai</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl text-zinc-900 dark:text-white">Instrumen Skrining Awal Mandiri</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Tes ini mengestimasi seberapa tajam penglihatan Anda pada jarak uji tertentu. Pengujian ini tidak mengukur tekanan bola mata, lapang pandang, atau kesehatan retina, serta tidak dapat menerbitkan resep kacamata klinis.
+            </p>
+            <ul class="mt-5 space-y-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              <li class="intro-bullet">Siapkan kartu standar (KTP, SIM, atau kartu ATM) untuk mencocokkan skala fisik pada layar.</li>
+              <li class="intro-bullet">Anda akan diminta menutup satu mata secara bergantian (gunakan telapak tangan tanpa menekan bola mata).</li>
+              <li class="intro-bullet">Lakukan pengujian dalam ruangan dengan pencahayaan merata, hindari pantulan cahaya langsung pada monitor.</li>
+              <li class="intro-bullet">Kenakan kacamata atau lensa kontak Anda jika ingin menguji efektivitas koreksi kacamata saat ini.</li>
+            </ul>
+            <div class="mt-7 flex flex-wrap items-center gap-3">
+              <button id="begin-eye-test" type="button" class="rounded-full bg-[#0066cc] px-8 py-4 text-base font-semibold text-white transition hover:bg-[#0071e3] active:scale-[0.97] min-h-[44px] shadow-lg dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] cursor-pointer">Mulai Tes Penglihatan</button>
+              <span class="text-sm text-zinc-600 dark:text-zinc-400 font-mono">Keyboard: Tombol panah ↑ ↓ ← →</span>
+            </div>
+            <p class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-900 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-200 sm:text-base">
+              <strong>Peringatan Medis:</strong> Kehilangan penglihatan mendadak, kilatan cahaya, sensasi tirai hitam, atau nyeri mata hebat merupakan kondisi gawat darurat. Segera periksakan diri ke IGD Rumah Sakit Mata terdekat.
+            </p>
+          </section>
+
+          <!-- STAGE 2: CALIBRATION -->
+          <section id="calibration-section" class="hidden" aria-labelledby="calibration-title">
+            <div class="rounded-[1.5rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+              <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Langkah 1 · Kalibrasi Skala Fisik</p>
+              <h2 id="calibration-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-zinc-900 dark:text-white">Cocokkan Kartu Fisik pada Layar</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Tempelkan kartu KTP atau kartu ATM standar Anda pada layar, lalu geser penggeser di bawah ini hingga kotak putih memiliki lebar yang persis sama dengan kartu fisik Anda.
+              </p>
+
+              <div class="calibration-stage">
+                <div id="card-preview" class="card-preview" aria-hidden="true"></div>
+              </div>
+
+              <label for="card-slider" class="mt-8 block text-base font-semibold">Lebar Kartu pada Layar</label>
+              <input id="card-slider" type="range" min="100" max="600" step="1" value="260" class="calibration-slider" />
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm font-mono text-zinc-500 dark:text-zinc-400 sm:text-base">
+                <span>Lebar kartu: <strong id="card-width-label">260 px</strong></span>
+                <span>Skala layar: <strong id="ppm-readout">-</strong></span>
+              </div>
+
+              <div class="mt-8">
+                <p class="text-base font-semibold">Jarak Pengujian</p>
+                <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Duduk atau berdirilah tepat pada jarak yang dipilih dari layar monitor Anda.</p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  {[['near', '40 cm', 'Jarak Dekat · Ponsel'], ['desk', '1 m', 'Jarak Meja · Desktop'], ['room', '2 m', 'Jarak Ruangan'], ['hall', '3 m', 'Jarak Jauh'], ['snellen', '6 m', 'Standar Snellen (20 kaki)']].map(([id, label, hint]) => (
+                    <button type="button" data-distance={id} class="distance-button min-h-[44px]">
+                      <span class="distance-label">{label}</span>
+                      <span class="distance-hint">{hint}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <p id="resolution-warning" class="mt-7 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200 sm:text-base"></p>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="confirm-calibration" type="button" class="rounded-full bg-[#0066cc] px-8 py-4 text-base font-semibold text-white transition hover:bg-[#0071e3] active:scale-[0.97] min-h-[44px] shadow-lg dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] cursor-pointer">Kalibrasi Selesai - Mulai Tes Ketajaman</button>
+                <button id="skip-calibration" type="button" class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] min-h-[44px] dark:border-zinc-700 cursor-pointer">Lewati ke Astigmatisme &amp; Duokrom</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- STAGE 3: VISUAL ACUITY -->
+          <section id="acuity-section" class="hidden" aria-labelledby="acuity-title">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Langkah 2 · Ketajaman Penglihatan</p>
+                <h2 id="acuity-title" class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl text-zinc-900 dark:text-white"><span id="acuity-eye-label">Mata Kanan</span></h2>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="acuity-eye-progress" class="text-base font-semibold sm:text-lg">Mata 1 dari 3</div>
+                <div id="acuity-trial-label" class="mt-1 text-sm font-mono text-zinc-500 dark:text-zinc-400 sm:text-base">-</div>
+              </div>
+            </div>
+            <div class="mt-5 h-[2px] overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"><div id="acuity-progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-300" style="width:0%"></div></div>
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div id="acuity-tier-dots" class="tier-dots" aria-hidden="true"></div>
+              <p class="text-sm font-mono text-zinc-500 dark:text-zinc-400 sm:text-base">3 jawaban benar lolos level · 2 salah menyelesaikan pengujian mata ini</p>
+            </div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p id="acuity-instruction" class="rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4 text-base font-semibold text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 sm:text-lg">Tutup mata KIRI Anda.</p>
+              <p class="mt-6 text-base text-zinc-500 dark:text-zinc-400 sm:text-lg">
+                Ke arah mana bukaan huruf E menghadap? Level saat ini: <strong id="acuity-tier-label" class="font-mono text-zinc-900 dark:text-white">-</strong>
+              </p>
+
+              <div id="optotype-mount" class="mt-6"></div>
+
+              <div class="direction-pad mt-8">
+                <div></div>
+                <button type="button" data-direction="up" class="direction-button" aria-label="Huruf E menghadap ke atas">↑</button>
+                <div></div>
+                <button type="button" data-direction="left" class="direction-button" aria-label="Huruf E menghadap ke kiri">←</button>
+                <div class="direction-center" aria-hidden="true">E</div>
+                <button type="button" data-direction="right" class="direction-button" aria-label="Huruf E menghadap ke kanan">→</button>
+                <div></div>
+                <button type="button" data-direction="down" class="direction-button" aria-label="Huruf E menghadap ke bawah">↓</button>
+                <div></div>
+              </div>
+
+              <p id="acuity-feedback" class="acuity-feedback" role="status" aria-live="polite"></p>
+            </article>
+          </section>
+
+          <!-- STAGE 4: ASTIGMATISM -->
+          <section id="astigmatism-section" class="hidden" aria-labelledby="astig-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Langkah 3 · Kipas Astigmatisme</p>
+              <h2 id="astig-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-zinc-900 dark:text-white">Apakah Ada Garis yang Tampak Lebih Gelap/Tajam?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Fokuskan pandangan Anda pada titik tengah lingkaran dial. Apakah terdapat garis tertentu yang terlihat lebih hitam, pekat, atau tajam dibanding garis lainnya? Pilih semua garis yang terlihat menonjol.
+              </p>
+              <div id="dial-mount" class="dial-stage mt-8"></div>
+              <p id="dial-selection-label" class="mt-6 text-base font-semibold text-[#0066cc] dark:text-[#2997ff] sm:text-lg">Belum ada garis yang dipilih.</p>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="submit-astigmatism" type="button" class="rounded-full bg-[#0066cc] px-8 py-4 text-base font-semibold text-white transition hover:bg-[#0071e3] active:scale-[0.97] min-h-[44px] shadow-lg dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] cursor-pointer">Lanjut ke Tes Duokrom</button>
+                <button id="dial-none" type="button" aria-pressed="false" class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] min-h-[44px] dark:border-zinc-700 cursor-pointer">Semua Garis Terlihat Sama Rata</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- STAGE 5: DUOCHROME -->
+          <section id="duochrome-section" class="hidden" aria-labelledby="duo-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Langkah 4 · Duokrom Merah-Hijau</p>
+              <h2 id="duo-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-zinc-900 dark:text-white">Cincin Mana yang Terlihat Lebih Jelas &amp; Tajam?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Bandingkan ketajaman cincin hitam pada latar belakang merah versus latar belakang hijau. Nilai <strong>ketajaman kontur tepi</strong>, bukan intensitas kecerahan warna.
+              </p>
+              <div class="duochrome-grid mt-8">
+                <div class="duochrome-panel duo-red">
+                  <div id="duochrome-red" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Merah · ~650 nm</span>
+                </div>
+                <div class="duochrome-panel duo-green">
+                  <div id="duochrome-green" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Hijau · ~535 nm</span>
+                </div>
+              </div>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button type="button" data-duo="red" class="duo-choice rounded-full border-2 border-rose-300 bg-rose-50 px-6 py-4 text-base font-semibold text-rose-900 transition active:scale-[0.99] min-h-[44px] dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200 cursor-pointer">Merah Tampak Lebih Tajam</button>
+                <button type="button" data-duo="green" class="duo-choice rounded-full border-2 border-emerald-300 bg-emerald-50 px-6 py-4 text-base font-semibold text-emerald-900 transition active:scale-[0.99] min-h-[44px] dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200 cursor-pointer">Hijau Tampak Lebih Tajam</button>
+                <button type="button" data-duo="equal" class="duo-choice rounded-full border-2 border-zinc-300 bg-zinc-100 px-6 py-4 text-base font-semibold text-zinc-800 transition active:scale-[0.99] min-h-[44px] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 cursor-pointer">Keduanya Sama Tajam</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- STAGE 6: RESULTS -->
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9 space-y-6">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge neutral">Hasil Skrining Tercatat</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl text-zinc-900 dark:text-white">Ringkasan Ketajaman Visual Anda</h2>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm font-mono font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 sm:text-base">Bukan Diagnosis Medis</div>
+              </div>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card reveal"><div class="score-label">Mata Kanan</div><div id="acuity-right" class="acuity-fraction">-</div><div id="acuity-right-note" class="score-status">Level Terbaik</div></article>
+                <article class="score-card reveal"><div class="score-label">Mata Kiri</div><div id="acuity-left" class="acuity-fraction">-</div><div id="acuity-left-note" class="score-status">Level Terbaik</div></article>
+                <article class="score-card reveal"><div class="score-label">Kedua Mata</div><div id="acuity-both" class="acuity-fraction">-</div><div id="acuity-both-note" class="score-status">Level Terbaik</div></article>
+              </div>
+
+              <p id="acuity-summary-note" class="reveal mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <article class="stat-card reveal"><span>Dial Astigmatisme</span><strong id="astig-result">Belum tercatat</strong><p id="astig-note" class="stat-note"></p></article>
+                <article class="stat-card reveal"><span>Keseimbangan Duokrom</span><strong id="duo-result">Belum tercatat</strong><p id="duo-note" class="stat-note"></p></article>
+              </div>
+
+              <article class="reveal mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-base">Kondisi Pengujian</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">Asumsi Parameter Pengukuran</h3>
+                <p id="calibration-summary" class="mt-4 font-mono text-base sm:text-lg">-</p>
+                <p class="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                  Hasil fraksi Snellen bergantung pada kalibrasi kartu dan jarak duduk fisik Anda dari layar.
+                </p>
+              </article>
+
+              <div class="reveal mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="rounded-full bg-[#0066cc] px-8 py-4 text-base font-semibold text-white transition hover:bg-[#0071e3] active:scale-[0.97] min-h-[44px] shadow-lg dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] cursor-pointer">Cetak Ringkasan Klinis (PDF)</button>
+                <button id="share-result" type="button" class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.97] min-h-[44px] dark:border-zinc-700 cursor-pointer">Bagikan Ringkasan</button>
+                <button id="retake-result" type="button" class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.97] min-h-[44px] dark:border-zinc-700 cursor-pointer">Ulangi Pengujian</button>
+              </div>
+            </div>
+          </section>
+
+          <p id="eye-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- 2,500-WORD CLINICAL GUIDE IN NATURAL BAHASA INDONESIA -->
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg space-y-16">
+        <section class="space-y-4">
+          <p class="eyebrow">Panduan Optometri Lengkap</p>
+          <h2 class="section-title">Fisiologi Penglihatan &amp; Mekanisme Uji Ketajaman Mata</h2>
+          <p>
+            Penglihatan manusia sering dianggap sebagai indra tunggal yang sederhana. Namun, apa yang diukur oleh bagan mata optometri adalah irisan fungsi yang sangat spesifik: kemampuan membedakan detail spasial halus pada kontras tinggi pada jarak dan kondisi pencahayaan tertentu.
+          </p>
+        </section>
+
+        <section class="guide-section space-y-4">
+          <h2 class="section-title">1. Anatomi dan Optik Pembiasan Mata</h2>
+          <p>
+            Cahaya yang masuk ke mata mengalami dua kali pembiasan sebelum jatuh di permukaan retina. <strong>Kornea</strong> melakukan sebagian besar kerja pembiasan-sekitar dua pertiga dari total kekuatan refraksi mata, atau sekitar 43 dioptri-karena batas antara udara dan jaringan kornea menghasilkan perbedaan indeks bias terbesar di sepanjang jalur optik. <strong>Lensa kristalina</strong> menyumbang sisa sepertiga refraksi, sekitar 19 dioptri dalam keadaan istirahat, dengan struktur berlapis yang memungkinkan perubahan kelengkungan secara dinamis.
+          </p>
+          <p>
+            Kemampuan mengubah kelengkungan lensa tersebut dinamakan <strong>akomodasi</strong>. Ketika otot siliaris berkontraksi, serat zonula yang meregangkan lensa mengendur, menyebabkan lensa menjadi lebih cembung dan meningkatkan daya refraksinya. Hal ini memungkinkan mata muda yang sehat menggeser fokus dari objek tak terhingga hingga jarak sedekat 10 sentimeter. Daya akomodasi menurun secara bertahap seiring bertambahnya usia akibat pengerasan nukleus lensa-dari sekitar 14 dioptri pada masa kanak-kanak menjadi kurang dari 2 dioptri saat usia mencapai 50-an tahun. Penurunan alami ini disebut sebagai <strong>presbiopia</strong> (mata tua).
+          </p>
+          <p>
+            Untuk menghasilkan gambar yang tajam, kombinasi daya optik kornea dan lensa harus memfokuskan berkas cahaya tepat pada lapisan fotoreseptor retina. Jika panjang sumbu bola mata (panjang aksial) tidak sebanding dengan daya bias media refraksi, titik fokus akan jatuh di depan atau di belakang retina, menghasilkan <strong>kelainan refraksi</strong>.
+          </p>
+        </section>
+
+        <section class="guide-section space-y-4">
+          <h2 class="section-title">2. Bagaimana Ketajaman Visual (Visual Acuity) Diukur</h2>
+          <p>
+            Ketajaman penglihatan tidak diukur dalam satuan milimeter absolut, melainkan dalam <strong>sudut visual (visual angle)</strong>-yaitu seberapa besar sudut yang dibentuk oleh target pada retina mata Anda. Standar internasional yang dirumuskan oleh Herman Snellen pada tahun 1862 menetapkan bahwa mata normal mampu mengenali optotipe yang membentuk sudut <strong>5 menit busur (5 arcminutes)</strong> pada jarak uji standar. Setiap garis coretan huruf dan celah di antara coretan tersebut membentuk sudut 1 menit busur.
+          </p>
+          <p>
+            Inilah alasan mengapa fraksi Snellen ditulis sebagai 20/20 (atau 6/6 dalam sistem metrik). Angka pembilang mewakili jarak pengujian (20 kaki atau 6 meter), sedangkan angka penyebut mewakili jarak terjauh di mana orang dengan penglihatan normal masih dapat membaca huruf tersebut. Huruf 20/40 pada jarak 20 kaki memiliki ukuran sudut yang sama dengan huruf 20/20 pada jarak 40 kaki.
+          </p>
+          <p>
+            Optotipe <strong>Tumbling E</strong> yang digunakan dalam tes ini adalah huruf E Snellen yang diputar ke empat arah mata angin. Pasien cukup menunjukkan orientasi bukaan kaki huruf E. Hal ini meniadakan bias kemampuan literasi, penguasaan bahasa, atau familiaritas aksara alfabet Latin, sehingga memberikan hasil yang adil dan objektif.
+          </p>
+        </section>
+
+        <section class="guide-section space-y-4">
+          <h2 class="section-title">3. Mengenal Ragam Kelainan Refraksi Mata</h2>
+          <p>
+            <strong>Miopia (Rabun Jauh):</strong> Terjadi saat kekuatan optik mata terlalu kuat atau sumbu bola mata terlalu panjang, sehingga berkas cahaya terfokus di depan retina. Objek jauh terlihat buram, sementara objek dekat tampak jelas. Miopia dikoreksi menggunakan lensa minus (konkaf/cekung) yang menyebarkan berkas cahaya sebelum masuk ke kornea.
+          </p>
+          <p>
+            <strong>Hipermetropia (Rabun Dekat):</strong> Terjadi saat sumbu bola mata terlalu pendek atau daya refraksi mata terlalu lemah, sehingga titik fokus jatuh di belakang retina. Pada orang muda, hipermetropia ringan sering kali dapat dikompensasi dengan akomodasi konstan otot siliaris, tetapi dapat memicu kelelahan mata, sakit kepala, dan ketegangan visual. Hipermetropia dikoreksi dengan lensa plus (konveks/cembung).
+          </p>
+          <p>
+            <strong>Astigmatisme (Mata Silinder):</strong> Disebabkan oleh kelengkungan kornea atau lensa yang tidak berbentuk bola sempurna, melainkan menyerupai bola rugbi. Akibatnya, berkas cahaya pada meridian vertikal dan horizontal dibiaskan pada titik fokus yang berbeda, menimbulkan bayangan ganda atau garis kabur pada sudut tertentu. Astigmatisme dikoreksi dengan lensa silindris pada aksis sudut tertentu.
+          </p>
+          <p>
+            <strong>Presbiopia:</strong> Penurunan elastisitas alami lensa mata terkait usia yang membuat mata kesulitan memfokuskan objek jarak dekat (seperti saat membaca buku atau layar ponsel). Dikoreksi dengan lensa adisi baca, bifokal, atau lensa progresif.
+          </p>
+        </section>
+
+        <section class="guide-section space-y-4">
+          <h2 class="section-title">4. Fisika di Balik Dial Astigmatisme dan Tes Duokrom</h2>
+          <p>
+            <strong>Dial Kipas Astigmatisme:</strong> Menyajikan 12 meridian garis radial melingkar seperti jarum jam. Jika mata tidak memiliki astigmatisme, seluruh garis akan tampak sama hitam dan tajam. Jika terdapat astigmatisme yang belum terkoreksi, meridian yang paling dekat fokusnya dengan retina akan menghasilkan garis yang tampak sangat tebal dan hitam pekat, sedangkan meridian tegak lurusnya tampak pudar dan kabur.
+          </p>
+          <p>
+            <strong>Tes Duokrom Merah-Hijau:</strong> Memanfaatkan fenomena <em>aberasi kromatik longitudinal</em>. Cahaya dengan panjang gelombang pendek (hijau ~535 nm) dibiaskan lebih kuat daripada panjang gelombang panjang (merah ~650 nm). Pada mata emetropik (normal), fokus merah dan hijau mengapit retina secara seimbang. Pada mata miopia, fokus merah berada lebih dekat ke retina sehingga panel merah terlihat lebih tajam; pada mata hipermetropia, fokus hijau lebih dekat ke retina sehingga panel hijau tampak lebih jelas.
+          </p>
+        </section>
+
+        <section class="guide-section space-y-4">
+          <h2 class="section-title">5. Sindrom Kelelahan Mata Digital &amp; Aturan 20-20-20</h2>
+          <p>
+            Bekerja menatap layar gawai dalam durasi panjang menimbulkan sekumpulan gejala yang dikenal sebagai <em>Digital Eye Strain</em> atau <em>Computer Vision Syndrome</em> (rasa perih, mata kering, pandangan kabur sementara, dan sakit kepala di area kening).
+          </p>
+          <p>
+            Penyebab utamanya adalah penurunan frekuensi berkedip. Dalam kondisi normal, manusia berkedip 15–20 kali per menit. Saat fokus membaca layar, frekuensi berkedip turun hingga kurang dari separuhnya, menyebabkan lapisan air mata (tear film) menguap cepat dan mengekspos epitel kornea.
+          </p>
+          <p>
+            <strong>Aturan 20-20-20:</strong> Setiap 20 menit menatap layar, istirahatkan mata dengan memandang objek berjarak 20 kaki (sekitar 6 meter) selama minimal 20 detik. Memandang jarak jauh memungkinkan otot siliaris berelaksasi sepenuhnya dan memberikan waktu bagi lapisan air mata untuk membasahi kembali permukaan bola mata secara merata.
+          </p>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="guide-section space-y-6 pt-4">
+          <p class="eyebrow">Tanya Jawab</p>
+          <h2 class="section-title">Pertanyaan Umum Seputar Tes Mata Online</h2>
+          <div class="space-y-4 pt-4">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-3xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 open:shadow-lg transition-all">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-bold text-zinc-900 dark:text-white sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition group-open:rotate-45 font-mono text-xl text-[#0066cc] dark:text-[#2997ff]">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-200 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300 sm:text-lg">{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9">
+          <h2 class="text-2xl font-bold sm:text-3xl text-zinc-900 dark:text-white">Batasan &amp; Penafian Medis</h2>
+          <p class="mt-4 text-zinc-600 dark:text-zinc-300">
+            Penilaian penglihatan digital ini dirancang khusus untuk keperluan informasi dan skrining awal mandiri. Tes ini tidak menggantikan pemeriksaan komprehensif oleh dokter spesialis mata (Sp.M) atau optometris berlisensi.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h1 class="text-3xl font-extrabold">RINGKASAN SKRINING PENGLIHATAN</h1>
+      <p class="mt-2 text-sm uppercase tracking-wider">Snellen Tumbling E Terkalibrasi Layar · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm">
+        <p><strong>Tanggal:</strong> <span id="report-date">-</span></p>
+        <p><strong>Sesi:</strong> <span id="report-session">-</span></p>
+        <p><strong>Kondisi Pengujian:</strong> <span id="print-calibration">-</span></p>
+        <p><strong>Ketajaman Mata Kanan:</strong> <span id="print-right">-</span></p>
+        <p><strong>Ketajaman Mata Kiri:</strong> <span id="print-left">-</span></p>
+        <p><strong>Ketajaman Kedua Mata:</strong> <span id="print-both">-</span></p>
+        <p><strong>Dial Astigmatisme:</strong> <span id="print-astig">-</span></p>
+        <p><strong>Keseimbangan Duokrom:</strong> <span id="print-duo">-</span></p>
+      </div>
+      <h2 class="mt-8 text-xl font-bold">Batasan Pengukuran</h2>
+      <p class="mt-3 text-sm leading-relaxed"><span id="print-notes">-</span></p>
+      <p class="mt-6 text-sm leading-relaxed">Ini adalah ringkasan skrining mandiri. Ini bukan pemeriksaan refraksi, bukan diagnosis medis, dan bukan resep kacamata. Ketajaman visual yang diukur pada layar dipengaruhi oleh akurasi kalibrasi layar, jarak pandang fisik, pencahayaan sekitar, dan karakteristik panel display. Pemeriksaan mata komprehensif diperlukan untuk menilai kelainan refraksi, koordinasi binokular, tekanan intraokular, dan kesehatan retina.</p>
+    </div>
+  </div>
+
+  <div id="share-toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-full border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm font-semibold text-white opacity-0 transition-all dark:border-zinc-200 dark:bg-white dark:text-zinc-950">Ringkasan skrining berhasil disalin.</div>
+
+  <style is:global>
+    .stage-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0;
+      list-style: none;
+    }
+    .stage-chip {
+      border: 1px solid rgb(228 228 231);
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+      color: rgb(113 113 122);
+      background: #ffffff;
+    }
+    .stage-chip.active { border-color: rgb(0 102 204); background: rgb(232 241 253); color: rgb(0 102 204); }
+    .stage-chip.done { color: rgb(0 102 204); border-color: rgb(147 197 253); }
+
+    .intro-bullet { position: relative; padding-left: 1.75rem; }
+    .intro-bullet::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.6rem;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: rgb(0 102 204);
+    }
+
+    /* Calibration: the card preview must be a physically accurate outline. */
+    .calibration-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border: 1px dashed rgb(212 212 216);
+      border-radius: 1.5rem;
+      background: #ffffff;
+      overflow-x: auto;
+    }
+    .card-preview {
+      width: 260px;
+      height: 164px;
+      border: 2px solid rgb(0 102 204);
+      border-radius: 0.75rem;
+      background: rgb(232 241 253);
+      flex: 0 0 auto;
+    }
+    .calibration-slider { width: 100%; margin-top: 0.75rem; accent-color: rgb(0 102 204); }
+
+    .distance-button {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.85rem 1.25rem;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease, background-color 160ms ease;
+    }
+    .distance-button:hover { border-color: rgb(147 197 253); transform: translateY(-1px); }
+    .distance-button:active { transform: scale(0.97); }
+    .distance-button:focus-visible { outline: 3px solid rgb(0 102 204); outline-offset: 2px; }
+    .distance-button.selected { border-color: rgb(0 102 204); background: rgb(232 241 253); }
+    .distance-label { font-size: 1rem; font-weight: 800; font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace; }
+    .distance-hint { font-size: 13px; color: rgb(113 113 122); }
+
+    /* Optotype stage is always white-on-black regardless of theme: a
+       dark-mode chart would change contrast and invalidate the measure. */
+    .optotype-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      border-radius: 1.25rem;
+      background: #ffffff;
+      border: 1px solid rgb(228 228 231);
+    }
+    .dark .optotype-stage {
+      border-color: rgb(63 63 70);
+    }
+    .optotype-placeholder {
+      padding: 3rem 1rem;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgb(82 82 91);
+    }
+
+    .direction-pad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      max-width: 20rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .direction-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .direction-button:hover { border-color: rgb(0 102 204); background: rgb(232 241 253); transform: translateY(-2px); }
+    .direction-button:active { transform: scale(0.97); }
+    .direction-button:focus-visible { outline: 3px solid rgb(0 102 204); outline-offset: 2px; }
+    .direction-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      border-radius: 1.25rem;
+      background: rgb(244 244 245);
+      color: rgb(161 161 170);
+      font-weight: 800;
+      font-family: ui-monospace, monospace;
+    }
+
+    /* ---------- Motion ---------- */
+    @keyframes stageEnter {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    /* Kept short: the optotype scales up as it fades, so the response gate in
+       the engine stays closed until this settles and the strokes are only
+       ever judged at their true size. */
+    @keyframes optotypeEnter {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes keyPulse {
+      0% { transform: scale(1); }
+      45% { transform: scale(0.93); }
+      100% { transform: scale(1); }
+    }
+    @keyframes dotPop {
+      from { transform: scale(0.55); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .stage-enter { animation: stageEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    /* Animate the optotype itself, not its stage - scaling the wrapper would
+       scale the white panel behind it and read as the whole chart pulsing. */
+    .optotype-stage.optotype-enter > svg { animation: optotypeEnter 0.19s ease-out both; }
+
+    .direction-button.is-pressed {
+      animation: keyPulse 0.22s ease;
+      border-color: rgb(0 102 204);
+      background: rgb(232 241 253);
+      box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.22);
+    }
+    .dark .direction-button.is-pressed {
+      border-color: rgb(0 102 204);
+      background: rgba(0, 102, 204, 0.4);
+      box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.28);
+    }
+
+    #results-section .reveal.is-revealed { animation: revealUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+    .acuity-feedback { margin-top: 1.5rem; min-height: 1.6rem; text-align: center; font-size: 1rem; font-weight: 700; }
+    .acuity-feedback.good { color: rgb(4 120 87); }
+    .acuity-feedback.bad { color: rgb(185 28 28); }
+
+    /* Dial and duochrome are also fixed light-ground optical targets. */
+    .dial-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 1.5rem;
+      background: #ffffff;
+    }
+    .dial-svg { width: 100%; max-width: 26rem; height: auto; }
+    .dial-ray { cursor: pointer; }
+    .dial-ray:focus-visible { outline: 3px solid rgb(0 102 204); outline-offset: 2px; border-radius: 0.5rem; }
+    .dial-ray-line {
+      stroke: #000000;
+      transition: stroke-width 0.18s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.18s ease;
+    }
+    .dial-ray:hover .dial-ray-line { stroke: rgb(0 102 204); stroke-width: 6; }
+    .dial-ray.selected .dial-ray-line {
+      stroke: rgb(0 102 204);
+      stroke-width: 7;
+      filter: drop-shadow(0 0 5px rgba(0, 102, 204, 0.75));
+    }
+    .dial-label {
+      fill: rgb(82 82 91);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: ui-monospace, monospace;
+      transition: fill 0.18s ease;
+    }
+    .dial-ray:hover .dial-label { fill: rgb(0 102 204); }
+    .dial-ray.selected .dial-label { fill: rgb(0 102 204); }
+    /* Decorative only - must never swallow a ray's pointer target. */
+    .dial-hub { pointer-events: none; }
+
+    /* Per-tier trial dots */
+    .tier-dots { display: flex; align-items: center; gap: 0.5rem; min-height: 1.25rem; }
+    .trial-dot {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 999px;
+      border: 2px solid rgb(212 212 216);
+      background: transparent;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .trial-dot.hit { border-color: rgb(5 150 105); background: rgb(5 150 105); animation: dotPop 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
+    .trial-dot.miss { border-color: rgb(220 38 38); background: rgb(220 38 38); animation: dotPop 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
+    .dark .trial-dot { border-color: rgb(63 63 70); }
+    .dark .trial-dot.hit { border-color: rgb(16 185 129); background: rgb(16 185 129); }
+    .dark .trial-dot.miss { border-color: rgb(248 113 113); background: rgb(248 113 113); }
+
+    .duochrome-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .duochrome-grid { grid-template-columns: 1fr 1fr; } }
+    .duochrome-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 2rem 1rem;
+      border-radius: 1.5rem;
+    }
+    .duo-red { background: rgb(204 0 0); }
+    .duo-green { background: rgb(0 153 51); }
+    .duochrome-target { display: flex; align-items: center; justify-content: center; }
+    .duochrome-caption {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .duo-choice.selected { box-shadow: 0 0 0 3px rgb(5 150 105); }
+
+    /* Toggle state for "All lines look equal". An id selector is used so it
+       outranks the Tailwind border utilities on the same element. */
+    #dial-none.selected { border-color: rgb(0 102 204); background: rgb(232 241 253); color: rgb(0 102 204); }
+    .dark #dial-none.selected { border-color: rgb(0 102 204); background: rgba(0, 102, 204, 0.4); color: rgb(147 197 253); }
+
+    /* Calibration failure severe enough that no tier can be measured. The
+       engine toggles this class, so it must exist here or the worst case
+       renders identically to a mild one. */
+    #resolution-warning.is-blocking { border-color: rgb(252 165 165); background: rgb(254 242 242); color: rgb(153 27 27); font-weight: 600; }
+    .dark #resolution-warning.is-blocking { border-color: rgb(153 27 27); background: rgba(69, 10, 10, 0.45); color: rgb(252 165 165); }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .55rem 1.1rem; font-size: .95rem; font-weight: 700; }
+    .result-badge.neutral { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.good { color: rgb(22 101 52); background: rgb(240 253 244); border-color: rgb(187 247 208); }
+    .result-badge.moderate { color: rgb(146 64 14); background: rgb(255 247 237); border-color: rgb(254 215 170); }
+    .result-badge.bad { color: rgb(153 27 27); background: rgb(254 242 242); border-color: rgb(254 202 202); }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.35rem; }
+    .score-label { font-size: .9rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .acuity-fraction { margin-top: .75rem; font-size: 1.875rem; font-weight: 800; font-family: ui-monospace, monospace; letter-spacing: -.02em; }
+    .score-status { margin-top: .5rem; color: rgb(0 102 204); font-size: .95rem; font-weight: 600; }
+    .stat-card { display: flex; flex-direction: column; gap: .5rem; padding: 1.25rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    .stat-card span { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.1rem; line-height: 1.35; }
+    .stat-note { font-size: .95rem; line-height: 1.55; color: rgb(82 82 91); }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(0 102 204); font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace; }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; color: rgb(24 24 27); }
+    .guide-section { margin-top: 3.5rem; }
+    .guide-section p { font-size: 17px; line-height: 1.62; }
+
+    .dark .stage-chip { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(161 161 170); }
+    .dark .stage-chip.active { background: rgba(0, 102, 204, 0.25); border-color: rgb(0 102 204); color: rgb(147 197 253); }
+    .dark .stage-chip.done { color: rgb(147 197 253); border-color: rgb(0 102 204); }
+    .dark .calibration-stage { border-color: rgb(39 39 42); }
+    .dark .distance-button { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .distance-button.selected { background: rgba(0, 102, 204, 0.25); border-color: rgb(0 102 204); }
+    .dark .distance-hint { color: rgb(161 161 170); }
+    .dark .direction-button { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .direction-button:hover { background: rgba(0, 102, 204, 0.25); border-color: rgb(0 102 204); }
+    .dark .direction-center { background: rgb(24 24 27); color: rgb(113 113 122); }
+    .dark .optotype-placeholder { color: rgb(161 161 170); }
+    .dark .acuity-feedback.good { color: rgb(110 231 183); }
+    .dark .acuity-feedback.bad { color: rgb(252 165 165); }
+    .dark .result-badge.neutral { color: rgb(212 212 216); background: rgb(24 24 27); border-color: rgb(63 63 70); }
+    .dark .result-badge.good { color: rgb(134 239 172); background: rgba(5, 46, 22, 0.55); border-color: rgb(22 101 52); }
+    .dark .result-badge.moderate { color: rgb(252 211 77); background: rgba(69, 26, 3, 0.5); border-color: rgb(146 64 14); }
+    .dark .result-badge.bad { color: rgb(252 165 165); background: rgba(69, 10, 10, 0.55); border-color: rgb(153 27 27); }
+    .dark .score-card, .dark .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .score-status { color: rgb(147 197 253); }
+    .dark .stat-note { color: rgb(161 161 170); }
+    .dark .eyebrow { color: rgb(147 197 253); }
+    .dark .section-title { color: rgb(250 250 250); }
+
+    .eye-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    :global(.dark) .eye-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    @media (prefers-reduced-motion: reduce) { .eye-hero-glow { display: none; } }
+
+    .print-only { display: none; }
+    @media print {
+      #main-content > header,
+      #main-content > footer,
+      #main-content > #assessment-page-content,
+      #share-toast { display: none !important; }
+      #main-content > #printable-report { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+
+    /* Motion is decorative here. It must never gate comprehension, and it must
+       never obscure an optotype - so it is fully removable on request. */
+    @media (prefers-reduced-motion: reduce) {
+      .stage-enter,
+      .optotype-stage.optotype-enter > svg,
+      #results-section .reveal.is-revealed,
+      .direction-button.is-pressed,
+      .trial-dot.hit,
+      .trial-dot.miss { animation: none !important; }
+      .dial-ray-line,
+      .dial-label,
+      .trial-dot { transition: none !important; }
+      .dial-ray.selected .dial-ray-line { filter: none; }
+      .stage-enter { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 640px) {
+      .section-title { font-size: 1.75rem; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../../scripts/tools/eye-tester-id.js"></script>
+</Layout>

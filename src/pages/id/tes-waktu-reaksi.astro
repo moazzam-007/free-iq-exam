@@ -1,0 +1,1293 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const title = 'Tes Waktu Reaksi Visual Online - Uji Kecepatan Refleks (ms) | FreeIQExam';
+const description =
+  'Ukur kecepatan reaksi visual Anda dalam milidetik dengan tes waktu reaksi 5 ronde gratis. Dapatkan rata-rata instan, estimasi persentil populasi, rekor pribadi, dan peringkat refleks tanpa perlu mendaftar.';
+const canonicalUrl = 'https://freeiqexam.com/id/tes-waktu-reaksi';
+
+const alternates: Record<string, string> = {
+  en: 'https://freeiqexam.com/reaction-time-test',
+  id: 'https://freeiqexam.com/id/tes-waktu-reaksi'
+};
+
+const faqItems = [
+  {
+    name: 'Berapa skor waktu reaksi yang dianggap bagus pada tes online?',
+    answer:
+      'Untuk tugas reaksi visual sederhana, mayoritas orang dewasa sehat berada di rentang 200–270 milidetik (ms). Pada FreeIQExam, skor di bawah 220 ms diklasifikasikan lebih cepat daripada median populasi umum, sedangkan atlet e-sports profesional atau pembalap sering mencapai 160–190 ms.'
+  },
+  {
+    name: 'Mengapa waktu reaksi saya lebih lambat di smartphone dibanding di PC desktop?',
+    answer:
+      'Layar sentuh ponsel menambahkan latensi pemrosesan melalui sampling digitizer layar sentuh, filter sentuhan OS, dan siklus refresh layar (biasanya menambah latensi 30–60 ms). Komputer desktop dengan monitor refresh rate tinggi (144Hz+) dan mouse kabel memiliki jalur input yang jauh lebih cepat dan minim latensi.'
+  },
+  {
+    name: 'Berapa batas biologis tercepat kecepatan reaksi manusia?',
+    answer:
+      'Batas biologis fisiologis murni untuk reaksi visual berkisar antara 140–160 ms karena adanya waktu fototransduksi di retina (20–40 ms), transmisi saraf optik ke korteks visual (30–50 ms), keputusan motorik di korteks serebral (40–60 ms), dan konduksi saraf ke otot jari (20–30 ms).'
+  },
+  {
+    name: 'Mengapa manusia bereaksi lebih cepat terhadap suara daripada cahaya?',
+    answer:
+      'Sistem pendengaran bekerja melalui transduksi mekanis langsung di sel rambut koklea yang memicu impuls saraf dalam hitungan 1–2 milidetik. Sebaliknya, sistem visual memerlukan reaksi fotokimiawi bertingkat (fototransduksi) di sel fotoreseptor retina sebelum sinyal dapat dikirim ke saraf optik, memakan waktu lebih lama.'
+  },
+  {
+    name: 'Seberapa besar pengaruh monitor gaming 144Hz atau 240Hz terhadap skor reaksi?',
+    answer:
+      'Monitor 60Hz memperbarui gambar setiap 16,67 ms, monitor 144Hz setiap 6,94 ms, dan monitor 240Hz setiap 4,17 ms. Refresh rate yang lebih tinggi mengurangi jeda tampilan antara stimulus hijau dan mata Anda, memberikan keuntungan beberapa milidetik pada skor akhir.'
+  },
+  {
+    name: 'Berapa waktu reaksi normal untuk orang berusia 50 tahun ke atas?',
+    answer:
+      'Seiring bertambahnya usia, kecepatan transmisi saraf dan pemrosesan informasi visual melambat secara bertahap sekitar 2–6 ms per dekade setelah usia 25 tahun. Waktu reaksi 270–320 ms sangat wajar dan normal untuk usia 50 tahun ke atas.'
+  },
+  {
+    name: 'Bisakah waktu reaksi visual dilatih dan ditingkatkan secara permanen?',
+    answer:
+      'Ya. Latihan refleks teratur, permainan aksi cepat, kualitas tidur yang cukup (7–9 jam), olahraga aerobik, dan menjaga fokus pandangan lembut (soft focus) dapat meningkatkan kecepatan reaksi sebesar 10–30 ms dengan mengoptimalkan kesiapan motorik (motor priming).'
+  },
+  {
+    name: 'Mengapa tes ini menggunakan rata-rata dari 5 ronde?',
+    answer:
+      'Pengukuran tunggal sangat rentan terhadap fluktuasi fokus sesaat atau ketidaksengajaan. Mengambil rata-rata dari 5 ronde valid meredam kebisingan acak dan memberikan estimasi performa refleks yang stabil dan reliabel.'
+  }
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#app`,
+    name: 'FreeIQExam Tes Waktu Reaksi Visual Online',
+    url: canonicalUrl,
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Any',
+    browserRequirements:
+      'Memerlukan dukungan JavaScript, Performance API, Pointer Events, dan HTML5',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    },
+    description:
+      'Tolok ukur waktu reaksi visual 5 ronde berbasis peramban yang menghitung kecepatan respons milidetik dan estimasi persentil populasi.',
+    isAccessibleForFree: true,
+    creator: {
+      '@type': 'Organization',
+      name: 'FreeIQExam',
+      url: 'https://freeiqexam.com'
+    },
+    featureList: [
+      '5 ronde tes reaksi visual terkalibrasi',
+      'Dukungan input klik pointer dan tombol keyboard (Spasi/Enter)',
+      'Penyimpanan rekor terbaik lokal di peramban',
+      'Estimasi persentil populasi berbasis model Gaussian',
+      'Efek suara audio sintetis opsional',
+      'Berbagi skor ke papan klip instan'
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Beranda',
+        item: 'https://freeiqexam.com/id'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Permainan Kognitif',
+        item: 'https://freeiqexam.com/id/permainan'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Tes Waktu Reaksi',
+        item: canonicalUrl
+      }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'Tolok Ukur Waktu Reaksi Visual 5 Ronde',
+    url: canonicalUrl,
+    description:
+      'Tugas reaksi visual sederhana di mana peserta merespons sesegera mungkin saat arena berubah dari merah menjadi hijau.',
+    numberOfQuestions: 5,
+    educationalAlignment: {
+      '@type': 'AlignmentObject',
+      alignmentType: 'educationalSubject',
+      targetName: 'Kecepatan persepsi dan latensi sensorimotor'
+    }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.name,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer
+      }
+    }))
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+>
+  <Header />
+
+  <style>
+    .reaction-page {
+      --reaction-border: #e4e4e7;
+      --reaction-muted: #52525b;
+      background: #ffffff;
+    }
+
+    :global(.dark) .reaction-page {
+      --reaction-border: #27272a;
+      --reaction-muted: #a1a1aa;
+      background: #000000;
+    }
+
+    .reaction-arena {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      transition:
+        transform 90ms ease-out,
+        background 120ms ease-out;
+    }
+
+    .reaction-arena:active {
+      transform: scale(0.997);
+    }
+
+    .state-start {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #2563eb 0%,
+          #1d4ed8 62%,
+          #1e40af 100%
+        );
+    }
+
+    :global(.dark) .state-start {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #1d4ed8 0%,
+          #0f172a 70%,
+          #09090b 100%
+        );
+    }
+
+    .state-waiting {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #e11d48 0%,
+          #be123c 62%,
+          #9f1239 100%
+        );
+    }
+
+    :global(.dark) .state-waiting {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #be123c 0%,
+          #881337 68%,
+          #4c0519 100%
+        );
+    }
+
+    .state-active {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #10b981 0%,
+          #059669 62%,
+          #047857 100%
+        );
+    }
+
+    :global(.dark) .state-active {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #10b981 0%,
+          #047857 68%,
+          #064e3b 100%
+        );
+    }
+
+    .state-toosoon {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #f97316 0%,
+          #ea580c 65%,
+          #c2410c 100%
+        );
+    }
+
+    :global(.dark) .state-toosoon {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #ea580c 0%,
+          #9a3412 70%,
+          #431407 100%
+        );
+    }
+
+    .state-result {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #0284c7 0%,
+          #0369a1 62%,
+          #075985 100%
+        );
+    }
+
+    :global(.dark) .state-result {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #0284c7 0%,
+          #082f49 70%,
+          #09090b 100%
+        );
+    }
+
+    .state-summary {
+      background:
+        radial-gradient(
+          circle at 50% 15%,
+          #f4f4f5 0%,
+          #e4e4e7 65%,
+          #d4d4d8 100%
+        );
+    }
+
+    :global(.dark) .state-summary {
+      background:
+        radial-gradient(
+          circle at 50% 20%,
+          #18181b 0%,
+          #09090b 70%,
+          #000000 100%
+        );
+    }
+
+    .summary-card {
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
+    }
+
+    :global(.dark) .summary-card {
+      background: #121215;
+      border: 1px solid #27272a;
+    }
+
+    .rx-hero-glow {
+      position: absolute;
+      inset-inline: -1rem;
+      top: -2rem;
+      height: 24rem;
+      pointer-events: none;
+      background: radial-gradient(
+        circle at 50% 10%,
+        rgba(0, 102, 204, 0.1) 0%,
+        rgba(0, 102, 204, 0.03) 45%,
+        transparent 70%
+      );
+      mask-image: linear-gradient(to bottom, black 55%, transparent 92%);
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        black 55%,
+        transparent 92%
+      );
+    }
+
+    :global(.dark) .rx-hero-glow {
+      background: radial-gradient(
+        circle at 50% 10%,
+        rgba(41, 151, 255, 0.12) 0%,
+        rgba(0, 102, 204, 0.04) 45%,
+        transparent 70%
+      );
+    }
+
+    @keyframes rxShake {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      20%,
+      60% {
+        transform: translateX(-6px);
+      }
+      40%,
+      80% {
+        transform: translateX(6px);
+      }
+    }
+
+    .animate-reaction-shake {
+      animation: rxShake 0.35s ease-in-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rx-hero-glow,
+      .animate-reaction-shake {
+        animation: none !important;
+        display: none;
+      }
+    }
+  </style>
+
+  <main class="reaction-page flex-1 text-zinc-900 dark:text-zinc-100">
+    <div
+      class="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16"
+    >
+      <!-- Breadcrumb -->
+      <nav
+        class="flex items-center text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-8"
+        aria-label="Breadcrumb"
+      >
+        <a
+          href="/id"
+          class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors"
+        >
+          Beranda
+        </a>
+
+        <span class="mx-2 text-zinc-400 dark:text-zinc-600">
+          /
+        </span>
+
+        <a
+          href="/id/permainan"
+          class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors"
+        >
+          Permainan
+        </a>
+
+        <span class="mx-2 text-zinc-400 dark:text-zinc-600">
+          /
+        </span>
+
+        <span class="text-zinc-900 dark:text-zinc-100 font-semibold">
+          Tes Waktu Reaksi
+        </span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="relative text-center max-w-3xl mx-auto mb-10">
+        <div class="rx-hero-glow" aria-hidden="true"></div>
+
+        <div
+          class="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[13px] sm:text-sm font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4 shadow-xs"
+        >
+          <span
+            class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"
+          ></span>
+
+          <span>Tolok Ukur Milidetik Presisi • 5 Ronde Terkalibrasi</span>
+        </div>
+
+        <h1
+          class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-[-0.025em] leading-[1.08] mb-4"
+        >
+          Tes Waktu Reaksi Visual Online
+        </h1>
+
+        <p
+          class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-300 leading-[1.62] max-w-2xl mx-auto"
+        >
+          Ukur kecepatan refleks sensorimotor Anda dalam satuan milidetik (ms). Klik segera saat layar berubah warna dari merah menjadi hijau.
+        </p>
+      </header>
+
+      <!-- Arena Section -->
+      <section
+        id="reaction-test-arena"
+        class="relative max-w-3xl mx-auto"
+        aria-label="Area Pengujian Waktu Reaksi"
+      >
+        <!-- Telemetry Header HUD -->
+        <div
+          class="mb-4 flex flex-wrap items-center justify-between gap-3 text-sm font-mono"
+        >
+          <div class="flex items-center gap-2">
+            <span
+              id="hud-trial-label"
+              class="rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3.5 py-1.5 font-bold text-zinc-900 dark:text-zinc-100"
+            >
+              Ronde 1 dari 5
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div
+              class="flex items-center gap-2 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-4 py-1.5 text-zinc-700 dark:text-zinc-300"
+            >
+              <span class="text-xs uppercase tracking-wider text-zinc-500">
+                TERBAIK
+              </span>
+
+              <strong
+                id="hud-personal-best"
+                class="text-emerald-600 dark:text-emerald-400"
+              >
+                -
+              </strong>
+            </div>
+
+            <button
+              id="btn-sound-toggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Matikan efek suara audio"
+              class="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-2.5 font-semibold text-zinc-800 dark:text-zinc-200 transition-smooth active:scale-[0.97] min-h-[44px] cursor-pointer"
+            >
+              <span id="sound-icon" aria-hidden="true">
+                🔊
+              </span>
+
+              <span id="sound-label">
+                Audio
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Trial Progress Pills -->
+        <div
+          class="mb-4 flex items-center gap-2"
+          aria-label="Kemajuan ronde"
+        >
+          <span
+            id="pill-trial-1"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-2"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-3"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-4"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-5"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+        </div>
+
+        <!-- Interactive Box -->
+        <div
+          id="reaction-box"
+          role="button"
+          tabindex="0"
+          aria-label="Arena tes waktu reaksi. Klik atau ketuk saat layar berubah hijau."
+          aria-busy="false"
+          class="reaction-arena state-start relative min-h-[430px] sm:min-h-[500px] rounded-[2rem] overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/40 shadow-2xl"
+        >
+          <div
+            class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,.18),transparent_34%),radial-gradient(circle_at_50%_100%,rgba(0,0,0,.16),transparent_60%)]"
+          ></div>
+
+          <!-- 1. Start View -->
+          <div
+            id="content-start"
+            class="relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg"
+            >
+              <svg
+                class="w-10 h-10 sm:w-12 sm:h-12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+
+            <div class="space-y-3 max-w-xl">
+              <h3
+                class="text-3xl sm:text-5xl font-extrabold tracking-tight"
+              >
+                Klik atau Ketuk untuk Mulai
+              </h3>
+
+              <p
+                class="text-base sm:text-lg leading-relaxed text-white/90"
+              >
+                Tunggu warna hijau. Lalu klik secepat mungkin. Percobaan sebelum hijau tidak akan dihitung dalam 5 ronde resmi.
+              </p>
+            </div>
+
+            <div
+              class="inline-flex flex-wrap items-center justify-center gap-2 rounded-full bg-white/15 border border-white/20 px-5 py-3 text-sm font-semibold font-mono"
+            >
+              <span>Keyboard:</span>
+
+              <kbd
+                class="rounded-lg bg-white/20 px-3 py-1 font-mono"
+              >
+                SPASI
+              </kbd>
+
+              <span>atau</span>
+
+              <kbd
+                class="rounded-lg bg-white/20 px-3 py-1 font-mono"
+              >
+                ENTER
+              </kbd>
+            </div>
+          </div>
+
+          <!-- 2. Waiting (Red) -->
+          <div
+            id="content-waiting"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="flex items-center gap-3"
+              aria-hidden="true"
+            >
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping"
+              ></span>
+
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping [animation-delay:150ms]"
+              ></span>
+
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping [animation-delay:300ms]"
+              ></span>
+            </div>
+
+            <div>
+              <h3
+                class="text-4xl sm:text-6xl font-extrabold tracking-tight uppercase"
+              >
+                Tunggu Warna Hijau…
+              </h3>
+
+              <p
+                class="mt-3 text-base sm:text-lg text-white/85"
+              >
+                Jangan menebak. Siapkan jari Anda, tetapi jangan ditekan dahulu.
+              </p>
+            </div>
+          </div>
+
+          <!-- 3. Active (Green) -->
+          <div
+            id="content-active"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="w-20 h-20 rounded-full bg-white/25 border border-white/30 flex items-center justify-center shadow-2xl"
+            >
+              <svg
+                class="w-12 h-12"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <h3
+                class="text-5xl sm:text-7xl font-extrabold tracking-tight uppercase"
+              >
+                KLIK SEKARANG!
+              </h3>
+
+              <p
+                class="mt-3 text-sm sm:text-base font-semibold uppercase tracking-widest text-white/90"
+              >
+                Ketuk Layar, Klik, Spasi, atau Enter
+              </p>
+            </div>
+          </div>
+
+          <!-- 4. Too Soon (Orange) -->
+          <div
+            id="content-toosoon"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-5 px-6 sm:px-10 text-center text-white animate-reaction-shake"
+          >
+            <div
+              class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center"
+            >
+              <svg
+                class="w-10 h-10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3.732 1.732 3z"
+                />
+              </svg>
+            </div>
+
+            <h3
+              class="text-4xl sm:text-5xl font-extrabold tracking-tight"
+            >
+              Terlalu Cepat!
+            </h3>
+
+            <p
+              class="text-base sm:text-lg text-white/90 max-w-xl"
+            >
+              Anda mengklik saat arena masih merah. Percobaan ini dibatalkan dan ronde ini akan diulang.
+            </p>
+
+            <span
+              class="rounded-full bg-white px-6 py-3 font-bold text-orange-700 shadow-xl"
+            >
+              Ketuk untuk Mengulang
+            </span>
+          </div>
+
+          <!-- 5. Round Result -->
+          <div
+            id="content-result"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-5 px-6 sm:px-10 text-center text-white"
+          >
+            <span
+              id="result-round-indicator"
+              class="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold uppercase tracking-wider font-mono"
+            >
+              RONDE 1 DARI 5
+            </span>
+
+            <div class="flex items-baseline gap-2">
+              <span
+                id="round-ms-display"
+                class="text-6xl sm:text-8xl font-extrabold tracking-tight font-mono"
+              >
+                250
+              </span>
+
+              <span
+                class="text-2xl sm:text-3xl font-mono font-bold text-white/80"
+              >
+                ms
+              </span>
+            </div>
+
+            <p
+              id="round-quick-feedback"
+              class="text-base sm:text-lg font-semibold text-white/90"
+            >
+              Reaksi visual yang sangat baik.
+            </p>
+
+            <span
+              class="rounded-full bg-white px-7 py-3.5 text-base font-bold text-sky-700 shadow-xl"
+            >
+              Klik untuk Lanjut
+            </span>
+          </div>
+
+          <!-- 6. Summary Final Card -->
+          <div
+            id="content-summary"
+            class="hidden relative z-10 w-full min-h-[430px] sm:min-h-[500px] flex items-center justify-center p-4 sm:p-8"
+          >
+            <div
+              class="summary-card w-full max-w-xl rounded-[2rem] p-6 sm:p-8 text-zinc-900 dark:text-white shadow-2xl"
+            >
+              <div
+                class="mx-auto w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center"
+              >
+                <svg
+                  class="w-8 h-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+
+              <h3
+                class="mt-4 text-2xl sm:text-3xl font-bold text-center tracking-tight"
+              >
+                Tes Selesai
+              </h3>
+
+              <p
+                class="mt-1 text-base text-zinc-500 dark:text-zinc-400 text-center font-mono text-[13px]"
+              >
+                5 ronde valid · rata-rata waktu reaksi visual
+              </p>
+
+              <div
+                class="mt-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-5 text-center"
+              >
+                <p
+                  class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-mono"
+                >
+                  Rata-Rata Respons
+                </p>
+
+                <div
+                  class="mt-2 flex items-baseline justify-center gap-2"
+                >
+                  <span
+                    id="final-avg-ms"
+                    class="text-6xl sm:text-7xl font-extrabold tracking-tight text-[#0066cc] dark:text-[#2997ff] font-mono"
+                  >
+                    250
+                  </span>
+
+                  <span
+                    class="text-2xl font-mono font-bold text-zinc-500"
+                  >
+                    ms
+                  </span>
+                </div>
+
+                <div
+                  class="mt-4 flex flex-wrap items-center justify-center gap-2"
+                >
+                  <span
+                    id="final-percentile-badge"
+                    class="rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 px-4 py-2 text-sm font-bold text-emerald-700 dark:text-emerald-300 font-mono"
+                  >
+                    Top 50% Refleks (Persentil ke-50)
+                  </span>
+
+                  <span
+                    id="final-tier-badge"
+                    class="rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                  >
+                    Median Manusia Normal
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-5">
+                <p
+                  class="mb-2 text-[13px] font-mono font-semibold uppercase tracking-wider text-center text-zinc-500 dark:text-zinc-400"
+                >
+                  Kecepatan per Ronde
+                </p>
+
+                <div
+                  id="summary-trials-grid"
+                  class="grid grid-cols-5 gap-2 text-center font-mono text-sm"
+                ></div>
+              </div>
+
+              <div
+                class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
+              >
+                <button
+                  id="btn-share-score"
+                  type="button"
+                  class="rounded-full border border-[#0066cc] dark:border-[#2997ff] bg-[#0066cc] dark:bg-[#2997ff] px-6 py-3.5 text-base font-semibold text-white transition-smooth active:scale-[0.97] min-h-[44px] hover:bg-[#0071e3] dark:hover:bg-[#3b82f6] cursor-pointer"
+                >
+                  <span id="share-btn-text">
+                    Salin &amp; Bagikan Skor
+                  </span>
+                </button>
+
+                <button
+                  id="btn-restart-game"
+                  type="button"
+                  class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 text-base font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth active:scale-[0.97] min-h-[44px] hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer"
+                >
+                  Ulangi Tes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p
+          class="mt-4 text-center text-sm sm:text-base text-zinc-500 dark:text-zinc-400"
+        >
+          Skor terukur mencakup latensi stimulus layar, peramban, dan perangkat input fisik Anda.
+        </p>
+      </section>
+
+      <!-- 2,000-WORD CLINICAL & NEUROLOGICAL GUIDE IN BAHASA INDONESIA -->
+      <section
+        class="reaction-copy mt-20 sm:mt-28 border-t border-zinc-200 dark:border-zinc-800 pt-16 sm:pt-20"
+        aria-labelledby="guide-title"
+      >
+        <div class="max-w-3xl mx-auto">
+          <p
+            class="text-[13px] font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400"
+          >
+            Neurobiologi · Tolok Ukur Populasi · Latensi Perangkat Keras
+          </p>
+
+          <h2
+            id="guide-title"
+            class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white"
+          >
+            Waktu Reaksi Visual: Berapa Kecepatan Maksimum Sistem Saraf Manusia?
+          </h2>
+
+          <p
+            class="mt-6 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+          >
+            Waktu reaksi bukan sekadar angka biologis tunggal. Waktu reaksi adalah akumulasi latensi total dari penginderaan stimulus, pemrosesan visual korteks serebral, pengambilan keputusan motorik, konduksi impuls saraf melalui sumsum tulang belakang, hingga kontraksi serat otot jari.
+          </p>
+        </div>
+
+        <article
+          class="mt-12 grid gap-14 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+        >
+          <section aria-labelledby="neurobiology-title">
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              01 · Fisiologi Sistem Saraf
+            </p>
+
+            <h3
+              id="neurobiology-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Rangkaian Jalur Saraf Refleks Visual
+            </h3>
+
+            <p class="mt-5">
+              Reaksi visual dimulai ketika foton cahaya hijau mengenai fotoreseptor retina (sel batang dan kerucut). Fototransduksi biokimiawi mengubah cahaya menjadi sinyal listrik yang merambat melalui sel ganglion saraf optik menuju Nucleus Geniculatum Laterale (LGN) di talamus, lalu diteruskan ke Korteks Visual Primer (V1) di lobus oksipital.
+            </p>
+
+            <p class="mt-5">
+              Jalur transmisi sensorimotor lengkap dapat dirangkum sebagai berikut:
+              <strong class="text-zinc-900 dark:text-white block mt-2 p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-800 font-mono text-sm">
+                Retina → Saraf Optik → Talamus (LGN) → Korteks Visual (V1) → Jaringan Perhatian Korteks Frontal → Korteks Motorik Primer → Jalur Kortikospinal → Neuron Motorik Tulang Belakang → Otot Jari → Klik Mouse/Layar
+              </strong>
+            </p>
+          </section>
+
+          <section aria-labelledby="benchmark-title">
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              02 · Konteks Populasi
+            </p>
+
+            <h3
+              id="benchmark-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Tabel Tolok Ukur Kecepatan Reaksi Global
+            </h3>
+
+            <div
+              class="mt-7 overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800"
+            >
+              <table
+                class="w-full text-left border-collapse text-sm sm:text-base"
+              >
+                <thead>
+                  <tr
+                    class="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 font-mono text-[13px] uppercase"
+                  >
+                    <th class="px-5 py-4 font-semibold text-zinc-950 dark:text-white">Grup Populasi</th>
+                    <th class="px-5 py-4 font-semibold text-zinc-950 dark:text-white">Rata-Rata Waktu Reaksi</th>
+                    <th class="px-5 py-4 font-semibold text-zinc-950 dark:text-white">Interpretasi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                  <tr>
+                    <td class="px-5 py-4 font-medium text-zinc-950 dark:text-white font-mono">Pembalap F1 &amp; Pilot Jet Tempur</td>
+                    <td class="px-5 py-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">~140–160 ms</td>
+                    <td class="px-5 py-4">Performa elit terlatih; ambang batas refleks manusia tercepat.</td>
+                  </tr>
+                  <tr>
+                    <td class="px-5 py-4 font-medium text-zinc-950 dark:text-white font-mono">Atlet E-Sports Profesional</td>
+                    <td class="px-5 py-4 font-mono font-bold text-blue-600 dark:text-blue-400">~160–190 ms</td>
+                    <td class="px-5 py-4">Kesiapan motor priming dan koordinasi mata-tangan tingkat tinggi.</td>
+                  </tr>
+                  <tr>
+                    <td class="px-5 py-4 font-medium text-zinc-950 dark:text-white font-mono">Atlet Olahraga Mahasiswa</td>
+                    <td class="px-5 py-4 font-mono font-bold text-blue-600 dark:text-blue-400">~190–220 ms</td>
+                    <td class="px-5 py-4">Refleks di atas rata-rata populasi umum.</td>
+                  </tr>
+                  <tr>
+                    <td class="px-5 py-4 font-medium text-zinc-950 dark:text-white font-mono">Orang Dewasa Sehat (Median)</td>
+                    <td class="px-5 py-4 font-mono font-bold text-zinc-900 dark:text-white">~250–270 ms</td>
+                    <td class="px-5 py-4">Standar median populasi normal untuk stimulus visual sederhana.</td>
+                  </tr>
+                  <tr>
+                    <td class="px-5 py-4 font-medium text-zinc-950 dark:text-white font-mono">Kelelahan / Kurang Tidur</td>
+                    <td class="px-5 py-4 font-mono font-bold text-amber-600 dark:text-amber-400">&gt;320 ms</td>
+                    <td class="px-5 py-4">Menunjukkan penurunan kewaspadaan atau latensi perangkat keras.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section aria-labelledby="hardware-title">
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              03 · Latensi Perangkat Keras
+            </p>
+
+            <h3
+              id="hardware-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Pengaruh Refresh Rate Monitor dan Polling Rate Mouse
+            </h3>
+
+            <p class="mt-5">
+              Tes online mencakup jeda perangkat fisik:
+            </p>
+            <ul class="list-disc pl-6 space-y-2 mt-3">
+              <li><strong>60 Hz Monitor:</strong> Jeda antar-frame 16,67 ms.</li>
+              <li><strong>144 Hz Monitor:</strong> Jeda antar-frame 6,94 ms.</li>
+              <li><strong>240 Hz Monitor:</strong> Jeda antar-frame 4,17 ms.</li>
+              <li><strong>Polling Rate Mouse (1000 Hz):</strong> Melaporkan input setiap 1 ms vs 8 ms pada mouse 125 Hz standar.</li>
+            </ul>
+          </section>
+
+          <section aria-labelledby="aging-title">
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              04 · Waktu &amp; Penuaan
+            </p>
+
+            <h3
+              id="aging-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Kronobiologi, tidur, dan usia mengubah kecepatan reaksi
+            </h3>
+
+            <p class="mt-5">
+              Performa reaksi sensitif terhadap arousal dan waktu sirkadian. Di banyak setting lab, kecepatan respons membaik dari pagi yang mengantuk ke sore hari, meski puncaknya bergantung pada kronotipe, jadwal tidur, paparan cahaya, kafein, dan tugas. Jendela tes sore hari karenanya pilihan praktis wajar bagi sebagian orang, tetapi bukan aturan biologis universal.
+            </p>
+
+            <p class="mt-5">
+              Usia pengaruh kuat lain. Waktu reaksi sederhana cenderung tercepat di dewasa muda lalu berangsur meningkat seiring usia. Perubahan tak dijelaskan satu mekanisme. Pemrosesan sensorik lebih lambat, perubahan atensi, kecepatan motorik berkurang, rekrutmen neuromuskular berubah, dan perubahan neural terkait usia semuanya berkontribusi. Klaim seperti “tepat +2–6 ms per dekade” bisa menjadi aproksimasi edukatif berguna, tetapi lintasan individual lebih lebar daripada formula tunggal itu.
+            </p>
+
+            <p class="mt-5">
+              Kehilangan tidur berdampak besar pada stabilitas vigilance dan respons. Deprivasi tidur berat menghasilkan level gangguan yang dibandingkan peneliti dengan gangguan terkait alkohol, tetapi kesetaraan eksak bergantung pada tugas, durasi terjaga, dan desain studi. Alih-alih menghafal satu “padanan BAC,” pelajaran praktisnya lebih sederhana: jangan menilai refleks normal dari skor saat Anda sangat kurang tidur.
+            </p>
+          </section>
+
+          <section aria-labelledby="optimization-title">
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              05 · Optimasi taktis
+            </p>
+
+            <h3
+              id="optimization-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Cara meningkatkan skor tes waktu reaksi tanpa mengejar artefak
+            </h3>
+
+            <p class="mt-5">
+              Tujuan paling berguna bukanlah memaksa angka mustahil kecil; melainkan mengurangi variabilitas yang dapat dihindari. Jaga tatapan lembut dan terpusat pada arena alih-alih menatap kaku satu piksel. Strategi fokal rileks membantu menangkap perubahan luminans global tanpa gerakan mata tak perlu. Jaga tangan merespons pada posisi netral dengan jari dekat target input, tetapi jangan pra-klik atau menekan sakelar.
+            </p>
+
+            <p class="mt-5">
+              Priming motorik antisipatif dapat membuat respons sederhana lebih cepat karena sistem motorik dapat menyiapkan gerakan kemungkinan sebelum stimulus tiba. Taruhannya adalah start salah: persiapan harus berhenti sebelum menebak waktu pemicu eksak. Postur konsisten, perangkat sama, browser sama, dan jarak pandang sama kerap lebih berharga daripada mengganti perangkat keras antar trial.
+            </p>
+
+            <div class="mt-7 grid gap-4 md:grid-cols-3">
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Tatapan fokal lembut
+                </h4>
+
+                <p class="mt-2">
+                  Jaga seluruh arena dalam pandangan dan hindari sakade tak perlu.
+                </p>
+              </div>
+
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Priming motorik
+                </h4>
+
+                <p class="mt-2">
+                  Sandarkan jari merespons dekat kontrol tanpa memuat klik.
+                </p>
+              </div>
+
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Ulangi konsisten
+                </h4>
+
+                <p class="mt-2">
+                  Pakai perangkat dan kondisi sama agar perubahan mencerminkan performa, bukan perangkat keras.
+                </p>
+              </div>
+            </div>
+
+            <p class="mt-5">
+              Latihan dapat membantu, tetapi peningkatannya kerap spesifik-tugas. Mengulang tes persis ini dapat mengurangi biaya familiaritas dan strategi, sementara game lebih luas dapat meningkatkan atensi atau seleksi respons tanpa menghasilkan gain sama pada tes berbeda. Tidur, aktivitas fisik, dan kondisi visual sehat bersifat fondasional; stimulan tak boleh dipakai sebagai pengganti istirahat memadai.
+            </p>
+
+            <p class="mt-5">
+              Salah satu prinsip latihan paling berguna adalah konsistensi. Jalankan beberapa sesi pada kira-kira waktu sama tiap hari, pakai browser, layar, mouse atau ponsel sama, dan duduk pada jarak sama. Timer browser bukan instrumen real-time keras: sistem operasi dapat menjeda tab sejenak, browser dapat memprioritaskan pekerjaan lain, dan siklus refresh dapat menggeser kapan perubahan visual tersedia. Rerata lima trial mengurangi sebagian derau acak, tetapi tak dapat menghilangkan sumber latensi itu sepenuhnya.
+            </p>
+
+            <p class="mt-5">
+              Gerakan mata juga penting. Tatapan fokal lembut menjaga area target dalam penglihatan periferal sambil meminimalkan sakade tak perlu. Pada tugas perubahan warna sederhana, tujuannya bukan “berburu” sinyal hijau melainkan menjaga kesiapan di seluruh arena. Persiapan pra-motor dapat memendekkan langkah motorik final, namun ketegangan berlebih membuat klik kurang andal. Postur kompetitif terbaik karenanya waspada tetapi rileks: mata terpusat, tangan ditopang, jari dekat kontrol, dan tanpa prediksi deliberat atas waktu pemicu.
+            </p>
+          </section>
+
+          <section aria-labelledby="measurement-title">
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              06A · Kualitas pengukuran
+            </p>
+
+            <h3
+              id="measurement-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Cara membuat tes reaksi online lebih terulang
+            </h3>
+
+            <p class="mt-5">
+              Tolok ukur baik terulang sebelum mengesankan. Jaga arena terlihat penuh, tutup tab berat CPU latar, hindari mengubah zoom antar percobaan, dan pakai pointer atau target sentuh stabil. Timer browser bukan instrumen real-time keras: sistem operasi dapat menjeda tab sejenak, browser dapat memprioritaskan pekerjaan lain, dan siklus refresh dapat menggeser kapan perubahan visual tersedia. Rerata lima trial mengurangi sebagian derau acak, tetapi tak dapat menghilangkan sumber latensi itu sepenuhnya.
+            </p>
+
+            <p class="mt-5">
+              Itulah mengapa baseline personal kerap menjadi perbandingan paling berguna. Tes di satu setup, catat rerata, lalu tes ulang nanti di setup sama. Perubahan yang bertahan beberapa sesi lebih bermakna daripada satu skor cepat luar biasa. Pendekatan ini juga memudahkan memisahkan perubahan atensi asli dari efek perangkat.
+            </p>
+          </section>
+
+          <section aria-labelledby="interpretation-title">
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              06 · Interpretasi hasil
+            </p>
+
+            <h3
+              id="interpretation-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Apa arti persentil waktu reaksi sebenarnya?
+            </h3>
+
+            <p class="mt-5">
+              FreeIQExam memakai model acuan Gauss berpusat 265 ms dengan simpangan baku 42 ms untuk mengubah rerata lima trial menjadi peringkat gaya persentil. Waktu ukur lebih rendah dipetakan ke persentil lebih tinggi karena respons lebih cepat diperlakukan sebagai performa lebih baik. Ini perbandingan matematis, bukan klaim populasi dunia sungguh mengikuti distribusi normal sempurna dengan parameter eksak itu.
+            </p>
+
+            <p class="mt-5">
+              Untuk alasan sama, hasil persentil ke-95 di halaman ini bukan berarti “Anda terbukti ilmiah lebih cepat dari 95% seluruh manusia.” Artinya skor Anda berada sekitar 5% teratas distribusi acuan yang dipakai kalkulator. Gunakan angka sebagai tolok ukur gaya-game, dan bandingkan dengan hasil Anda sebelumnya pada kondisi cocok.
+            </p>
+
+            <div
+              class="mt-7 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6 sm:p-7"
+            >
+              <h4
+                class="font-bold text-xl text-zinc-950 dark:text-white"
+              >
+                Mengapa lima trial?
+              </h4>
+
+              <p class="mt-3">
+                Trial tunggal berderau. Lima observasi valid memberi rerata lebih stabil sambil menjaga tes cukup singkat untuk pemakaian kasual. Karena start salah dibuang, lima nilai pada ringkasan final selalu merepresentasikan respons pemicu-hijau valid bukan percobaan penalti.
+              </p>
+            </div>
+          </section>
+
+          <!-- FAQ Section -->
+          <section id="faq" aria-labelledby="faq-title">
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              07 · Tanya Jawab
+            </p>
+
+            <h3
+              id="faq-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Pertanyaan Umum Seputar Tes Waktu Reaksi
+            </h3>
+
+            <div class="mt-7 space-y-3">
+              {
+                faqItems.map((item) => (
+                  <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 open:shadow-lg transition-all">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base sm:text-lg font-semibold text-zinc-950 dark:text-white">
+                      <span>{item.name}</span>
+
+                      <svg
+                        class="faq-chevron w-5 h-5 shrink-0 text-zinc-500 transition-transform duration-200 group-open:rotate-180"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="m19 9-7 7-7-7"
+                        />
+                      </svg>
+                    </summary>
+
+                    <div
+                      class="mt-4 border-t border-zinc-200 dark:border-zinc-800 pt-4 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+                    >
+                      {item.answer}
+                    </div>
+                  </details>
+                ))
+              }
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="related-title"
+            class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-7 sm:p-9"
+          >
+            <p
+              class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              Lanjutkan tolok ukur
+            </p>
+
+            <h3
+              id="related-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Latih bagian lain performa kognitif
+            </h3>
+
+            <p class="mt-4">
+              Kecepatan reaksi hanyalah satu irisan kognisi. Lanjutkan dengan tugas memori kerja, inhibisi, visual-spasial, dan penalaran di pustaka permainan kognitif FreeIQExam.
+            </p>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a
+                href="/id/permainan"
+                class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Jelajahi Permainan Kognitif
+              </a>
+
+              <a
+                href="/id/permainan/stroop-clash"
+                class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Coba Stroop Clash
+              </a>
+
+              <a
+                href="/id/permainan/digit-span"
+                class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Coba Digit Span
+              </a>
+            </div>
+          </section>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <div
+    id="share-toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-16 pointer-events-none opacity-0 rounded-full bg-zinc-950 dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-zinc-950 shadow-2xl transition-all duration-300 border border-zinc-800 dark:border-zinc-200"
+  >
+    Skor berhasil disalin ke papan klip!
+  </div>
+
+  <Footer />
+
+  <script src="../../scripts/tools/reaction-timer-id.js"></script>
+</Layout>

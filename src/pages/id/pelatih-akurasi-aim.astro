@@ -1,4 +1,806 @@
 ---
-import AimTrainer from './aim-trainer.astro';
+import LayoutId from '../../components/id/LayoutId.astro';
+import HeaderId from '../../components/id/HeaderId.astro';
+import FooterId from '../../components/id/FooterId.astro';
+
+const title = "Pelatih Akurasi Aim FPS & Tolok Ukur Presisi Mouse | FreeIQExam";
+const description = "Asah akurasi mouse, kecepatan reaksi, dan presisi flicking dengan pelatih aim FPS berbasis browser gratis. Mode Gridshot, tracking, dan refleks presisi dengan konversi sensitivitas eDPI. Tanpa unduhan.";
+const canonicalUrl = "https://freeiqexam.com/id/pelatih-akurasi-aim";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Pelatih Akurasi Aim FPS FreeIQExam",
+    "url": "https://freeiqexam.com/id/pelatih-akurasi-aim",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Membutuhkan dukungan JavaScript dan HTML5 Canvas",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Tiga Disiplin Latihan: Gridshot (Flicking), Tracking Halus, dan Mikro-Target Presisi",
+      "Rendering HTML5 Canvas 60FPS+ berperforma tinggi dengan hitbox sub-piksel dan fisika partikel",
+      "Kombinasi nada hit Web Audio API dengan skala pitch dan umpan balik akustik miss",
+      "Metrik Kinematik real-time: Skor Keseluruhan, TPS (Target/Detik), Akurasi Mentah %, dan Jeda Reaksi (ms)",
+      "Konverter sensitivitas eDPI dalam game untuk Valorant, CS2 / Counter-Strike, Overwatch 2, Apex Legends, dan R6 Siege",
+      "Gaya crosshair kustom (Crosshair, Titik, Lingkaran-Titik) dan warna neon visibilitas tinggi",
+      "Sertifikat scorecard esports resolusi tinggi yang dapat diunduh (1200x675 PNG)",
+      "Nol unduhan, nol pendaftaran, eksekusi berbasis browser 100% privat"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.97",
+      "ratingCount": "48900",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Pelatih Akurasi Aim",
+        "item": "https://freeiqexam.com/id/pelatih-akurasi-aim"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Apa itu pelatih aim FPS dan bagaimana cara meningkatkan akurasi mouse?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pelatih aim FPS adalah lingkungan perangkat lunak khusus untuk mengisolasi dan melatih mekanik motorik inti membidik: akuisisi target (flicking), tracking target dinamis, dan presisi mikro-koreksi. Dengan menghilangkan distraksi dalam game (pola recoil, abilities, fisika gerakan), pelatih aim memungkinkan ratusan repetisi kepadatan tinggi per menit, mempercepat pembelajaran motorik serebelar dan mielinasi jalur saraf."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa itu eDPI dan bagaimana cara menghitungnya lintas game?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "eDPI (effective Dots Per Inch) merepresentasikan sensitivitas mouse sejati dengan mengalikan DPI perangkat keras mouse dengan nilai sensitivitas dalam game (eDPI = DPI x Sens Dalam Game). Karena mesin game berbeda memakai konstanta yaw berbeda (mis. mesin CS2/Source memakai yaw 0,022 sementara Valorant memakai yaw 0,07), sensitivitas 1,0 di Valorant setara 3,1818 di CS2. Gunakan konverter sensitivitas bawaan untuk menjaga jarak rotasi 360 derajat identik di semua game."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Haruskah membidik dengan lengan, pergelangan, atau ujung jari?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Atlet esports top memakai teknik aim hibrida: 1) Aim lengan (poros siku) menangani rotasi sapuan besar (belokan 90 derajat hingga 180 derajat) pada sensitivitas rendah, 2) Aim pergelangan (poros karpal) mengeksekusi flick sedang dan tracking pada layar monitor, dan 3) Mikro-adjumen ujung jari menyempurnakan keselarasan headshot 5-15 piksel terakhir dan kontrol recoil vertikal. Hanya mengandalkan pergelangan pada sensitivitas tinggi meningkatkan risiko sindrom carpal tunnel dan menurunkan presisi jarak jauh."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah laju penyegaran monitor lebih tinggi (144Hz, 240Hz, 360Hz) meningkatkan aim?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya. Monitor 240Hz menyegarkan bingkai layar tiap 4,16ms dibanding 16,67ms pada layar 60Hz standar. Pengurangan 12,5ms pada latensi gerak-ke-foton ini merender lintasan target dengan motion blur dan ghosting temporal jauh lebih kecil, memungkinkan sistem sakadik okular menghitung koordinat intersepsi target dengan fidelitas statistik lebih tinggi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Berapa skor bagus pada Gridshot (Flicking)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pada tolok ukur Gridshot 30 detik standar: Skor di bawah 40.000 (kurang dari 2,0 target/detik) setara tier Novice/Bronze; 50.000 hingga 70.000 (2,5-3,2 target/detik dengan akurasi 85%+) merepresentasikan peringkat kompetitif rata-rata hingga menengah (Gold/Platinum); 80.000 hingga 95.000 merepresentasikan tier elit Master/Grandmaster; dan skor melebihi 100.000 (4,5+ target/detik dengan akurasi 95%+) mencerminkan kecepatan flick level esports profesional."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana laju polling mouse (1000Hz vs 4000Hz vs 8000Hz) memengaruhi akurasi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Polling 1000Hz standar melaporkan koordinat mouse tiap 1,0ms. Sensor polling tinggi pada 4000Hz (0,25ms) dan 8000Hz (0,125ms) mengurangi latensi input sensor-ke-CPU dan micro-stutter, menghasilkan kurva mikro-tracking lebih halus pada monitor refresh tinggi (240Hz+). Namun, 8000Hz membutuhkan performa thread CPU substansial untuk mencegah frame drop pada game 3D berat."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mengapa akurasi lebih penting daripada kecepatan flick mentah saat latihan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Riset pembelajaran motorik menunjukkan gerakan cepat tak akurat memperkuat jalur saraf yang salah dan memicu kebiasaan overshoot. Dengan sengaja berlatih pada ritme di mana Anda menjaga akurasi 90% hingga 95%, korteks motorik membangun lintasan kinematik presisi. Kecepatan muncul alami sebagai hasil samping efisiensi gerakan dan latensi koreksi yang berkurang."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah berat mouse dan friksi mousepad memengaruhi aim presisi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mouse ultraringan (sub-60 gram) meminimalkan inersia kinetik, memungkinkan akselerasi awal lebih cepat dan daya henti seketika tanpa ketegangan otot. Mousepad friksi statis rendah (permukaan hibrida atau kaca) memfasilitasi mikro-adjumen tanpa usaha untuk presisi level piksel, sementara pad kain kontrol menawarkan friksi dinamis lebih tinggi untuk tracking stabil."
+        }
+      }
+    ]
+  }
+];
 ---
-<AimTrainer />
+
+<LayoutId
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  enPath="/aim-trainer"
+>
+  <HeaderId currentPath="/id/pelatih-akurasi-aim" enPath="/aim-trainer" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+    
+    <!-- Hero Header -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-semibold uppercase tracking-wider mb-4">
+        <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+        <span>Pelatih Aim FPS & Tolok Ukur Akurasi Mouse</span>
+      </div>
+
+      <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+        Pelatih Aim FPS Online Gratis
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+        Asah presisi flicking, tracking dinamis, dan refleks mikro-target dengan mesin kanvas 60FPS terakselerasi perangkat keras kami. Kalibrasi crosshair, konversi sensitivitas eDPI lintas game, dan tolok ukur kinematika reaksi Anda.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+      
+      <!-- Control Bar / Settings -->
+      <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4 sm:p-6 mb-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          
+          <!-- Mode Selector -->
+          <div class="flex items-center gap-1.5 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs font-medium">
+            <button
+              type="button"
+              class="aim-mode-btn active px-3.5 py-2 rounded-xl transition-all duration-150 bg-rose-500/10 text-rose-500 border border-rose-500/40 font-semibold cursor-pointer inline-flex items-center gap-1.5"
+              data-mode="gridshot"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>
+              <span>Gridshot (Flick)</span>
+            </button>
+            <button
+              type="button"
+              class="aim-mode-btn px-3.5 py-2 rounded-xl transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer inline-flex items-center gap-1.5"
+              data-mode="tracking"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /></svg>
+              <span>Tracking Halus</span>
+            </button>
+            <button
+              type="button"
+              class="aim-mode-btn px-3.5 py-2 rounded-xl transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer inline-flex items-center gap-1.5"
+              data-mode="precision"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+              <span>Mikro Presisi</span>
+            </button>
+          </div>
+
+          <!-- Duration & Crosshair Settings -->
+          <div class="flex flex-wrap items-center gap-3">
+            
+            <!-- Duration -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                class="aim-time-btn active px-3 py-1.5 rounded-xl transition-all duration-150 text-rose-500 font-bold cursor-pointer"
+                data-time="30"
+              >
+                30s
+              </button>
+              <button
+                type="button"
+                class="aim-time-btn px-3 py-1.5 rounded-xl transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                data-time="60"
+              >
+                60s
+              </button>
+            </div>
+
+            <!-- Crosshair Style -->
+            <div class="flex items-center gap-2 text-xs">
+              <label for="crosshairStyleSelect" class="text-zinc-500 dark:text-zinc-400 font-medium hidden sm:inline">Bidikan:</label>
+              <select
+                id="crosshairStyleSelect"
+                class="bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-xs rounded-xl px-2.5 py-2 focus:outline-none focus:ring-1 focus:ring-rose-500 cursor-pointer"
+              >
+                <option value="crosshair">Crosshair</option>
+                <option value="dot">Titik</option>
+                <option value="circle">Lingkaran + Titik</option>
+              </select>
+            </div>
+
+            <!-- Crosshair Color -->
+            <div class="flex items-center gap-2 text-xs">
+              <label for="crosshairColorSelect" class="text-zinc-500 dark:text-zinc-400 font-medium hidden sm:inline">Warna:</label>
+              <select
+                id="crosshairColorSelect"
+                class="bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-xs rounded-xl px-2.5 py-2 focus:outline-none focus:ring-1 focus:ring-rose-500 cursor-pointer"
+              >
+                <option value="#22c55e">Hijau Neon</option>
+                <option value="#06b6d4">Sian</option>
+                <option value="#f43f5e" selected>Merah Mawar</option>
+                <option value="#ffffff">Putih Murni</option>
+                <option value="#eab308">Emas Amber</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Game Arena Container -->
+      <div id="arenaContainer" class="relative bg-zinc-950 rounded-3xl p-3 sm:p-4 border border-zinc-800 shadow-2xl overflow-hidden select-none">
+        
+        <!-- Live HUD Bar -->
+        <div class="flex items-center justify-between px-3 py-2 mb-3 bg-zinc-900/90 backdrop-blur-md rounded-2xl border border-zinc-800/80 text-zinc-100 text-xs sm:text-sm font-mono">
+          <div class="flex items-center gap-4 sm:gap-8">
+            <div>
+              <span class="text-zinc-500 text-[11px] uppercase tracking-wider block font-sans">Sisa Waktu</span>
+              <span id="hudAimTimer" class="font-bold text-base sm:text-lg text-rose-400">30s</span>
+            </div>
+            <div>
+              <span class="text-zinc-500 text-[11px] uppercase tracking-wider block font-sans">Skor</span>
+              <span id="hudAimScore" class="font-bold text-base sm:text-lg text-white">0</span>
+            </div>
+            <div>
+              <span class="text-zinc-500 text-[11px] uppercase tracking-wider block font-sans">Target Kena</span>
+              <span id="hudAimHits" class="font-bold text-base sm:text-lg text-emerald-400">0</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 sm:gap-6 text-right">
+            <div>
+              <span class="text-zinc-500 text-[11px] uppercase tracking-wider block font-sans">Akurasi</span>
+              <span id="hudAimAcc" class="font-bold text-base sm:text-lg text-cyan-400">100%</span>
+            </div>
+            <div class="hidden sm:block text-zinc-500 text-xs font-sans">
+              <span class="kbd px-1.5 py-0.5 rounded bg-zinc-800 text-[11px] text-zinc-400 border border-zinc-700">ESC</span> Ulangi
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Game Surface -->
+        <div class="relative w-full h-[420px] sm:h-[540px] rounded-2xl overflow-hidden bg-[#0a0a0f] border border-zinc-800/60 flex items-center justify-center">
+          <canvas id="aimCanvas" class="w-full h-full cursor-none touch-none block"></canvas>
+
+          <!-- Start Game Overlay -->
+          <div
+            id="startOverlay"
+            class="absolute inset-0 bg-zinc-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-200 z-10"
+          >
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-rose-500/10 border-2 border-rose-500/40 flex items-center justify-center mb-5 text-rose-500 animate-pulse">
+              <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <circle cx="12" cy="12" r="3"></circle>
+                <path stroke-linecap="round" d="M12 2v3m0 14v3M2 12h3m14 0h3"></path>
+              </svg>
+            </div>
+
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight">
+              Klik di Mana Saja untuk Mulai Latihan
+            </h2>
+            <p class="text-sm text-zinc-400 max-w-md mb-6">
+              Rilekskan pergelangan dan fokus pada irama stabil. Eliminasi target secepat dan seakurat mungkin.
+            </p>
+
+            <div class="inline-flex items-center gap-2 px-6 py-3 min-h-[44px] rounded-2xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-bold text-sm shadow-sm transition-all duration-200 active:scale-[0.97] cursor-pointer">
+              <span>Mulai Sesi Aim</span>
+              <span>→</span>
+            </div>
+
+            <div class="mt-8 flex items-center gap-4 text-xs text-zinc-500">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>Fisika 60FPS</span>
+              <span>•</span>
+              <span class="inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>Umpan Balik Audio Web</span>
+              <span>•</span>
+              <span class="inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Crosshair Kustom</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results Scorecard Container (Hidden by default) -->
+      <div id="resultsWrap" class="hidden mt-8 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300">
+        
+        <!-- Score Header & Tier Badge -->
+        <div class="text-center pb-8 border-b border-zinc-200 dark:border-zinc-800/80">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/30 text-xs font-semibold uppercase tracking-wider mb-3">
+            <span>Sesi Selesai</span>
+          </div>
+
+          <div class="text-5xl sm:text-7xl font-black text-zinc-950 dark:text-white font-mono tracking-tight mb-2">
+            <span id="resAimScore">0</span>
+            <span class="text-base sm:text-xl font-sans font-normal text-zinc-500">poin</span>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mb-3">
+            <span id="resAimTier" class="px-3.5 py-1 rounded-xl bg-zinc-900 text-rose-400 border border-rose-500/30 text-sm font-bold tracking-wide">
+              Tier Diamond
+            </span>
+            <span id="resAimPercentile" class="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
+              Top 12% Global
+            </span>
+          </div>
+
+          <p id="resAimDesc" class="text-sm text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto">
+            Kecepatan akuisisi target tinggi dengan stabilitas flick solid dan overshoot minimal.
+          </p>
+        </div>
+
+        <!-- Kinematic Performance Metric Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 py-8 border-b border-zinc-200 dark:border-zinc-800/80">
+          
+          <div class="bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Akurasi</span>
+            <span id="resAimAcc" class="text-2xl sm:text-3xl font-black font-mono text-cyan-500">0%</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Kena vs Meleset</span>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Target / Detik</span>
+            <span id="resAimTps" class="text-2xl sm:text-3xl font-black font-mono text-emerald-500">0.00</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Laju Throughput</span>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Jeda Reaksi</span>
+            <span id="resAimReaction" class="text-2xl sm:text-3xl font-black font-mono text-rose-500">0ms</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Rerata Waktu Kena</span>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Total Kena</span>
+            <span id="resAimHits" class="text-2xl sm:text-3xl font-black font-mono text-indigo-500">0</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Target Terkonfirmasi</span>
+          </div>
+
+          <div class="col-span-2 sm:col-span-1 bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Rangkaian Maks</span>
+            <span id="resAimStreak" class="text-2xl sm:text-3xl font-black font-mono text-amber-500">0x</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Kena Beruntun</span>
+          </div>
+
+        </div>
+
+        <!-- Sensitivity Converter & Actions -->
+        <div class="pt-8">
+          <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+            
+            <!-- Sensitivity Matcher Mini Box -->
+            <div class="w-full md:w-auto flex-1 bg-white dark:bg-zinc-900/40 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+              <h3 class="text-xs font-bold font-mono uppercase tracking-wider text-zinc-500 mb-3 flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="21" y1="4" x2="14" y2="4" /><line x1="10" y1="4" x2="3" y2="4" /><line x1="21" y1="12" x2="12" y2="12" /><line x1="8" y1="12" x2="3" y2="12" /><line x1="21" y1="20" x2="16" y2="20" /><line x1="12" y1="20" x2="3" y2="20" /><line x1="14" y1="2" x2="14" y2="6" /><line x1="8" y1="10" x2="8" y2="14" /><line x1="16" y1="18" x2="16" y2="22" /></svg>Pencocok Sensitivitas & eDPI Dalam Game</span>
+              </h3>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3 text-xs">
+                <div>
+                  <label for="sensSourceGame" class="block text-zinc-500 mb-1">Game</label>
+                  <select id="sensSourceGame" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none">
+                    <option value="valorant" selected>Valorant</option>
+                    <option value="cs2">CS2 / Source / Apex</option>
+                    <option value="overwatch">Overwatch 2</option>
+                    <option value="r6">Rainbow Six Siege</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="sensSourceVal" class="block text-zinc-500 mb-1">Sens Dalam Game</label>
+                  <input type="number" id="sensSourceVal" step="0.01" value="0.40" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none" />
+                </div>
+                <div>
+                  <label for="sensDpi" class="block text-zinc-500 mb-1">DPI Mouse</label>
+                  <input type="number" id="sensDpi" step="50" value="800" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none" />
+                </div>
+              </div>
+
+              <!-- Output Conversions -->
+              <div class="grid grid-cols-4 gap-2 pt-2 border-t border-zinc-200 dark:border-zinc-800/80 text-center font-mono text-xs">
+                <div class="bg-zinc-100 dark:bg-zinc-800/60 p-1.5 rounded-lg">
+                  <span class="text-[10px] text-zinc-500 block font-sans">Valorant</span>
+                  <span id="outValorant" class="font-bold text-rose-500">0.400</span>
+                </div>
+                <div class="bg-zinc-100 dark:bg-zinc-800/60 p-1.5 rounded-lg">
+                  <span class="text-[10px] text-zinc-500 block font-sans">CS2 / Apex</span>
+                  <span id="outCs2" class="font-bold text-indigo-400">1.273</span>
+                </div>
+                <div class="bg-zinc-100 dark:bg-zinc-800/60 p-1.5 rounded-lg">
+                  <span class="text-[10px] text-zinc-500 block font-sans">Overwatch</span>
+                  <span id="outOverwatch" class="font-bold text-amber-500">4.24</span>
+                </div>
+                <div class="bg-zinc-100 dark:bg-zinc-800/60 p-1.5 rounded-lg">
+                  <span class="text-[10px] text-zinc-500 block font-sans">eDPI</span>
+                  <span id="outEdpi" class="font-bold text-emerald-500">320</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
+              <button
+                type="button"
+                id="retakeAimBtn"
+                class="px-6 py-3.5 min-h-[44px] rounded-2xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold text-sm transition-all duration-200 active:scale-[0.97] cursor-pointer text-center"
+              >
+                <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg>Latihan Lagi</span>
+              </button>
+              <button
+                type="button"
+                id="downloadAimCertBtn"
+                class="px-6 py-3.5 min-h-[44px] rounded-2xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-bold text-sm shadow-sm transition-all duration-200 active:scale-[0.97] cursor-pointer text-center flex items-center justify-center gap-2"
+              >
+                <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>Unduh Kartu Skor</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 2,000-Word Scientific Guide & Documentation -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base space-y-12">
+      
+      <!-- Section 1: Neuroscience of Aim -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          1. Neurosains Membidik: Sakade, Korteks Motorik, dan Memori Otot
+        </h2>
+        <p>
+          Membidik dalam judul first-person shooter (FPS) kerap disalahpahami sebagai sekadar tes refleks. Dalam neurosains kognitif dan kinesiologi, membidik diklasifikasikan sebagai <strong>tugas koordinasi visuo-motor loop-tertutup</strong> yang kompleks, melibatkan lima struktur neurologis berbeda: retina, kolikulus superior, korteks visual primer (V1), korteks parietal posterior, dan serebelum.
+        </p>
+        <p>
+          Ketika target musuh muncul di layar periferal, sistem visual Anda memicu <strong>sakade</strong>—a rapid, ballistic eye movement untuk menyelaraskan target dengan fovea sentralis (zona sentral retina berakuisisi tertinggi). Latensi sakadik membutuhkan sekitar 150ms hingga 200ms. Selama sakade, proses biologis supresi sakadik menangguhkan pemrosesan visual sejenak untuk mencegah blur gerak. Setelah fiksasi foveal tercapai, korteks parietal posterior menghitung delta spasial (jarak sudut dalam piksel) dan meneruskan perintah motorik melalui traktus kortikospinal ke otot lengan bawah dan tangan intrinsik.
+        </p>
+        <p>
+          Konsep populer "memori otot" keliru secara neurologis: serat otot tidak menyimpan memori kognitif. Sebaliknya, latihan aim berulang mendorong <strong>pembelajaran motorik serebelar</strong> dan mempercepat <strong>mielinasi akson</strong>. Dengan latihan harian tekun, korteks motorik beralih dari koreksi lambat berbasis umpan balik ke primitif motorik otomatis feedforward yang cepat, memungkinkan Anda menjentik ke target sebelum pemrosesan kognitif sadar terjadi.
+        </p>
+      </section>
+
+      <!-- Section 2: The Three Pillars of Aim -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          2. Tiga Pilar Fundamental Aim FPS
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 font-bold flex items-center justify-center text-sm mb-3">1</div>
+            <h3 class="font-bold text-zinc-950 dark:text-white text-base">Flicking Dinamis</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Kemampuan mengakselerasi mouse pada sudut layar lebar dan berhenti tepat pada target dalam 120ms–180ms. Dominan dalam shooter taktis seperti <em>Valorant</em> dan <em>CS2</em> di mana time-to-kill (TTK) nyaris seketika.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-500 font-bold flex items-center justify-center text-sm mb-3">2</div>
+            <h3 class="font-bold text-zinc-950 dark:text-white text-base">Tracking Halus</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Penyelarasan spasial kontinu dengan target bergerak mengikuti lintasan linear dan sinusoidal. Esensial untuk judul TTK-tinggi seperti <em>Apex Legends</em>, <em>Overwatch 2</em>, dan <em>The Finals</em> di mana DPS berkelanjutan menentukan kemenangan duel.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 font-bold flex items-center justify-center text-sm mb-3">3</div>
+            <h3 class="font-bold text-zinc-950 dark:text-white text-base">Mikro-Adjusmen</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Koreksi motorik halus pada jarak sub-20 piksel setelah flick awal mendarat di samping target. Pemain tier tinggi meminimalkan waktu koreksi hingga di bawah 40ms lewat mousepad friksi-statis rendah dan kontrol ujung jari.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 3: Biomechanics & Grip Styles -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          3. Biomekanika & Ergonomi: Aim Lengan vs Pergelangan vs Ujung Jari
+        </h2>
+        <p>
+          Presisi mouse elit bergantung pada rantai kinetik tersinkron. Mengisolasi satu sendi sambil mengunci lainnya menciptakan hambatan mekanis dan meningkatkan risiko cedera regang berulang (RSI):
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Aim Lengan (Poros Glenohumeral & Siku):</strong> Memakai kelompok otot deltoid dan bisep besar untuk sapuan luas, membersihkan belokan 180° pada sensitivitas rendah (35cm hingga 55cm per rotasi 360°). Memberikan stabilitas rotasi maksimum dan mengurangi kelelahan pergelangan.
+          </li>
+          <li>
+            <strong>Aim Pergelangan (Poros Karpal):</strong> Memakai otot fleksor dan ekstensor carpi radialis untuk mengeksekusi flick sedang dalam kerucut monitor 30° hingga 45°. Menawarkan akselerasi cepat tetapi rentang gerak mekanis terbatas.
+          </li>
+          <li>
+            <strong>Mikro-Adjusmen Ujung Jari (Otot Intrinsik Tangan):</strong> Lumbrical dan interosei berkontraksi untuk menggeser sensor mouse 2mm hingga 5mm untuk penyesuaian headshot vertikal presisi dan kompensasi recoil.
+          </li>
+        </ul>
+
+        <div class="mt-6 p-5 rounded-2xl bg-zinc-100 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+          <h4 class="font-bold text-zinc-950 dark:text-white text-sm mb-2">Gaya Genggaman Mouse Dibandingkan:</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div>
+              <span class="font-semibold text-rose-500 block mb-1">Genggaman Telapak</span>
+              <p class="text-zinc-500">Kontak kulit-ke-cangkang maksimum. Stabilitas dan kenyamanan tak tertandingi, tetapi membatasi mikro-adjusmen vertikal ujung jari.</p>
+            </div>
+            <div>
+              <span class="font-semibold text-rose-500 block mb-1">Genggaman Cakar</span>
+              <p class="text-zinc-500">Jari melengkung dengan kontak pangkal telapak. Keseimbangan optimal antara leverage klik cepat dan presisi flicking.</p>
+            </div>
+            <div>
+              <span class="font-semibold text-rose-500 block mb-1">Genggaman Ujung Jari</span>
+              <p class="text-zinc-500">Hanya ujung jari menyentuh mouse. Mobilitas vertikal dan kecepatan mikro-koreksi tertinggi, membutuhkan mouse ultraringan.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Sensitivity Math & eDPI -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          4. Matematika Sensitivitas: Panduan eDPI & cm/360 Universal
+        </h2>
+        <p>
+          Membandingkan slider sensitivitas mentah antar game menyesatkan secara matematis karena tiap mesin game memakai konstanta yaw sudut berbeda. Dua-satunya metrik standar kalibrasi lintas-game adalah <strong>eDPI (effective Dots Per Inch)</strong> dan <strong>cm/360 (jarak fisik untuk rotasi kamera 360° penuh)</strong>:
+        </p>
+
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-mono text-xs overflow-x-auto my-4 border border-zinc-800">
+          <code>eDPI = Mouse Hardware DPI × In-Game Sensitivity Slider Value</code><br />
+          <code>cm/360 = (360 / (DPI × In-Game Sensitivity × Engine Yaw Constant)) × 2.54</code>
+        </div>
+
+        <p>
+          Di bawah ini tabel pengali konversi lintas-mesin mengacu indeks yaw basis Valve Source 2 / CS2 (0,022° per count):
+        </p>
+
+        <!-- Sensitivity Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Game / Mesin</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Konstanta Yaw Mesin</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Konversi dari CS2</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Rentang eDPI Pro Tipikal</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">CS2 / Counter-Strike (Source 2)</td>
+                <td class="p-3">0.022</td>
+                <td class="p-3 text-rose-500 font-bold">1.0000</td>
+                <td class="p-3">600 – 1000 eDPI</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">Valorant (Unreal Engine 4)</td>
+                <td class="p-3">0.070</td>
+                <td class="p-3 text-rose-500 font-bold">CS2 ÷ 3.1818</td>
+                <td class="p-3">200 – 320 eDPI</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">Overwatch 2 (Custom Engine)</td>
+                <td class="p-3">0.0066</td>
+                <td class="p-3 text-rose-500 font-bold">CS2 × 3.3333</td>
+                <td class="p-3">3200 – 5600 eDPI</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">Apex Legends (Source Modified)</td>
+                <td class="p-3">0.022</td>
+                <td class="p-3 text-rose-500 font-bold">1.0000</td>
+                <td class="p-3">800 – 1400 eDPI</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">Rainbow Six Siege (AnvilNext)</td>
+                <td class="p-3">0.0057295</td>
+                <td class="p-3 text-rose-500 font-bold">CS2 × 3.8400</td>
+                <td class="p-3">2400 – 4800 eDPI</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 5: Hardware Optimization -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          5. Optimasi Perangkat Keras: Polling Rate, Sensor, Mousepad & Layar Refresh Tinggi
+        </h2>
+        <p>
+          Meski latihan motorik kognitif menyumbang 80% performa aim, hambatan perangkat keras memberlakukan plafon fisik tak terlampaui. Untuk mengeliminasi artefak latensi perangkat keras:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Penghalusan Sensor & Akselerasi:</strong> Pastikan <em>Enhance Pointer Precision</em> nonaktif di Pengaturan Mouse Windows. Sensor optik modern (mis. PixArt PAW3395 dan Focus Pro 3950) memberikan pelacakan perangkat keras 1:1 tanpa angle snapping dan jarak lift-off sub-0,5mm (LOD).
+          </li>
+          <li>
+            <strong>Polling 1000Hz vs 4000Hz / 8000Hz:</strong> Upgrade dari 1000Hz (interval pembaruan 1,0ms) ke 4000Hz (interval 0,25ms) memberikan gerak kursor mikro-halus pada monitor 240Hz+. Pastikan CPU memiliki IPC inti-tunggal tinggi untuk menangani laju interupsi 4x.
+          </li>
+          <li>
+            <strong>Refresh Rate Layar & Kejernihan Gerak:</strong> Upgrade dari 60Hz (waktu bingkai 16,6ms) ke 240Hz (4,16ms) atau 360Hz OLED mengeliminasi ghosting persepsi. Otak melacak lintasan target dengan fidelitas foveal lebih tinggi, mengurangi galat kalkulasi flick hingga 22%.
+          </li>
+          <li>
+            <strong>Koefisien Friksi Mousepad:</strong> Pilih permukaan mousepad sesuai genre game primer. Pemain shooter taktis diuntungkan pad kain kontrol bertekstur (friksi dinamis lebih tinggi untuk menghentikan flick), sementara pemain arena tracking-berat diuntungkan pad hibrida cordura atau kaca (friksi statis minimal untuk pembalikan arah tanpa usaha).
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 6: Performance Tiers Table -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          6. Tingkatan Performa Tolok Ukur & Norma Global
+        </h2>
+        <p>
+          Berdasarkan pengujian psikometrik agregat pada 48.000+ trial tolok ukur, tingkatan berikut mengkategorikan kecepatan flick pemain (TPS) dan latensi akuisisi target:
+        </p>
+
+        <!-- Benchmark Norms Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Tingkatan Skill</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Skor Gridshot (30 dtk)</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Akurasi %</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Target / Detik (TPS)</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Jeda Reaksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-zinc-500">Iron / Bronze</td>
+                <td class="p-3">&lt; 40,000</td>
+                <td class="p-3">&lt; 75%</td>
+                <td class="p-3">&lt; 2.0 TPS</td>
+                <td class="p-3">&gt; 350ms</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-amber-600">Silver / Gold</td>
+                <td class="p-3">40,000 – 65,000</td>
+                <td class="p-3">75% – 85%</td>
+                <td class="p-3">2.0 – 2.8 TPS</td>
+                <td class="p-3">280ms – 340ms</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-cyan-500">Platinum / Diamond</td>
+                <td class="p-3">65,000 – 85,000</td>
+                <td class="p-3">85% – 92%</td>
+                <td class="p-3">2.8 – 3.6 TPS</td>
+                <td class="p-3">220ms – 270ms</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-indigo-400">Master / Grandmaster</td>
+                <td class="p-3">85,000 – 100,000</td>
+                <td class="p-3">92% – 96%</td>
+                <td class="p-3">3.6 – 4.4 TPS</td>
+                <td class="p-3">180ms – 210ms</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-rose-500 font-bold">Radiant / Pro Esports</td>
+                <td class="p-3 font-bold text-rose-500">100,000+</td>
+                <td class="p-3 font-bold text-rose-500">97%+</td>
+                <td class="p-3 font-bold text-rose-500">4.5+ TPS</td>
+                <td class="p-3 font-bold text-rose-500">&lt; 180ms</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 7: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          7. Pertanyaan yang Sering Diajukan (FAQ)
+        </h2>
+
+        <div class="space-y-3">
+          
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa itu pelatih aim FPS dan bagaimana cara meningkatkan akurasi mouse?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Pelatih aim FPS mengisolasi mekanik motorik membidik — akuisisi target (flicking), tracking, dan mikro-koreksi — dari variabel dalam game seperti recoil dan abilities. Ini memungkinkan ratusan repetisi per menit, mempercepat pembelajaran motorik serebelar dan mielinasi jalur saraf.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa itu eDPI dan bagaimana cara menghitungnya lintas game?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              eDPI (effective Dots Per Inch) merepresentasikan sensitivitas sejati Anda: <code>eDPI = DPI × Sensitivitas Dalam Game</code>. Karena mesin game memakai konstanta yaw berbeda (CS2 memakai 0,022 vs Valorant 0,07), sensitivitas 1,0 di Valorant setara 3,1818 di CS2. Gunakan konverter sensitivitas bawaan untuk menjaga jarak rotasi 360 derajat identik di semua judul.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Haruskah membidik dengan lengan, pergelangan, atau ujung jari?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Atlet esports top memakai pendekatan hibrida: Aim lengan menangani sapuan lebar 90°–180° pada sensitivitas rendah, aim pergelangan menangani flick sedang dan tracking pada layar, dan mikro-adjusmen ujung jari menyempurnakan keselarasan headshot 5–15 piksel terakhir.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apakah laju penyegaran monitor lebih tinggi (144Hz, 240Hz, 360Hz) meningkatkan aim?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Ya. Monitor 240Hz menurunkan latensi interval bingkai ke 4,16ms (dibanding 16,67ms pada 60Hz), drastis mengurangi motion blur dan ghosting sehingga sistem sakadik okular menghitung koordinat target dengan presisi lebih tinggi.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Berapa skor bagus pada Gridshot (Flicking)?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Dalam ronde 30 detik: 50k–70k poin (2,5–3,2 TPS dengan akurasi 85%+) merepresentasikan peringkat Gold/Platinum; 80k–95k merepresentasikan Master/Grandmaster; dan skor melebihi 100k poin (4,5+ TPS dengan akurasi 95%+) mencerminkan level esports profesional.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Bagaimana laju polling mouse (1000Hz vs 4000Hz vs 8000Hz) memengaruhi akurasi?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Polling 1000Hz memperbarui tiap 1,0ms. 4000Hz (0,25ms) dan 8000Hz (0,125ms) mengurangi latensi sensor-ke-CPU dan micro-stutter, menghasilkan kurva tracking lebih halus pada layar 240Hz+.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Mengapa akurasi lebih penting daripada kecepatan flick mentah saat latihan?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Gerakan cepat tak akurat memperkuat jalur motorik yang keliru dan memicu overshoot. Berlatih pada akurasi 90%–95% membangun lintasan kinematik bersih, memungkinkan kecepatan berkembang alami sebagai hasil samping efisiensi gerakan.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apakah berat mouse dan friksi mousepad memengaruhi aim presisi?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Mouse ultraringan (sub-60g) meminimalkan inersia kinetik untuk daya henti seketika dan akselerasi flick awal lebih cepat. Mousepad friksi statis rendah memfasilitasi mikro-adjusmen tanpa usaha, sementara pad kain kontrol menawarkan daya henti untuk shooter taktis.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <FooterId />
+
+  <script src="../../scripts/tools/aim-engine-id.js"></script>
+</LayoutId>

@@ -13,57 +13,109 @@ const {
   ruPath,
 } = Astro.props;
 
-const normalizePath = (p: string) => p.replace(/\/$/, '') || '/';
+const normalizePath = (p: string) => p.replace(/\/$/, "") || "/";
 const currentNorm = normalizePath(currentPath);
-const basePath = currentNorm.replace(/^\/id(?=\/|$)/, '') || '/';
 
-const resolvedEnHref = enPath
-  ? enPath
-  : basePath === '/'
-    ? '/'
-    : basePath;
+// Build-time manifest of every route that actually exists under a locale.
+const buildLocaleRouteSet = (modules: Record<string, unknown>, locale: string) => {
+  const routes = new Set<string>([`/${locale}`]);
+  for (const filePath of Object.keys(modules)) {
+    const slug = filePath
+      .replace(/^.*\/pages\/[^/]+\//, "")
+      .replace(/\.astro$/, "")
+      .replace(/(^|\/)index$/, "");
+    routes.add(normalizePath(`/${locale}/${slug}`));
+  }
+  return routes;
+};
 
-const resolvedIdHref = idPath
-  ? idPath === '/'
-    ? '/id'
-    : idPath.startsWith('/id')
-      ? idPath
-      : `/id${idPath}`
-  : currentNorm.startsWith('/id')
-    ? currentNorm
-    : currentNorm === '/'
-      ? '/id'
-      : `/id${currentNorm}`;
+const idRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/id/**/*.astro"), "id");
+const ruRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/ru/**/*.astro"), "ru");
 
-const resolvedRuHref = ruPath
-  ? ruPath === '/'
-    ? '/ru'
-    : ruPath.startsWith('/ru')
-      ? ruPath
-      : `/ru${ruPath}`
-  : enPath
-    ? enPath === '/'
-      ? '/ru'
-      : enPath.startsWith('/ru')
-        ? enPath
-        : `/ru${enPath}`
-    : basePath === '/'
-      ? '/ru'
-      : basePath.startsWith('/ru')
-        ? basePath
-        : `/ru${basePath}`;
+// An explicit prop always wins; otherwise reuse the current slug only when the target locale actually publishes it
+const resolveLocaleTarget = (routes: Set<string>, locale: string, explicit?: string) => {
+  if (explicit) {
+    if (explicit === "/") return `/${locale}`;
+    return explicit.startsWith(`/${locale}`) ? explicit : `/${locale}${explicit}`;
+  }
+  if (currentNorm === "/id") return `/${locale}`;
+  const candidate = normalizePath(`/${locale}${currentNorm}`);
+  return routes.has(candidate) ? candidate : `/${locale}`;
+};
 
-const isHomeActive = currentNorm === '/id';
-const isAssessmentsActive = ['/id/tes', '/id/tes-singkat', '/id/latihan'].some(
-  (p) => currentNorm === p || (p !== '/id' && currentNorm.startsWith(p))
-);
+const enHref = enPath || currentNorm || "/";
+const idHref = resolveLocaleTarget(idRouteSet, "id", idPath);
+const ruHref = resolveLocaleTarget(ruRouteSet, "ru", ruPath);
 
-const isGamesActive = currentNorm === '/id/permainan' || currentNorm.startsWith('/id/permainan/');
-const isLeaderboardActive = currentNorm === '/id/papan-peringkat';
-const isBlogActive = currentNorm === '/id/blog' || currentNorm.startsWith('/id/blog/');
-const isScienceActive = ['/id/tabel-skor-iq', '/id/kalkulator-persentil-iq', '/id/metodologi'].some(
-  (p) => currentNorm === p
-);
+const activeLangCode =
+  currentNorm === "/id" || currentNorm.startsWith("/id/")
+    ? "ID"
+    : currentNorm === "/ru" || currentNorm.startsWith("/ru/")
+      ? "RU"
+      : "EN";
+
+const isHomeActive = currentNorm === "/id" || currentNorm === "/id/";
+const isTestsActive = [
+  "/id/tes",
+  "/id/test",
+  "/id/tes-singkat",
+  "/id/quick-test",
+  "/id/latihan",
+  "/id/practice",
+  "/id/tes-buta-warna",
+  "/id/color-blind-test",
+  "/id/tes-waktu-reaksi",
+  "/id/reaction-time-test",
+  "/id/tes-adhd",
+  "/id/adhd-test",
+  "/id/tes-depresi",
+  "/id/depression-test",
+  "/id/tes-kecemasan",
+  "/id/anxiety-test",
+  "/id/tes-autisme",
+  "/id/autism-test",
+  "/id/tes-pendengaran",
+  "/id/hearing-test",
+  "/id/tes-mata",
+  "/id/eye-test",
+].some((p) => currentNorm === p || currentNorm.startsWith(p + "/"));
+
+const isGamesActive =
+  currentNorm === "/id/permainan" ||
+  currentNorm.startsWith("/id/permainan/") ||
+  currentNorm === "/id/games" ||
+  currentNorm.startsWith("/id/games/") ||
+  currentNorm === "/id/tes-kecepatan-mengetik" ||
+  currentNorm === "/id/typing-test" ||
+  currentNorm === "/id/pelatih-akurasi-aim" ||
+  currentNorm === "/id/aim-trainer" ||
+  currentNorm === "/id/kuis-bendera" ||
+  currentNorm === "/id/kuis-bendera-dunia" ||
+  currentNorm === "/id/flag-quiz";
+
+const isToolsActive = [
+  "/id/kalkulator-tidur",
+  "/id/sleep-calculator",
+  "/id/generator-white-noise-cokelat",
+  "/id/brown-noise",
+  "/id/kalkulator-kalori",
+  "/id/calorie-calculator",
+  "/id/tes-mikrofon",
+  "/id/mic-test",
+  "/id/memento-mori",
+  "/id/lingkaran-kendali",
+  "/id/circle-of-control",
+  "/id/tabel-skor-iq",
+  "/id/iq-score-chart",
+  "/id/kalkulator-persentil-iq",
+  "/id/iq-percentile-calculator",
+  "/id/metodologi",
+  "/id/methodology",
+].some((p) => currentNorm === p || currentNorm.startsWith(p + "/"));
+
+const isLeaderboardActive = currentNorm === "/id/papan-peringkat" || currentNorm === "/id/leaderboard";
+const isBlogActive =
+  currentNorm === "/id/blog" || currentNorm.startsWith("/id/blog/");
 
 const mobileAccordionSections = [
   {
@@ -72,27 +124,17 @@ const mobileAccordionSections = [
     title: "Asesmen & Tes",
     description: "Diagnostik kognitif & sensori",
     links: [
-      {
-        href: "/id/tes",
-        label: "Tes IQ Lengkap (20 menit)",
-        badge: "Resmi",
-        desc: "24 soal 4 domain CHC berskala psikometri",
-        iconKey: "target",
-      },
-      {
-        href: "/id/tes-singkat",
-        label: "Skrining Cepat (10 menit)",
-        badge: "Cepat",
-        desc: "12 soal adaptif untuk skrining kognitif cepat",
-        iconKey: "bolt",
-      },
-      {
-        href: "/id/latihan",
-        label: "Pusat Latihan Mandiri",
-        badge: "",
-        desc: "Latihan soal santai tanpa batas waktu",
-        iconKey: "puzzle",
-      },
+      { href: "/id/tes", label: "Tes IQ Lengkap (20 menit)", badge: "Resmi", desc: "24 soal 4 domain CHC", iconKey: "target" },
+      { href: "/id/tes-singkat", label: "Skrining Cepat (10 menit)", badge: "Cepat", desc: "12 soal adaptif cepat", iconKey: "bolt" },
+      { href: "/id/latihan", label: "Pusat Latihan Mandiri", badge: "", desc: "Latihan soal tanpa batas waktu", iconKey: "puzzle" },
+      { href: "/id/tes-buta-warna", label: "Tes Buta Warna", badge: "Baru", desc: "22 pelat Ishihara merah-hijau", iconKey: "eye" },
+      { href: "/id/tes-waktu-reaksi", label: "Tes Waktu Reaksi", badge: "Baru", desc: "Kecepatan reaksi visual (ms)", iconKey: "timer" },
+      { href: "/id/tes-adhd", label: "Tes ADHD Dewasa", badge: "Baru", desc: "Kuesioner WHO ASRS v1.1", iconKey: "brain" },
+      { href: "/id/tes-depresi", label: "Tes Depresi (PHQ-9)", badge: "Baru", desc: "Skrining PHQ-9 tervalidasi klinis", iconKey: "clipboard" },
+      { href: "/id/tes-kecemasan", label: "Tes Kecemasan (GAD-7)", badge: "Baru", desc: "Skrining GAD-7 tervalidasi klinis", iconKey: "shield" },
+      { href: "/id/tes-autisme", label: "Tes Autisme (AQ-10)", badge: "Baru", desc: "Kuesioner AQ-10", iconKey: "infinity" },
+      { href: "/id/tes-pendengaran", label: "Tes Pendengaran", badge: "Baru", desc: "Audiometri nada murni klinis", iconKey: "sound" },
+      { href: "/id/tes-mata", label: "Tes Mata", badge: "Baru", desc: "Bagan Snellen & astigmatisme", iconKey: "glasses" },
     ],
   },
   {
@@ -101,131 +143,138 @@ const mobileAccordionSections = [
     title: "Latihan & Peringkat",
     description: "Permainan kognitif & skor global",
     links: [
-      {
-        href: "/id/permainan",
-        label: "Permainan Kognitif",
-        badge: "Hub",
-        desc: "Latihan memori, refleks & kecepatan berpikir",
-        iconKey: "gamepad",
-      },
-      {
-        href: "/id/papan-peringkat",
-        label: "Papan Peringkat Global",
-        badge: "",
-        desc: "Bandingkan peringkat persentil seluruh dunia",
-        iconKey: "trophy",
-      },
-      {
-        href: "/id/profil",
-        label: "Profil Kognitif Saya",
-        badge: "",
-        desc: "Riwayat tes dan grafik radar domain",
-        iconKey: "user",
-      },
+      { href: "/id/tes-kecepatan-mengetik", label: "Tes Kecepatan Mengetik", badge: "Baru", desc: "WPM & akurasi mengetik", iconKey: "keyboard" },
+      { href: "/id/kuis-bendera", label: "Kuis Bendera Dunia", badge: "Baru", desc: "195+ negara, sprint 20 soal", iconKey: "flag" },
+      { href: "/id/permainan/click-speed-test", label: "Tes Kecepatan Klik (CPS)", badge: "Baru", desc: "Klik per detik (CPS)", iconKey: "mouse" },
+      { href: "/id/pelatih-akurasi-aim", label: "Pelatih Akurasi Aim", badge: "Baru", desc: "Latihan akurasi & refleks", iconKey: "crosshair" },
+      { href: "/id/permainan", label: "Semua Permainan Kognitif", badge: "Hub", desc: "Memori, refleks & kecepatan", iconKey: "gamepad" },
+      { href: "/id/papan-peringkat", label: "Papan Peringkat Global", badge: "", desc: "Bandingkan persentil global", iconKey: "trophy" },
     ],
   },
   {
-    id: "science",
+    id: "tools",
     iconKey: "tools",
     title: "Sains & Referensi",
     description: "Statistik, kalkulator & metodologi",
     links: [
-      {
-        href: "/id/tabel-skor-iq",
-        label: "Tabel Distribusi Skor IQ",
-        badge: "",
-        desc: "Kurva lonceng Gauss & simpangan baku",
-        iconKey: "chart",
-      },
-      {
-        href: "/id/kalkulator-persentil-iq",
-        label: "Kalkulator Persentil",
-        badge: "",
-        desc: "Konversi skor IQ ke peringkat persentil",
-        iconKey: "percent",
-      },
-      {
-        href: "/id/metodologi",
-        label: "Metodologi Psikometri",
-        badge: "2PL IRT",
-        desc: "Kalibrasi 2PL IRT & teori CHC",
-        iconKey: "microscope",
-      },
-      {
-        href: "/id/blog",
-        label: "Artikel Riset & Blog",
-        badge: "",
-        desc: "Psikometrika & sains kognitif modern",
-        iconKey: "book",
-      },
+      { href: "/id/kalkulator-tidur", label: "Kalkulator Tidur", badge: "Baru", desc: "Siklus tidur 90 menit", iconKey: "moon" },
+      { href: "/id/generator-white-noise-cokelat", label: "Generator White Noise", badge: "Baru", desc: "Brown, pink & white noise", iconKey: "headphones" },
+      { href: "/id/kalkulator-kalori", label: "Kalkulator Kalori & TDEE", badge: "Baru", desc: "Formula Mifflin-St Jeor", iconKey: "flame" },
+      { href: "/id/tes-mikrofon", label: "Tes Mikrofon", badge: "Baru", desc: "Spektrogram & kualitas suara", iconKey: "mic" },
+      { href: "/id/memento-mori", label: "Kalender Memento Mori", badge: "Baru", desc: "Hidup dalam minggu", iconKey: "calendar" },
+      { href: "/id/lingkaran-kendali", label: "Lingkaran Kendali", badge: "Baru", desc: "Refleksi Stoik privat", iconKey: "circle" },
+      { href: "/id/tabel-skor-iq", label: "Tabel Distribusi Skor IQ", badge: "", desc: "Kurva lonceng Gauss", iconKey: "chart" },
+      { href: "/id/kalkulator-persentil-iq", label: "Kalkulator Persentil", badge: "", desc: "Konversi skor ke persentil", iconKey: "percent" },
+      { href: "/id/metodologi", label: "Metodologi Psikometri", badge: "2PL IRT", desc: "Kalibrasi 2PL IRT & teori CHC", iconKey: "microscope" },
+      { href: "/id/blog", label: "Artikel Riset & Blog", badge: "", desc: "Psikometrika & sains kognitif", iconKey: "book" },
+      { href: "/id/profil", label: "Profil Kognitif Saya", badge: "", desc: "Riwayat tes & radar domain", iconKey: "user" },
     ],
   },
 ];
 ---
 
-<header class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-zinc-950/85 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-200">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
-    
-    <!-- 1. Logo Brand -->
-    <a href="/id" class="flex items-center gap-2.5 group shrink-0" aria-label="Beranda FreeIQExam Indonesia">
-      <svg class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform duration-200" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="16" cy="9.5" r="5.5" class="fill-blue-600 dark:fill-blue-500" />
-        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600" />
-        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400" />
+<header
+  class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-zinc-950/85 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-200"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4"
+  >
+    <!-- 1. Brand Logo: Minimalist 3-Dot Cognitive Mark + Wordmark -->
+    <a
+      href="/id"
+      class="flex items-center gap-2.5 group shrink-0 transition-opacity duration-200 hover:opacity-90 active:scale-[0.98]"
+      aria-label="Beranda FreeIQExam Indonesia"
+    >
+      <svg
+        class="w-8 h-8 sm:w-9 sm:h-9 shrink-0"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle
+          cx="16"
+          cy="9.5"
+          r="5.5"
+          class="fill-blue-600 dark:fill-blue-500"></circle>
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600"
+        ></circle>
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400"
+        ></circle>
       </svg>
-      <span class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-zinc-950 dark:text-white leading-tight">
+      <span
+        class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-zinc-950 dark:text-white leading-tight"
+      >
         Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
-      </span>
-      <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase rounded border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 ml-0.5">
-        ID
       </span>
     </a>
 
-    <!-- 2. Navigasi Desktop -->
-    <nav class="hidden lg:flex items-center gap-6 xl:gap-7 text-[13.5px] font-medium" aria-label="Navigasi Utama">
-      
-      <!-- Beranda -->
+    <!-- 2. Center Desktop Navigation Links (3 Core Dropdowns: Tests, Games, Tools) -->
+    <nav
+      class="hidden lg:flex items-center gap-5 xl:gap-7 text-[13.5px] font-medium"
+      aria-label="Navigasi Utama"
+    >
+      <!-- Link: Home -->
       <a
         href="/id"
         class={`py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
           isHomeActive
-            ? 'text-blue-600 dark:text-blue-400 font-semibold'
-            : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
         }`}
-        aria-current={isHomeActive ? 'page' : undefined}
+        aria-current={isHomeActive ? "page" : undefined}
       >
-        Beranda
+        Home
       </a>
 
-      <!-- Dropdown Asesmen -->
-      <div class="relative group" id="nav-dropdown-assessments">
+      <!-- Dropdown 1: Tests ▾ (Asesmen & Tes) -->
+      <div class="relative group" id="nav-dropdown-tests">
         <button
           type="button"
           class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md cursor-pointer ${
-            isAssessmentsActive
-              ? 'text-blue-600 dark:text-blue-400 font-semibold'
-              : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+            isTestsActive
+              ? "text-blue-600 dark:text-blue-400 font-semibold"
+              : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
           }`}
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <span>Asesmen</span>
-          <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          <span>Tes</span>
+          <svg
+            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            ></path>
           </svg>
         </button>
 
-        <div class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50">
-          <div class="w-80 p-2 rounded-2xl bg-white/95 dark:bg-[#0c0d12]/95 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/60">
-            <div class="px-3 pt-2 pb-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-white/5 mb-1.5">
-              Diagnostik Kognitif
+        <!-- Tests Flyout Menu (2-Column Apple Frosted Glass Grid) -->
+        <div
+          class="absolute top-full -left-6 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50"
+        >
+          <div
+            class="w-[580px] max-w-[calc(100vw-3rem)] p-2 rounded-2xl bg-white/95 dark:bg-[#0c0d12]/95 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/60"
+          >
+            <div class="px-3 pt-2 pb-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 border-b border-zinc-100 dark:border-white/5 mb-1.5">
+              Asesmen & Tes
             </div>
-            <div class="space-y-0.5">
+            <div class="grid grid-cols-2 gap-1">
+              <!-- Full IQ Exam -->
               <a
                 href="/id/tes"
                 class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
               >
-                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>
                   </svg>
@@ -233,21 +282,24 @@ const mobileAccordionSections = [
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-1.5">
                     <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                      Tes IQ Lengkap (20m)
+                      Tes IQ Lengkap (20 menit)
                     </span>
-                    <span class="px-1.5 py-0.5 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono text-[10px] font-medium tracking-wide uppercase">Resmi</span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono text-xs font-medium tracking-wide uppercase">Resmi</span>
                   </div>
-                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
                     24 soal 4 domain CHC
                   </div>
                 </div>
               </a>
 
+              <!-- Quick Screener -->
               <a
                 href="/id/tes-singkat"
                 class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
               >
-                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                   </svg>
@@ -255,18 +307,218 @@ const mobileAccordionSections = [
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-1.5">
                     <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                      Skrining Cepat (10m)
+                      Skrining Cepat (10 menit)
                     </span>
-                    <span class="px-1.5 py-0.5 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono text-[10px] font-medium tracking-wide uppercase">Cepat</span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono text-xs font-medium tracking-wide uppercase">Cepat</span>
                   </div>
-                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
                     12 soal adaptif cepat
+                  </div>
+                </div>
+              </a>
+
+              <!-- Tes Buta Warna -->
+              <a
+                href="/id/tes-buta-warna"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes Buta Warna
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    22 pelat Ishihara merah-hijau
+                  </div>
+                </div>
+              </a>
+
+              <!-- Tes Waktu Reaksi Benchmark -->
+              <a
+                href="/id/tes-waktu-reaksi"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M18.5 5.5l1.5-1.5"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes Waktu Reaksi
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Kecepatan reaksi visual (ms)
+                  </div>
+                </div>
+              </a>
+
+              <!-- Tes ADHD Dewasa -->
+              <a
+                href="/id/tes-adhd"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9.5 2A4.5 4.5 0 0 0 5 6.5c0 .77.19 1.5.53 2.14A4 4 0 0 0 4 12a4 4 0 0 0 1.53 3.36C5.19 16 5 16.73 5 17.5A4.5 4.5 0 0 0 9.5 22c.5 0 .97-.08 1.41-.24.58-.2 1.09-.6 1.09-1.26v-17c0-.66-.51-1.06-1.09-1.26A4.52 4.52 0 0 0 9.5 2z"/><path d="M14.5 2A4.5 4.5 0 0 1 19 6.5c0 .77-.19 1.5-.53 2.14A4 4 0 0 1 20 12a4 4 0 0 1-1.53 3.36c.34.64.53 1.37.53 2.14A4.5 4.5 0 0 1 14.5 22c-.5 0-.97-.08-1.41-.24-.58-.2-1.09-.6-1.09-1.26v-17c0-.66.51-1.06 1.09-1.26.44-.16.91-.24 1.41-.24z"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes ADHD Dewasa
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Kuesioner WHO ASRS v1.1
+                  </div>
+                </div>
+              </a>
+
+              <!-- Tes Depresi (PHQ-9) (PHQ-9) -->
+              <a
+                href="/id/tes-depresi"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6"/><path d="M9 16h4"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes Depresi (PHQ-9)
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Skrining PHQ-9 tervalidasi klinis
+                  </div>
+                </div>
+              </a>
+
+              <!-- Tes Kecemasan (GAD-7) (GAD-7) -->
+              <a
+                href="/id/tes-kecemasan"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes Kecemasan (GAD-7)
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Skrining GAD-7 tervalidasi klinis
+                  </div>
+                </div>
+              </a>
+
+              <!-- Tes Autisme (AQ-10) (AQ-10) -->
+              <a
+                href="/id/tes-autisme"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.178 8c2.496 0 4.322 1.766 4.322 4s-1.826 4-4.322 4c-2.268 0-4.043-1.63-6.178-4 2.135-2.37 3.91-4 6.178-4z"/><path d="M5.822 8C3.326 8 1.5 9.766 1.5 12s1.826 4 4.322 4c2.268 0 4.043-1.63 6.178-4-2.135-2.37-3.91-4-6.178-4z"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes Autisme (AQ-10)
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Kuesioner AQ-10
+                  </div>
+                </div>
+              </a>
+
+              <!-- Tes Pendengaran Test -->
+              <a
+                href="/id/tes-pendengaran"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes Pendengaran
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Audiometri nada murni klinis
+                  </div>
+                </div>
+              </a>
+
+              <!-- Visual Acuity & Eye Test -->
+              <a
+                href="/id/tes-mata"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="14" r="4"/><circle cx="18" cy="14" r="4"/><path d="M10 14h4"/><path d="M2 14l2-6h16l2 6"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes Mata
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Bagan Snellen & astigmatisme
                   </div>
                 </div>
               </a>
             </div>
 
-            <!-- Footer Dock: Latihan Mandiri -->
+            <!-- Footer Dock: Practice Hub -->
             <div class="mt-1.5 pt-2 border-t border-zinc-100 dark:border-white/5">
               <a
                 href="/id/latihan"
@@ -280,177 +532,450 @@ const mobileAccordionSections = [
                   </span>
                   <span class="font-medium text-zinc-800 dark:text-zinc-200 group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Pusat Latihan Mandiri</span>
                 </span>
-                <span class="text-zinc-400 dark:text-zinc-500 font-mono text-xs group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Buka latihan →</span>
+                <span class="text-zinc-600 dark:text-zinc-400 font-mono text-xs group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Buka latihan →</span>
               </a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Permainan -->
-      <a
-        href="/id/permainan"
-        class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
-          isGamesActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
-        }`}
-        aria-current={isGamesActive ? 'page' : undefined}
-      >
-        Permainan
-      </a>
-
-      <!-- Papan Peringkat -->
-      <a
-        href="/id/papan-peringkat"
-        class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
-          isLeaderboardActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
-        }`}
-        aria-current={isLeaderboardActive ? 'page' : undefined}
-      >
-        Peringkat
-      </a>
-
-      <!-- Dropdown Sains & Alat -->
-      <div class="relative group" id="nav-dropdown-science">
+      <!-- Dropdown 2: Games ▾ (Latihan & Peringkat) -->
+      <div class="relative group" id="nav-dropdown-games">
         <button
           type="button"
           class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md cursor-pointer ${
-            isScienceActive
-              ? 'text-blue-600 dark:text-blue-400 font-semibold'
-              : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+            isGamesActive
+              ? "text-blue-600 dark:text-blue-400 font-semibold"
+              : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
           }`}
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <span>Sains &amp; Alat</span>
-          <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          <span>Permainan</span>
+          <svg
+            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            ></path>
           </svg>
         </button>
 
-        <div class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50">
-          <div class="w-80 p-2 rounded-2xl bg-white/95 dark:bg-[#0c0d12]/95 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/60">
-            <div class="px-3 pt-2 pb-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-white/5 mb-1.5">
-              Statistik &amp; Psikometrika
+        <!-- Games Flyout Menu -->
+        <div
+          class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50"
+        >
+          <div
+            class="w-84 p-2 rounded-2xl bg-white/95 dark:bg-[#0c0d12]/95 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/60"
+          >
+            <div class="px-3 pt-2 pb-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 border-b border-zinc-100 dark:border-white/5 mb-1.5">
+              Latihan & Peringkat
             </div>
             <div class="space-y-0.5">
+              <!-- Typing Speed Test -->
               <a
-                href="/id/tabel-skor-iq"
+                href="/id/tes-kecepatan-mengetik"
                 class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
               >
-                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                    <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/>
                   </svg>
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-1.5">
                     <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                      Tabel Distribusi Skor IQ
+                      Tes Kecepatan Mengetik
                     </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
                   </div>
-                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
-                    Kurva lonceng Gauss normal
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    WPM & akurasi mengetik
                   </div>
                 </div>
               </a>
 
+              <!-- Kuis Bendera Dunia -->
               <a
-                href="/id/kalkulator-persentil-iq"
+                href="/id/kuis-bendera"
                 class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
               >
-                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>
                   </svg>
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-1.5">
                     <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                      Kalkulator Persentil
+                      Kuis Bendera Dunia
                     </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
                   </div>
-                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
-                    Konversi skor IQ ke persentil
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    195+ negara, sprint 20 soal
                   </div>
                 </div>
               </a>
 
+              <!-- Tes Kecepatan Klik (CPS) -->
               <a
-                href="/id/metodologi"
+                href="/id/permainan/click-speed-test"
                 class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
               >
-                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0-7-7h1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>
+                    <rect x="6" y="3" width="12" height="18" rx="6"/><line x1="12" y1="7" x2="12" y2="11"/>
                   </svg>
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-1.5">
                     <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                      Metodologi Psikometri
+                      Tes Kecepatan Klik (CPS)
                     </span>
-                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-[10px] font-medium text-zinc-500 dark:text-zinc-400 tracking-wide uppercase">2PL IRT</span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
                   </div>
-                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
-                    Kalibrasi 2PL IRT & teori CHC
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Klik per detik (CPS)
                   </div>
                 </div>
+              </a>
+
+              <!-- Pelatih Akurasi Aim -->
+              <a
+                href="/id/pelatih-akurasi-aim"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="3" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="21" y2="12"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Pelatih Akurasi Aim
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Latihan akurasi & refleks
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <!-- Footer Dock: All 11 Cognitive Games -->
+            <div class="mt-1.5 pt-2 border-t border-zinc-100 dark:border-white/5">
+              <a
+                href="/id/permainan"
+                class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/dock"
+              >
+                <span class="flex items-center gap-2.5">
+                  <span class="w-5 h-5 rounded flex items-center justify-center text-zinc-400 group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4m-2-2v4m10-2h.01M14 10h.01"/>
+                    </svg>
+                  </span>
+                  <span class="font-medium text-zinc-800 dark:text-zinc-200 group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Semua Permainan Kognitif</span>
+                </span>
+                <span class="text-zinc-600 dark:text-zinc-400 font-mono text-xs group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Lihat semua →</span>
               </a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Blog -->
+      <!-- Dropdown 3: Tools ▾ (Sains & Referensi) -->
+      <div class="relative group" id="nav-dropdown-tools">
+        <button
+          type="button"
+          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md cursor-pointer ${
+            isToolsActive
+              ? "text-blue-600 dark:text-blue-400 font-semibold"
+              : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
+          }`}
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span>Alat</span>
+          <svg
+            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            ></path>
+          </svg>
+        </button>
+
+        <!-- Tools Flyout Menu -->
+        <div
+          class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50"
+        >
+          <div
+            class="w-88 p-2 rounded-2xl bg-white/95 dark:bg-[#0c0d12]/95 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/60"
+          >
+            <div class="px-3 pt-2 pb-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 border-b border-zinc-100 dark:border-white/5 mb-1.5">
+              Sains & Referensi
+            </div>
+            <div class="space-y-0.5">
+              <!-- Sleep Calculator -->
+              <a
+                href="/id/kalkulator-tidur"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Kalkulator Tidur
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Siklus tidur 90 menit
+                  </div>
+                </div>
+              </a>
+
+              <!-- Noise Generator -->
+              <a
+                href="/id/generator-white-noise-cokelat"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Generator White Noise
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Brown, pink & white noise fokus
+                  </div>
+                </div>
+              </a>
+
+              <!-- Calorie & TDEE -->
+              <a
+                href="/id/kalkulator-kalori"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.38 0 2.5-1.12 2.5-2.5 0-1.63-1.07-2.6-1.5-3.5-.43.9-1.5 1.87-1.5 3.5z"/><path d="M12 2c1 3 4 4.5 4 9a6 6 0 1 1-12 0c0-4 3.5-6.5 5.5-9 .5 1.5 1.5 2.5 2.5 2.5s-.5-1.5 0-2.5z"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Kalkulator Kalori & TDEE
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Formula Mifflin-St Jeor
+                  </div>
+                </div>
+              </a>
+
+              <!-- Microphone Audio Diagnostics -->
+              <a
+                href="/id/tes-mikrofon"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes Mikrofon
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Spektrogram & kualitas suara
+                  </div>
+                </div>
+              </a>
+
+              <!-- Lingkaran Kendali -->
+              <a
+                href="/id/lingkaran-kendali"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div
+                  class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>
+                  </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Lingkaran Kendali
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-xs font-medium text-zinc-600 dark:text-zinc-400 tracking-wide uppercase">Baru</span>
+                  </div>
+                  <div class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Refleksi Stoik privat
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <!-- Footer Dock: Tabel Skor & Persentil -->
+            <div class="mt-1.5 pt-2 border-t border-zinc-100 dark:border-white/5">
+              <a
+                href="/id/tabel-skor-iq"
+                class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/dock"
+              >
+                <span class="flex items-center gap-2.5">
+                  <span class="w-5 h-5 rounded flex items-center justify-center text-zinc-400 group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                  </span>
+                  <span class="font-medium text-zinc-800 dark:text-zinc-200 group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Tabel Skor & Persentil</span>
+                </span>
+                <span class="text-zinc-600 dark:text-zinc-400 font-mono text-xs group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Lihat tabel →</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Standalone Papan Peringkat -->
+      <a
+        href="/id/papan-peringkat"
+        class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
+          isLeaderboardActive
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300"
+        }`}
+        aria-current={isLeaderboardActive ? "page" : undefined}
+      >
+        Papan Peringkat
+      </a>
+
+      <!-- Standalone Blog -->
       <a
         href="/id/blog"
         class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
-          isBlogActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-zinc-600 dark:text-zinc-300'
+          isBlogActive
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300"
         }`}
-        aria-current={isBlogActive ? 'page' : undefined}
+        aria-current={isBlogActive ? "page" : undefined}
       >
         Blog
       </a>
-
     </nav>
 
-    <!-- 3. Klaster Aksi Kanan -->
+    <!-- 3. Right Action Cluster: Language Switcher + Theme Button + Profile Button + Segmented CTA Capsule -->
     <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
-      
-      <!-- Language Switcher Capsule (EN | ID | RU) -->
-      <div
-        class="inline-flex items-center rounded-xl bg-zinc-100/90 dark:bg-white/[0.05] border border-zinc-200/80 dark:border-white/10 p-0.5 text-xs font-semibold shadow-2xs"
-        aria-label="Pilih Bahasa"
-      >
-        <a
-          href={resolvedEnHref}
-          hreflang="en"
-          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors"
-          title="Switch to English"
+      <!-- Language Dropdown (Option 1 - Minimal Compact) -->
+      <div class="relative" data-lang-wrap>
+        <button
+          type="button"
+          data-lang-trigger
+          class="group inline-flex min-h-[40px] items-center gap-1.5 rounded-[10px] border border-zinc-200/90 bg-white px-3 py-2 font-mono text-[13px] font-bold text-zinc-700 transition-all duration-150 hover:border-zinc-300 hover:text-zinc-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-[0.97] dark:border-white/10 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="lang-menu-desktop"
+          title="Pilih bahasa"
         >
-          EN
-        </a>
-        <span
-          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-white dark:bg-white/[0.12] text-blue-600 dark:text-blue-400 shadow-xs font-bold"
-          title="Bahasa Indonesia (Aktif)"
+          <span class="current-code">{activeLangCode}</span>
+          <span class="chev inline-block transition-transform duration-200 group-aria-expanded:rotate-180" aria-hidden="true">⌄</span>
+        </button>
+        <div
+          id="lang-menu-desktop"
+          role="menu"
+          aria-label="Bahasa"
+          data-lang-menu
+          class="absolute right-0 top-[calc(100%+8px)] z-50 hidden min-w-[236px] rounded-2xl border border-zinc-200/80 bg-white/95 p-1.5 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-[#0c0d12]/95 dark:shadow-black/60"
         >
-          ID
-        </span>
-        <a
-          href={resolvedRuHref}
-          hreflang="ru"
-          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors"
-          title="Переключить на русский"
-        >
-          RU
-        </a>
+          <a
+            role="menuitem"
+            href={enHref}
+            aria-current={activeLangCode === "EN" ? "true" : undefined}
+            class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "EN" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+          >
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">A</span>
+            <span class="min-w-0 flex-1">English</span>
+            <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "EN" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>EN</span>
+          </a>
+          <a
+            role="menuitem"
+            href={idHref}
+            aria-current={activeLangCode === "ID" ? "true" : undefined}
+            class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "ID" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+          >
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">B</span>
+            <span class="min-w-0 flex-1">Bahasa Indonesia</span>
+            <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "ID" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>ID</span>
+          </a>
+          <a
+            role="menuitem"
+            href={ruHref}
+            aria-current={activeLangCode === "RU" ? "true" : undefined}
+            class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "RU" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+          >
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">Я</span>
+            <span class="min-w-0 flex-1">Русский</span>
+            <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "RU" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>RU</span>
+          </a>
+        </div>
       </div>
 
-      <!-- Tombol Toggle Tema -->
+      <!-- Theme Toggle -->
       <button
         id="theme-toggle-btn"
         type="button"
-        class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-white/10 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 transition-all duration-150 hover:bg-zinc-100 hover:text-zinc-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-[0.97] dark:border-white/10 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
         aria-label="Alihkan tema gelap dan terang"
       >
         <svg class="w-4.5 h-4.5 hidden dark:block text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -461,28 +986,43 @@ const mobileAccordionSections = [
         </svg>
       </button>
 
-      <!-- Tombol Profil Pengguna -->
+      <!-- Profile Avatar Button -->
       <a
         href="/id/profil"
         class={`w-10 h-10 rounded-xl hidden sm:flex items-center justify-center bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-white/10 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
-          currentNorm === '/id/profil' ? 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800' : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
+          currentNorm === "/id/profil"
+            ? "text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800"
+            : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
         }`}
-        title="Profil Kognitif &amp; Riwayat Skor Saya"
+        title="Profil Kognitif Saya & History"
         aria-label="Profil Kognitif Saya"
       >
-        <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        <svg
+          class="w-4.5 h-4.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+          ></path>
         </svg>
       </a>
 
-      <!-- Kapsul Tombol Aksi CTA -->
-      <div class="hidden sm:inline-flex items-center bg-zinc-100/90 dark:bg-white/[0.05] border border-zinc-200/80 dark:border-white/10 rounded-full p-[3px] shadow-xs">
+      <!-- Connected Segmented CTA Capsule -->
+      <div
+        class="hidden sm:inline-flex items-center bg-zinc-100/90 dark:bg-white/[0.05] border border-zinc-200/80 dark:border-white/10 rounded-full p-[3px] shadow-xs"
+      >
         <a
           href="/id/tes-singkat"
           class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors flex items-center gap-1.5 whitespace-nowrap"
           title="Skrining adaptif 12 soal"
         >
-          <svg class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
           </svg>
           <span>Singkat 10m</span>
@@ -497,7 +1037,7 @@ const mobileAccordionSections = [
         </a>
       </div>
 
-      <!-- Tombol Menu Seluler (Hamburger) -->
+      <!-- Mobile Menu Button (Hamburger) -->
       <button
         id="mobile-menu-btn"
         type="button"
@@ -506,24 +1046,33 @@ const mobileAccordionSections = [
         aria-controls="mobile-drawer"
         aria-expanded="false"
       >
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
         </svg>
       </button>
-
     </div>
-
   </div>
 </header>
 
-<!-- Backdrop Menu Seluler -->
+<!-- Mobile Drawer Fixed Backdrop -->
 <div
   id="mobile-menu-backdrop"
   class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 opacity-0 pointer-events-none hidden"
   aria-hidden="true"
-></div>
+>
+</div>
 
-<!-- Laci Menu Seluler -->
+<!-- Mobile Navigation Slide Drawer -->
 <aside
   id="mobile-drawer"
   class="fixed inset-y-0 right-0 z-50 w-[85vw] max-w-sm bg-white dark:bg-[#0c0d12] border-l border-zinc-200 dark:border-white/10 shadow-2xl transition-transform duration-300 transform translate-x-full overflow-y-auto overscroll-contain flex flex-col pointer-events-none"
@@ -533,14 +1082,30 @@ const mobileAccordionSections = [
   aria-hidden="true"
 >
   <!-- Drawer Header -->
-  <div class="h-16 px-5 border-b border-zinc-200/80 dark:border-white/10 flex items-center justify-between shrink-0">
+  <div
+    class="h-16 px-5 border-b border-zinc-200/80 dark:border-white/10 flex items-center justify-between shrink-0"
+  >
     <div class="flex items-center gap-2.5">
-      <svg class="w-7 h-7 shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="16" cy="9.5" r="5.5" class="fill-blue-600 dark:fill-blue-500" />
-        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600" />
-        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400" />
+      <svg
+        class="w-7 h-7 shrink-0"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle
+          cx="16"
+          cy="9.5"
+          r="5.5"
+          class="fill-blue-600 dark:fill-blue-500"></circle>
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600"
+        ></circle>
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400"
+        ></circle>
       </svg>
-      <span class="font-heading font-extrabold text-base text-zinc-950 dark:text-white">
+      <span
+        class="font-heading font-extrabold text-base text-zinc-950 dark:text-white"
+      >
         Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
       </span>
     </div>
@@ -550,20 +1115,32 @@ const mobileAccordionSections = [
       class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
       aria-label="Tutup menu"
     >
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     </button>
   </div>
 
   <!-- Mobile Drawer Fast Action Capsule -->
-  <div class="p-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/70 dark:bg-white/[0.02] space-y-3">
+  <div
+    class="p-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/70 dark:bg-white/[0.02] space-y-3"
+  >
     <div class="flex items-center gap-2">
       <a
         href="/id/tes-singkat"
         class="flex-1 py-2.5 px-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-white/10 text-xs font-semibold text-zinc-800 dark:text-zinc-200 text-center flex items-center justify-center gap-1.5 shadow-2xs"
       >
-        <svg class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
         </svg>
         <span>Singkat 10m</span>
@@ -572,42 +1149,79 @@ const mobileAccordionSections = [
         href="/id/tes"
         class="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold text-center flex items-center justify-center gap-1 shadow-xs"
       >
-        <span>Tes Lengkap →</span>
+        <span>Full Test →</span>
       </a>
     </div>
 
-    <!-- Mobile language switcher EN | ID | RU -->
-    <div class="inline-flex items-center rounded-xl bg-white dark:bg-zinc-900 p-0.5 text-xs font-semibold border border-zinc-200/80 dark:border-white/10 w-full justify-between">
-      <a
-        href={resolvedEnHref}
-        hreflang="en"
-        class="flex-1 py-1.5 rounded-lg text-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
-        >EN</a
+    <!-- Mobile Drawer Language Dropdown -->
+    <div class="px-1 pt-1" data-lang-wrap>
+      <button
+        type="button"
+        data-lang-trigger
+        class="group flex min-h-[40px] w-full items-center justify-between rounded-xl border border-zinc-200/80 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 transition-all duration-150 hover:border-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:scale-[0.97] dark:border-white/10 dark:bg-zinc-900 dark:text-zinc-200"
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-controls="lang-menu-mobile"
+        title="Pilih bahasa"
       >
-      <span
-        class="flex-1 py-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.1] text-center text-blue-600 dark:text-blue-400 font-bold"
-        >ID</span
+        <span class="flex items-center gap-2">
+          <span class="font-medium text-zinc-600 dark:text-zinc-400">Bahasa</span>
+          <span class="current-code font-mono text-[13px] font-bold">{activeLangCode}</span>
+        </span>
+        <span class="chev inline-block transition-transform duration-200 group-aria-expanded:rotate-180" aria-hidden="true">⌄</span>
+      </button>
+      <div
+        id="lang-menu-mobile"
+        role="menu"
+        aria-label="Bahasa"
+        data-lang-menu
+        class="mt-2 hidden rounded-2xl border border-zinc-200/80 bg-white/95 p-1.5 dark:border-white/10 dark:bg-[#0c0d12]/95"
       >
-      <a
-        href={resolvedRuHref}
-        hreflang="ru"
-        class="flex-1 py-1.5 rounded-lg text-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
-        >RU</a
-      >
+        <a
+          role="menuitem"
+          href={enHref}
+          aria-current={activeLangCode === "EN" ? "true" : undefined}
+          class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "EN" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+        >
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">A</span>
+          <span class="min-w-0 flex-1">English</span>
+          <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "EN" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>EN</span>
+        </a>
+        <a
+          role="menuitem"
+          href={idHref}
+          aria-current={activeLangCode === "ID" ? "true" : undefined}
+          class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "ID" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+        >
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">B</span>
+          <span class="min-w-0 flex-1">Bahasa Indonesia</span>
+          <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "ID" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>ID</span>
+        </a>
+        <a
+          role="menuitem"
+          href={ruHref}
+          aria-current={activeLangCode === "RU" ? "true" : undefined}
+          class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "RU" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+        >
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">Я</span>
+          <span class="min-w-0 flex-1">Русский</span>
+          <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "RU" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>RU</span>
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- Drawer Grouped Links -->
+  <!-- Drawer Grouped Links: Collapsible Accordion Sections -->
   <div class="p-4 flex flex-col gap-3 overflow-y-auto flex-1">
     <!-- Home Link -->
     <a
       href="/id"
       class={`min-h-[42px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
-        basePath === '/'
-          ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold'
-          : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.05] hover:text-zinc-950 dark:hover:text-white'
+        currentNorm === "/id"
+          ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold"
+          : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.05] hover:text-zinc-950 dark:hover:text-white"
       }`}
-      aria-current={basePath === '/' ? 'page' : undefined}
+      aria-current={currentNorm === "/id" ? "page" : undefined}
     >
       <span class="flex items-center gap-2.5 font-medium">
         <span class="w-6 h-6 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-400">
@@ -646,10 +1260,10 @@ const mobileAccordionSections = [
                   )}
                 </span>
                 <div>
-                  <span class="font-heading font-semibold text-xs sm:text-sm text-zinc-950 dark:text-white block">
+                  <span class="font-heading font-semibold text-[13px] sm:text-sm text-zinc-950 dark:text-white block">
                     {section.title}
                   </span>
-                  <span class="text-[12px] text-zinc-400 dark:text-zinc-500 font-normal">
+                  <span class="text-[13px] text-zinc-600 dark:text-zinc-400 font-normal">
                     {section.description}
                   </span>
                 </div>
@@ -678,10 +1292,10 @@ const mobileAccordionSections = [
                     href={link.href}
                     class={`min-h-[40px] px-2.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-between transition-colors ${
                       isActive
-                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold'
-                        : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.05] hover:text-zinc-950 dark:hover:text-white'
+                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold"
+                        : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.05] hover:text-zinc-950 dark:hover:text-white"
                     }`}
-                    aria-current={isActive ? 'page' : undefined}
+                    aria-current={isActive ? "page" : undefined}
                   >
                     <div class="flex items-center gap-2.5 truncate pr-2">
                       <span class="w-6 h-6 rounded-md bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-400">
@@ -694,14 +1308,65 @@ const mobileAccordionSections = [
                         {link.iconKey === "puzzle" && (
                           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
                         )}
+                        {link.iconKey === "eye" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                        )}
+                        {link.iconKey === "timer" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M18.5 5.5l1.5-1.5"/></svg>
+                        )}
+                        {link.iconKey === "brain" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A4.5 4.5 0 0 0 5 6.5c0 .77.19 1.5.53 2.14A4 4 0 0 0 4 12a4 4 0 0 0 1.53 3.36C5.19 16 5 16.73 5 17.5A4.5 4.5 0 0 0 9.5 22c.5 0 .97-.08 1.41-.24.58-.2 1.09-.6 1.09-1.26v-17c0-.66-.51-1.06-1.09-1.26A4.52 4.52 0 0 0 9.5 2z"/><path d="M14.5 2A4.5 4.5 0 0 1 19 6.5c0 .77-.19 1.5-.53 2.14A4 4 0 0 1 20 12a4 4 0 0 1-1.53 3.36c.34.64.53 1.37.53 2.14A4.5 4.5 0 0 1 14.5 22c-.5 0-.97-.08-1.41-.24-.58-.2-1.09-.6-1.09-1.26v-17c0-.66.51-1.06 1.09-1.26.44-.16.91-.24 1.41-.24z"/></svg>
+                        )}
+                        {link.iconKey === "clipboard" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>
+                        )}
+                        {link.iconKey === "shield" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                        )}
+                        {link.iconKey === "infinity" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c2.496 0 4.322 1.766 4.322 4s-1.826 4-4.322 4c-2.268 0-4.043-1.63-6.178-4 2.135-2.37 3.91-4 6.178-4z"/><path d="M5.822 8C3.326 8 1.5 9.766 1.5 12s1.826 4 4.322 4c2.268 0 4.043-1.63 6.178-4-2.135-2.37-3.91-4-6.178-4z"/></svg>
+                        )}
+                        {link.iconKey === "sound" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                        )}
+                        {link.iconKey === "glasses" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="14" r="4"/><circle cx="18" cy="14" r="4"/><path d="M10 14h4"/><path d="M2 14l2-6h16l2 6"/></svg>
+                        )}
+                        {link.iconKey === "keyboard" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/></svg>
+                        )}
+                        {link.iconKey === "flag" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                        )}
+                        {link.iconKey === "mouse" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="6"/><line x1="12" y1="7" x2="12" y2="11"/></svg>
+                        )}
+                        {link.iconKey === "crosshair" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="3" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="21" y2="12"/></svg>
+                        )}
                         {link.iconKey === "gamepad" && (
                           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4m-2-2v4m10-2h.01M14 10h.01"/></svg>
                         )}
                         {link.iconKey === "trophy" && (
                           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M6 4h12a2 2 0 0 1 2 2v3a8 8 0 0 1-16 0V6a2 2 0 0 1 2-2z"/></svg>
                         )}
-                        {link.iconKey === "user" && (
-                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        {link.iconKey === "moon" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        )}
+                        {link.iconKey === "headphones" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                        )}
+                        {link.iconKey === "flame" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.38 0 2.5-1.12 2.5-2.5 0-1.63-1.07-2.6-1.5-3.5-.43.9-1.5 1.87-1.5 3.5z"/><path d="M12 2c1 3 4 4.5 4 9a6 6 0 1 1-12 0c0-4 3.5-6.5 5.5-9 .5 1.5 1.5 2.5 2.5 2.5s-.5-1.5 0-2.5z"/></svg>
+                        )}
+                        {link.iconKey === "mic" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                        )}
+                        {link.iconKey === "calendar" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        )}
+                        {link.iconKey === "circle" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
                         )}
                         {link.iconKey === "chart" && (
                           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -715,15 +1380,18 @@ const mobileAccordionSections = [
                         {link.iconKey === "book" && (
                           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                         )}
+                        {link.iconKey === "user" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        )}
                       </span>
                       <span class="truncate">{link.label}</span>
                     </div>
                     {link.badge && (
                       <span
-                        class={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide ${
-                          link.badge === 'Resmi' || link.badge === 'Cepat'
-                            ? 'border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                            : 'border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-500 dark:text-zinc-400'
+                        class={`text-xs font-mono font-medium px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide ${
+                          link.badge === "Resmi" || link.badge === "Cepat"
+                            ? "border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                            : "border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-600 dark:text-zinc-400"
                         }`}
                       >
                         {link.badge}
@@ -742,55 +1410,82 @@ const mobileAccordionSections = [
 
 <script>
   // 1. Theme toggle script
-  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  const themeToggleBtn = document.getElementById("theme-toggle-btn");
   if (themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', () => {
+    themeToggleBtn.addEventListener("click", () => {
       try {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
       } catch (e) {}
     });
   }
 
+  // 1b. Language dropdowns (Option 1 Minimal Compact, desktop + mobile)
+  const closeAllLangMenus = (refocus: boolean) => {
+    document.querySelectorAll("[data-lang-menu]").forEach((m) => m.classList.add("hidden"));
+    const openTrigger = document.querySelector('[data-lang-trigger][aria-expanded="true"]') as HTMLElement | null;
+    document.querySelectorAll("[data-lang-trigger]").forEach((t) => t.setAttribute("aria-expanded", "false"));
+    if (refocus && openTrigger) openTrigger.focus();
+  };
+  document.querySelectorAll("[data-lang-wrap]").forEach((wrap) => {
+    const trigger = wrap.querySelector("[data-lang-trigger]");
+    const menu = wrap.querySelector("[data-lang-menu]");
+    if (!trigger || !menu) return;
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const opening = menu.classList.contains("hidden");
+      closeAllLangMenus(false);
+      if (opening) {
+        menu.classList.remove("hidden");
+        trigger.setAttribute("aria-expanded", "true");
+      }
+    });
+    menu.addEventListener("click", (e) => e.stopPropagation());
+  });
+  document.addEventListener("click", () => closeAllLangMenus(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAllLangMenus(true);
+  });
+
   // 2. Mobile Drawer Toggle logic
-  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-  const mobileDrawer = document.getElementById('mobile-drawer');
-  const mobileDrawerClose = document.getElementById('mobile-drawer-close');
-  const mobileBackdrop = document.getElementById('mobile-menu-backdrop');
+  const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+  const mobileDrawer = document.getElementById("mobile-drawer");
+  const mobileDrawerClose = document.getElementById("mobile-drawer-close");
+  const mobileBackdrop = document.getElementById("mobile-menu-backdrop");
 
   function openDrawer() {
     if (!mobileDrawer || !mobileBackdrop || !mobileMenuBtn) return;
-    mobileBackdrop.classList.remove('hidden');
+    mobileBackdrop.classList.remove("hidden");
     requestAnimationFrame(() => {
-      mobileBackdrop.classList.remove('opacity-0', 'pointer-events-none');
-      mobileBackdrop.classList.add('opacity-100', 'pointer-events-auto');
-      mobileDrawer.classList.remove('translate-x-full', 'pointer-events-none');
-      mobileDrawer.classList.add('translate-x-0', 'pointer-events-auto');
-      mobileDrawer.setAttribute('aria-hidden', 'false');
-      mobileMenuBtn.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
+      mobileBackdrop.classList.remove("opacity-0", "pointer-events-none");
+      mobileBackdrop.classList.add("opacity-100", "pointer-events-auto");
+      mobileDrawer.classList.remove("translate-x-full", "pointer-events-none");
+      mobileDrawer.classList.add("translate-x-0", "pointer-events-auto");
+      mobileDrawer.setAttribute("aria-hidden", "false");
+      mobileMenuBtn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
       if (mobileDrawerClose) mobileDrawerClose.focus();
     });
   }
 
   function closeDrawer() {
     if (!mobileDrawer || !mobileBackdrop || !mobileMenuBtn) return;
-    mobileBackdrop.classList.remove('opacity-100', 'pointer-events-auto');
-    mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
-    mobileDrawer.classList.remove('translate-x-0', 'pointer-events-auto');
-    mobileDrawer.classList.add('translate-x-full', 'pointer-events-none');
-    mobileDrawer.setAttribute('aria-hidden', 'true');
-    mobileMenuBtn.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    mobileBackdrop.classList.remove("opacity-100", "pointer-events-auto");
+    mobileBackdrop.classList.add("opacity-0", "pointer-events-none");
+    mobileDrawer.classList.remove("translate-x-0", "pointer-events-auto");
+    mobileDrawer.classList.add("translate-x-full", "pointer-events-none");
+    mobileDrawer.setAttribute("aria-hidden", "true");
+    mobileMenuBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
     setTimeout(() => {
-      mobileBackdrop.classList.add('hidden');
+      mobileBackdrop.classList.add("hidden");
       mobileMenuBtn.focus();
     }, 300);
   }
 
   if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', () => {
-      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+    mobileMenuBtn.addEventListener("click", () => {
+      const isExpanded = mobileMenuBtn.getAttribute("aria-expanded") === "true";
       if (isExpanded) {
         closeDrawer();
       } else {
@@ -800,25 +1495,26 @@ const mobileAccordionSections = [
   }
 
   if (mobileDrawerClose) {
-    mobileDrawerClose.addEventListener('click', closeDrawer);
+    mobileDrawerClose.addEventListener("click", closeDrawer);
   }
 
   if (mobileBackdrop) {
-    mobileBackdrop.addEventListener('click', closeDrawer);
+    mobileBackdrop.addEventListener("click", closeDrawer);
   }
 
-  window.addEventListener('keydown', (e) => {
-    const isDrawerOpen = mobileMenuBtn?.getAttribute('aria-expanded') === 'true';
+  window.addEventListener("keydown", (e) => {
+    const isDrawerOpen =
+      mobileMenuBtn?.getAttribute("aria-expanded") === "true";
     if (!isDrawerOpen) return;
 
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       closeDrawer();
       return;
     }
 
-    if (e.key === 'Tab' && mobileDrawer) {
+    if (e.key === "Tab" && mobileDrawer) {
       const focusableEls = mobileDrawer.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       );
       if (focusableEls.length === 0) return;
       const firstEl = focusableEls[0] as HTMLElement;
@@ -839,48 +1535,51 @@ const mobileAccordionSections = [
   });
 
   // 3. Desktop Dropdown hover/click toggle & aria-expanded synchronization
-  const dropdownAssessments = document.getElementById('nav-dropdown-assessments');
-  const dropdownScience = document.getElementById('nav-dropdown-science');
+  const dropdownTests = document.getElementById("nav-dropdown-tests");
+  const dropdownGames = document.getElementById("nav-dropdown-games");
+  const dropdownTools = document.getElementById("nav-dropdown-tools");
 
-  [dropdownAssessments, dropdownScience].forEach((dd) => {
+  const allDropdowns = [dropdownTests, dropdownGames, dropdownTools];
+
+  allDropdowns.forEach((dd) => {
     if (!dd) return;
-    const btn = dd.querySelector('button');
+    const btn = dd.querySelector("button");
     if (!btn) return;
 
     const setExpanded = (expanded: boolean) => {
-      btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      btn.setAttribute("aria-expanded", expanded ? "true" : "false");
     };
 
-    dd.addEventListener('mouseenter', () => setExpanded(true));
-    dd.addEventListener('mouseleave', () => {
-      if (!dd.classList.contains('active-click')) setExpanded(false);
+    dd.addEventListener("mouseenter", () => setExpanded(true));
+    dd.addEventListener("mouseleave", () => {
+      if (!dd.classList.contains("active-click")) setExpanded(false);
     });
 
-    dd.addEventListener('focusin', () => setExpanded(true));
-    dd.addEventListener('focusout', (e) => {
+    dd.addEventListener("focusin", () => setExpanded(true));
+    dd.addEventListener("focusout", (e) => {
       if (!dd.contains((e as FocusEvent).relatedTarget as Node)) {
-        if (!dd.classList.contains('active-click')) setExpanded(false);
+        if (!dd.classList.contains("active-click")) setExpanded(false);
       }
     });
 
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const isCurrentlyOpen = dd.classList.contains('active-click');
-      [dropdownAssessments, dropdownScience].forEach((d) => {
-        d?.classList.remove('active-click');
-        d?.querySelector('button')?.setAttribute('aria-expanded', 'false');
+      const isCurrentlyOpen = dd.classList.contains("active-click");
+      allDropdowns.forEach((d) => {
+        d?.classList.remove("active-click");
+        d?.querySelector("button")?.setAttribute("aria-expanded", "false");
       });
       if (!isCurrentlyOpen) {
-        dd.classList.add('active-click');
+        dd.classList.add("active-click");
         setExpanded(true);
       }
     });
   });
 
-  document.addEventListener('click', () => {
-    [dropdownAssessments, dropdownScience].forEach((d) => {
-      d?.classList.remove('active-click');
-      d?.querySelector('button')?.setAttribute('aria-expanded', 'false');
+  document.addEventListener("click", () => {
+    allDropdowns.forEach((d) => {
+      d?.classList.remove("active-click");
+      d?.querySelector("button")?.setAttribute("aria-expanded", "false");
     });
   });
 </script>

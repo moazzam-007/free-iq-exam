@@ -1,0 +1,1960 @@
+---
+import LayoutId from '../../components/id/LayoutId.astro';
+import HeaderId from '../../components/id/HeaderId.astro';
+import FooterId from '../../components/id/FooterId.astro';
+
+// Tautan alternatif multibahasa
+const alternates = {
+  en: "https://freeiqexam.com/sleep-calculator",
+  id: "https://freeiqexam.com/id/kalkulator-tidur"
+};
+
+const title = "Kalkulator Tidur Gratis | Jam Tidur Optimal, Siklus Tidur & Tes Kronotipe";
+const description = "Hitung waktu tidur dan bangun optimal Anda berdasarkan siklus tidur ultradian 90 menit alami. Dilengkapi asesmen kronotipe Munich (MCTQ) dan pelacak waktu paruh kafein. 100% gratis.";
+const canonicalUrl = "https://freeiqexam.com/id/kalkulator-tidur";
+
+const faqItems = [
+  {
+    q: "Bagaimana cara kerja kalkulator tidur ini?",
+    a: "Kalkulator ini bekerja menghitung mundur dari siklus ultradian 90 menit, yaitu rata-rata durasi satu putaran lengkap melalui tidur ringan (N1/N2), tidur lelap gelombang lambat (N3), dan tidur REM. Jika Anda memasukkan jam bangun yang diinginkan, kalkulator akan mengurangi 90 menit per siklus ditambah toleransi latensi jatuh tertidur selama 14 menit untuk memberi opsi jam tidur 6, 5, 4, atau 3 siklus. Toleransi 14 menit ini sangat krusial: jam tidur adalah saat Anda merebahkan diri di ranjang, bukan saat Anda langsung terlelap."
+  },
+  {
+    q: "Berapa jam tidur yang sebenarnya dibutuhkan oleh orang dewasa?",
+    a: "Konsensus ilmiah dari American Academy of Sleep Medicine (AASM) dan Sleep Research Society merekomendasikan 7 jam atau lebih per malam untuk orang dewasa usia 18 hingga 60 tahun. Angka 7 jam adalah batas bawah, bukan target ideal-kebanyakan orang dewasa berfungsi optimal pada rentang 7 hingga 9 jam. Kalkulator ini menetapkan 5 siklus (7,5 jam) sebagai standar dasar yang direkomendasikan dan 4 siklus (6 jam) sebagai batas minimum fungsional jangka pendek."
+  },
+  {
+    q: "Apa itu siklus tidur dan apakah durasinya benar-benar tepat 90 menit?",
+    a: "Siklus tidur adalah satu progresi penuh melalui fase non-REM (N1, N2, N3) yang diikuti oleh fase REM sebelum pola berulang kembali. Durasi 90 menit adalah rata-rata populasi, bukan konstanta mutlak. Siklus ultradian individu berkisar antara 70 hingga 120 menit, dan siklus dalam satu malam tidak sama panjang-siklus pertama biasanya terpendek (70-80 menit) dan siklus terakhir adalah yang terpanjang (100-120 menit)."
+  },
+  {
+    q: "Haruskah saya menghitung dari saat naik ke ranjang atau saat terlelap?",
+    a: "Dihitung dari saat Anda benar-benar tertidur. Orang dewasa sehat membutuhkan rata-rata sekitar 14 menit untuk beralih dari kondisi terjaga hingga terlelap (latensi tidur). Kalkulator ini otomatis memasukkan latensi 14 menit ke dalam setiap hasil jadwal yang ditampilkan."
+  },
+  {
+    q: "Apa itu kronotipe dan bagaimana tipe saya dihitung?",
+    a: "Kronotipe adalah preferensi biologis internal tubuh Anda terhadap pengaturan waktu tidur dan bangun yang dikendalikan oleh jam sirkadian. Alat ini menggunakan Munich ChronoType Questionnaire (MCTQ). Anda memasukkan jadwal tidur hari kerja dan hari libur; algoritma menghitung titik tengah tidur hari libur (MSF), lalu mengoreksinya terhadap utang tidur mingguan untuk menghasilkan skor MSFsc yang mengklasifikasikan Anda sebagai Singa (pagi), Beruang (menengah), atau Serigala (malam)."
+  },
+  {
+    q: "Berapa lama kafein bertahan di dalam tubuh?",
+    a: "Kafein memiliki waktu paruh eliminasi (half-life) rata-rata sekitar 5,7 jam pada orang dewasa sehat (rentang 3–7 jam). Artinya setiap 5,7 jam, tubuh hanya membuang setengah dari sisa kafein yang beredar: 200 mg kopi menjadi 100 mg setelah 5,7 jam, 50 mg setelah 11,4 jam, dan masih tersisa 25 mg setelah 17 jam."
+  },
+  {
+    q: "Dapatkah kita 'membayar lunas' utang tidur yang menumpuk di akhir pekan?",
+    a: "Hanya sebagian, dan jauh lebih lambat daripada yang diperkirakan kebanyakan orang. Utang tidur nyata terakumulasi, namun kapasitas pemulihan biologis tubuh memiliki batas (homeostatic rebound ceiling). Menghabiskan 4 jam ekstra di ranjang pada hari Minggu tidak serta-merta mengembalikan fungsi otak yang hilang selama 5 hari kurang tidur, dan justru dapat memicu jet lag sosial."
+  },
+  {
+    q: "Apakah kalkulator tidur ini akurat secara medis?",
+    a: "Kalkulator ini menggunakan model aritmatika berbasis data rata-rata populasi yang sahih dalam literatur sains tidur (siklus 90 menit, latensi 14 menit, kinetika eliminasi kafein 5,7 jam). Ini bukan alat diagnostik medis. Jika Anda mengalami insomnia kronis, dengkuran keras disertai henti napas (sleep apnea), atau kantuk ekstrem di siang hari, konsultasikan dengan dokter spesialis tidur."
+  }
+];
+
+const schemas = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Pengoptimal Siklus Tidur & Kronotipe",
+    "url": "https://freeiqexam.com/id/kalkulator-tidur",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Memerlukan JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Penjadwalan tidur 3 mode: bangun pada jam tertentu, tidur sekarang, dan rencana jam tidur",
+      "Pemodelan siklus ultradian 90 menit dengan kompensasi latensi tidur 14 menit",
+      "Klasifikasi tingkatan siklus dari Tidur Restoratif Optimal hingga Risiko Deprivasi Tidur",
+      "Asesmen Munich ChronoType Questionnaire (MCTQ) komputasi MSFsc ilmiah",
+      "Klasifikasi kronotipe Singa, Beruang, dan Serigala dengan kuantifikasi jet lag sosial",
+      "Kurva peluruhan eliminasi kafein kinetika orde pertama 5,7 jam",
+      "Roda jam sirkadian 24 jam interaktif dengan penanda sekresi melatonin alami",
+      "Buku kas utang tidur 7 malam dengan protokol pemulihan 3 malam terstruktur",
+      "100% gratis, tanpa pendaftaran, seluruh komputasi berjalan lokal di peramban Anda"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Alat & Tes",
+        "item": "https://freeiqexam.com/id/tes"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Kalkulator Tidur",
+        "item": "https://freeiqexam.com/id/kalkulator-tidur"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a
+      }
+    }))
+  }
+];
+---
+
+<LayoutId
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schemas}
+>
+  <HeaderId />
+
+  <main class="sleep-page relative overflow-hidden">
+    <div class="sleep-hero-glow" aria-hidden="true"></div>
+
+    <!-- ===================================================== HERO ======= -->
+    <section class="hero relative z-10">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/id">Beranda</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/id/tes">Alat &amp; Tes</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">Kalkulator Tidur</li>
+        </ol>
+      </nav>
+
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider mb-4 shadow-2xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff]"></span>
+        <span>SAINS SIRKADIAN · SIKLUS ULTRADIAN 90 MENIT</span>
+      </div>
+      <h1>Kalkulator Tidur</h1>
+      <p class="lede">
+        Tentukan jam tidur ideal agar Anda bangun tepat di akhir siklus tidur alami, bukan di tengah-tengah tidur lelap. Dilengkapi tiga mode jadwal, asesmen Munich ChronoType, kurva eliminasi kafein, dan kalkulator pelunasan utang tidur-semuanya dihitung secara lokal tanpa pengiriman data ke server.
+      </p>
+
+      <ul class="hero-stats">
+        <li><strong>90 mnt</strong><span>siklus ultradian</span></li>
+        <li><strong>14 mnt</strong><span>latensi terlelap</span></li>
+        <li><strong>5,7 jam</strong><span>waktu paruh kafein</span></li>
+        <li><strong>0</strong><span>data diunggah</span></li>
+      </ul>
+    </section>
+
+    <!-- ================================================ SCHEDULER ======= -->
+    <section class="panel" aria-labelledby="scheduler-title">
+      <header class="panel-head">
+        <h2 id="scheduler-title">Penjadwal Siklus Tidur</h2>
+        <p>
+          Pilih mode perhitungan. Setiap hasil otomatis menyertakan kompensasi latensi 14 menit, sehingga jam yang tertera adalah waktu untuk naik ke tempat tidur.
+        </p>
+      </header>
+
+      <div class="mode-tabs" role="tablist" aria-label="Mode penjadwalan">
+        <button
+          type="button"
+          role="tab"
+          class="mode-tab is-active"
+          data-sleep-mode="wake"
+          aria-selected="true"
+        >Saya harus bangun jam…</button>
+        <button
+          type="button"
+          role="tab"
+          class="mode-tab"
+          data-sleep-mode="now"
+          aria-selected="false"
+        >Saya ingin tidur sekarang</button>
+        <button
+          type="button"
+          role="tab"
+          class="mode-tab"
+          data-sleep-mode="bedtime"
+          aria-selected="false"
+        >Rencana jam tidur saya…</button>
+      </div>
+
+      <div class="mode-panel" data-mode-panel="wake">
+        <label class="field" for="wake-time">
+          <span class="field-label">Target jam bangun</span>
+          <input type="time" id="wake-time" value="07:00" step="60" />
+        </label>
+        <p class="results-summary" id="wake-results-summary" aria-live="polite"></p>
+        <div class="cycle-grid" id="wake-results"></div>
+      </div>
+
+      <div class="mode-panel" data-mode-panel="now" hidden>
+        <p class="mode-note">
+          Menggunakan jam internal perangkat Anda. Waktu diperbarui setiap menit saat tab ini aktif.
+        </p>
+        <p class="results-summary" id="now-results-summary" aria-live="polite"></p>
+        <div class="cycle-grid" id="now-results"></div>
+      </div>
+
+      <div class="mode-panel" data-mode-panel="bedtime" hidden>
+        <label class="field" for="bedtime-input">
+          <span class="field-label">Waktu Anda naik ke tempat tidur</span>
+          <input type="time" id="bedtime-input" value="23:00" step="60" />
+        </label>
+        <p class="results-summary" id="bedtime-results-summary" aria-live="polite"></p>
+        <div class="cycle-grid" id="bedtime-results"></div>
+      </div>
+
+      <div class="tier-legend">
+        <span class="tier-chip tone-optimal">Optimal · 6 siklus</span>
+        <span class="tier-chip tone-baseline">Standar · 5 siklus</span>
+        <span class="tier-chip tone-minimum">Minimum · 4 siklus</span>
+        <span class="tier-chip tone-deficit">Defisit · ≤ 3 siklus</span>
+      </div>
+    </section>
+
+    <!-- ============================================ CLOCK + HYPNOGRAM === -->
+    <section class="split" aria-labelledby="wheel-title">
+      <div class="panel">
+        <header class="panel-head">
+          <h2 id="wheel-title">Roda Sirkadian 24 Jam</h2>
+          <p>
+            Tengah malam di bagian atas, tengah hari di bawah, berputar searah jarum jam. Menampilkan jendela tidur, estimasi pelepasan melatonin, batas konsumsi kafein, dan puncak kronotipe Anda.
+          </p>
+        </header>
+
+        <svg
+          id="clock-wheel"
+          class="wheel"
+          viewBox="0 0 260 260"
+          role="img"
+          aria-label="Roda jam sirkadian menampilkan jendela tidur dan penanda biologis"
+        ></svg>
+
+        <ul class="wheel-legend">
+          <li><i class="swatch swatch-sleep"></i>Jendela tidur</li>
+          <li><i class="swatch swatch-melatonin"></i>Pelepasan melatonin</li>
+          <li><i class="swatch swatch-caffeine"></i>Batas akhir kafein</li>
+          <li><i class="swatch swatch-peak"></i>Puncak fokus biologis</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <header class="panel-head">
+          <h2>Arsitektur Fase Tidur Malam</h2>
+          <p>
+            Arsitektur fase rata-rata populasi untuk 6 siklus tidur. Tidur gelombang lambat mendominasi awal malam; fase REM mendominasi siklus-siklus menjelang pagi.
+          </p>
+        </header>
+
+        <svg
+          id="hypnogram"
+          class="hypnogram"
+          viewBox="0 0 720 200"
+          role="img"
+          aria-label="Hipnogram arsitektur tahapan tidur sepanjang malam"
+        ></svg>
+
+        <dl class="hypo-totals">
+          <div><dt>Total tidur</dt><dd id="hypo-total">-</dd></div>
+          <div><dt>Lelap (N3)</dt><dd id="hypo-sws">-</dd></div>
+          <div><dt>Fase REM</dt><dd id="hypo-rem">-</dd></div>
+          <div><dt>Ringan (N1+N2)</dt><dd id="hypo-light">-</dd></div>
+        </dl>
+
+        <p class="caveat">
+          Ini adalah pemodelan statistik populasi. Pola fisiologis aktual Anda dapat berbeda dan mengalami perubahan seiring pertambahan usia.
+        </p>
+      </div>
+    </section>
+
+    <!-- ================================================ CHRONOTYPE ====== -->
+    <section class="panel" aria-labelledby="chrono-title">
+      <header class="panel-head">
+        <h2 id="chrono-title">Asesmen Munich ChronoType (MCTQ)</h2>
+        <p>
+          MCTQ adalah instrumen standar emas dalam penelitian kronobiologi. Algoritma membandingkan jam tidur hari kerja dan hari libur untuk menemukan titik tengah biologis sejati (MSFsc).
+        </p>
+      </header>
+
+      <div class="mctq-grid">
+        <fieldset class="mctq-group">
+          <legend>Hari Kerja</legend>
+          <label class="field" for="mctq-workday-sleep">
+            <span class="field-label">Jam mulai tidur</span>
+            <input type="time" id="mctq-workday-sleep" value="23:30" step="60" />
+          </label>
+          <label class="field" for="mctq-workday-wake">
+            <span class="field-label">Jam bangun pagi</span>
+            <input type="time" id="mctq-workday-wake" value="07:00" step="60" />
+          </label>
+        </fieldset>
+
+        <fieldset class="mctq-group">
+          <legend>Hari Libur</legend>
+          <label class="field" for="mctq-freeday-sleep">
+            <span class="field-label">Jam mulai tidur</span>
+            <input type="time" id="mctq-freeday-sleep" value="01:00" step="60" />
+          </label>
+          <label class="field" for="mctq-freeday-wake">
+            <span class="field-label">Jam bangun pagi</span>
+            <input type="time" id="mctq-freeday-wake" value="09:00" step="60" />
+          </label>
+        </fieldset>
+
+        <fieldset class="mctq-group">
+          <legend>Kualitas Tidur</legend>
+          <label class="field" for="mctq-fragmentation">
+            <span class="field-label">Seberapa sering Anda terbangun di malam hari?</span>
+            <select id="mctq-fragmentation">
+              <option value="never">Jarang atau tidak pernah</option>
+              <option value="sometimes" selected>Kadang-kadang</option>
+              <option value="often">Sering - hampir setiap malam</option>
+            </select>
+          </label>
+          <p class="field-hint">
+            Digunakan untuk mendeteksi potensi hamparan Lumba-lumba (tidur terfragmentasi).
+          </p>
+        </fieldset>
+      </div>
+
+      <p class="field-error" id="chrono-error" hidden></p>
+
+      <article class="chrono-card" id="chrono-result" hidden>
+        <header class="chrono-head">
+          <div>
+            <p class="chrono-kicker">Kronotipe Biologis Anda</p>
+            <h3 id="chrono-name">-</h3>
+            <p class="chrono-alias" id="chrono-alias">-</p>
+          </div>
+          <div class="chrono-msfsc">
+            <span class="chrono-msfsc-label">MSFsc</span>
+            <strong id="chrono-msfsc">-</strong>
+          </div>
+        </header>
+
+        <p class="chrono-summary" id="chrono-summary">-</p>
+
+        <p class="chrono-disclosure" id="chrono-overlay-note" hidden></p>
+
+        <div class="chrono-windows">
+          <div class="window-card">
+            <span class="window-label">Puncak Kewaspadaan</span>
+            <strong id="chrono-peak">-</strong>
+          </div>
+          <div class="window-card">
+            <span class="window-label">Puncak Sekunder</span>
+            <strong id="chrono-secondary">-</strong>
+          </div>
+          <div class="window-card">
+            <span class="window-label">Titik Terendah Energi</span>
+            <strong id="chrono-trough">-</strong>
+          </div>
+          <div class="window-card">
+            <span class="window-label">Mulai Melatonin</span>
+            <strong id="chrono-melatonin-onset">-</strong>
+          </div>
+          <div class="window-card">
+            <span class="window-label">Batas Akhir Kafein</span>
+            <strong id="chrono-caffeine-cutoff">-</strong>
+          </div>
+        </div>
+
+        <div class="chrono-notes">
+          <p><strong>Rekomendasi Jadwal:</strong> <span id="chrono-advice">-</span></p>
+          <p><strong>Kerentanan Biologis:</strong> <span id="chrono-friction">-</span></p>
+        </div>
+
+        <details class="chrono-math">
+          <summary>Tampilkan rincian perhitungan matematis (MCTQ)</summary>
+          <dl class="math-list">
+            <div><dt>Durasi tidur hari kerja</dt><dd id="chrono-sdweek">-</dd></div>
+            <div><dt>Durasi tidur hari libur</dt><dd id="chrono-sdfree">-</dd></div>
+            <div><dt>Titik tengah hari kerja (MSW)</dt><dd id="chrono-msw">-</dd></div>
+            <div><dt>Titik tengah hari libur (MSF)</dt><dd id="chrono-msf">-</dd></div>
+            <div><dt>Koreksi utang tidur</dt><dd id="chrono-correction">-</dd></div>
+            <div><dt>Titik tengah terkoreksi (MSFsc)</dt><dd id="chrono-msfsc-echo">-</dd></div>
+            <div><dt>Rata-rata durasi tidur</dt><dd id="chrono-average">-</dd></div>
+            <div><dt>Jet lag sosial</dt><dd id="chrono-social-jetlag">-</dd></div>
+          </dl>
+          <p class="math-note">
+            MSFsc = MSF − (SD<sub>free</sub> − SD<sub>work</sub>) ÷ 2, hanya diterapkan jika durasi tidur hari libur lebih panjang dari hari kerja untuk mencegah salah klasifikasi utang tidur sebagai tipe malam.
+          </p>
+        </details>
+      </article>
+    </section>
+
+    <!-- ================================================== CAFFEINE ====== -->
+    <section class="panel" aria-labelledby="caffeine-title">
+      <header class="panel-head">
+        <h2 id="caffeine-title">Pelacak Waktu Paruh &amp; Eliminasi Kafein</h2>
+        <p>
+          Kafein dieliminasi melalui kinetika orde pertama dengan rata-rata waktu paruh 5,7 jam. Geser panel untuk melihat konsentrasi kafein yang masih aktif di otak saat Anda tidur.
+        </p>
+      </header>
+
+      <div class="caffeine-controls">
+        <label class="field" for="caffeine-dose">
+          <span class="field-label">
+            Dosis: <output id="caffeine-dose-value">200 mg</output>
+          </span>
+          <input
+            type="range"
+            id="caffeine-dose"
+            min="0"
+            max="600"
+            step="10"
+            value="200"
+          />
+          <span class="field-hint">
+            Kopi seduh 250 ml ≈ 95 mg; espresso ganda ≈ 125 mg; kaleng cola 330 ml ≈ 34 mg.
+          </span>
+        </label>
+
+        <label class="field" for="caffeine-time">
+          <span class="field-label">Waktu dikonsumsi</span>
+          <input type="time" id="caffeine-time" value="14:00" step="60" />
+        </label>
+
+        <label class="field" for="caffeine-bedtime">
+          <span class="field-label">Jam tidur yang direncanakan</span>
+          <input type="time" id="caffeine-bedtime" value="23:00" step="60" />
+        </label>
+      </div>
+
+      <div class="caffeine-readouts">
+        <div class="readout">
+          <span class="readout-label">Sisa saat jam tidur</span>
+          <strong id="caffeine-remaining">-</strong>
+        </div>
+        <div class="readout">
+          <span class="readout-label">Rentang waktu ke jam tidur</span>
+          <strong id="caffeine-hours">-</strong>
+        </div>
+        <div class="readout">
+          <span class="readout-label">Persentase sisa dosis</span>
+          <strong id="caffeine-fraction">-</strong>
+        </div>
+        <div class="readout">
+          <span class="readout-label">Batas aman konsumsi</span>
+          <strong id="caffeine-cutoff">-</strong>
+        </div>
+      </div>
+
+      <svg
+        id="caffeine-curve"
+        class="curve"
+        viewBox="0 0 640 220"
+        role="img"
+        aria-label="Kurva peluruhan konsentrasi plasma kafein selama 24 jam"
+      ></svg>
+
+      <div class="verdict" id="caffeine-verdict" data-tone="optimal">
+        <p id="caffeine-verdict-text">-</p>
+      </div>
+
+      <h3 class="sub-head">Tonggak Waktu Paruh (Half-Life)</h3>
+      <ul class="milestones" id="caffeine-milestones"></ul>
+    </section>
+
+    <!-- ====================================================== DEBT ======= -->
+    <section class="panel" aria-labelledby="debt-title">
+      <header class="panel-head">
+        <h2 id="debt-title">Kalkulator Utang Tidur &amp; Pemulihan</h2>
+        <p>
+          Catat jam tidur Anda selama 7 malam terakhir. Sistem akan membandingkannya dengan acuan standar 8 jam dan menyusun protokol pemulihan realistis selama 3 malam.
+        </p>
+      </header>
+
+      <div class="debt-grid">
+        <label class="debt-field"><span>Malam 1</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Malam 2</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Malam 3</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Malam 4</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Malam 5</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Malam 6</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+        <label class="debt-field"><span>Malam 7</span>
+          <input type="number" data-debt-night min="0" max="16" step="0.5" value="7" /></label>
+      </div>
+      <p class="field-hint">Masukkan durasi jam Anda benar-benar tidur, bukan jam Anda berada di ranjang.</p>
+
+      <article class="debt-result" id="debt-result" data-tone="optimal">
+        <div class="debt-readouts">
+          <div class="readout">
+            <span class="readout-label">Akumulasi Defisit</span>
+            <strong id="debt-deficit">-</strong>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Rata-rata per Malam</span>
+            <strong id="debt-average">-</strong>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Malam Tercatat</span>
+            <strong id="debt-nights">-</strong>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Tidur Terpendek</span>
+            <strong id="debt-worst">-</strong>
+          </div>
+        </div>
+
+        <p class="debt-summary" id="debt-summary">-</p>
+
+        <h3 class="sub-head">Protokol Pemulihan 3 Malam</h3>
+        <ul class="debt-plan" id="debt-plan"></ul>
+        <p class="caveat" id="debt-residual">-</p>
+      </article>
+    </section>
+
+    <!-- ==================================================== GUIDE ======== -->
+    <article class="guide">
+      <header class="guide-head">
+        <h2>Panduan Klinis Siklus Tidur, Kronotipe &amp; Farmakologi Kafein</h2>
+        <p>
+          Pemahaman mendalam mengenai sains di balik ritme sirkadian, arsitektur gelombang otak, dan mekanisme pembersihan metabolik saraf.
+        </p>
+      </header>
+
+      <section>
+        <h3>Siklus 90 Menit Adalah Rata-rata Statistik, Bukan Ketetapan Kaku</h3>
+        <p>
+          Tidur bukanlah kondisi statis pasif, melainkan serangkaian siklus berulang sepanjang 4 hingga 6 kali setiap malam. Ritme biologis ini disebut sebagai <em>ritme ultradian</em>-periode osilasi yang lebih cepat dari ritme sirkadian 24 jam, namun lebih lambat dari detak jantung atau pernapasan. Angka 90 menit dipopulerkan oleh penelitian fisiolog Nathaniel Kleitman mengenai <em>Basic Rest-Activity Cycle</em> (BRAC).
+        </p>
+        <p>
+          Pada tingkat individual, durasi siklus sebenarnya berfluktuasi antara 70 hingga 120 menit. Dalam satu malam yang sama, siklus pertama biasanya merupakan yang terpendek (70-80 menit) dengan konsentrasi tidur lelap tertinggi, sedangkan siklus-siklus menjelang fajar memanjang (100-120 menit) dan didominasi fase REM.
+        </p>
+      </section>
+
+      <section>
+        <h3>Fungsi Fisiologis di Setiap Tahapan Tidur</h3>
+        <p>
+          Tidur non-REM terbagi menjadi tiga tahapan elektrofisiologis yang masing-masing memiliki peran vital:
+        </p>
+        <p>
+          <strong>N1 (Tidur Ringan Transisi)</strong>: Fase 2–5 menit di ambang kesadaran saat gelombang teta muncul, otot mulai relaksasi, dan sentakan hipnik (hypnic jerk) dapat terjadi. Seseorang yang dibangunkan dari fase N1 sering kali merasa belum tertidur sama sekali.
+        </p>
+        <p>
+          <strong>N2 (Tidur Ringan Stabil)</strong>: Porsi terbesar dari total tidur malam (45–55%). Ciri khasnya adalah kehadiran <em>sleep spindles</em> (letupan gelombang 12–14 Hz dari sirkuit talamokortikal) dan <em>K-complexes</em> yang melindungi stabilitas tidur dari gangguan sensorik eksternal. Fase ini berperan penting dalam konsolidasi memori prosedural dan keterampilan motorik.
+        </p>
+        <p>
+          <strong>N3 (Tidur Gelombang Lambat / Deep Sleep)</strong>: Fase tidur paling dalam yang ditandai dengan gelombang delta amplitudo tinggi (&lt; 4 Hz). Ini adalah fase paling sulit untuk dibangunkan. Fase N3 menjadi puncak sekresi hormon pertumbuhan (HGH), perbaikan jaringan seluler, dan penguatan sistem imun. Sebagian besar fase N3 terkonsentrasi pada dua siklus pertama di awal malam.
+        </p>
+        <p>
+          <strong>REM (Rapid Eye Movement)</strong>: Tidur paradoksikal di mana aktivitas metabolik otak sama tingginya dengan saat terjaga dan bola mata bergerak cepat, sementara otot rangka tubuh dilumpuhkan sementara (atonia otot). REM berperan krusial dalam pemrosesan memori emosional, integrasi skema kognitif, dan kreativitas.
+        </p>
+      </section>
+
+      <section>
+        <h3>Sistem Glimfatik: Mengapa Tidur Lelap Adalah Pembersih Otak</h3>
+        <p>
+          Pada tahun 2012, tim peneliti Prof. Maiken Nedergaard di University of Rochester menemukan jalur pembuangan limbah metabolik di sistem saraf pusat yang dinamakan <strong>sistem glimfatik</strong>. Sistem ini hanya bekerja secara efisien saat otak memasuki fase tidur lelap gelombang lambat (N3).
+        </p>
+        <p>
+          Selama fase tidur dalam, ruang interstisial antarsel otak membesar hingga 60%, memungkinkan cairan serebrospinal (CSF) mengalir deras membasuh jaringan otak dan mengangkut produk limbah neurotoksik, termasuk protein <em>beta-amiloid</em> dan <em>tau</em> yang berkaitan erat dengan patologi penyakit Alzheimer.
+        </p>
+      </section>
+
+      <section>
+        <h3>Inersia Tidur: Mengapa Terbangun di Tengah Siklus Menyebabkan Pusing</h3>
+        <p>
+          Inersia tidur (sleep inertia) adalah kondisi transisi penurunan kewaspadaan kognitif, perlambatan reaksi motorik, dan disorientasi setelah terbangun. Jika Anda terbangun secara mendadak saat otak sedang berada di tengah fase N3 (gelombang lambat), inersia tidur akan terasa sangat berat dan bisa bertahan selama 30 menit hingga beberapa jam.
+        </p>
+        <p>
+          Dengan menyelaraskan waktu bangun pada kelipatan siklus 90 menit, Anda memaksimalkan probabilitas untuk terbangun di akhir fase REM atau fase N1/N2 ringan, sehingga transisi menuju kesadaran penuh berlangsung mulus dan segar.
+        </p>
+      </section>
+
+      <section>
+        <h3>Adenosin, Kafein &amp; Perbedaan antara Merasa Terjaga vs Cukup Istirahat</h3>
+        <p>
+          Selama Anda beraktivitas, molekul <strong>adenosin</strong> terakumulasi secara bertahap di otak dan berikatan dengan reseptor A1 serta A2A untuk memicu dorongan kantuk biologis (homeostatic sleep pressure).
+        </p>
+        <p>
+          Kafein tidak menghasilkan energi baru; kafein adalah antagonis kompetitif yang menduduki reseptor adenosin tersebut sehingga sinyal kantuk tidak dapat diterima oleh otak. Adenosin tetap terus menumpuk di latar belakang. Ketika kafein habis dimetabolisme oleh enzim hati CYP1A2, seluruh molekul adenosin yang menumpuk akan langsung menyerbu reseptor, memicu fenomena <em>caffeine crash</em>.
+        </p>
+      </section>
+
+      <section>
+        <h3>Kronotipe Adalah Biologi, Bukan Disiplin</h3>
+        <p>
+          Kronotipe Anda adalah relasi fase antara jam sirkadian internal dan hari eksternal. Sifat ini sangat diwariskan (heritabel), bergeser terprediksi sepanjang rentang hidup — lebih larut selama masa remaja, lebih pagi kembali sejak akhir usia lima puluhan — dan bukan preferensi gaya hidup yang bisa diubah sesuka hati.
+        </p>
+        <p>
+          Munich ChronoType Questionnaire mengukurnya secara perilaku, bukan dengan menanyakan seberapa pagi Anda merasa. Instrumen ini mencatat waktu tidur pada hari kerja dan hari libur, menghitung titik tengah masing-masing, dan memakai titik tengah hari libur (MSF) sebagai penanda biologis, dengan logika bahwa hari libur membiarkan jam biologis berjalan pada fase alaminya tanpa dipotong alarm.
+        </p>
+        <p>
+          Penyempurnaan — dan bagian yang dilewatkan sebagian besar kalkulator — adalah bahwa tidur hari libur pun tidak murni biologis. Jika Anda kekurangan tidur kronis pada hari kerja, sebagian tidur akhir pekan yang panjang adalah pelunasan utang, yang menggeser titik tengah secara artifisial ke lebih larut dan membuat Anda tampak lebih nokturnal dari sebenarnya. MCTQ mengoreksinya dengan mengurangkan setengah selisih durasi tidur hari libur dan hari kerja, dan hanya bila tidur hari libur lebih panjang. Hasilnya adalah MSFsc, titik tengah terkoreksi tidur. Menerapkan koreksi tanpa memandang tanda adalah bug serius yang salah mengklasifikasikan penderita kurang tidur, dan mesin di sini menjaganya.
+        </p>
+        <p>
+          Kesenjangan antara tengah-tidur biologis dan tengah-tidur yang dituntut sosial adalah jetlag sosial, dan perilakunya seperti jetlag perjalanan. Orang dengan jetlag sosial lebih dari sekitar dua jam menunjukkan tingkat merokok, konsumsi kafein, dan gangguan metabolik yang lebih tinggi, terlepas dari durasi tidur aktual. Jika hasil Anda menunjukkan nilai jetlag sosial besar, respons produktif bukanlah memaksa tidur lebih awal — melainkan menggeser waktu bangun hari libur mendekati waktu bangun hari kerja, yang menjangkar jam biologis tanpa memotong tidur.
+        </p>
+        <p>
+          Satu catatan taksonomi, karena internet tidak konsisten. Literatur riset umumnya mendeskripsikan tiga kronotipe. Skema empat hewan — Singa, Beruang, Serigala, Lumba-lumba — adalah popularisasi, dan Lumba-lumba khususnya bukan konstruk MCTQ. Kalkulator ini akan menampilkan Lumba-lumba, tetapi sebagai lapisan eksplisit berlabel yang digerakkan oleh jawaban fragmentasi Anda, dan selalu memberi tahu tipe MCTQ terukur Anda. Menyajikan pola fragmentasi sebagai kronotipe keempat yang tervalidasi adalah fabrikasi.
+        </p>
+      </section>
+
+      <section>
+        <h3>Hal yang Tidak Dapat Dilakukan Kalkulator Ini</h3>
+        <p>
+          Kalkulator ini tidak dapat mendiagnosis apa pun. Ia tidak dapat mendeteksi apnea tidur obstruktif, dan baik jadwal maupun hasil kronotipe tidak akan menandainya. Jika Anda mendengkur keras, jika pasangan menyaksikan jeda napas Anda, atau jika Anda bangun tidak segar setelah waktu tidur memadai, itu membutuhkan studi tidur klinis — tidak ada optimasi waktu tidur yang mengatasi saluran napas yang menutup di malam hari.
+        </p>
+        <p>
+          Kalkulator ini tidak dapat mengukur panjang siklus, latensi tidur, atau tahapan tidur aktual Anda. Seluruh laporan arsitekturnya adalah model rata-rata populasi. Ia tidak dapat memberi tahu kapan Anda akan terbangun alami, dan tidak dapat menjamin bahwa alarm selaras siklus akan terasa lebih baik daripada alarm lainnya.
+        </p>
+        <p>
+          Yang dapat dilakukannya adalah menghilangkan aritmetika dari pertanyaan penjadwalan, menunjukkan kurva peluruhan kafein yang merupakan farmakologi asli bukan heuristik, mengkuantifikasi jetlag sosial Anda dari instrumen tervalidasi, dan memberi buku besar utang tidur jujur yang tidak berpura-pura tiga malam baik menghapus seminggu pembatasan.
+        </p>
+      </section>
+
+      <section class="sources">
+        <h3>Referensi Ilmiah &amp; Bacaan Lanjutan</h3>
+        <ul>
+          <li>Roenneberg T. et al. - <em>Social jetlag and obesity</em>, Current Biology (2012)</li>
+          <li>Nedergaard M. et al. - <em>A paravascular pathway facilitates CSF flow through the brain parenchyma</em>, Science Translational Medicine (2012)</li>
+          <li>Drake C. et al. - <em>Caffeine effects on sleep taken 0, 3, or 6 hours before going to bed</em>, Journal of Clinical Sleep Medicine (2013)</li>
+          <li>Watson N.F. et al. - <em>Recommended amount of sleep for a healthy adult: AASM and SRS consensus statement</em>, Sleep (2015)</li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- ======================================================= FAQ ======= -->
+    <section class="faq" aria-labelledby="faq-title">
+      <h2 id="faq-title">Pertanyaan yang Sering Diajukan</h2>
+      {faqItems.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </section>
+  </main>
+
+  <FooterId />
+
+  <script src="../../scripts/tools/sleep-engine-id.js"></script>
+</LayoutId>
+
+<style is:global>
+  /* ===================================================== page tokens === */
+  .sleep-page {
+    --bg: #000000;
+    --elev: #090a0f;
+    --elev2: #0f1016;
+    --line: rgba(255, 255, 255, 0.08);
+    --line-soft: rgba(255, 255, 255, 0.05);
+    --ink: #ffffff;
+    --ink-dim: #a1a1aa;
+    --ink-faint: #71717a;
+    --action: #2997ff;
+    --action-hover: #3b82f6;
+    --violet: var(--action);
+    --indigo: var(--action);
+    --sky: #38bdf8;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #f43f5e;
+    --rose: #f43f5e;
+
+    position: relative;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 0 1rem 6rem;
+    overflow-x: clip;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .dark .sleep-page,
+  :root:not(.light) .sleep-page {
+    color-scheme: dark;
+  }
+
+  html:not(.dark) .sleep-page {
+    --bg: #ffffff;
+    --elev: #f5f5f7;
+    --elev2: #ffffff;
+    --line: #e4e4e7;
+    --line-soft: #f0f0f2;
+    --ink: #09090b;
+    --ink-dim: #52525b;
+    --ink-faint: #71717a;
+    --action: #0066cc;
+    --action-hover: #0071e3;
+    --violet: var(--action);
+    --indigo: var(--action);
+    --sky: #0284c7;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #f43f5e;
+    --rose: #f43f5e;
+  }
+
+  .sleep-page > * {
+    max-width: 1120px;
+    margin-inline: auto;
+  }
+
+  /* Candidate 2 Luxury Ambient Radial Glow */
+  .sleep-hero-glow {
+    position: absolute;
+    inset-inline: -1rem;
+    top: -2rem;
+    height: 24rem;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%);
+    mask-image: linear-gradient(to bottom, black 55%, transparent 92%);
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%);
+  }
+
+  .dark .sleep-hero-glow {
+    background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sleep-hero-glow { display: none; }
+  }
+
+  .sleep-page > *:not(.sleep-hero-glow) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ========================================================== hero ==== */
+  .sleep-page .hero {
+    padding: 3rem 0 2rem;
+  }
+
+  .sleep-page .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    list-style: none;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .crumbs a {
+    color: var(--ink-dim);
+    text-decoration: none;
+  }
+
+  .sleep-page .crumbs a:hover {
+    color: var(--action);
+  }
+
+  .sleep-page h1,
+  .sleep-page h2,
+  .sleep-page h3 {
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .sleep-page h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(48px, 6vw, 64px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    font-weight: 800;
+  }
+
+  .sleep-page h2 {
+    letter-spacing: -0.02em;
+  }
+
+  .sleep-page .lede {
+    max-width: 62ch;
+    margin: 0 0 2rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--line-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .sleep-page .hero-stats li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--elev);
+  }
+
+  .sleep-page .hero-stats strong {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: var(--action);
+  }
+
+  .sleep-page .hero-stats span {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+
+  /* ========================================================= panels === */
+  .sleep-page .panel {
+    margin-top: 2.5rem;
+    padding: 1.75rem;
+    background: var(--elev);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+  }
+
+  .sleep-page .panel-head {
+    margin-bottom: 1.5rem;
+  }
+
+  .sleep-page .panel-head h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .sleep-page .panel-head p {
+    margin: 0;
+    max-width: 68ch;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .sub-head {
+    margin: 2rem 0 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .split {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .sleep-page .split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* ======================================================= mode tabs === */
+  .sleep-page .mode-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sleep-page .mode-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.625rem 1.25rem;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-dim);
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .sleep-page .mode-tab:hover {
+    color: var(--ink);
+    border-color: var(--action);
+  }
+
+  .sleep-page .mode-tab:active {
+    transform: scale(0.97);
+  }
+
+  .sleep-page .mode-tab.is-active {
+    color: #ffffff;
+    background: var(--action);
+    border-color: var(--action);
+    font-weight: 600;
+  }
+
+  .sleep-page .mode-note {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .mode-panel > .field,
+  .sleep-page .mode-panel > .mode-note {
+    margin-bottom: 1.5rem;
+  }
+
+  /* ========================================================== fields == */
+  .sleep-page .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sleep-page .field-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .field-hint {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .field-error {
+    margin: 0.75rem 0 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--bad);
+    background: rgba(244, 63, 94, 0.08);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    border-radius: 10px;
+  }
+
+  .sleep-page input[type="time"],
+  .sleep-page input[type="number"],
+  .sleep-page select {
+    min-height: 44px;
+    padding: 0.625rem 0.75rem;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.9375rem;
+    color: var(--ink);
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .sleep-page select {
+    font-family: inherit;
+  }
+
+  .sleep-page input[type="time"]:focus-visible,
+  .sleep-page input[type="number"]:focus-visible,
+  .sleep-page select:focus-visible,
+  .sleep-page input[type="range"]:focus-visible,
+  .sleep-page .mode-tab:focus-visible {
+    border-color: var(--action);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.25);
+  }
+
+  .dark .sleep-page input[type="time"]:focus-visible,
+  .dark .sleep-page input[type="number"]:focus-visible,
+  .dark .sleep-page select:focus-visible,
+  .dark .sleep-page input[type="range"]:focus-visible,
+  .dark .sleep-page .mode-tab:focus-visible {
+    border-color: var(--action);
+    box-shadow: 0 0 0 3px rgba(41, 151, 255, 0.25);
+  }
+
+  .sleep-page input[type="range"] {
+    width: 100%;
+    min-height: 44px;
+    accent-color: var(--action);
+    cursor: pointer;
+  }
+
+  .sleep-page output {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--action);
+  }
+
+  /* ================================================= cycle result cards = */
+  .sleep-page .results-summary {
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .cycle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 0.875rem;
+  }
+
+  .sleep-page .cycle-grid:empty {
+    display: none;
+  }
+
+  .sleep-page .cycle-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.125rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 0.15s, box-shadow 0.15s;
+    animation: cycleIn 0.32s ease both;
+  }
+
+  .sleep-page .cycle-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--action);
+  }
+
+  .sleep-page .cycle-card:nth-child(2) { animation-delay: 0.05s; }
+  .sleep-page .cycle-card:nth-child(3) { animation-delay: 0.1s; }
+  .sleep-page .cycle-card:nth-child(4) { animation-delay: 0.15s; }
+
+  @keyframes cycleIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sleep-page .cycle-card { animation: none; }
+  }
+
+  .sleep-page .cycle-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.875rem;
+  }
+
+  .sleep-page .cycle-count {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .cycle-tier {
+    padding: 0.2rem 0.55rem;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 999px;
+  }
+
+  .sleep-page .cycle-card[data-tone="optimal"] .cycle-tier {
+    color: var(--good);
+    background: rgba(16, 185, 129, 0.12);
+  }
+
+  .sleep-page .cycle-card[data-tone="baseline"] .cycle-tier {
+    color: var(--sky);
+    background: rgba(56, 189, 248, 0.12);
+  }
+
+  .sleep-page .cycle-card[data-tone="minimum"] .cycle-tier {
+    color: var(--warn);
+    background: rgba(245, 158, 11, 0.12);
+  }
+
+  .sleep-page .cycle-card[data-tone="deficit"] .cycle-tier {
+    color: var(--bad);
+    background: rgba(244, 63, 94, 0.12);
+  }
+
+  .sleep-page .cycle-card[data-tone="optimal"] { border-color: rgba(16, 185, 129, 0.28); }
+  .sleep-page .cycle-card[data-tone="minimum"] { border-color: rgba(245, 158, 11, 0.28); }
+  .sleep-page .cycle-card[data-tone="deficit"] { border-color: rgba(244, 63, 94, 0.32); }
+
+  .sleep-page .cycle-primary {
+    margin: 0;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .sleep-page .cycle-primary-label {
+    margin: 0.25rem 0 0.875rem;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .cycle-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin: 0 0 0.875rem;
+    padding: 0.875rem 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .sleep-page .cycle-meta > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 13px;
+  }
+
+  .sleep-page .cycle-meta dt {
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .cycle-meta dd {
+    margin: 0;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .cycle-note {
+    margin: auto 0 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .cycle-alert {
+    margin: 0.625rem 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--bad);
+  }
+
+  /* ==================================================== tier legend ==== */
+  .sleep-page .tier-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .sleep-page .tier-chip {
+    padding: 0.375rem 0.75rem;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    border-radius: 999px;
+  }
+
+  .sleep-page .tier-chip.tone-optimal {
+    color: var(--good);
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+  }
+
+  .sleep-page .tier-chip.tone-baseline {
+    color: var(--sky);
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.28);
+  }
+
+  .sleep-page .tier-chip.tone-minimum {
+    color: var(--warn);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.28);
+  }
+
+  .sleep-page .tier-chip.tone-deficit {
+    color: var(--bad);
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid rgba(244, 63, 94, 0.28);
+  }
+
+  /* ===================================================== clock wheel === */
+  .sleep-page .wheel {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin: 0 auto 1.25rem;
+  }
+
+  .sleep-page .wheel-ring {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .sleep-page .wheel-tick {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .sleep-page .wheel-tick.is-major {
+    stroke: var(--ink-faint);
+    stroke-width: 1.5;
+  }
+
+  .sleep-page .wheel-hour {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    fill: var(--ink-faint);
+  }
+
+  .sleep-page .wheel-sleep-arc {
+    fill: none;
+    stroke: var(--action);
+    stroke-width: 14;
+    stroke-linecap: round;
+    opacity: 0.45;
+  }
+
+  .sleep-page .wheel-peak-arc {
+    fill: none;
+    stroke: var(--good);
+    stroke-width: 5;
+    stroke-linecap: round;
+    opacity: 0.7;
+  }
+
+  .sleep-page .wheel-node.is-bed { fill: var(--action); }
+  .sleep-page .wheel-node.is-wake { fill: var(--sky); }
+  .sleep-page .wheel-node.is-melatonin { fill: var(--sky); }
+  .sleep-page .wheel-node.is-caffeine { fill: var(--warn); }
+
+  .sleep-page .wheel-hand {
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .sleep-page .wheel-hub { fill: var(--ink); }
+
+  .sleep-page .wheel-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .wheel-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .sleep-page .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  .sleep-page .swatch-sleep { background: var(--action); }
+  .sleep-page .swatch-melatonin { background: var(--sky); }
+  .sleep-page .swatch-caffeine { background: var(--warn); }
+  .sleep-page .swatch-peak { background: var(--good); }
+
+  /* ====================================================== hypnogram ==== */
+  .sleep-page .hypnogram {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .sleep-page .hypo-grid {
+    stroke: var(--line-soft);
+    stroke-width: 1;
+  }
+
+  .sleep-page .hypo-stage {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    fill: var(--ink-faint);
+  }
+
+  .sleep-page .hypo-trace {
+    fill: none;
+    stroke: var(--action);
+    stroke-width: 1.75;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .sleep-page .hypo-cycle-tick {
+    stroke: var(--line);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+  }
+
+  .sleep-page .hypo-axis {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    fill: var(--ink-faint);
+  }
+
+  .sleep-page .hypo-totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+  }
+
+  .sleep-page .hypo-totals > div {
+    padding: 0.75rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+
+  .sleep-page .hypo-totals dt {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .hypo-totals dd {
+    margin: 0.25rem 0 0;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .sleep-page .caveat {
+    margin: 1rem 0 0;
+    padding: 0.875rem 1rem;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    background: var(--elev2);
+    border-left: 3px solid var(--action);
+    border-radius: 0 10px 10px 0;
+  }
+
+  /* ====================================================== chronotype === */
+  .sleep-page .mctq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .sleep-page .mctq-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0;
+    padding: 1.125rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .sleep-page .mctq-group legend {
+    padding: 0 0.5rem;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--action);
+  }
+
+  .sleep-page .chrono-card {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 0.15s;
+  }
+
+  .sleep-page .chrono-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .sleep-page .chrono-card[data-tone="early"] { border-color: rgba(56, 189, 248, 0.32); }
+  .sleep-page .chrono-card[data-tone="intermediate"] { border-color: rgba(0, 102, 204, 0.32); }
+  .sleep-page .chrono-card[data-tone="late"] { border-color: rgba(41, 151, 255, 0.36); }
+  .sleep-page .chrono-card[data-tone="fragmented"] { border-color: rgba(244, 63, 94, 0.32); }
+
+  .sleep-page .chrono-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .sleep-page .chrono-kicker {
+    margin: 0 0 0.25rem;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .chrono-head h3 {
+    margin: 0;
+    font-family: 'Geist', -apple-system, sans-serif;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  .sleep-page .chrono-alias {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .chrono-msfsc {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    text-align: right;
+    background: var(--elev);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .sleep-page .chrono-msfsc-label {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .chrono-msfsc strong {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.25rem;
+    color: var(--action);
+  }
+
+  .sleep-page .chrono-summary {
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .chrono-disclosure {
+    margin: 0 0 1rem;
+    padding: 0.875rem 1rem;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--bad);
+    background: rgba(244, 63, 94, 0.08);
+    border: 1px solid rgba(244, 63, 94, 0.26);
+    border-radius: 10px;
+  }
+
+  .sleep-page .chrono-windows {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sleep-page .window-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.875rem;
+    background: var(--elev);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .sleep-page .window-label {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .window-card strong {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+
+  .sleep-page .chrono-notes p {
+    margin: 0 0 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .chrono-notes strong {
+    color: var(--ink);
+  }
+
+  .sleep-page .chrono-math {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .sleep-page .chrono-math summary {
+    font-size: 0.875rem;
+    color: var(--action);
+    cursor: pointer;
+  }
+
+  .sleep-page .math-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 0.5rem 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .sleep-page .math-list > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 13px;
+  }
+
+  .sleep-page .math-list dt {
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .math-list dd {
+    margin: 0;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink);
+  }
+
+  .sleep-page .math-note {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink-faint);
+  }
+
+  /* ======================================================== caffeine === */
+  .sleep-page .caffeine-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sleep-page .caffeine-readouts,
+  .sleep-page .debt-readouts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sleep-page .readout {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.875rem 1rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .sleep-page .readout-label {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .readout strong {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.125rem;
+    color: var(--ink);
+  }
+
+  .sleep-page .curve {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 1.25rem;
+  }
+
+  .sleep-page .curve-axis {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .sleep-page .curve-grid {
+    stroke: var(--line-soft);
+    stroke-width: 1;
+  }
+
+  .sleep-page .curve-tick {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    fill: var(--ink-faint);
+  }
+
+  .sleep-page .curve-line {
+    fill: none;
+    stroke: var(--action);
+    stroke-width: 2.25;
+    stroke-linecap: round;
+  }
+
+  .sleep-page .curve-threshold {
+    stroke: var(--warn);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    opacity: 0.75;
+  }
+
+  .sleep-page .curve-threshold-label {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    fill: var(--warn);
+  }
+
+  .sleep-page .curve-bedtime {
+    stroke: var(--sky);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .sleep-page .curve-node {
+    fill: var(--sky);
+  }
+
+  .sleep-page .curve-bedtime-label {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    fill: var(--sky);
+  }
+
+  .sleep-page .verdict {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    border-radius: 12px;
+  }
+
+  .sleep-page .verdict p {
+    margin: 0;
+  }
+
+  .sleep-page .verdict[data-tone="optimal"] {
+    color: var(--good);
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.26);
+  }
+
+  .sleep-page .verdict[data-tone="minimum"] {
+    color: var(--warn);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.26);
+  }
+
+  .sleep-page .verdict[data-tone="deficit"] {
+    color: var(--bad);
+    background: rgba(244, 63, 94, 0.08);
+    border: 1px solid rgba(244, 63, 94, 0.26);
+  }
+
+  .sleep-page .milestones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sleep-page .milestones li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.875rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .sleep-page .milestone-dose {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--action);
+  }
+
+  .sleep-page .milestone-time {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    color: var(--ink);
+  }
+
+  .sleep-page .milestone-label {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+
+  /* ============================================================ debt === */
+  .sleep-page .debt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sleep-page .debt-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .sleep-page .debt-field span {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sleep-page .debt-field input {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .sleep-page .debt-result {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .sleep-page .debt-summary {
+    margin: 0 0 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .debt-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sleep-page .debt-step {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.875rem 1rem;
+    background: var(--elev2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 640px) {
+    .sleep-page .debt-step {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .sleep-page .debt-step-night {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .sleep-page .debt-step-extend {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--good);
+  }
+
+  .sleep-page .debt-step-total {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .debt-step-residual {
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+
+  /* =========================================================== guide === */
+  .sleep-page .guide {
+    margin-top: 4rem;
+  }
+
+  .sleep-page .guide-head {
+    margin-bottom: 2rem;
+  }
+
+  .sleep-page .guide-head h2 {
+    margin: 0 0 0.75rem;
+    font-family: 'Geist', -apple-system, sans-serif;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .sleep-page .guide-head p {
+    margin: 0;
+    max-width: 68ch;
+    font-size: 1rem;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .guide section {
+    margin-bottom: 2.5rem;
+  }
+
+  .sleep-page .guide h3 {
+    margin: 0 0 0.875rem;
+    font-family: 'Geist', -apple-system, sans-serif;
+    font-size: 1.25rem;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .sleep-page .guide p {
+    max-width: 74ch;
+    margin: 0 0 1rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    color: var(--ink-dim);
+  }
+
+  .sleep-page .guide strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .sleep-page .guide em {
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  .sleep-page .sources ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .sleep-page .sources li {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--ink-faint);
+  }
+
+  /* ============================================================= FAQ === */
+  .sleep-page .faq {
+    margin-top: 4rem;
+  }
+
+  .sleep-page .faq h2 {
+    margin: 0 0 1.5rem;
+    font-family: 'Geist', -apple-system, sans-serif;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  .sleep-page .faq-item {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sleep-page .faq-item summary {
+    padding: 1.125rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .sleep-page .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .sleep-page .faq-item summary::after {
+    content: "+";
+    float: right;
+    font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--action);
+  }
+
+  .sleep-page .faq-item[open] summary::after {
+    content: "−";
+  }
+
+  .sleep-page .faq-item p {
+    margin: 0 0 1.25rem;
+    max-width: 74ch;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--ink-dim);
+  }
+
+  /* Light-theme corrections */
+  html:not(.dark) .sleep-page .mode-tab.is-active {
+    color: #ffffff;
+  }
+
+  html:not(.dark) .sleep-page .wheel-hand {
+    stroke: #52525b;
+  }
+
+  html:not(.dark) .sleep-page .wheel-hub {
+    fill: #52525b;
+  }
+
+  html:not(.dark) .sleep-page .wheel-sleep-arc {
+    opacity: 0.35;
+  }
+</style>

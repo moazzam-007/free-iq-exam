@@ -1,9 +1,567 @@
 ---
-import Layout from '../../components/id/LayoutId.astro';
-import Header from '../../components/id/HeaderId.astro';
-import Footer from '../../components/id/FooterId.astro';
+import LayoutId from '../../components/id/LayoutId.astro';
+import HeaderId from '../../components/id/HeaderId.astro';
+import FooterId from '../../components/id/FooterId.astro';
+
 const title = 'Memento Mori: Kalender Hidup dalam Minggu | FreeIQExam';
 const description = 'Visualisasikan perjalanan hidup dalam minggu dan lihat estimasi harapan hidup secara privat di browser.';
 const canonicalUrl = 'https://freeiqexam.com/id/memento-mori';
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Memento Mori: Kalender Hidup dalam Minggu",
+    "url": "https://freeiqexam.com/id/memento-mori",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://freeiqexam.com/id/" },
+      { "@type": "ListItem", "position": 2, "name": "Memento Mori", "item": "https://freeiqexam.com/id/memento-mori/" }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Apa itu Memento Mori dan mengapa kaum Stoik mempraktikkannya?", "acceptedAnswer": { "@type": "Answer", "text": "Memento Mori berarti ingatlah kematian. Kaum Stoik memakainya untuk memfokuskan perhatian pada hal bermakna, mengurangi kecemasan harian, dan hidup dengan intensi." } },
+      { "@type": "Question", "name": "Berapa minggu dalam rata-rata hidup manusia?", "acceptedAnswer": { "@type": "Answer", "text": "Dengan harapan hidup sekitar 80 tahun, hidup manusia rata-rata mencakup sekitar 4.000 minggu (80 x 52)." } },
+      { "@type": "Question", "name": "Mengapa waktu terasa berjalan lebih cepat seiring bertambahnya usia?", "acceptedAnswer": { "@type": "Answer", "text": "Teori proporsional Janet: tiap tahun menjadi fraksi lebih kecil dari total hidup, plus rutinitas mengurangi kepadatan memori episodik. Kebaruan kognitif memperlambat persepsi waktu subjektif." } },
+      { "@type": "Question", "name": "Bagaimana gaya hidup memengaruhi harapan hidup statistik dan healthspan?", "acceptedAnswer": { "@type": "Answer", "text": "Olahraga aerobik (+3,5 hingga +4,5 thn), tidur 7-8 jam (+2,4 thn), diet bersih (+2,8 thn), dan menghindari rokok dapat memperpanjang healthspan bebas penyakit lebih dari satu dekade." } },
+      { "@type": "Question", "name": "Apa perbedaan lifespan dan healthspan?", "acceptedAnswer": { "@type": "Answer", "text": "Lifespan adalah total tahun hidup; healthspan adalah tahun yang dijalani bebas disabilitas kronis dan penurunan kognitif." } },
+      { "@type": "Question", "name": "Apa itu Amor Fati dalam filsafat Stoik?", "acceptedAnswer": { "@type": "Answer", "text": "Amor Fati berarti Cinta pada Takdir. Berakar pada Marcus Aurelius dan Epiktetus: merangkul setiap kesulitan bukan sebagai tragedi, melainkan bahan baku membangun ketahanan dan kebajikan." } },
+      { "@type": "Question", "name": "Bagaimana Memento Mori mengurangi kecemasan dan stres harian?", "acceptedAnswer": { "@type": "Answer", "text": "Meditasi atas mortalitas memberi perspektif kosmik instan. Dalam bentangan waktu agung, konflik kecil dan gosip menyusut ke signifikansi nol, membebaskan energi mental untuk tindakan bertujuan." } },
+      { "@type": "Question", "name": "Apakah tanggal lahir atau informasi pribadi saya disimpan di server?", "acceptedAnswer": { "@type": "Answer", "text": "Tidak. Seluruh kalkulasi, pembuatan grid hidup, dan render poster berjalan 100% lokal di browser. Tidak ada tanggal pribadi atau input kesehatan yang dikirim atau disimpan di server mana pun." } }
+    ]
+  }
+];
 ---
-<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/memento-mori"><Header currentPath="/id/memento-mori" enPath="/memento-mori" /><main class="flex-1 bg-white px-4 py-10 text-zinc-950 dark:bg-black dark:text-white sm:px-6 lg:px-8"><div class="mx-auto max-w-5xl"><header class="mb-8 text-center"><span class="fx-tag">Perspektif waktu</span><h1 class="mt-5 text-4xl font-extrabold tracking-[-0.025em] sm:text-5xl">Memento Mori</h1><p class="mx-auto mt-4 max-w-2xl text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-300 sm:text-lg">Lihat hidup sebagai kumpulan minggu yang terbatas dan gunakan perspektif itu untuk memilih tindakan yang berarti.</p></header><section class="rounded-3xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8"><label>Tanggal lahir<input id="mementoDob" type="date" class="mt-2 min-h-[44px] rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900" /></label><div class="mt-8 grid gap-4 sm:grid-cols-4"><span id="statLivedWeeks" class="rounded-xl bg-white p-4 font-mono text-2xl dark:bg-zinc-900">-</span><span id="statRemainingWeeks" class="rounded-xl bg-white p-4 font-mono text-2xl dark:bg-zinc-900">-</span><span id="statPercentSpent" class="rounded-xl bg-white p-4 font-mono text-2xl dark:bg-zinc-900">-</span><span id="statLifeExpectancy" class="rounded-xl bg-white p-4 font-mono text-2xl dark:bg-zinc-900">-</span></div><div id="lifeProgressBar" class="mt-6 h-3 rounded-full bg-[#0066cc] dark:bg-[#2997ff]" style="width:0%"></div><div id="lifeGridContainer" class="mt-8 overflow-x-auto"></div><div class="hidden"><input id="modExercise" type="checkbox" checked /><input id="modSleep" type="checkbox" checked /><input id="modDiet" type="checkbox" checked /><input id="modSmoking" type="checkbox" /><input id="modStress" type="checkbox" /><button id="downloadMementoPosterBtn" type="button"></button><button id="nextQuoteBtn" type="button"></button><span id="stoicQuoteText"></span><span id="stoicQuoteAuthor"></span><span id="stoicQuoteSource"></span><span id="statAgeYears"></span><span id="statRemainingDays"></span><span id="statRemainingHours"></span><span id="statRemainingHeartbeats"></span><div id="gridTooltip"></div></div></section></div></main><Footer /><script src="../../scripts/tools/memento-engine.js"></script></Layout>
+
+<LayoutId
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  enPath="/memento-mori"
+>
+  <HeaderId currentPath="/id/memento-mori" enPath="/memento-mori" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+    
+    <!-- Hero Header -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span>Observatorium Mortalitas Stoik · Kalender 4.000 Minggu</span>
+      </div>
+
+      <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+        Hidup Memento Mori dalam Minggu
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+        “Bukan karena hidup kita singkat, melainkan karena kita menyia-nyiakan banyak darinya.” Visualisasikan 4.000 minggu fana Anda di Bumi, hitung harapan hidup statistik, dan selaraskan tindakan harian dengan intensi Stoik klasik.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+      
+      <!-- Biometric & Lifestyle Input Deck -->
+      <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-8 mb-8 shadow-xl">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-800/80">
+          
+          <!-- Tanggal Lahir Input -->
+          <div>
+            <label for="mementoDob" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>Tanggal Lahir</span>
+            </label>
+            <input
+              type="date"
+              id="mementoDob"
+              class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+            />
+          </div>
+
+          <!-- Jenis Kelamin Biologis Selector -->
+          <div>
+            <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 4v2" /><path d="M20 12h-2" /><path d="M12 20v-2" /><path d="M4 12h2" /></svg>Jenis Kelamin Biologis</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                class="memento-gender-btn active flex-1 py-2.5 rounded-2xl text-xs font-bold border border-amber-500/40 bg-amber-500/10 text-amber-500 transition-all cursor-pointer"
+                data-gender="male"
+              >
+                ♂ Pria
+              </button>
+              <button
+                type="button"
+                class="memento-gender-btn flex-1 py-2.5 rounded-2xl text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer"
+                data-gender="female"
+              >
+                ♀ Wanita
+              </button>
+            </div>
+          </div>
+
+          <!-- Poster Download Action Button -->
+          <div class="flex flex-col justify-end">
+            <button
+              type="button"
+              id="downloadMementoPosterBtn"
+              class="w-full py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition-all duration-150 transform hover:scale-[1.02] active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>Unduh Poster Hidup (PNG)</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Longevity & Lifestyle Modifiers Toggle -->
+        <div class="pt-6">
+          <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+            <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 18h8" /><path d="M3 22h18" /><path d="M14 22a7 7 0 1 0-7-7h1" /><path d="M9 14h2" /><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" /><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" /></svg>Aktuaria Healthspan & Faktor Gaya Hidup</span>
+          </label>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-xs">
+            
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-amber-500 transition-colors">
+              <input type="checkbox" id="modExercise" checked class="rounded accent-amber-500 w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">Olahraga 150mnt+</span>
+                <span class="text-[10px] text-emerald-500 font-mono">+3,8 thn</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-amber-500 transition-colors">
+              <input type="checkbox" id="modSleep" checked class="rounded accent-amber-500 w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">Tidur 7-8 jam</span>
+                <span class="text-[10px] text-emerald-500 font-mono">+2,4 thn</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-amber-500 transition-colors">
+              <input type="checkbox" id="modDiet" checked class="rounded accent-amber-500 w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">Diet Bersih</span>
+                <span class="text-[10px] text-emerald-500 font-mono">+2,8 thn</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-amber-500 transition-colors">
+              <input type="checkbox" id="modSmoking" class="rounded accent-amber-500 w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">Rokok / Vape</span>
+                <span class="text-[10px] text-rose-500 font-mono">-8,5 thn</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-amber-500 transition-colors">
+              <input type="checkbox" id="modStress" class="rounded accent-amber-500 w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">Stres Kronis</span>
+                <span class="text-[10px] text-rose-500 font-mono">-2,5 thn</span>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Life Metrics Scorecard -->
+      <div class="bg-zinc-950 text-white border border-zinc-800 rounded-3xl p-6 sm:p-8 mb-8 shadow-2xl relative overflow-hidden">
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Minggu Dijalani</span>
+            <span id="statLivedWeeks" class="text-3xl sm:text-4xl font-black font-mono text-amber-400">1,460</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Perjalanan Berlalu</span>
+          </div>
+
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Minggu Tersisa</span>
+            <span id="statTersisaWeeks" class="text-3xl sm:text-4xl font-black font-mono text-white">2,700</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Potensi Masa Depan</span>
+          </div>
+
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Hidup Terpakai</span>
+            <span id="statPercentSpent" class="text-3xl sm:text-4xl font-black font-mono text-orange-400">35.1%</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Waktu Berlalu</span>
+          </div>
+
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Usia Harapan</span>
+            <span id="statLifeExpectancy" class="text-3xl sm:text-4xl font-black font-mono text-emerald-400">87,2 thn</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Rentang Aktuaria</span>
+          </div>
+
+        </div>
+
+        <!-- Life Progress Bar -->
+        <div class="space-y-1.5 mb-6">
+          <div class="flex justify-between text-xs font-mono text-zinc-400">
+            <span>Usia 0</span>
+            <span id="statAgeYears" class="text-amber-400 font-bold">28,0 thn</span>
+            <span>Target Longevitas</span>
+          </div>
+          <div class="w-full h-3 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-0.5">
+            <div id="lifeProgressBar" class="h-full bg-[#0066cc] dark:bg-[#2997ff] rounded-full transition-all duration-500" style="width: 35.1%;"></div>
+          </div>
+        </div>
+
+        <!-- Deep Time Breakdown -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-zinc-800 text-center font-mono text-xs text-zinc-400">
+          <div>
+            <span class="text-[10px] text-zinc-500 uppercase block">Estimasi Hari Tersisa</span>
+            <span id="statTersisaDays" class="font-bold text-white text-sm">18,900</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-zinc-500 uppercase block">Estimasi Jam Tersisa</span>
+            <span id="statTersisaHours" class="font-bold text-white text-sm">453,600</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-zinc-500 uppercase block">Detak Jantung Tersisa</span>
+            <span id="statTersisaHeartbeats" class="font-bold text-amber-400 text-sm">1,959,552,000</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 4,000 Weeks Interactive Grid Arena -->
+      <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4 sm:p-8 shadow-sm">
+        
+        <!-- Legend & Eras Header -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800/80">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-zinc-950 dark:text-white">
+              Grid Hidup 4.000 Minggu
+            </h2>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400">
+              Tiap kotak merepresentasikan 1 minggu (52 minggu per baris horizontal = 1 tahun penuh).
+            </p>
+          </div>
+
+          <!-- Dot Legend -->
+          <div class="flex flex-wrap items-center gap-3 text-xs font-mono">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-sm bg-amber-500"></span>
+              <span class="text-zinc-600 dark:text-zinc-400">Minggu Berlalu</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-sm bg-white shadow-[0_0_6px_#ffffff] animate-pulse"></span>
+              <span class="text-zinc-600 dark:text-zinc-400">Minggu Kini</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-sm border border-zinc-700"></span>
+              <span class="text-zinc-600 dark:text-zinc-400">Tersisa</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Life Eras Key -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 text-xs font-mono">
+          <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
+            <span class="block font-bold">Usia 0 – 18</span>
+            <span class="text-[10px] text-zinc-400">Masa Kecil Formatif</span>
+          </div>
+          <div class="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+            <span class="block font-bold">Usia 18 – 35</span>
+            <span class="text-[10px] text-zinc-400">Pendakian & Ambisi</span>
+          </div>
+          <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+            <span class="block font-bold">Usia 35 – 60</span>
+            <span class="text-[10px] text-zinc-400">Penguasaan & Puncak</span>
+          </div>
+          <div class="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400">
+            <span class="block font-bold">Usia 60 – 85+</span>
+            <span class="text-[10px] text-zinc-400">Kebijaksanaan & Warisan</span>
+          </div>
+        </div>
+
+        <!-- Interactive Grid Container -->
+        <div class="relative overflow-x-auto py-2">
+          <div id="lifeGridContainer" class="min-w-[640px] space-y-1 select-none"></div>
+
+          <!-- Floating Inspection Tooltip -->
+          <div
+            id="gridTooltip"
+            class="hidden fixed z-50 bg-zinc-950/95 text-white border border-zinc-700 p-3 rounded-xl shadow-2xl backdrop-blur-md pointer-events-none text-xs"
+          ></div>
+        </div>
+
+      </div>
+
+      <!-- Daily Stoic Meditation Card -->
+      <div class="mt-8 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-mono uppercase tracking-wider text-amber-500 font-bold flex items-center gap-1.5">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="3" y1="22" x2="21" y2="22" /><line x1="6" y1="18" x2="6" y2="11" /><line x1="10" y1="18" x2="10" y2="11" /><line x1="14" y1="18" x2="14" y2="11" /><line x1="18" y1="18" x2="18" y2="11" /><polygon points="12 2 20 7 4 7" /></svg>
+            <span>Refleksi Stoik Harian</span>
+          </span>
+          <button
+            type="button"
+            id="nextQuoteBtn"
+            class="text-xs text-zinc-500 dark:text-zinc-400 hover:text-amber-500 font-mono transition-colors cursor-pointer"
+          >
+            <span class="inline-flex items-center gap-1"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg>Meditasi Berikutnya</span>
+          </button>
+        </div>
+
+        <blockquote class="text-base sm:text-lg font-serif italic text-zinc-800 dark:text-zinc-200 leading-relaxed mb-3">
+          <span id="stoicQuoteText">“Bukan karena hidup kita singkat, melainkan karena kita menyia-nyiakan banyak darinya.”</span>
+        </blockquote>
+
+        <div class="flex items-center justify-between text-xs text-zinc-500 font-mono">
+          <span id="stoicQuoteAuthor" class="font-bold text-amber-500">Seneka</span>
+          <span id="stoicQuoteSource">De Brevitate Vitae</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 2,000-Word Philosophical & Actuarial Guide -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base space-y-12">
+      
+      <!-- Section 1: Roman & Stoic Origins -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          1. Asal-usul Romawi & Stoik Memento Mori dan Amor Fati
+        </h2>
+        <p>
+          During the Roman Republic and Empire, when a victorious general returned from military conquest to celebrate a triumphal parade through the streets of Rome, a state slave was positioned directly behind him in the golden chariot. As the crowds cheered and showered the conqueror with laurel wreaths, the slave’s sole duty was to repeatedly whisper into his ear: <em>“Respice post te. Hominem te esse memento. Memento mori.”</em> (“Lihat ke belakangmu. Ingat engkau manusia. Ingat engkau akan mati.”)
+        </p>
+        <p>
+          Dalam Stoikisme klasik — dikembangkan Zenon dari Citium dan diabadikan triumvirat Romawi <strong>Seneka Muda, Epiktetus, dan Kaisar Marcus Aurelius</strong>—death was not feared as an evil. Instead, mortality was revered as nature’s ultimate equalizing force and the profound catalyst for intentional, virtuous living. To meditate upon death is to instantly dismantle ego, greed, and procrastination.
+        </p>
+        <p>
+          Dipasangkan dengan <em>Memento Mori</em> adalah doktrin saudari dari <strong>Amor Fati</strong> (“Cinta pada Takdir”). Kaum Stoik tidak sekadar menoleransi jumlah minggu fana yang dijatahkan; mereka merangkul setiap suka, nestapa, kemenangan, dan tragedi sebagai bahan baku tepat untuk menempa karakter tak tergoyahkan.
+        </p>
+      </section>
+
+      <!-- Section 2: Seneka's De Brevitate Vitae -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          2. De Brevitate Vitae Seneka: Mengapa Hidup Panjang Jika Tahu Cara Menjalaninya
+        </h2>
+        <p>
+          Dalam risalah filsafatnya <em>De Brevitate Vitae</em> (“Tentang Singkatnya Hidup”), ditulis sekitar 49 M untuk sahabatnya Paulinus, Seneka menjawab keluhan universal manusia bahwa alam memberi eksistensi terlalu sekilas:
+        </p>
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-serif italic text-sm my-4 border border-zinc-800">
+          “Bukan karena hidup kita singkat, melainkan karena kita menyia-nyiakan banyak darinya. Hidup cukup panjang, dan estimasi yang cukup murah hati telah diberikan untuk pencapaian tertinggi seandainya semuanya diinvestasikan dengan baik.”
+        </div>
+        <p>
+          Seneka mengamati manusia sangat protektif terhadap uang fisik dan properti, namun sangat ceroboh terhadap satu-satunya aset yang tak pernah dapat dipulihkan: <strong>waktu</strong>. Kita menghamburkan dekade untuk kewajiban sosial sepele, kesombongan korporat tanpa akhir, sengketa toksik, dan hiburan menganggur, tiba di ujung hidup hanya dengan ilusi umur panjang:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Sibuk Menganggur:</strong> Seneka mengkritik mereka yang terus dilahap kesibukan — menghadiri perjamuan, mengelola investasi, dan mencari muka — tanpa pernah berhenti untuk kontemplasi filosofis atau hidup mendalam.
+          </li>
+          <li>
+            <strong>Jebakan Penundaan:</strong> Menunda hidup autentik hingga usia pensiun (mis. “Di usia 60 saya akan pensiun dan menulis”) mengasumsikan jaminan waktu depan yang tak dimiliki insan fana mana pun.
+          </li>
+          <li>
+            <strong>Hidup di Masa Kini:</strong> Momen kini adalah satu-satunya irisan waktu di mana agensi manusia berkuasa. Masa lalu tak dapat diubah; masa depan tak pasti.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 3: Time Perception Psychology -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          3. Psikologi Persepsi Waktu: Mengapa Tahun Berakselerasi Seiring Usia
+        </h2>
+        <p>
+          Hampir setiap orang dewasa mengamati waktu tampak berakselerasi eksponensial seiring bertambahnya usia. Liburan musim panas yang terasa seperti zaman abadi di masa kecil seolah lenyap dalam sekejap mata di usia paruh baya. Neurosains kognitif dan psikologi persepsi menjelaskannya lewat dua mekanisme primer:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Teori Proporsional Janet:</strong> Formulated by philosopher Paul Janet, subjective time is evaluated relative to the total duration of life already experienced. For a 5-year-old child, one single year represents 20% of their entire cognitive existence. For a 50-year-old adult, that same calendar year represents merely 2% of lived experience—making it feel subjectively ten times faster.
+          </li>
+          <li>
+            <strong>Kebaruan Neuro-Kognitif & Kepadatan Memori Episodik:</strong> The human hippocampus and amygdala encode rich, detailed episodic memory traces when confronted with novel environments, first-time experiences, and sensory surprises. In childhood, nearly everything is new. In adulthood, daily life settles into predictable neurological automation (the daily commute, routine office tasks), causing the brain to aggregate weeks of memory into compressed, featureless memory chunks.
+          </li>
+        </ul>
+        <p>
+          <strong>Remedi Stoik:</strong> Untuk memperlambat laju subjektif waktu, hadirkan kebaruan kognitif deliberat: pelajari keterampilan baru, jelajahi lanskap asing, terlibat produksi kreatif, dan praktikkan kehadiran penuh perhatian.
+        </p>
+      </section>
+
+      <!-- Section 4: Actuarial Science & Healthspan -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          4. Sains Aktuaria Longevitas: Memperluas Healthspan
+        </h2>
+        <p>
+          Meski Stoikisme mengajarkan penerimaan radikal atas batas biologis, gerosains modern menunjukkan pilihan kita sangat menentukan kualitas tahun-tahun itu. Pembedaan krusial adalah antara <strong>Lifespan</strong> (total tahun hidup) dan <strong>Healthspan</strong> (tahun yang dijalani bebas disabilitas kronis dan penurunan kognitif).
+        </p>
+
+        <!-- Longevity Table -->
+        <div class="overflow-x-auto my-4">
+          <table class="w-full text-left text-xs border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Intervensi Gaya Hidup</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Mekanisme Biologis</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Dampak Statistik pada Lifespan</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Manfaat Healthspan</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-emerald-500">Kardio Aerobik & Zona 2</td>
+                <td class="p-3">Biogenesis mitokondria, peningkatan VO2 max</td>
+                <td class="p-3 text-emerald-400 font-bold">+3,5 hingga +4,5 Tahun</td>
+                <td class="p-3">Memangkas separuh risiko mortalitas kardiovaskular</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-cyan-400">Latihan Beban Progresif</td>
+                <td class="p-3">Pencegahan sarkopenia, kepadatan mineral tulang</td>
+                <td class="p-3 text-cyan-400 font-bold">+1,8 hingga +2,5 Tahun</td>
+                <td class="p-3">Mencegah kerapuhan dan fraktur akibat jatuh</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-indigo-400">Optimasi Tidur Sirkadian</td>
+                <td class="p-3">Pembersihan glimfatik otak, pencucian amyloid-beta</td>
+                <td class="p-3 text-indigo-400 font-bold">+2,0 hingga +3,0 Tahun</td>
+                <td class="p-3">Menurunkan risiko Alzheimer & demensia 40%</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-rose-500">Merokok & Vaping Kronis</td>
+                <td class="p-3">Disfungsi endotel, pemendekan telomer</td>
+                <td class="p-3 text-rose-500 font-bold">-8,0 hingga -10,0 Tahun</td>
+                <td class="p-3">Mempercepat penuaan biologis sistemik</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 5: Daily Stoic Practices -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          5. Latihan Stoik Praktis untuk Hidup Harian
+        </h2>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Premeditatio Malorum ( antisipasi Keburukan):</strong> Tiap pagi, visualisasikan sekilas rintangan potensial, kemunduran, dan kehilangan personal. Ini mengimunisasi jiwa terhadap syok dan mengubah kemalangan tak terduga menjadi persiapan terstruktur.
+          </li>
+          <li>
+            <strong>Pandangan dari Atas:</strong> Perkecil mental secara zoom-out dari ruangan ke kota, planet Bumi, dan bentangan kosmik waktu geologis. Keluhan personal seketika menyusut ke proporsi sejatinya.
+          </li>
+          <li>
+            <strong>Audit Petang:</strong> Sebelum tidur, tinjau hari dengan pengawasan objektif: Di mana saya bertindak dengan keberanian dan kebaikan? Di mana saya goyah? Apa yang bisa lebih baik?
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 6: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          6. Pertanyaan yang Sering Diajukan (FAQ)
+        </h2>
+
+        <div class="space-y-3">
+          
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa itu Memento Mori dan mengapa kaum Stoik mempraktikkannya?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Memento Mori adalah bahasa Latin untuk 'Ingat engkau akan mati.' Bagi kaum Stoik seperti Seneka dan Marcus Aurelius, refleksi mortalitas berfungsi sebagai penjernih kognitif pamungkas, mengeliminasi kecemasan sepele, mengakhiri penundaan, dan menumbuhkan syukur mendalam atas jam kini.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Berapa minggu dalam rata-rata hidup manusia?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Lifespan 80 tahun memuat sekitar 4.160 minggu. Pada usia 30, Anda telah menjalani ~1.560 minggu (37,5%); pada usia 50, ~2.600 minggu (62,5%). Memvisualisasikan hidup pada grid 4.000 minggu mengubah waktu abstrak menjadi aset fana yang visual.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Mengapa waktu terasa berjalan lebih cepat seiring bertambahnya usia?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Teori Proporsional Janet mencatat pada usia 10 tahun, setahun adalah 10% hidup Anda, tetapi pada usia 50 hanya 2%. Selain itu, rutinitas dewasa repetitif kekurangan pemicu memori episodik baru, menyebabkan otak memampatkan bulan-bulan lampau menjadi potongan memori pendek.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Bagaimana gaya hidup memengaruhi harapan hidup statistik dan healthspan?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Studi epidemiologis menunjukkan olahraga aerobik (+3,5 hingga +4,5 thn), tidur 7-8 jam (+2,4 thn), diet bersih (+2,8 thn), dan menghindari rokok dapat memperpanjang healthspan bebas penyakit lebih dari satu dekade.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa perbedaan lifespan dan healthspan?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Lifespan adalah total tahun Anda hidup secara biologis. Healthspan adalah durasi hidup yang dijalani bebas nyeri kronis, disabilitas, dan gangguan kognitif. Tujuannya adalah memampatkan morbiditas agar healthspan menyamai lifespan.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa itu Amor Fati dalam filsafat Stoik?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Amor Fati berarti 'Cinta pada Takdir.' Berakar pada Marcus Aurelius dan Epiktetus, ini merepresentasikan merangkul setiap kesulitan dan rintangan bukan sebagai tragedi, melainkan bahan baku niscaya untuk membangun ketahanan dan kebajikan.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Bagaimana Memento Mori mengurangi kecemasan dan stres harian?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Meditasi atas mortalitas memberi perspektif kosmik instan. Dalam bentangan waktu agung, konflik kecil, gosip remeh, dan kecanggungan sosial menyusut ke signifikansi nol, membebaskan energi mental untuk tindakan bertujuan.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apakah tanggal lahir atau informasi pribadi saya disimpan di server?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Tidak. Seluruh kalkulasi, pembuatan grid hidup, dan render poster berjalan 100% lokal di browser. Tidak ada tanggal pribadi atau input kesehatan yang dikirim atau disimpan di server mana pun.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <FooterId />
+
+  <script src="../../scripts/tools/memento-engine-id.js"></script>
+</LayoutId>

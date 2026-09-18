@@ -1,0 +1,722 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+// Alternate links for i18n
+const alternates = {
+  en: "https://freeiqexam.com/typing-test",
+  id: "https://freeiqexam.com/id/tes-kecepatan-mengetik"
+};
+
+const title = "Tes Kecepatan Mengetik (WPM) Online Gratis | Uji Akurasi & Refleks Jari";
+const description = "Uji kecepatan mengetik kata per menit (WPM) dan akurasi Anda secara gratis. Dilengkapi fisika caret halus ala Monkeytype, audio switch mekanis, grafik WPM langsung, dan peta panas (heatmap) tombol keyboard.";
+const canonicalUrl = "https://freeiqexam.com/id/tes-kecepatan-mengetik";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Tes Kecepatan Mengetik & Tolok Ukur WPM Online",
+    "url": "https://freeiqexam.com/id/tes-kecepatan-mengetik",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Memerlukan dukungan JavaScript dan Web Audio API",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Kalkulasi kecepatan Net WPM dan Gross WPM secara real-time",
+      "Fisika kursor caret halus mengambang dengan penyorotan karakter dinamis",
+      "Sintesis suara sakelar mekanis Web Audio API (Cherry MX Blue, Brown, Red)",
+      "Grafik sparkline kecepatan WPM dan kesalahan kanvas High-DPI",
+      "Peta panas kesalahan tombol keyboard QWERTY dan analisis ketangkasan jari",
+      "Pilihan mode Pengujian Waktu (15d, 30d, 60d, 120d) dan Jumlah Kata (25, 50, 100)",
+      "Sertifikat kecepatan mengetik beresolusi tinggi yang dapat diunduh (PNG)",
+      "100% gratis, tanpa login email, pemrosesan aman di peramban lokal"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Permainan",
+        "item": "https://freeiqexam.com/id/permainan"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Tes Kecepatan Mengetik",
+        "item": "https://freeiqexam.com/id/tes-kecepatan-mengetik"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Berapa kecepatan mengetik rata-rata (WPM) yang dianggap bagus?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Rata-rata kecepatan mengetik global adalah sekitar 40 hingga 45 kata per menit (WPM). Kecepatan 60 hingga 70 WPM dinilai di atas rata-rata dan sangat produktif untuk pekerjaan kantor serta profesional. Kecepatan 80 hingga 95 WPM menempatkan Anda di posisi 10% teratas, sedangkan 100+ WPM merupakan level pengetik 10 jari elit (top 2% dunia)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apa perbedaan antara Gross WPM dan Net WPM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Gross WPM (WPM Kotor) mengukur kecepatan ketikan mentah dengan membagi total karakter yang diketik dengan 5 (panjang kata standar internasional) per menit. Net WPM (WPM Bersih) menerapkan penalti kesalahan: Net WPM = Gross WPM - (Kesalahan yang Belum Dikoreksi / Waktu dalam Menit). Net WPM adalah standar resmi rekrutmen profesional karena kesalahan mengetik merusak produktivitas nyata."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana definisi 1 kata dihitung dalam tes mengetik?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Dalam tolok ukur psikometri dan optometri mengetik, 1 kata distandardisasi menjadi tepat 5 ketukan tombol (mencakup karakter huruf, spasi, dan tanda baca). Standardisasi 5 ketukan ini memastikan kata panjang (misal 'pertanggungjawaban') tidak merugikan pengetik dibanding kata pendek (misal 'dan')."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana cara meningkatkan kecepatan mengetik dari 50 ke 100+ WPM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Untuk menembus batas kecepatan mengetik: 1) Kuasai teknik mengetik 10 jari buta (touch typing) pada deret dasar home row (ASDF JKL;) tanpa menatap keyboard, 2) Prioritaskan akurasi 98%+ sebelum memacu kecepatan, 3) Latih mata membaca 1–2 kata di depan posisi kursor, 4) Lakukan latihan sprint singkat 15 detik setiap hari, dan 5) Gunakan keyboard mekanis ergonomis dengan resistensi aktuasi rendah."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah jenis switch keyboard mekanis memengaruhi kecepatan mengetik?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya. Switch mekanis memberikan titik aktuasi taktil atau suara klik yang jelas sebelum tombol menyentuh dasar (bottom-out), sehingga mengurangi keletihan otot jari. Switch taktil (seperti Cherry MX Brown) dan linier (Cherry MX Red) sangat disukai oleh pengetik cepat karena gerakan aktuasi yang halus dan responsif."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mengapa akurasi mengetik jauh lebih penting daripada kecepatan mentah?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Setiap penekanan tombol Backspace menimbulkan tiga kerugian waktu: waktu untuk menekan Backspace, waktu untuk mengetik ulang karakter yang benar, dan terhentinya ritme aliran kognitif motorik Anda. Mengetik pada kecepatan 80 WPM dengan akurasi 99% menghasilkan teks yang jauh lebih cepat selesai dibanding 100 WPM dengan akurasi 90%."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah tata letak keyboard Dvorak atau Colemak lebih cepat daripada QWERTY?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tata letak alternatif seperti Dvorak dan Colemak dirancang untuk memaksimalkan penempatan huruf vokal dan konsonan umum pada baris dasar (home row hingga 70% vs 32% pada QWERTY). Hal ini mengurangi jarak jelajah jari dan mencegah cedera regangan berulang (RSI), meskipun kecepatan tertinggi tetap ditentukan oleh otomatisasi memori motorik otak."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Berapa rekor dunia kecepatan mengetik tercepat saat ini?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kecepatan mengetik tercepat yang tercatat pada keyboard standar QWERTY dalam durasi 1 menit adalah 216 WPM oleh Sean Wrona. Rekor dunia Guinness untuk pengetikan berkelanjutan dipegang oleh Barbara Blackburn dengan rata-rata 150 WPM selama 50 menit dan puncak 212 WPM menggunakan layout Dvorak."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+>
+  <Header />
+
+  <style>
+    /* Caret Pulse and Floating Smooth Movement */
+    #caret {
+      transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    @keyframes caretBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .caret-blink {
+      animation: caretBlink 1s infinite ease-in-out;
+    }
+
+    /* Word Box Line Clamping & Mask */
+    .words-box {
+      mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .typ-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    :global(.dark) .typ-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    #typingSettingsBar button { min-height: 44px; }
+    #typingSettingsBar button:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+    @media (prefers-reduced-motion: reduce) { .typ-hero-glow { display: none; } }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    @media print {
+      header, footer, #typingSettingsBar, #restartBtn, .no-print {
+        display: none !important;
+      }
+      #resultsWrap {
+        display: block !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/id" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Beranda</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <a href="/id/permainan" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Permainan</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Tes Kecepatan Mengetik</span>
+    </nav>
+
+    <!-- Header & Hero Section -->
+    <header class="relative text-center max-w-3xl mx-auto mb-10">
+      <div class="typ-hero-glow" aria-hidden="true"></div>
+      <div class="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[13px] sm:text-sm font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Kadensi Psikomotorik • Fisika Kursor Halus • Audio Switch Mekanis</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-[-0.025em] leading-[1.08] mb-4">
+        Tes Kecepatan Mengetik (WPM) Online
+      </h1>
+      <p class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-300 leading-[1.62] max-w-2xl mx-auto">
+        Uji kecepatan mengetik, Net WPM, akurasi, dan konsistensi ketukan jari Anda. Dilengkapi audio sakelar mekanis, analisis grafik sparkline langsung, dan peta panas kesalahan jari.
+      </p>
+    </header>
+
+    <!-- TOP SETTINGS & MODE TOOLBAR -->
+    <section id="typingSettingsBar" class="max-w-4xl mx-auto mb-8 p-3 rounded-2xl bg-zinc-50 dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-[13px] font-mono shadow-xs">
+      <!-- Mode Tabs (Waktu vs Kata) -->
+      <div class="flex items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/60 p-1 rounded-xl">
+        <button
+          type="button"
+          data-mode="time"
+          class="mode-btn active px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/40"
+        >
+          ⏱️ Waktu
+        </button>
+        <button
+          type="button"
+          data-mode="words"
+          class="mode-btn px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer"
+        >
+          📝 Kata
+        </button>
+      </div>
+
+      <!-- Pilihan Waktu (15, 30, 60, 120 detik) -->
+      <div id="timeOptionsGroup" class="flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Detik:</span>
+        <button type="button" data-time="15" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">15</button>
+        <button type="button" data-time="30" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">30</button>
+        <button type="button" data-time="60" class="time-opt-btn active px-2.5 py-1 rounded-md text-blue-500 font-bold transition-colors cursor-pointer">60</button>
+        <button type="button" data-time="120" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">120</button>
+      </div>
+
+      <!-- Pilihan Kata (25, 50, 100) -->
+      <div id="wordOptionsGroup" class="hidden flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Kata:</span>
+        <button type="button" data-words="25" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">25</button>
+        <button type="button" data-words="50" class="word-opt-btn active px-2.5 py-1 rounded-md text-blue-500 font-bold transition-colors cursor-pointer">50</button>
+        <button type="button" data-words="100" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">100</button>
+      </div>
+
+      <!-- Sakelar Tanda Baca & Angka -->
+      <div class="flex items-center gap-2">
+        <button id="togglePunctuation" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">
+          @ Tanda Baca
+        </button>
+        <button id="toggleNumbers" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">
+          # Angka
+        </button>
+      </div>
+
+      <!-- Pemilih Audio Switch Mekanis -->
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-400">🔊 Suara:</span>
+        <select
+          id="soundSelect"
+          class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-blue-500 cursor-pointer"
+        >
+          <option value="blue">Cherry MX Blue (Klik Nyaring)</option>
+          <option value="brown">Cherry MX Brown (Taktil Mantap)</option>
+          <option value="red">Cherry MX Red (Linier Halus)</option>
+          <option value="mute">Hening (Mute)</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE TYPING ARENA -->
+    <section class="relative w-full max-w-4xl mx-auto mb-16">
+      
+      <!-- ARENA CARD -->
+      <div id="typingArena" class="relative w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl transition-all cursor-text select-none">
+        
+        <!-- Live HUD Status -->
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-6 font-mono">
+          <div class="flex items-center gap-6">
+            <div>
+              <div class="text-[13px] text-zinc-400 uppercase tracking-wider">Sisa Waktu</div>
+              <div id="hudTimer" class="font-heading font-extrabold text-2xl sm:text-3xl text-[#0066cc] dark:text-[#2997ff]">60s</div>
+            </div>
+            <div>
+              <div class="text-[13px] text-zinc-400 uppercase tracking-wider">WPM Langsung</div>
+              <div id="hudWpm" class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">0</div>
+            </div>
+            <div>
+              <div class="text-[13px] text-zinc-400 uppercase tracking-wider">Akurasi</div>
+              <div id="hudAccuracy" class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">100%</div>
+            </div>
+          </div>
+
+          <!-- Restart Button & Shortcut Hint -->
+          <div class="flex items-center gap-3">
+            <button
+              id="restartBtn"
+              type="button"
+              class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500/10 hover:text-blue-500 text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Ulangi tes mengetik"
+              title="Ulangi tes (Esc atau Tab)"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15a9 9 0 0014.85 3.36L23 14" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Words Stream Display Box -->
+        <div class="relative words-box">
+          <div
+            id="wordsWrapper"
+            class="max-h-36 sm:max-h-44 overflow-hidden relative font-mono text-xl sm:text-2xl leading-loose sm:leading-loose text-zinc-400 dark:text-zinc-600 tracking-wide select-none"
+          >
+            <!-- Dynamically populated word spans -->
+          </div>
+
+          <!-- Smooth Caret Bar -->
+          <div
+            id="caret"
+            class="absolute top-0 left-0 w-0.5 sm:w-[3px] h-7 sm:h-8 bg-[#0066cc] dark:bg-[#2997ff] rounded-full caret-blink pointer-events-none shadow-[0_0_8px_rgba(0,102,204,0.6)]"
+          ></div>
+        </div>
+
+        <!-- Accessible Transparent Input for Desktop & Mobile IME Keyboards -->
+        <input
+          id="typingInput"
+          type="text"
+          class="absolute inset-0 opacity-0 w-full h-full cursor-text z-10"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Kolom input tes mengetik"
+        />
+
+        <!-- Click to focus prompt -->
+        <div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-[13px] font-mono text-zinc-400 dark:text-zinc-500">
+          <span>Klik kotak ini atau langsung mulai mengetik</span>
+          <span class="hidden sm:inline">Tekan <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Tab</kbd> atau <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Esc</kbd> untuk mengulang</span>
+        </div>
+      </div>
+
+      <!-- RESULTS REPORT SECTION -->
+      <div id="resultsWrap" class="hidden mt-8 space-y-8">
+        
+        <div class="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-8">
+          
+          <!-- Result Hero Header -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-zinc-100 dark:border-zinc-800/80 pb-8">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">
+                Hasil Tolok Ukur Psikomotorik
+              </div>
+              <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">
+                Laporan Kecepatan Mengetik
+              </h3>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span id="resPercentile" class="px-4 py-2 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400 font-mono font-bold text-sm">
+                Top 10%
+              </span>
+              <span id="resTier" class="px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-heading font-bold text-sm">
+                Pengetik Mahir
+              </span>
+            </div>
+          </div>
+
+          <!-- Hero Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center col-span-2 sm:col-span-1">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Net WPM</div>
+              <div class="font-heading font-black text-4xl sm:text-5xl text-[#0066cc] dark:text-[#2997ff]">
+                <span id="resWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Akurasi</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">
+                <span id="resAccuracy">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Raw WPM</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resRawWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Konsistensi</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resConsistency">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Karakter / Menit</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resCpm">0</span>
+              </div>
+            </div>
+          </div>
+
+          <p id="resDesc" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
+            --
+          </p>
+
+          <!-- Live WPM Sparkline Graph -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+              <span>Linimasa Kecepatan WPM</span>
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Net WPM</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400 inline-block"></span> Raw WPM</span>
+              </div>
+            </div>
+            <div class="w-full overflow-x-auto rounded-2xl bg-zinc-50 dark:bg-[#09090b] p-4 border border-zinc-200 dark:border-zinc-800">
+              <canvas id="wpmChartCanvas" width="760" height="260" class="w-full max-w-[760px] mx-auto block"></canvas>
+            </div>
+          </div>
+
+          <!-- QWERTY Keyboard Heatmap -->
+          <div class="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div class="flex items-center justify-between text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+              <span>Peta Panas Akurasi Tombol Keyboard</span>
+              <div class="flex items-center gap-3">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> ≥95% Akurat</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span> 85–94% Akurat</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500 inline-block"></span> &lt;85% Titik Kesalahan</span>
+              </div>
+            </div>
+            <div id="keyboardHeatmap" class="p-4 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 overflow-x-auto">
+              <!-- Dynamically populated keyboard keys -->
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-6 border-t border-zinc-100 dark:border-zinc-800/80">
+            <button
+              id="downloadCertBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-heading font-bold text-sm shadow-lg hover:shadow-blue-600/25 active:scale-[0.97] min-h-[44px] transition-all cursor-pointer flex items-center gap-2"
+            >
+              <span>⬇</span> Unduh Sertifikat Terverifikasi (PNG)
+            </button>
+            <button
+              id="retakeTestBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Ulangi Tes
+            </button>
+            <a
+              href="/id/tes-waktu-reaksi"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Uji Waktu Reaksi Refleks →</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 2,000-WORD CLINICAL TYPING SCIENCE GUIDE IN INDONESIAN -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+      
+      <!-- Section 1: Neurobiologi Mengetik 10 Jari -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 1 · Neurosains Motorik
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Neurobiologi Mengetik 10 Jari &amp; Otomatisasi Motorik Serebelar
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Mengetik dengan kecepatan tinggi (80 hingga 140+ WPM) adalah salah satu tugas psikomotorik paling rumit yang dapat dikuasai manusia. Pengetik pemula yang masih melihat tuts keyboard harus melalui siklus kognitif sadar: mencari huruf secara visual, mengarahkan jari, menekan tuts, lalu memastikan huruf di layar. Proses sadar ini membatasi kecepatan maksimal hanya di 25–35 WPM.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Sebaliknya, pengetik 10 jari mahir menyerahkan eksekusi ketukan sepenuhnya kepada <strong>serebelum (otak kecil)</strong> dan <strong>ganglia basalis</strong>-pusat memori motorik prosedural otak. Rangkaian huruf umum (n-gram seperti <em>"yang"</em>, <em>"dengan"</em>, <em>"untuk"</em>, <em>"meng"</em>) dieksekusi secara otomatis sebagai satu kesatuan paket motorik (motor chunking) tanpa keterlibatan korteks sadar.
+        </p>
+      </section>
+
+      <!-- Section 2: Metodologi Perhitungan WPM -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 2 · Metrik &amp; Standardisasi
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Standar Metrik WPM: Gross WPM, Net WPM, dan CPM
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Dunia profesional menggunakan rumus baku internasional untuk menghitung efisiensi mengetik:
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h4 class="font-heading font-bold text-lg text-[#0066cc] dark:text-[#2997ff]">Gross WPM (WPM Kotor)</h4>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300">
+              <code>Gross WPM = (Total Ketukan Tombol / 5) / Waktu dalam Menit</code>. Mengukur kecepatan fisik murni tanpa mempedulikan kesalahan ketik.
+            </p>
+          </div>
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h4 class="font-heading font-bold text-lg text-emerald-600 dark:text-emerald-400">Net WPM (WPM Bersih)</h4>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300">
+              <code>Net WPM = Gross WPM - (Kesalahan Belum Terkoreksi / Waktu Menit)</code>. Standar resmi yang mencerminkan produktivitas kerja nyata.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Global Typing Speed Percentiles -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 3 · Tolok Ukur Demografis
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Persentil Kecepatan Mengetik Global &amp; Tolok Ukur Populasi
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Di mana posisi keterampilan mengetik Anda dibanding populasi global? Dari jutaan tes standar yang tercatat, kecepatan mengetik manusia mengikuti distribusi kurva lonceng Gauss dengan median 41,4 WPM:
+        </p>
+
+        <!-- Percentiles Table -->
+        <div class="overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-2">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-mono text-xs uppercase">
+                <th class="p-4">Kecepatan Mengetik (WPM)</th>
+                <th class="p-4">Persentil Global</th>
+                <th class="p-4">Klasifikasi Juru Ketik</th>
+                <th class="p-4">Profil Tipikal</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr>
+                <td class="p-4 font-mono font-bold text-rose-600 dark:text-rose-400">&lt; 25 WPM</td>
+                <td class="p-4 font-mono">Terbawah 15%</td>
+                <td class="p-4 font-semibold">Berburu &amp; Mematuk</td>
+                <td class="p-4">Ketergantungan pencarian visual; memakai 2 hingga 4 jari. Tingkat kesalahan tinggi.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-zinc-600 dark:text-zinc-300">30–45 WPM</td>
+                <td class="p-4 font-mono">Persentil 40–50</td>
+                <td class="p-4 font-semibold">Juru Ketik Rata-rata</td>
+                <td class="p-4">Kecepatan dewasa standar. Mengetik sentuh dasar dengan lirikan visual berkala.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-blue-600 dark:text-blue-400">50–69 WPM</td>
+                <td class="p-4 font-mono">Persentil 65–85</td>
+                <td class="p-4 font-semibold">Pro Kantor Produktif</td>
+                <td class="p-4">Mengetik sentuh penuh; memori buffer keyboard mahir. Backspace minimal.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">70–89 WPM</td>
+                <td class="p-4 font-mono">Persentil 88–96</td>
+                <td class="p-4 font-semibold">Profesional Cepat</td>
+                <td class="p-4">Insinyur perangkat lunak, panitera pengadilan, transkriptionis medis, jurnalis.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-amber-600 dark:text-amber-400">90–119 WPM</td>
+                <td class="p-4 font-mono">Teratas 2–4%</td>
+                <td class="p-4 font-semibold">Master Mengetik Sentuh</td>
+                <td class="p-4">Chunking memori otot n-gram penuh; akurasi berkelanjutan 98%+.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-amber-500 font-extrabold">120+ WPM</td>
+                <td class="p-4 font-mono">Teratas 0,5%</td>
+                <td class="p-4 font-semibold">Elit Kompetitif</td>
+                <td class="p-4">Kecepatan esports kelas dunia; kadens gulir multi-jari sub-100ms.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 4: Ergonomics & RSI Prevention -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 4 · Ergonomi &amp; Kesehatan Fisik
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Ergonomi, Netralitas Pergelangan &amp; Pencegahan RSI / Carpal Tunnel
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Mengetik volume tinggi membebani jari, pergelangan, dan lengan bawah dengan ribuan siklus mikrotrauma berulang per jam. Bentuk biomekanik yang buruk kerap menyebabkan <strong>Repetitive Strain Injury (RSI)</strong>, Sindrom Carpal Tunnel (jepitan saraf median), dan tenosinovitis de Quervain.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-amber-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Postur Pergelangan Netral</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Jaga pergelangan lurus dan melayang. Jangan sandarkan pergelangan pada permukaan meja keras saat mengetik; sandaran pergelangan untuk istirahat <em>di antara</em> ledakan mengetik, bukan saat mengetik.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-amber-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="6" width="20" height="12" rx="2" /><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9 14h6" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Miring Datar / Negatif</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Hindari kaki lipat pada keyboard. Memiringkan keyboard ke atas memaksa pergelangan ke dorsifleksi, menekan terowongan karpal. Jaga keyboard datar atau sedikit miring negatif.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-amber-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3" /><path d="M2 16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0Z" /><path d="M4 18v2" /><path d="M20 18v2" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Sudut Siku 90°</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Sesuaikan tinggi kursi agar lengan bawah sejajar lantai dengan bahu rileks. Jaga siku dekat torso pada sudut buka 90° hingga 105° yang nyaman.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Protokol Latihan Menembus 100+ WPM -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 5 · Protokol Latihan
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Protokol Latihan Terarah untuk Menembus 100+ WPM
+        </h2>
+        <ul class="space-y-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-blue-500 text-lg">01.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">Aturan Akurasi 98%:</strong> Kecepatan adalah hasil sampingan dari akurasi yang konsisten. Jika akurasi Anda turun di bawah 96%, perlambat kecepatan sebesar 15% hingga akurasi kembali ke 98%+.
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-blue-500 text-lg">02.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">Latihan Sprint 15 Detik:</strong> Lakukan lima kali sprint kecepatan maksimal 15 detik per hari untuk membiasakan koordinasi antar-jari pada tempo tinggi.
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-blue-500 text-lg">03.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">Analisis Peta Panas Kesalahan:</strong> Perhatikan tombol keyboard berwarna merah pada laporan tes untuk melatih pasangan jari yang sering keliru.
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 6: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Bagian 6 · Tanya Jawab Umum
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Pertanyaan Umum Seputar Kecepatan Mengetik &amp; WPM
+        </h2>
+
+        <div class="space-y-4 pt-4">
+          {schema[2].mainEntity.map((item) => (
+            <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+              <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+                <span>{item.name}</span>
+                <span class="faq-chevron ml-4 text-blue-500 transition-transform duration-200 font-mono text-xl">
+                  ↓
+                </span>
+              </summary>
+              <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                {item.acceptedAnswer.text}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+
+  <!-- Rich Indonesian Word Bank -->
+  <script is:inline>
+    window.TYPING_WORDS = [
+      'yang', 'dan', 'di', 'dari', 'untuk', 'pada', 'adalah', 'ini', 'itu', 'dengan', 'ke', 'akan', 'bisa', 'ada',
+      'mereka', 'kita', 'saya', 'kami', 'kamu', 'dia', 'sudah', 'telah', 'juga', 'oleh', 'karena', 'lebih', 'harus',
+      'dapat', 'dalam', 'saat', 'satu', 'dua', 'tiga', 'seperti', 'hanya', 'bukan', 'kemudian', 'tetapi', 'banyak',
+      'orang', 'tahun', 'hari', 'waktu', 'negara', 'kerja', 'hidup', 'jalan', 'tempat', 'rumah', 'dunia', 'air',
+      'mata', 'tangan', 'kepala', 'hati', 'kata', 'nama', 'bagian', 'masalah', 'cara', 'sistem', 'proses', 'hasil',
+      'tinggi', 'besar', 'kecil', 'panjang', 'cepat', 'baru', 'lama', 'baik', 'benar', 'salah', 'mudah', 'sulit',
+      'penting', 'utama', 'mungkin', 'semua', 'setiap', 'antara', 'melalui', 'tentang', 'terhadap', 'menjadi',
+      'membuat', 'melihat', 'mendengar', 'merasa', 'tahu', 'berpikir', 'mengambil', 'memberi', 'datang', 'pergi',
+      'membaca', 'menulis', 'belajar', 'bekerja', 'berbicara', 'berjalan', 'membantu', 'membuka', 'menutup',
+      'menggunakan', 'menemukan', 'mencari', 'memulai', 'selesai', 'hidup', 'mati', 'tumbuh', 'berubah', 'berdiri',
+      'duduk', 'tidur', 'makan', 'minum', 'pagi', 'siang', 'sore', 'malam', 'ruang', 'udara', 'tanah', 'api',
+      'laut', 'gunung', 'sungai', 'pohon', 'bunga', 'hewan', 'burung', 'ikan', 'batu', 'kayu', 'emas', 'besi',
+      'kertas', 'buku', 'surat', 'angka', 'bunyi', 'suara', 'cahaya', 'warna', 'merah', 'putih', 'hitam', 'biru',
+      'hijau', 'kuning', 'terang', 'gelap', 'dingin', 'panas', 'hangat', 'tenang', 'ramai', 'senang', 'sedih',
+      'takut', 'berani', 'kuat', 'lemah', 'sehat', 'sakit', 'pikir', 'ingat', 'lupa', 'paham', 'mengerti', 'yakin',
+      'percaya', 'ragu', 'tujuan', 'rencana', 'usaha', 'langkah', 'pilihan', 'keputusan', 'aturan', 'hukum',
+      'ilmu', 'pengetahuan', 'teknologi', 'informasi', 'komunikasi', 'masyarakat', 'keluarga', 'teman', 'sahabat',
+      'kota', 'desa', 'daerah', 'bangsa', 'bahasa', 'budaya', 'cerita', 'berita', 'fakta', 'data', 'bukti'
+    ];
+  </script>
+
+  <!-- Client-side Typing Speed Engine -->
+  <script src="../../scripts/tools/typing-engine-id.js"></script>
+</Layout>

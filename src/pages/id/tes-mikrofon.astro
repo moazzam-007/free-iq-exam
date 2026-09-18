@@ -1,0 +1,700 @@
+---
+import Layout from '../../components/id/LayoutId.astro';
+import Header from '../../components/id/HeaderId.astro';
+import Footer from '../../components/id/FooterId.astro';
+
+const title = 'Tes Mikrofon Online Gratis & Uji Kualitas Suara | Spektrogram & Playback';
+const description = 'Uji mikrofon online dengan spektrum frekuensi FFT real-time, meter desibel dBFS, analisis noise floor dan SNR, serta pemutaran instan. Periksa kualitas mic untuk Zoom, Discord, Google Meet, dan streaming.';
+
+const canonicalUrl = 'https://freeiqexam.com/id/tes-mikrofon';
+
+const alternates = {
+  en: 'https://freeiqexam.com/mic-test',
+  id: 'https://freeiqexam.com/id/tes-mikrofon'
+};
+
+const faqItems = [
+  [
+    'Mengapa mikrofon saya tidak memunculkan sinyal suara dalam pengujian ini?',
+    'Tiga penyebab paling umum: 1) Izin mikrofon belum diberikan pada peramban (periksa ikon gembok/kamera pada bilah alamat URL), 2) Perangkat input yang salah dipilih pada menu drop-down, atau 3) Aplikasi lain memegang akses eksklusif mikrofon (seperti Zoom, Teams, Discord, atau OBS). Tutup aplikasi lain lalu muat ulang halaman ini.'
+  ],
+  [
+    'Berapa tingkat volume dBFS yang ideal untuk percakapan suara?',
+    'Untuk ucapan vokal, targetkan puncak (peak) berada di antara -12 dBFS dan -6 dBFS, dengan rata-rata RMS sekitar -18 dBFS. Rentang ini menyisakan headroom dinamis yang cukup untuk tawa mendadak atau konsonan letup (plosif) tanpa memicu pemotongan sinyal (clipping 0 dBFS).'
+  ],
+  [
+    'Apa arti SNR (Signal-to-Noise Ratio) dan berapa nilai yang bagus?',
+    'SNR adalah selisih desibel antara kenyaringan suara vokal Anda dan kebisingan latar belakang (noise floor). Nilai di atas 35 dB dinilai Sangat Baik, 25–35 dB Bagus, 15–25 dB Cukup, dan di bawah 15 dB Buruk. Setiap kenaikan 6 dB menggandakan kejernihan sinyal vokal terhadap desis ruangan.'
+  ],
+  [
+    'Mengapa tes ini menyarankan menonaktifkan peredam bising (noise suppression) saat pengukuran awal?',
+    'Pemrosesan suara bawaan seperti Noise Suppression, Echo Cancellation, dan Auto Gain Control bersifat merusak sinyal mentah. Auto Gain terus mengubah volume sehingga nilai dBFS tidak lagi mencerminkan sensitivitas asli mikrofon. Ukur kualitas perangkat keras secara murni terlebih dahulu, baru aktifkan filter sesuai kebutuhan panggilan Anda.'
+  ],
+  [
+    'Bagaimana cara mengetahui jika mikrofon saya mengalami clipping (distorsi pecah)?',
+    'Clipping terjadi saat gelombang audio menyentuh batas amplitudo maksimum konverter digital (0 dBFS) dan puncak gelombangnya terpotong rata, menghasilkan suara berderak tajam. Tes ini mendeteksi jika ada 3 sampel berturut-turut pada 99% skala penuh. Solusinya adalah menurunkan gain analog di pengaturan sistem atau kenop interface.'
+  ],
+  [
+    'Mengapa saya mendengar dengungan konstan (hum) atau desis tajam (hiss)?',
+    'Dengungan rendah di 50 Hz atau 60 Hz biasanya merupakan interferensi listrik (ground loop atau kabel mic yang bersentuhan dengan adaptor daya). Jauhkan kabel dari stopkontak dan colokkan komputer ke sirkuit yang sama. Desis tajam biasanya berasal dari noise port USB komputer atau gain preamp yang diputar terlalu tinggi.'
+  ],
+  [
+    'Mengapa suara rekaman saya terdengar berbeda dari suara di kepala saya?',
+    'Saat berbicara, Anda mendengar kombinasi gelombang udara dan konduksi getaran tulang tengkorak yang memperkuat frekuensi bass. Pemutaran rekaman pada tes ini memperdengarkan murni gelombang suara akustik udara yang didengar oleh audiens atau lawan bicara Anda.'
+  ],
+  [
+    'Apakah halaman web ini dapat merekam mikrofon saya secara diam-diam?',
+    'Tidak. Peramban modern mewajibkan izin eksplisit sebelum mengizinkan Web Audio API mengakses mikrofon. Semua pemrosesan data, kalkulasi spektrum, dan pemutaran ulang berjalan secara lokal di memori peramban Anda (RAM) tanpa pernah diunggah ke server mana pun.'
+  ]
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#webapp`,
+    name: 'FreeIQExam Tes Mikrofon Online & Diagnostik Kualitas Suara',
+    url: canonicalUrl,
+    applicationCategory: 'MultimediaApplication',
+    operatingSystem: 'All',
+    browserRequirements: 'Memerlukan dukungan Web Audio API, koneksi HTTPS aman, dan izin mikrofon',
+    description: 'Diagnostik mikrofon berbasis peramban dengan analisis spektrum frekuensi FFT real-time, meter dBFS peak/RMS, kalkulasi noise floor dan SNR, deteksi distorsi clipping, dan playback loop 5 detik.',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    },
+    featureList: [
+      'Penganalisis spektrum frekuensi FFT real-time 60 FPS',
+      'Meter volume Peak dan RMS terkalibrasi -60 dBFS hingga 0 dBFS',
+      'Pengukuran tingkat kebisingan latar (noise floor) dan peringkat SNR',
+      'Deteksi distorsi saturasi dan pemotongan gelombang (clipping)',
+      'Pemutaran loopback 5 detik audio mentah tanpa kompresi',
+      'Deteksi perangkat keras: sample rate, jumlah kanal, dan latensi',
+      'Sakelar kontrol pemrosesan: echo cancellation, noise suppression, dan AGC'
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://freeiqexam.com/id' },
+      { '@type': 'ListItem', position: 2, name: 'Alat', item: 'https://freeiqexam.com/id/tes-mikrofon' },
+      { '@type': 'ListItem', position: 3, name: 'Tes Mikrofon', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map(([question, answer]) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer }
+    }))
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schemas}>
+  <Header />
+
+  <main id="mic-test-page" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+      
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="mb-8 flex flex-wrap items-center gap-2 text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+        <a href="/id" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Beranda</a>
+        <span aria-hidden="true">/</span>
+        <a href="/id/tes-mikrofon" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Alat</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white font-semibold">Tes Mikrofon</span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="relative mx-auto max-w-4xl text-center mb-12">
+        <div class="mic-hero-glow" aria-hidden="true"></div>
+        <div class="relative inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-4 py-1.5 text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 shadow-xs">
+          Analisis Spektrum FFT Real-Time · Meter dBFS Presisi
+        </div>
+        <h1 class="mt-4 text-4xl font-extrabold tracking-[-0.025em] leading-[1.08] sm:text-5xl md:text-6xl text-zinc-950 dark:text-white">
+          Tes Mikrofon Online &amp; Uji Kualitas Suara
+        </h1>
+        <p class="mx-auto mt-4 max-w-3xl text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Uji perangkat mikrofon Anda secara instan. Pantau spektrum frekuensi vokal, ukur rasio sinyal terhadap desis ruangan (SNR), deteksi distorsi clipping, dan dengarkan suara asli Anda.
+        </p>
+      </header>
+
+      <!-- Interactive Shell Container -->
+      <div id="mic-app" class="mic-shell mx-auto max-w-4xl">
+        <!-- Konteks tidak didukung / tidak aman -->
+        <div id="mic-unsupported" class="notice notice-bad mb-6" hidden>
+          <h2 class="notice-title font-bold text-red-900 dark:text-red-200 text-lg mb-2">Peramban ini tidak dapat menjalankan tes</h2>
+          <p id="mic-unsupported-reason" class="notice-body text-red-800 dark:text-red-300 text-sm leading-relaxed"></p>
+        </div>
+
+        <div id="mic-controls">
+          <!-- Panel kesalahan -->
+          <div id="mic-error" class="notice notice-bad mb-6" hidden>
+            <h2 class="notice-title font-bold text-red-900 dark:text-red-200 text-lg mb-2">Mikrofon tidak dapat dibuka</h2>
+            <p id="mic-error-message" class="notice-body text-red-800 dark:text-red-300 text-sm leading-relaxed"></p>
+          </div>
+
+          <div id="mic-mount" class="mic-grid">
+          
+          <!-- Control Panel (Transport & DSP) -->
+          <section class="mic-panel" aria-labelledby="mic-transport-title">
+            <div class="panel-head">
+              <div>
+                <p class="panel-eyebrow">Langkah 1</p>
+                <h2 id="mic-transport-title" class="panel-title">Aktifkan Mikrofon Anda</h2>
+              </div>
+              <span id="clip-indicator" class="clip-indicator">CLIP</span>
+            </div>
+
+            <p class="panel-help">
+              Peramban akan meminta izin akses mikrofon. Seluruh pemrosesan audio dilakukan di memori lokal dan tidak pernah diunggah.
+            </p>
+
+            <div class="transport-row">
+              <button id="mic-start" type="button" class="btn btn-primary min-h-[44px]">Mulai Tes Mikrofon</button>
+              <button id="mic-stop" type="button" class="btn btn-ghost min-h-[44px]" disabled>Hentikan</button>
+            </div>
+
+            <div class="field-grid">
+              <label class="field" for="mic-device">
+                <span class="field-label">Pilih Perangkat Input</span>
+                <select id="mic-device" class="field-control">
+                  <option value="">Klik 'Mulai Tes Mikrofon' untuk memuat daftar perangkat</option>
+                </select>
+              </label>
+            </div>
+
+            <fieldset class="dsp-fieldset">
+              <legend class="field-label">Pemrosesan Audio Bawaan &mdash; Nonaktif secara default untuk pengukuran sinyal murni</legend>
+              <div class="dsp-row">
+                <label class="toggle" for="dsp-echoCancellation">
+                  <input id="dsp-echoCancellation" type="checkbox" />
+                  <span>Echo cancellation</span>
+                </label>
+                <label class="toggle" for="dsp-noiseSuppression">
+                  <input id="dsp-noiseSuppression" type="checkbox" />
+                  <span>Noise suppression</span>
+                </label>
+                <label class="toggle" for="dsp-autoGainControl">
+                  <input id="dsp-autoGainControl" type="checkbox" />
+                  <span>Auto gain control</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <p id="mic-live" class="sr-only" role="status" aria-live="polite"></p>
+          </section>
+
+          <!-- Hardware Capabilities -->
+          <section class="mic-panel" aria-labelledby="mic-hw-title">
+            <div class="panel-head">
+              <div>
+                <p class="panel-eyebrow">Perangkat Keras</p>
+                <h2 id="mic-hw-title" class="panel-title">Spesifikasi Input Audio</h2>
+              </div>
+            </div>
+            <dl class="hw-grid">
+              <div class="hw-item">
+                <dt class="hw-label">Perangkat Aktif</dt>
+                <dd id="hw-device" class="hw-value hw-value-text">--</dd>
+              </div>
+              <div class="hw-item">
+                <dt class="hw-label">Sample Rate</dt>
+                <dd id="hw-rate" class="hw-value">--</dd>
+              </div>
+              <div class="hw-item">
+                <dt class="hw-label">Jumlah Kanal</dt>
+                <dd id="hw-channels" class="hw-value">--</dd>
+              </div>
+              <div class="hw-item">
+                <dt class="hw-label">Estimasi Latensi</dt>
+                <dd id="hw-latency" class="hw-value">--</dd>
+              </div>
+              <div class="hw-item">
+                <dt class="hw-label">Buffer Tangkapan</dt>
+                <dd id="hw-capture" class="hw-value hw-value-text">--</dd>
+              </div>
+              <div class="hw-item">
+                <dt class="hw-label">Filter Terpasang</dt>
+                <dd id="hw-dsp" class="hw-value hw-value-text">--</dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- Level Meter dBFS -->
+          <section class="mic-panel" aria-labelledby="mic-meter-title">
+            <div class="panel-head">
+              <div>
+                <p class="panel-eyebrow">Langkah 2</p>
+                <h2 id="mic-meter-title" class="panel-title">Meter Volume (dBFS)</h2>
+              </div>
+              <div class="readout-pair">
+                <div class="readout">
+                  <span class="readout-label">RMS</span>
+                  <span class="readout-value"><span id="meter-rms">--</span><span class="readout-unit">dBFS</span></span>
+                </div>
+                <div class="readout">
+                  <span class="readout-label">Peak</span>
+                  <span class="readout-value"><span id="meter-peak">--</span><span class="readout-unit">dBFS</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="meter-track" role="img" aria-label="Meter level volume langsung dari -60 hingga 0 dBFS">
+              <div id="meter-fill" class="meter-fill"></div>
+              <div id="meter-peak-marker" class="meter-peak-marker"></div>
+            </div>
+            <div class="meter-ticks font-mono text-[13px]" aria-hidden="true">
+              <span>&minus;60</span><span>&minus;48</span><span>&minus;36</span><span>&minus;24</span><span>&minus;12</span><span>0</span>
+            </div>
+
+            <p class="panel-help">
+              Targetkan puncak suara percakapan berada di antara &minus;12 dan &minus;6 dBFS. Penanda putih adalah peak-hold untuk melacak transien suara.
+            </p>
+          </section>
+
+          <!-- Frequency Spectrum Canvas -->
+          <section class="mic-panel" aria-labelledby="mic-spectrum-title">
+            <div class="panel-head">
+              <div>
+                <p class="panel-eyebrow">Langkah 3</p>
+                <h2 id="mic-spectrum-title" class="panel-title">Spektrum Frekuensi FFT</h2>
+              </div>
+            </div>
+            <p class="panel-help">
+              Skala logaritmik dari 20 Hz hingga 20 kHz. Gemuruh bass berada di kiri, frekuensi fundamental vokal di tengah, dan artikulasi kejelasan konsonan di kanan.
+            </p>
+            <div class="spectrum-wrap">
+              <canvas id="spectrum-canvas" class="spectrum-canvas" role="img" aria-label="Spektrum frekuensi audio real-time"></canvas>
+            </div>
+            <ul class="band-legend font-mono text-[13px]">
+              <li><span class="band-swatch" style="background:#8b5cf6"></span>Gemuruh 20&ndash;150&nbsp;Hz</li>
+              <li><span class="band-swatch" style="background:#6366f1"></span>Fundamental 150&ndash;500&nbsp;Hz</li>
+              <li><span class="band-swatch" style="background:#38bdf8"></span>Bodi Vokal 500&nbsp;Hz&ndash;2&nbsp;kHz</li>
+              <li><span class="band-swatch" style="background:#10b981"></span>Kejernihan 2&ndash;6&nbsp;kHz</li>
+              <li><span class="band-swatch" style="background:#a78bfa"></span>Udara (Air) 6&ndash;16&nbsp;kHz</li>
+            </ul>
+          </section>
+
+          <!-- Real-Time Signal Diagnostics -->
+          <section class="mic-panel" aria-labelledby="mic-diag-title">
+            <div class="panel-head">
+              <div>
+                <p class="panel-eyebrow">Diagnostik Langsung</p>
+                <h2 id="mic-diag-title" class="panel-title">Kesehatan Sinyal Suara</h2>
+              </div>
+            </div>
+            <dl class="diag-list">
+              <div class="diag-row">
+                <dt class="diag-label">Tingkat Input</dt>
+                <dd id="diag-level" class="diag-value neutral">Hening</dd>
+              </div>
+              <div class="diag-row">
+                <dt class="diag-label">Distorsi Clipping</dt>
+                <dd id="diag-clipping" class="diag-value neutral">Belum dimulai</dd>
+              </div>
+              <div class="diag-row">
+                <dt class="diag-label">Kebisingan Ruangan</dt>
+                <dd id="diag-noise" class="diag-value neutral">Belum dimulai</dd>
+              </div>
+              <div class="diag-row">
+                <dt class="diag-label">Kejernihan Vokal</dt>
+                <dd id="diag-clarity" class="diag-value neutral">Belum dimulai</dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- Noise Floor & SNR -->
+          <section class="mic-panel" aria-labelledby="mic-snr-title">
+            <div class="panel-head">
+              <div>
+                <p class="panel-eyebrow">Langkah 4</p>
+                <h2 id="mic-snr-title" class="panel-title">Noise Floor &amp; Rasio Sinyal terhadap Derau (SNR)</h2>
+              </div>
+              <span id="snr-badge" class="result-badge neutral">Mengukur</span>
+            </div>
+
+            <p class="panel-help">
+              Diamlah selama 3 detik untuk mengunci desis ruangan Anda, lalu bicaralah dengan wajar. Rasio SNR menentukan apakah suara Anda terdengar jernih atau berdesis pada panggilan.
+            </p>
+
+            <dl class="analysis-grid">
+              <div class="analysis-item">
+                <dt class="analysis-label">Noise Floor</dt>
+                <dd id="analysis-floor" class="analysis-value">--</dd>
+              </div>
+              <div class="analysis-item">
+                <dt class="analysis-label">Puncak Vokal</dt>
+                <dd id="analysis-speech" class="analysis-value">--</dd>
+              </div>
+              <div class="analysis-item analysis-item-accent">
+                <dt class="analysis-label">SNR</dt>
+                <dd id="analysis-snr" class="analysis-value">--</dd>
+              </div>
+            </dl>
+
+            <div class="noise-row">
+              <button id="noise-capture" type="button" class="btn btn-ghost min-h-[44px]">Ukur Keheningan Ruangan</button>
+              <button id="noise-reset" type="button" class="btn btn-quiet min-h-[44px]" hidden>Kalibrasi Ulang</button>
+              <span id="noise-status" class="noise-status">Belum diukur.</span>
+            </div>
+            <div class="noise-progress-track" aria-hidden="true">
+              <div id="noise-progress" class="noise-progress"></div>
+            </div>
+
+            <p id="snr-note" class="panel-help">
+              Bicaralah selama beberapa detik agar rasio SNR dapat dikalkulasikan secara otomatis.
+            </p>
+          </section>
+
+          <!-- Loopback Audio Playback -->
+          <section class="mic-panel" aria-labelledby="mic-loop-title">
+            <div class="panel-head">
+              <div>
+                <p class="panel-eyebrow">Langkah 5</p>
+                <h2 id="mic-loop-title" class="panel-title">Dengarkan yang Didengar Lawan Bicara</h2>
+              </div>
+            </div>
+            <p class="panel-help">
+              Sistem menyimpan buffer PCM mentah selama 5 detik terakhir di memori lokal. Dengarkan kembali suara asli Anda tanpa kompresi atau degradasi kualitas.
+            </p>
+            <div class="transport-row">
+              <button id="mic-playback" type="button" class="btn btn-primary min-h-[44px]" disabled>Putar 5 Detik Terakhir</button>
+              <button id="mic-clear" type="button" class="btn btn-quiet min-h-[44px]">Kosongkan Buffer</button>
+            </div>
+            <p id="playback-status" class="panel-help">Belum ada rekaman.</p>
+          </section>
+        </div>
+        </div>
+      </div>
+
+      <!-- 2,000-WORD CLINICAL & AUDIO ENGINEERING GUIDE IN INDONESIAN -->
+      <article class="guide">
+        <header class="guide-head">
+          <p class="eyebrow text-[13px] font-semibold uppercase tracking-[0.18em] text-[#0066cc] dark:text-[#2997ff]">Panduan Teknik Audio</p>
+          <h2 class="guide-title">Fisika Transduser Mikrofon, Pola Kutub &amp; Manajemen Gain</h2>
+          <p class="guide-standfirst">
+            Panduan komprehensif mengenai prinsip kerja mikrofon dinamik vs kondensor, efek proksimitas, pencegahan distorsi digital, dan konfigurasi audio profesional pada aplikasi rapat serta streaming.
+          </p>
+        </header>
+
+        <section class="space-y-4">
+          <h3>1. Fisika Transduser: Kapsul Dinamik vs Kondensor</h3>
+          <p>
+            Setiap mikrofon adalah sebuah <strong>transduser</strong>: perangkat yang mengubah satu bentuk energi menjadi bentuk energi lain-dalam hal ini, mengubah fluktuasi tekanan udara akustik menjadi sinyal tegangan listrik. Dua tipe kapsul paling umum mendominasi industri rekaman:
+          </p>
+          <p>
+            <strong>Mikrofon Dinamik:</strong> Menggunakan diafragma ringan yang melekat pada kumparan kawat tembaga (voice coil) di dalam medan magnet permanen. Gelombang suara menggetarkan diafragma, menggerakkan kumparan, dan menghasilkan arus listrik melalui induksi elektromagnetik. Massa diafragmanya yang relatif tebal membuatnya lambat merespons transien suara ekstrem, menghasilkan kompresi alami yang hangat dan tahan terhadap benturan suara keras. Sangat cocok untuk ruangan bising tanpa peredam akustik.
+          </p>
+          <p>
+            <strong>Mikrofon Kondensor:</strong> Menggunakan diafragma tipis berlapis emas yang diposisikan sejajar sangat dekat dengan pelat belakang bermuatan listrik (backplate), membentuk sebuah kapasitor. Karena massanya yang sangat ringan, diafragma kondensor merespons transien nada tinggi dengan kecepatan luar biasa dan kejernihan frekuensi hingga 20 kHz. Namun, mikrofon kondensor sangat sensitif dan akan menangkap setiap pantulan gema dinding ruangan yang tidak diredam.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3>2. Pola Kutub (Polar Pattern) &amp; Efek Proksimitas</h3>
+          <p>
+            Pola kutub menentukan arah sensitivitas penangkapan suara:
+          </p>
+          <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Cardioid:</strong> Sangat peka pada bagian depan kapsul dan meredam suara dari arah belakang. Merupakan standar emas untuk rapat virtual, podcasting, dan vokal solo.</li>
+            <li><strong>Omnidirectional:</strong> Menangkap suara dengan kepekaan merata dari segala sudut 360 derajat.</li>
+            <li><strong>Figure-8 (Bidirectional):</strong> Menangkap suara dari arah depan dan belakang secara seimbang, serta menolak suara dari samping.</li>
+          </ul>
+          <p>
+            <strong>Efek Proksimitas (Proximity Effect):</strong> Karakteristik pada mikrofon terarah (directional) di mana respon frekuensi rendah (bass) meningkat secara dramatis saat sumber suara diletakkan semakin dekat ke kapsul. Memposisikan bibir pada jarak 5 cm dapat meningkatkan bass hingga 6–10 dB, memberikan karakter suara radio yang tebal. Namun, jika terlalu dekat, vokal akan terdengar bergumam (boomy). Jarak ideal berbicara berkisar antara 10 hingga 20 cm dari kapsul.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3>3. Penataan Gain (Gain Staging) &amp; Batas 0 dBFS</h3>
+          <p>
+            Dalam domain audio digital, batas amplitudo tertinggi absolut adalah <strong>0 dBFS (Decibels relative to Full Scale)</strong>. Berbeda dengan pita analog yang menghasilkan saturasi harmonik hangat saat volume berlebih, konverter digital analog-ke-digital (ADC) yang kehabisan angka biner akan langsung memotong puncak gelombang secara kaku (hard clipping).
+          </p>
+          <p>
+            Aturan praktis penataan gain untuk suara percakapan adalah mengatur puncak volume berada di antara <strong>-12 dBFS hingga -6 dBFS</strong> dengan rata-rata RMS sekitar <strong>-18 dBFS</strong>. Rentang ini menyisakan 6 hingga 12 dB <em>headroom</em> dinamis untuk menyerap teriakan, tawa mendadak, atau letupan napas tanpa memicu distorsi digital.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3>4. Mengatasi Dengung (Hum), Desis (Hiss), dan Letupan (Pops)</h3>
+          <p>
+            <strong>Dengung Listrik (Hum 50/60 Hz):</strong> Disebabkan oleh perbedaan potensial ground (ground loop) atau kabel mikrofon yang diletakkan sejajar dengan kabel daya adaptor komputer. Gunakan koneksi USB berkualitas atau kabel seimbang (balanced XLR).
+          </p>
+          <p>
+            <strong>Desis Frekuensi Tinggi (Hiss):</strong> Berasal dari self-noise komponen preamp internal yang diputar pada gain terlalu tinggi, atau gangguan listrik dari jalur bus USB komputer. Gunakan port USB langsung di belakang motherboard daripada hub USB tanpa daya.
+          </p>
+          <p>
+            <strong>Letupan Konsonan (Plosives):</strong> Terjadi saat hembusan udara kuat dari pelafalan huruf P, B, atau T membentur diafragma mikrofon. Gunakan pop filter atau busa windscreen, dan posisikan mikrofon sedikit miring (off-axis) dari garis lurus hembusan mulut.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3>5. Optimalisasi Konfigurasi pada Zoom, Discord, dan OBS</h3>
+          <p>
+            <strong>Discord:</strong> Pilih perangkat mikrofon secara eksplisit (hindari opsi "Default"). Atur sensitivitas input pada mode <em>Voice Activity</em>. Uji efektivitas fitur peredam bising <em>Krisp</em> menggunakan loopback playback tes ini untuk memastikan vokal tidak terdengar seperti robot.
+          </p>
+          <p>
+            <strong>Zoom:</strong> Nonaktifkan <em>Automatically adjust microphone volume</em> agar gain mikrofon tidak berfluktuasi sendiri. Untuk keperluan musik atau audio fidelitas tinggi, aktifkan mode <em>Original Sound for Musicians</em>.
+          </p>
+          <p>
+            <strong>OBS Studio:</strong> Tambahkan filter audio dengan urutan yang benar: 1) <em>Noise Gate</em> (untuk mematikan saluran saat hening), 2) <em>Noise Suppression</em> (untuk menyaring suara kipas komputer), 3) <em>Compressor</em> (untuk meratakan dinamika vokal), dan 4) <em>Limiter</em> di -2 dBFS untuk mencegah clipping.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3>6. Membaca Angka yang Dilaporkan Tes Ini</h3>
+          <p>
+            <strong>dBFS</strong> adalah desibel relatif terhadap skala penuh, skala khusus-negatif di mana 0&nbsp;dBFS adalah nilai terkeras yang dapat direpresentasikan konverter dan setiap nilai lain dinyatakan sebagai jarak di bawah batas tersebut. Skalanya logaritmik, sehingga perubahan 6&nbsp;dB kira-kira berarti penggandaan atau pembagian dua amplitudo, dan 20&nbsp;dB berarti faktor sepuluh.
+          </p>
+          <p>
+            <strong>RMS</strong> adalah rata-rata kuadrat (root mean square) bentuk gelombang pada jendela analisis, dan berkorelasi erat dengan kenyaringan yang dipersepsikan. <strong>Peak</strong> adalah sampel absolut terbesar tunggal, yang menunjukkan sisa headroom sebelum clipping tetapi tidak banyak menjelaskan level yang dipersepsikan. Sinyal dengan peak tinggi dan RMS rendah bersifat sangat transien; jarak antara keduanya adalah ukuran kasar seberapa dinamis ucapan Anda.
+          </p>
+          <p>
+            <strong>Noise floor</strong> adalah level seluruh suara yang ada saat Anda tidak berbicara, dan menentukan desis yang didengar lawan bicara di antara kalimat Anda. Ruangan tenang yang diberi perlakuan akustik biasanya terukur antara &minus;65 dan &minus;55&nbsp;dBFS; kantor rumah tipikal antara &minus;55 dan &minus;45; ruangan dengan kipas, kulkas, atau jalan ramai di luar, di atas &minus;45. Tes ini mengestimasi lantai dari seperlima paling hening jendela analisis terkini, sehingga beradaptasi terus-menerus, dan opsional dari pengukuran hening tiga detik eksplisit yang mengunci nilai yang kokoh terhadap batuk sesekali.
+          </p>
+          <p>
+            <strong>Rasio sinyal terhadap derau (SNR)</strong> adalah selisih antara lantai tersebut dan puncak ucapan Anda, dan merupakan angka tunggal paling berguna di sini, karena memprediksi bagaimana suara Anda terdengar oleh orang lain lebih baik daripada level absolut mana pun. Di atas 35&nbsp;dB hasilnya luar biasa dan suara Anda akan terdengar bersih di atas ruangan. Antara 25 dan 35&nbsp;dB hasilnya baik dan sangat memadai untuk panggilan. Antara 15 dan 25&nbsp;dB terdengar desis atau dengung di bawah ucapan, dan ruangan yang lebih tenang atau mikrofon yang lebih dekat akan membantu. Di bawah 15&nbsp;dB latar benar-benar bersaing dengan suara Anda, dan tidak ada pemrosesan perangkat lunak yang dapat memperbaikinya sepenuhnya &mdash; ruangannya yang bermasalah, bukan mikrofonnya.
+          </p>
+        </section>
+      </article>
+
+      <!-- FAQ Section -->
+      <section class="faq mt-16" aria-labelledby="faq-title">
+        <h2 id="faq-title" class="faq-title">Pertanyaan Umum Seputar Pengujian Mikrofon</h2>
+        <div class="faq-list">
+          {faqItems.map(([question, answer]) => (
+            <details class="faq-item">
+              <summary class="faq-question">{question}</summary>
+              <p class="faq-answer">{answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+
+  <style is:global>
+    /* ============================ Layout ============================ */
+    .mic-shell { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 4rem; }
+
+    .mic-panel {
+      border: 1px solid rgb(228 228 231);
+      border-radius: 1.5rem;
+      background: #ffffff;
+      padding: 1.5rem;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    @media (min-width: 640px) { .mic-panel { padding: 2rem; } }
+
+    .mic-shell.is-live .mic-panel { border-color: rgb(147 197 253); }
+    .mic-shell.is-clipping .mic-panel:first-of-type { border-color: rgb(220 38 38); }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .panel-eyebrow {
+      margin: 0 0 0.35rem;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgb(0 102 204);
+      font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+    }
+    .panel-title {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .panel-help {
+      margin: 0.75rem 0 0;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: rgb(82 82 91);
+    }
+    @media (min-width: 640px) { .panel-help { font-size: 1rem; } }
+
+    /* ============================ Controls ============================ */
+    .transport-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0.9rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1;
+      cursor: pointer;
+      border: 1px solid transparent;
+      min-height: 44px;
+      transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .btn:active:not(:disabled) { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-primary { background: #0066cc; color: #ffffff; }
+    .btn-primary:hover:not(:disabled) { background: #0071e3; }
+    :global(.dark) .btn-primary { background: #2997ff; color: #000000; }
+    :global(.dark) .btn-primary:hover:not(:disabled) { background: #3b82f6; }
+
+    .btn-ghost { background: rgb(244 244 245); color: rgb(24 24 27); border-color: rgb(228 228 231); }
+    .btn-ghost:hover:not(:disabled) { background: rgb(228 228 231); }
+    :global(.dark) .btn-ghost { background: rgb(24 24 27); color: rgb(244 244 245); border-color: rgb(39 39 42); }
+    :global(.dark) .btn-ghost:hover:not(:disabled) { background: rgb(39 39 42); }
+
+    .btn-quiet { background: transparent; color: rgb(113 113 122); border-color: rgb(228 228 231); }
+    .btn-quiet:hover:not(:disabled) { color: rgb(24 24 27); border-color: rgb(161 161 170); }
+    :global(.dark) .btn-quiet { border-color: rgb(39 39 42); color: rgb(161 161 170); }
+    :global(.dark) .btn-quiet:hover:not(:disabled) { color: #ffffff; border-color: rgb(113 113 122); }
+
+    .field-grid { margin-top: 1.25rem; }
+    .field { display: flex; flex-direction: column; gap: 0.5rem; }
+    .field-label { font-size: 0.875rem; font-weight: 600; color: rgb(63 63 70); }
+    :global(.dark) .field-label { color: rgb(212 212 216); }
+    .field-control {
+      width: 100%;
+      border-radius: 0.85rem;
+      border: 1px solid rgb(228 228 231);
+      background: #ffffff;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      color: rgb(24 24 27);
+      min-height: 44px;
+    }
+    :global(.dark) .field-control { border-color: rgb(39 39 42); background: rgb(18 18 21); color: #ffffff; }
+
+    .dsp-fieldset { border: 1px solid rgb(228 228 231); border-radius: 1rem; padding: 1rem 1.25rem; margin-top: 1.25rem; }
+    :global(.dark) .dsp-fieldset { border-color: rgb(39 39 42); }
+    .dsp-row { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 0.75rem; }
+    .toggle { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer; }
+
+    .clip-indicator {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 13px;
+      font-family: ui-monospace, monospace;
+      font-weight: 700;
+      color: rgb(161 161 170);
+      background: rgb(244 244 245);
+      border: 1px solid rgb(228 228 231);
+      transition: all 0.2s ease;
+    }
+    .clip-indicator.is-clipping { background: rgb(220 38 38); color: #ffffff; border-color: rgb(185 28 28); animation: clipPulse 0.4s infinite alternate; }
+
+    @keyframes clipPulse { from { opacity: 0.8; } to { opacity: 1; } }
+
+    /* Hardware & Diagnostics Grids */
+    .hw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .hw-item { padding: 1rem; border-radius: 1rem; background: rgb(250 250 250); border: 1px solid rgb(244 244 245); }
+    :global(.dark) .hw-item { background: rgb(18 18 21); border-color: rgb(39 39 42); }
+    .hw-label { font-size: 13px; font-mono: uppercase; color: rgb(113 113 122); margin-bottom: 0.25rem; }
+    .hw-value { font-size: 1.15rem; font-weight: 700; font-family: ui-monospace, monospace; }
+
+    .readout-pair { display: flex; gap: 1rem; }
+    .readout { display: flex; flex-direction: column; align-items: flex-end; }
+    .readout-label { font-size: 13px; font-mono: uppercase; color: rgb(113 113 122); }
+    .readout-value { font-size: 1.25rem; font-weight: 800; font-family: ui-monospace, monospace; }
+    .readout-unit { font-size: 0.75rem; color: rgb(161 161 170); margin-left: 0.2rem; }
+
+    .meter-track {
+      position: relative;
+      height: 1.25rem;
+      background: rgb(244 244 245);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 1.25rem 0 0.5rem;
+      border: 1px solid rgb(228 228 231);
+    }
+    :global(.dark) .meter-track { background: rgb(24 24 27); border-color: rgb(39 39 42); }
+    .meter-fill { height: 100%; width: 0%; background: linear-gradient(to right, #10b981 0%, #3b82f6 70%, #ef4444 100%); transition: width 0.05s linear; }
+    .meter-peak-marker { position: absolute; top: 0; bottom: 0; width: 3px; background: #ffffff; box-shadow: 0 0 4px rgba(0,0,0,0.5); left: 0%; transition: left 0.1s ease; }
+    .meter-ticks { display: flex; justify-content: space-between; font-size: 13px; color: rgb(113 113 122); }
+
+    .spectrum-wrap { width: 100%; height: 200px; background: rgb(9 9 11); border-radius: 1.25rem; overflow: hidden; margin: 1rem 0; border: 1px solid rgb(39 39 42); }
+    .spectrum-canvas { width: 100%; height: 100%; display: block; }
+    .band-legend { display: flex; flex-wrap: wrap; gap: 1rem; list-style: none; padding: 0; margin: 0.5rem 0 0; }
+    .band-swatch { display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 999px; margin-right: 0.4rem; vertical-align: middle; }
+
+    .diag-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+    .diag-row { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-radius: 1rem; background: rgb(250 250 250); border: 1px solid rgb(244 244 245); }
+    :global(.dark) .diag-row { background: rgb(18 18 21); border-color: rgb(39 39 42); }
+    .diag-label { font-size: 0.9rem; font-weight: 600; color: rgb(113 113 122); }
+    .diag-value { font-size: 0.9rem; font-weight: 700; }
+    .diag-value.good { color: #10b981; }
+    .diag-value.warn { color: #f59e0b; }
+    .diag-value.bad { color: #ef4444; }
+
+    .analysis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .analysis-item { padding: 1.25rem; border-radius: 1.25rem; background: rgb(250 250 250); border: 1px solid rgb(244 244 245); text-align: center; }
+    :global(.dark) .analysis-item { background: rgb(18 18 21); border-color: rgb(39 39 42); }
+    .analysis-item-accent { border-color: rgb(147 197 253); background: rgba(0, 102, 204, 0.05); }
+    :global(.dark) .analysis-item-accent { border-color: rgb(0 102 204); background: rgba(41, 151, 255, 0.1); }
+    .notice { border: 1px solid rgb(228 228 231); border-radius: 1.25rem; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+    .notice-bad { border-color: rgb(220 38 38); background: rgb(254 242 242); }
+    :global(.dark) .notice-bad { border-color: rgba(220, 38, 38, 0.4); background: rgba(127, 29, 29, 0.2); }
+    .notice-title { margin: 0 0 0.5rem; font-size: 1.05rem; font-weight: 700; }
+    .notice-body { margin: 0; font-size: 0.95rem; line-height: 1.5; }
+
+    .analysis-label { font-size: 13px; font-mono: uppercase; color: rgb(113 113 122); }
+    .analysis-value { font-size: 1.75rem; font-weight: 800; font-family: ui-monospace, monospace; color: #0066cc; }
+    :global(.dark) .analysis-value { color: #2997ff; }
+
+    .noise-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+    .noise-status { font-size: 0.9rem; color: rgb(113 113 122); font-family: ui-monospace, monospace; }
+    .noise-progress-track { height: 4px; background: rgb(244 244 245); border-radius: 999px; overflow: hidden; margin-top: 0.75rem; }
+    :global(.dark) .noise-progress-track { background: rgb(39 39 42); }
+    .noise-progress { height: 100%; width: 0%; background: #0066cc; transition: width 0.1s linear; }
+
+    .result-badge { display: inline-flex; border-radius: 999px; padding: 0.35rem 0.85rem; font-size: 13px; font-weight: 700; border: 1px solid; }
+    .result-badge.neutral { background: rgb(244 244 245); color: rgb(113 113 122); border-color: rgb(228 228 231); }
+    :global(.dark) .result-badge.neutral { background: rgb(24 24 27); color: rgb(161 161 170); border-color: rgb(39 39 42); }
+    .result-badge.good { background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
+
+    /* Guide & FAQ Styles */
+    .guide { margin-top: 5rem; border-t: 1px solid rgb(228 228 231); padding-top: 4rem; }
+    :global(.dark) .guide { border-color: rgb(39 39 42); }
+    .guide-title { font-size: 2.25rem; font-weight: 800; tracking-tight: -0.025em; margin: 0.5rem 0 1rem; }
+    .guide-standfirst { font-size: 1.15rem; line-height: 1.6; color: rgb(113 113 122); margin-bottom: 2.5rem; }
+    .guide section { margin-top: 3rem; }
+    .guide h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+    .guide p { font-size: 1.05rem; line-height: 1.7; color: rgb(63 63 70); margin-bottom: 1.25rem; }
+    :global(.dark) .guide p { color: rgb(212 212 216); }
+
+    .faq { margin-top: 4rem; border-top: 1px solid rgb(228 228 231); padding-top: 3rem; }
+    :global(.dark) .faq { border-color: rgb(39 39 42); }
+    .faq-title { font-size: 2rem; font-weight: 800; margin-bottom: 2rem; }
+    .faq-list { display: flex; flex-direction: column; gap: 1rem; }
+    .faq-item { border: 1px solid rgb(228 228 231); border-radius: 1.25rem; padding: 1.25rem; background: #ffffff; }
+    :global(.dark) .faq-item { border-color: rgb(39 39 42); background: rgb(18 18 21); }
+    .faq-question { font-size: 1.1rem; font-weight: 700; cursor: pointer; list-style: none; }
+    .faq-answer { margin-top: 1rem; font-size: 1rem; line-height: 1.65; color: rgb(82 82 91); border-top: 1px solid rgb(244 244 245); padding-top: 0.75rem; }
+    :global(.dark) .faq-answer { color: rgb(161 161 170); border-color: rgb(39 39 42); }
+
+    .mic-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    :global(.dark) .mic-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    @media (prefers-reduced-motion: reduce) { .mic-hero-glow { display: none; } }
+  </style>
+
+  <script src="../../scripts/tools/mic-tester-id.js"></script>
+</Layout>

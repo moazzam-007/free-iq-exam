@@ -1,36 +1,780 @@
 ---
-import Layout from '../../components/id/LayoutId.astro';
-import Header from '../../components/id/HeaderId.astro';
-import Footer from '../../components/id/FooterId.astro';
+import LayoutId from '../../components/id/LayoutId.astro';
+import HeaderId from '../../components/id/HeaderId.astro';
+import FooterId from '../../components/id/FooterId.astro';
+
 const title = 'Kalkulator Kalori dan Makro TDEE | FreeIQExam';
 const description = 'Hitung BMR, TDEE, target kalori, BMI, dan pembagian makronutrien dengan formula Mifflin-St Jeor.';
 const canonicalUrl = 'https://freeiqexam.com/id/kalkulator-kalori';
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Kalkulator Kalori dan Makro TDEE",
+    "url": "https://freeiqexam.com/id/kalkulator-kalori",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://freeiqexam.com/id/" },
+      { "@type": "ListItem", "position": 2, "name": "Kalkulator Kalori", "item": "https://freeiqexam.com/id/kalkulator-kalori/" }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Apa perbedaan BMR dan TDEE?", "acceptedAnswer": { "@type": "Answer", "text": "BMR adalah energi istirahat basal, sedangkan TDEE adalah total pengeluaran harian termasuk aktivitas. Target kalori dihitung dari TDEE dikurangi defisit yang dipilih." } },
+      { "@type": "Question", "name": "Formula BMR mana yang paling akurat?", "acceptedAnswer": { "@type": "Answer", "text": "Mifflin-St Jeor paling akurat untuk populasi umum; Katch-McArdle lebih baik bila persen lemak tubuh diketahui karena memakai massa tanpa lemak." } },
+      { "@type": "Question", "name": "Berapa defisit kalori aman untuk penurunan lemak berkelanjutan?", "acceptedAnswer": { "@type": "Answer", "text": "Defisit 20% di bawah TDEE (sekitar 400 hingga 500 kkal/hari) optimal, menghasilkan sekitar 0,50 kg penurunan lemak per minggu dengan tetap menjaga massa otot." } },
+      { "@type": "Question", "name": "Berapa energi yang dikonsumsi otak manusia setiap hari?", "acceptedAnswer": { "@type": "Answer", "text": "Otak memakai sekitar 20% BMR atau sekitar 120 gram glukosa per hari untuk pemompaan ion neuronal dan sintesis neurotransmiter." } },
+      { "@type": "Question", "name": "Berapa protein harian yang dibutuhkan saat defisit kalori?", "acceptedAnswer": { "@type": "Answer", "text": "Pertahankan 1,8g hingga 2,4g protein per kg berat badan selama defisit untuk mengaktifkan rasa kenyang dan melindungi massa otot." } },
+      { "@type": "Question", "name": "Apa itu adaptasi metabolik (mode kelaparan)?", "acceptedAnswer": { "@type": "Answer", "text": "Defisit berkepanjangan memicu termogenesis adaptif: tubuh menurunkan pengeluaran istirahat dan NEAT untuk menghemat cadangan lemak." } },
+      { "@type": "Question", "name": "Bagaimana formula Lemak Tubuh US Navy mengestimasi lemak tubuh?", "acceptedAnswer": { "@type": "Answer", "text": "Formula US Navy memakai rasio lingkar logaritmik leher, pinggang, dan pinggul terhadap tinggi badan, dengan margin galat 3-4% dibanding pemindaian DEXA." } },
+      { "@type": "Question", "name": "Haruskah saya memakan kembali kalori yang terbakar saat olahraga?", "acceptedAnswer": { "@type": "Answer", "text": "Umumnya tidak perlu; TDEE berbasis PAL sudah mencakup aktivitas. Makan kembali seluruh estimasi olahraga kerap menghapus defisit karena pelacak melebih-lebihkan pembakaran." } }
+    ]
+  }
+];
 ---
-<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/calorie-calculator">
-  <Header currentPath="/id/kalkulator-kalori" enPath="/calorie-calculator" />
-  <main class="flex-1 bg-white px-4 py-10 text-zinc-950 dark:bg-black dark:text-white sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-4xl">
-      <header class="mb-8 text-center">
-        <span class="fx-tag">Kesehatan metabolik</span>
-        <h1 class="mt-5 text-4xl font-extrabold tracking-[-0.025em] sm:text-5xl">Kalkulator Kalori dan Makro</h1>
-        <p class="mx-auto mt-4 max-w-2xl text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-300 sm:text-lg">Hitung kebutuhan energi harian, target kalori, BMI, dan makronutrien berdasarkan data tubuh dan aktivitas Anda.</p>
-      </header>
-      <section class="rounded-3xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
-        <div class="grid gap-4 sm:grid-cols-2">
-          <label>Usia<input id="calAge" type="number" value="28" min="13" class="mt-2 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900" /></label>
-          <label>Aktivitas<select id="calActivity" class="mt-2 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900"><option value="1.2">Sangat ringan</option><option value="1.375">Ringan</option><option value="1.55" selected>Sedang</option><option value="1.725">Tinggi</option></select></label>
-          <label>Berat (kg)<input id="calWeightMetric" type="number" value="75" class="mt-2 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900" /></label>
-          <label>Tinggi (cm)<input id="calHeightMetric" type="number" value="178" class="mt-2 min-h-[44px] w-full rounded-xl border border-zinc-300 bg-white px-3 dark:border-zinc-700 dark:bg-zinc-900" /></label>
-          <input id="calBodyFat" type="hidden" value="" />
+
+<LayoutId
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  enPath="/calorie-calculator"
+>
+  <HeaderId currentPath="/id/kalkulator-kalori" enPath="/calorie-calculator" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+    
+    <!-- Hero Header -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Mesin Klinis Mifflin-St Jeor & Katch-McArdle</span>
+      </div>
+
+      <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+        Kalkulator TDEE & Kalori Gratis
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+        Hitung Total Daily Energy Expenditure (TDEE), Laju Metabolik Basal (BMR), target defisit kalori, dan gram makronutrien secara eksak. Dilengkapi pemodelan komposisi tubuh klinis dan metrik energi otak neuro-metabolik.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Inputs Form (7 Cols) -->
+        <div class="lg:col-span-7 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-7 shadow-lg space-y-6">
+          
+          <!-- Unit & Gender Selectors -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-200 dark:border-zinc-800/80">
+            
+            <!-- Unit Selector -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                class="cal-unit-btn active px-3.5 py-1.5 rounded-xl font-bold transition-all bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 cursor-pointer"
+                data-unit="metric"
+              >
+                Metrik (kg / cm)
+              </button>
+              <button
+                type="button"
+                class="cal-unit-btn px-3.5 py-1.5 rounded-xl font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                data-unit="imperial"
+              >
+                Imperial (lbs / ft-in)
+              </button>
+            </div>
+
+            <!-- Gender Selector -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                class="cal-gender-btn active px-3.5 py-1.5 rounded-xl font-bold transition-all bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 cursor-pointer"
+                data-gender="male"
+              >
+                ♂ Pria
+              </button>
+              <button
+                type="button"
+                class="cal-gender-btn px-3.5 py-1.5 rounded-xl font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                data-gender="female"
+              >
+                ♀ Wanita
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Biometric Inputs Grid -->
+          <div class="space-y-4">
+            
+            <!-- Age & Optional Body Fat -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calAge" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Usia (Tahun)
+                </label>
+                <input
+                  type="number"
+                  id="calAge"
+                  value="28"
+                  min="12"
+                  max="110"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="calBodyFat" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                    Lemak Tubuh % <span class="text-[10px] text-zinc-400 lowercase font-sans">(opsional)</span>
+                  </label>
+                  <span id="navyBfResultBadge" class="hidden text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full"></span>
+                </div>
+                <input
+                  type="number"
+                  id="calBodyFat"
+                  placeholder="e.g. 16"
+                  step="0.1"
+                  min="4"
+                  max="60"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Metric Inputs (Weight kg, Height cm) -->
+            <div id="metricInputsWrap" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calWeightMetric" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Berat (kg)
+                </label>
+                <input
+                  type="number"
+                  id="calWeightMetric"
+                  value="75"
+                  step="0.5"
+                  min="25"
+                  max="300"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label for="calHeightMetric" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Tinggi (cm)
+                </label>
+                <input
+                  type="number"
+                  id="calHeightMetric"
+                  value="178"
+                  min="80"
+                  max="250"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Imperial Inputs (Weight lbs, Height ft-in) - Hidden by default -->
+            <div id="imperialInputsWrap" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calWeightImperial" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Berat (lbs)
+                </label>
+                <input
+                  type="number"
+                  id="calWeightImperial"
+                  value="165"
+                  step="1"
+                  min="55"
+                  max="660"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Tinggi (Kaki & Inci)
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    id="calHeightFeet"
+                    value="5"
+                    min="3"
+                    max="8"
+                    placeholder="Feet"
+                    class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    type="number"
+                    id="calHeightInches"
+                    value="10"
+                    min="0"
+                    max="11"
+                    placeholder="Inches"
+                    class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Level (PAL) -->
+            <div>
+              <label for="calActivity" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                Tingkat Aktivitas Fisik (PAL)
+              </label>
+              <select
+                id="calActivity"
+                class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+              >
+                <option value="1.20">Sedentari (Kerja meja, olahraga minimal)</option>
+                <option value="1.375">Ringan (Olahraga ringan 1-3 hari/minggu)</option>
+                <option value="1.55" selected>Sedang (Latihan sedang 3-5 hari/minggu)</option>
+                <option value="1.725">Sangat Aktif (Latihan berat 6-7 hari/minggu)</option>
+                <option value="1.90">Atlet / Kerja Fisik (Latihan 2x sehari atau konstruksi)</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- US Navy Body Fat Calculator Drawer -->
+          <details class="group p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-xs">
+            <summary class="font-bold text-zinc-900 dark:text-zinc-200 cursor-pointer select-none flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z" /><path d="m14.5 12.5 2-2" /><path d="m11.5 9.5 2-2" /><path d="m8.5 6.5 2-2" /><path d="m17.5 15.5 2-2" /></svg>Estimasi Lemak Tubuh % (Metode US Navy)</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            
+            <div class="mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 space-y-3">
+              <p class="text-zinc-500 dark:text-zinc-400">
+                Ukur lingkar dalam cm dengan meteran fleksibel. Dipakai untuk membuka persamaan Katch-McArdle berbasis komposisi tubuh.
+              </p>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label for="navyNeck" class="block text-zinc-500 mb-1">Leher (cm)</label>
+                  <input type="number" id="navyNeck" value="38" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+                <div>
+                  <label for="navyWaist" class="block text-zinc-500 mb-1">Pinggang di Pusar (cm)</label>
+                  <input type="number" id="navyWaist" value="84" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+                <div id="femaleHipWrap" class="hidden">
+                  <label for="navyHip" class="block text-zinc-500 mb-1">Pinggul (cm)</label>
+                  <input type="number" id="navyHip" value="98" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                id="calcNavyBfBtn"
+                class="w-full mt-2 py-2 min-h-[44px] rounded-xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-bold transition-all duration-200 active:scale-[0.97] cursor-pointer"
+              >
+                Hitung & Terapkan Lemak Tubuh %
+              </button>
+            </div>
+          </details>
+
+          <!-- Goal Preset Buttons -->
+          <div>
+            <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2.5">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Target & Tujuan Kalori</span>
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <button type="button" class="cal-goal-btn active p-2.5 rounded-2xl text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 text-left cursor-pointer" data-goal="maintenance">
+                <span class="block">Pertahankan</span>
+                <span class="text-[10px] text-zinc-400 font-normal">delta 0 kkal</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="mild-cut">
+                <span class="block">Potong Ringan (-10%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0,25 kg/minggu</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="standard-cut">
+                <span class="block">Potong Standar (-20%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0,50 kg/minggu</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="aggressive-cut">
+                <span class="block">Agresif (-25%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0,75 kg/minggu</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="lean-bulk">
+                <span class="block">Bulk Ramping (+10%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">+0,25 kg/minggu</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="heavy-bulk">
+                <span class="block">Bulk Berat (+20%)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">+0,50 kg/minggu</span>
+              </button>
+            </div>
+          </div>
+
         </div>
-        <div class="mt-6 flex flex-wrap gap-3"><button type="button" class="cal-gender-btn fx-tag" data-gender="male">Pria</button><button type="button" class="cal-gender-btn fx-tag" data-gender="female">Wanita</button><button type="button" class="cal-goal-btn fx-tag" data-goal="maintenance">Pertahankan</button></div>
-        <div class="hidden"><div id="metricInputsWrap"></div><div id="imperialInputsWrap"></div><div id="femaleHipWrap"></div><input id="calWeightImperial" value="165" /><input id="calHeightFeet" value="5" /><input id="calHeightInches" value="10" /><input id="navyNeck" value="38" /><input id="navyWaist" value="84" /><input id="navyHip" value="98" /><button id="calcNavyBfBtn" type="button"></button><span id="navyBfResultBadge"></span></div>
-        <div class="mt-8 grid gap-4 sm:grid-cols-3"><article class="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><span class="text-sm text-zinc-500">BMR</span><strong id="resBmrVal" class="mt-2 block text-2xl">-</strong></article><article class="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><span class="text-sm text-zinc-500">TDEE</span><strong id="resTdeeVal" class="mt-2 block text-2xl text-[#0066cc] dark:text-[#2997ff]">-</strong></article><article class="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><span class="text-sm text-zinc-500">Target kalori</span><strong id="resTargetCalories" class="mt-2 block text-2xl">-</strong></article></div>
-        <p id="resGoalDesc" class="mt-5 text-zinc-600 dark:text-zinc-300"></p><canvas id="macroChartCanvas" class="mx-auto mt-6 h-[180px] w-[180px]"></canvas>
-        <div class="hidden"><span id="resDeltaVal"></span><span id="bmrMifflinVal"></span><span id="bmrKatchVal"></span><span id="bmrOxfordVal"></span><span id="resBmiVal"></span><span id="resBmiCategory"></span><span id="macroProteinGrams"></span><span id="macroProteinKcal"></span><span id="macroFatGrams"></span><span id="macroFatKcal"></span><span id="macroCarbGrams"></span><span id="macroCarbKcal"></span><span id="neuroBrainKcal"></span><span id="neuroBrainGlucose"></span><span id="neuroBrainWatts"></span><button class="cal-unit-btn" data-unit="metric" type="button"></button><button class="cal-diet-btn" data-diet="balanced" type="button"></button></div>
+
+        <!-- Right Column: Results & Interactive Scorecard (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Hero Target Calories Card -->
+          <div class="bg-zinc-950 text-white border border-zinc-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold">Target Kalori Harian</span>
+              <span id="resDeltaVal" class="text-xs font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold">0 kkal</span>
+            </div>
+
+            <div class="text-5xl font-black font-mono tracking-tight mb-1 text-white">
+              <span id="resTargetCalories">2,450</span>
+              <span class="text-lg font-sans font-normal text-zinc-400">kkal/hari</span>
+            </div>
+
+            <p id="resGoalDesc" class="text-xs text-zinc-400 mb-6 leading-relaxed">
+              Pertahankan (0 kkal) · Ekuilibrium metabolik dan rekomposisi tubuh
+            </p>
+
+            <!-- BMR & TDEE Badges Grid -->
+            <div class="grid grid-cols-2 gap-3 pt-4 border-t border-zinc-800 text-xs font-mono">
+              <div class="bg-zinc-900/80 p-3 rounded-2xl border border-zinc-800">
+                <span class="text-[10px] text-zinc-500 block uppercase font-sans">Laju Metabolik Basal</span>
+                <span id="resBmrVal" class="text-lg font-bold text-emerald-400">1,720</span>
+                <span class="text-[10px] text-zinc-400 font-sans block">kkal (Istirahat)</span>
+              </div>
+
+              <div class="bg-zinc-900/80 p-3 rounded-2xl border border-zinc-800">
+                <span class="text-[10px] text-zinc-500 block uppercase font-sans">Total Pengeluaran (TDEE)</span>
+                <span id="resTdeeVal" class="text-lg font-bold text-cyan-400">2,450</span>
+                <span class="text-[10px] text-zinc-400 font-sans block">kkal (Aktif)</span>
+              </div>
+            </div>
+
+            <!-- BMI Quick Card -->
+            <div class="mt-3 bg-zinc-900/50 px-3.5 py-2 rounded-xl border border-zinc-800 flex items-center justify-between text-xs font-mono">
+              <span class="text-zinc-400 font-sans">Indeks Massa Tubuh:</span>
+              <div class="flex items-center gap-2">
+                <span id="resBmiVal" class="font-bold text-white">23.7</span>
+                <span id="resBmiCategory" class="text-xs font-bold text-emerald-500">Berat Normal</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Macro Doughnut Chart & Split Card -->
+          <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm">
+            
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z" /><path d="M10 2c1 .5 2 2 2 5" /></svg>Distribusi Makronutrien</span>
+              </h3>
+            </div>
+
+            <!-- Protokol Diet Selector Tabs -->
+            <div class="grid grid-cols-2 gap-1.5 p-1 bg-zinc-200/70 dark:bg-zinc-900 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs mb-5">
+              <button type="button" class="cal-diet-btn active py-1.5 rounded-xl font-bold bg-zinc-800 text-white transition-all cursor-pointer" data-diet="balanced">Seimbang</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="high-protein">Tinggi Protein</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="keto">Keto / Rendah Karbo</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="endurance">Ketahanan</button>
+            </div>
+
+            <!-- Chart & Macros Grid -->
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+              
+              <!-- Doughnut Canvas -->
+              <div class="shrink-0 flex items-center justify-center">
+                <canvas id="macroChartCanvas" class="w-[180px] h-[180px] block"></canvas>
+              </div>
+
+              <!-- Macro Cards List -->
+              <div class="flex-1 w-full space-y-2.5 text-xs font-mono">
+                
+                <!-- Protein -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-emerald-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Protein</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroProteinGrams" class="font-bold text-emerald-500 text-sm block">184g</span>
+                    <span id="macroProteinKcal" class="text-[10px] text-zinc-400 block">735 kcal (30%)</span>
+                  </div>
+                </div>
+
+                <!-- Lemak -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-amber-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Lemak</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroFatGrams" class="font-bold text-amber-500 text-sm block">82g</span>
+                    <span id="macroFatKcal" class="text-[10px] text-zinc-400 block">735 kcal (30%)</span>
+                  </div>
+                </div>
+
+                <!-- Carbs -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-cyan-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Karbohidrat</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroCarbGrams" class="font-bold text-cyan-500 text-sm block">245g</span>
+                    <span id="macroCarbKcal" class="text-[10px] text-zinc-400 block">980 kkal (40%)</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Neuro-Metabolic Brain Glucose Metric Card -->
+          <div class="bg-white/80 dark:bg-[#0f1016]/90 border border-zinc-200/80 dark:border-white/10 rounded-3xl p-5 text-xs space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-indigo-400 flex items-center gap-1.5">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" /><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" /></svg>
+                <span>Indeks Energi Otak Neuro-Metabolik</span>
+              </span>
+              <span class="text-[10px] font-mono text-zinc-400">~20% dari BMR</span>
+            </div>
+
+            <p class="text-zinc-400 leading-relaxed text-[11px]">
+              Otak manusia memakai 20% pengeluaran metabolik istirahat untuk pemompaan ion neuronal dan sintesis neurotransmiter kontinu.
+            </p>
+
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-800 text-center font-mono">
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Energi Otak</span>
+                <span id="neuroBrainKcal" class="font-bold text-indigo-300 text-xs">344 kkal/hari</span>
+              </div>
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Kebutuhan Glukosa</span>
+                <span id="neuroBrainGlucose" class="font-bold text-emerald-400 text-xs">86g glucose</span>
+              </div>
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Daya Kontinu</span>
+                <span id="neuroBrainWatts" class="font-bold text-amber-400 text-xs">16.7 Watts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BMR Equation Comparison Accordion -->
+          <details class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 text-xs">
+            <summary class="font-bold text-zinc-700 dark:text-zinc-300 cursor-pointer select-none flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 18h8" /><path d="M3 22h18" /><path d="M14 22a7 7 0 1 0-7-7h1" /><path d="M9 14h2" /><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" /><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" /></svg>Perbandingan Multi-Formula BMR</span>
+              <svg class="w-4 h-4 text-zinc-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 space-y-2 font-mono">
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Mifflin-St Jeor:</span>
+                <span id="bmrMifflinVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,720 kkal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Katch-McArdle (LBM):</span>
+                <span id="bmrKatchVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,732 kcal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Oxford / Schofield:</span>
+                <span id="bmrOxfordVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,733 kcal</span>
+              </div>
+            </div>
+          </details>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 2,000-Word Scientific Guide & Documentation -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base space-y-12">
+      
+      <!-- Section 1: Thermodynamics -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          1. Termodinamika Keseimbangan Energi Manusia
+        </h2>
+        <p>
+          Regulasi berat manusia secara fundamental diatur oleh <strong>Hukum Pertama Termodinamika</strong>: energi dalam sistem biologis tertutup tidak dapat diciptakan atau dimusnahkan, hanya diubah dari satu wujud kimia ke wujud lain. Dalam istilah fisiologis:
+        </p>
+        
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-mono text-xs overflow-x-auto my-4 border border-zinc-800">
+          <code>Laju Penyimpanan Energi (ΔLemak + ΔOtot) = Energi Masuk (ME) - Total Daily Energy Expenditure (TDEE)</code>
+        </div>
+
+        <p>
+          Meski persamaan dasarnya linear, pengeluaran energi fisiologis bersifat dinamis dan adaptif. Saat individu memasuki defisit kalori berkelanjutan, tubuh manusia mengaktifkan <strong>termogenesis adaptif</strong>—mekanisme survival evolusioner yang menurunkan pengeluaran energi istirahat, mengurangi gerakan spontan non-olahraga (NEAT), dan meningkatkan efisiensi kopling energi mitokondria untuk menghemat cadangan lemak.
+        </p>
       </section>
-    </div>
+
+      <!-- Section 2: The Four Pillars of TDEE -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          2. Empat Komponen Fundamental Total Daily Energy Expenditure
+        </h2>
+        <p>
+          Pengeluaran kalori harian Anda bukan angka statis tunggal; melainkan jumlah matematis empat komponen metabolik berbeda:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-500 text-base">Laju Metabolik Basal (BMR)</span>
+              <span class="text-xs font-mono text-zinc-500">60% – 70%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Energi dasar untuk menopang hidup dalam keadaan pasca-penyerapan pada suhu termonetral (pemompaan ion ginjal, sintesis protein hati, pemompaan jantung, dan oksidasi glukosa otak).
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-cyan-500 text-base">NEAT (Aktivitas Non-Olahraga)</span>
+              <span class="text-xs font-mono text-zinc-500">15% – 20%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Thermogenesis Aktivitas Non-Olahraga mencakup seluruh aktivitas fisik spontan: berdiri, berjalan, gelisah, menjaga postur, dan mengetik. Ini komponen paling variabel antar individu.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-amber-500 text-base">Efek Termik Makanan (TEF)</span>
+              <span class="text-xs font-mono text-zinc-500">8% – 10%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Biaya metabolik mencerna, menyerap, dan mengasimilasi nutrien. Protein memiliki TEF tertinggi (20%–30% kalori masuk terbakar), diikuti karbohidrat (5%–10%) dan lemak (0%–3%).
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-indigo-400 text-base">Aktivitas Olahraga (EAT)</span>
+              <span class="text-xs font-mono text-zinc-500">5% – 10%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Olahraga terstruktur (latihan beban, lari, bersepeda). Meski kritis untuk adaptasi kardiovaskular dan otot, EAT menyumbang fraksi lebih kecil dari total bakar harian daripada yang umum diyakini.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 3: Protein Leverage & Satiety -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          3. Hipotesis Leverage Protein & Sinyal Kenyang
+        </h2>
+        <p>
+          Diformulasikan oleh biolog evolusi David Raubenheimer dan Stephen Simpson, <strong>Hipotesis Leverage Protein</strong> posits that human appetite regulation prioritizes protein intake above all other macronutrients. The central nervous system drives food consumption until target protein requirements are met. When diets are diluted with refined fats and carbohydrates, individuals overconsume total energy to satisfy absolute amino acid needs.
+        </p>
+        <p>
+          Menjaga asupan protein tinggi (1,8g hingga 2,4g per kg berat badan) selama defisit kalori mengaktifkan tiga kaskade kenyang berbeda:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Supresi Ghrelin:</strong> Protein tinggi menurunkan ghrelin pasca-makan (hormon lapar utama dari fundus lambung) jauh lebih lama daripada karbohidrat atau lipid.
+          </li>
+          <li>
+            <strong>Stimulasi Inkretin (GLP-1 & PYY):</strong> Asupan protein merangsang sel-L di ileum distal melepas Glucagon-Like Peptide-1 (GLP-1) dan Peptide YY, menunda pengosongan lambung dan memberi sinyal kenyang ke hipotalamus.
+          </li>
+          <li>
+            <strong>Sintesis Protein Otot (MPS) Terlindungi:</strong> Protein kaya leusin memicu jalur mTORC1, melindungi jaringan otot tanpa lemak dari pemecahan glukoneogenik selama restriksi kalori.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 4: The 69 kcal/kg Adipose Limit -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          4. Batas Matematis Penurunan Lemak: Kendala Adiposa 69 kkal/kg
+        </h2>
+        <p>
+          Studi tonggak oleh Seymour Alpert (2005, <em>Journal of Theoretical Biology</em>) menunjukkan ada plafon fisiologis ketat pada laju jaringan adiposa manusia melepaskan asam lemak ke sirkulasi untuk beta-oksidasi. Laju transfer energi maksimum terkendala matematis pada:
+        </p>
+
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-mono text-xs overflow-x-auto my-4 border border-zinc-800">
+          <code>Transfer Energi Adiposa Maks = 69,3 ± 12,8 kkal per kg lemak tubuh per hari</code>
+        </div>
+
+        <p>
+          Jika individu menciptakan defisit kalori harian lebih besar dari kapasitas adiposa totalnya (mis. individu dengan 10 kg lemak mencoba defisit 800 kkal padahal transfer maksimumnya 10 &times; 69 = 690 kkal/hari), kekurangan metabolik dipenuhi paksa lewat katabolisme jaringan otot fungsional dan protein organ via glukoneogenesis hati.
+        </p>
+      </section>
+
+      <!-- Section 5: Neuro-Metabolic Brain Glucose -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          5. Tuntutan Neuro-Metabolik: Perfusi Glukosa Otak & Fokus Mental
+        </h2>
+        <p>
+          Meski otot rangka mudah beralih antara oksidasi lipid, glikogenolisis, dan asam lemak sirkulasi, otak manusia membutuhkan perfusi metabolik kontinu. Pada kondisi diet standar, sistem saraf pusat mengonsumsi sekitar <strong>120 gram glukosa per hari</strong> (mewakili ~20% dari total Laju Metabolik Basal).
+        </p>
+        <p>
+          Selama restriksi kalori agresif, ketersediaan karbohidrat tak cukup atau ayunan gula darah tak menentu dapat memicu kelelahan mental akut, gangguan fungsi eksekutif, dan penurunan kapasitas memori kerja. Menjaga distribusi makronutrien seimbang atau memberi 2–3 minggu adaptasi keto hepatik memastikan fokus kognitif berkelanjutan selama penurunan berat.
+        </p>
+      </section>
+
+      <!-- Section 6: Macro Protocols Table -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          6. Perbandingan Protokol Makronutrien Klinis
+        </h2>
+
+        <!-- Macro Table -->
+        <div class="overflow-x-auto my-4">
+          <table class="w-full text-left text-xs border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Protokol Diet</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Protein</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Lemak</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Karbohidrat</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Tujuan Utama</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-emerald-500">Tinggi Protein / Binaraga</td>
+                <td class="p-3">2.2 g/kg (35%)</td>
+                <td class="p-3">25%</td>
+                <td class="p-3">40%</td>
+                <td class="p-3">Preservasi otot saat cut, kenyang maksimum</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-cyan-400">Kesehatan Seimbang</td>
+                <td class="p-3">30%</td>
+                <td class="p-3">30%</td>
+                <td class="p-3">40%</td>
+                <td class="p-3">Pemeliharaan gaya hidup berkelanjutan & rekomposisi tubuh</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-amber-400">Rendah Karbo / Ketogenik</td>
+                <td class="p-3">25%</td>
+                <td class="p-3">70%</td>
+                <td class="p-3">5%</td>
+                <td class="p-3">Stabilisasi insulin, epilepsi, supresi nafsu makan</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-indigo-400">Ketahanan Nabati</td>
+                <td class="p-3">20%</td>
+                <td class="p-3">20%</td>
+                <td class="p-3">60%</td>
+                <td class="p-3">Pengisian glikogen untuk maraton & olahraga ketahanan</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 7: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          7. Pertanyaan yang Sering Diajukan (FAQ)
+        </h2>
+
+        <div class="space-y-3">
+          
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa perbedaan BMR dan TDEE?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              BMR (Laju Metabolik Basal) is the baseline calories burned at complete rest to keep organs functioning. TDEE (Total Daily Energy Expenditure) is your actual total daily calorie burn, calculated by multiplying BMR by your Tingkat Aktivitas Fisik (PAL) to account for daily walking, digestion, and exercise.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Formula BMR mana yang paling akurat?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Mifflin-St Jeor is the clinical gold standard for the general population. If you know your body fat percentage, the Katch-McArdle formula is even more precise because it calculates metabolic rate directly from Lean Body Mass (LBM).
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Berapa defisit kalori aman untuk penurunan lemak berkelanjutan?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Defisit 20% di bawah TDEE (sekitar 400 hingga 500 kkal/hari) optimal. Ini menghasilkan sekitar 0,50 kg (1 lb) penurunan lemak per minggu dengan tetap menjaga massa otot, hormon tiroid, dan laju metabolik.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Berapa energi yang dikonsumsi otak manusia setiap hari?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Otak manusia mencakup ~2% massa tubuh tetapi mengonsumsi ~20% Laju Metabolik Basal (BMR) istirahat Anda — sekitar 300 hingga 400 kkal per hari (setara ~100-130 gram glukosa murni) untuk transpor ion neuronal kontinu.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Berapa protein harian yang dibutuhkan saat defisit kalori?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Panduan klinis merekomendasikan 1,8 hingga 2,4 gram protein per kilogram berat badan (0,8 hingga 1,1 g/lb). Protein tinggi memanfaatkan Efek Termik Makanan (TEF membakar 20-30% kalori protein), melindungi otot tanpa lemak, dan meningkatkan hormon kenyang seperti GLP-1 dan PYY.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa itu adaptasi metabolik (mode kelaparan)?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Termogenesis adaptif adalah mekanisme evolusioner di mana tubuh menurunkan aktivitas non-olahraga (NEAT), memperlambat denyut jantung istirahat, dan menurunkan hormon leptin serta tiroid (T3). Untuk mencegah adaptasi metabolik parah, hindari defisit di atas 25% dan selingi jeda diet terstruktur.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Bagaimana formula Lemak Tubuh US Navy mengestimasi lemak tubuh?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Formula US Navy memakai rasio lingkar logaritmik leher, pinggang (di pusar), dan pinggul (untuk wanita) terhadap tinggi badan. Memberikan estimasi andal dengan margin galat 3-4% dibanding pemindaian DEXA.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Haruskah saya memakan kembali kalori yang terbakar saat olahraga?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Pada kebanyakan kasus, tidak. Pelacak kebugaran melebih-lebihkan pengeluaran kardio sebesar 20% hingga 40%. Karena kalkulasi TDEE sudah memperhitungkan frekuensi latihan mingguan via pengali aktivitas, memakan kembali kalori olahraga hasil pelacakan biasanya menghapus defisit kalori Anda.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
   </main>
-  <Footer />
-  <script src="../../scripts/tools/calorie-engine.js"></script>
-</Layout>
+
+  <FooterId />
+
+  <script src="../../scripts/tools/calorie-engine-id.js"></script>
+</LayoutId>

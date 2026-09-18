@@ -370,19 +370,19 @@
 
     if (milliseconds < 185) {
       refs.roundFeedback.textContent =
-        '⚡ Exceptional speed. Elite-level reflex territory.';
+        'Exceptional speed. Elite-level reflex territory.';
     } else if (milliseconds < 220) {
       refs.roundFeedback.textContent =
-        '🚀 Lightning fast. Well ahead of the population baseline.';
+        'Lightning fast. Well ahead of the population baseline.';
     } else if (milliseconds < 250) {
       refs.roundFeedback.textContent =
-        '🎯 Above average. A strong visual reaction.';
+        'Above average. A strong visual reaction.';
     } else if (milliseconds <= 280) {
       refs.roundFeedback.textContent =
-        '⏱️ Solid human baseline. Keep your gaze relaxed.';
+        'Solid human baseline. Keep your gaze relaxed.';
     } else {
       refs.roundFeedback.textContent =
-        '🐢 Slower result. Display and input latency can matter.';
+        'Slower result. Display and input latency can matter.';
     }
   }
 
@@ -631,7 +631,7 @@
         : '—';
 
     const message =
-      `⚡ I scored an average reaction time of ${average} ms on FreeIQExam. ` +
+      `I scored an average reaction time of ${average} ms on FreeIQExam. ` +
       `Can you beat my reflexes? https://freeiqexam.com/reaction-time-test`;
 
     try {

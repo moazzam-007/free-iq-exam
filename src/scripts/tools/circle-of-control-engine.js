@@ -62,7 +62,6 @@
   var PRESETS = {
     work: {
       title: 'Workplace Overwhelm & Deadlines',
-      icon: '💼',
       items: [
         { text: 'My preparation and work output today', zone: 'control' },
         { text: 'How I prioritize the next 90 minutes', zone: 'control' },
@@ -75,7 +74,6 @@
     },
     relationship: {
       title: 'Relationship & Social Anxiety',
-      icon: '💬',
       items: [
         { text: 'My own integrity and follow-through', zone: 'control' },
         { text: 'How I listen and respond with respect', zone: 'control' },
@@ -88,7 +86,6 @@
     },
     financial: {
       title: 'Financial & Macro Uncertainty',
-      icon: '📉',
       items: [
         { text: 'My personal spending budget this month', zone: 'control' },
         { text: 'Building one marketable skill this week', zone: 'control' },
@@ -100,7 +97,6 @@
     },
     health: {
       title: 'Health & Physical Well-being',
-      icon: '🌿',
       items: [
         { text: 'My exercise and daily movement', zone: 'control' },
         { text: 'My nutrition and sleep routine tonight', zone: 'control' },
@@ -362,7 +358,7 @@
     });
     saveItems();
     renderAll();
-    toast(preset.icon + ' ' + preset.title + ' — ' + added + ' reflection' + (added === 1 ? '' : 's') + ' added.');
+    toast(preset.title + ' — ' + added + ' reflection' + (added === 1 ? '' : 's') + ' added.');
     var arena = $('cocArena');
     if (arena) arena.scrollIntoView({ behavior: state.reduceMotion ? 'auto' : 'smooth', block: 'center' });
   }
@@ -393,7 +389,7 @@
     var outTitle = $('reframeTitle');
     if (outTitle) outTitle.textContent = 'Reframing: “' + it.text + '”';
     if (outText) outText.textContent = r.reframe;
-    if (outAction) outAction.textContent = '⚡ Next controllable step: ' + r.action;
+    if (outAction) outAction.textContent = 'Next controllable step: ' + r.action;
     if (panel) {
       panel.classList.remove('hidden');
       panel.scrollIntoView({ behavior: state.reduceMotion ? 'auto' : 'smooth', block: 'nearest' });

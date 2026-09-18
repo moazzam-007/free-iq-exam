@@ -464,8 +464,8 @@
           const displayAns = ans === 'nothing' ? 'Nothing' : ans === 'unsure' ? 'Unsure' : ans;
 
           const statusBadge = isCorrect
-            ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400">✓ Correct</span>'
-            : '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400">✗ Mismatch</span>';
+            ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Correct</span>'
+            : '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Mismatch</span>';
 
           tableHtml += `
             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors border-b border-zinc-200 dark:border-zinc-800">
@@ -508,11 +508,11 @@
     if (btnCopySummary) {
       btnCopySummary.addEventListener('click', () => {
         const title = diagTitle ? diagTitle.textContent : 'Normal Vision';
-        const text = '👁️ Ishihara Color Vision Assessment Result: ' + title + '\n' +
-          '📊 Retinal Sensitivity: L-Cone ' + (coneLVal ? coneLVal.textContent : '100%') +
+        const text = 'Ishihara Color Vision Assessment Result: ' + title + '\n' +
+          'Retinal Sensitivity: L-Cone ' + (coneLVal ? coneLVal.textContent : '100%') +
           ', M-Cone ' + (coneMVal ? coneMVal.textContent : '100%') +
           ', S-Cone ' + (coneSVal ? coneSVal.textContent : '100%') + '\n' +
-          '🔗 Verified free on: https://freeiqexam.com/color-blind-test';
+          'Verified free on: https://freeiqexam.com/color-blind-test';
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(() => {

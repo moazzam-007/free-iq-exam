@@ -469,7 +469,7 @@
                 <div class="font-bold text-amber-400">Week ${info.weekIndex.toLocaleString()} (Age ${info.ageAtWeek})</div>
                 <div class="text-[10px] text-zinc-300 font-mono">${info.startDate} – ${info.endDate}</div>
                 <div class="text-[10px] text-zinc-400 mt-1">${info.era}</div>
-                ${info.milestone ? `<div class="mt-1 font-bold text-emerald-400 text-[10px]">📌 Milestone: ${info.milestone}</div>` : ''}
+                ${info.milestone ? `<div class="mt-1 font-bold text-emerald-400 text-[10px]"><span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1"></span>Milestone: ${info.milestone}</div>` : ''}
               `;
               tooltip.classList.remove('hidden');
 

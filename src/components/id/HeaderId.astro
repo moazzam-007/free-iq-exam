@@ -65,24 +65,106 @@ const isScienceActive = ['/id/tabel-skor-iq', '/id/kalkulator-persentil-iq', '/i
   (p) => currentNorm === p
 );
 
-const allMobileLinks = [
-  { href: '/id/tes', label: 'Tes IQ Lengkap (20 menit)', badge: 'Resmi', group: 'Asesmen' },
-  { href: '/id/tes-singkat', label: 'Skrining Cepat (10 menit)', badge: 'Cepat', group: 'Asesmen' },
-  { href: '/id/latihan', label: 'Pusat Latihan (Tanpa Waktu)', badge: '', group: 'Asesmen' },
-  { href: '/id/permainan', label: 'Permainan Kognitif', badge: '', group: 'Latihan & Peringkat' },
-  { href: '/id/papan-peringkat', label: 'Papan Peringkat Global', badge: '', group: 'Latihan & Peringkat' },
-  { href: '/id/profil', label: 'Profil Kognitif Saya', badge: '', group: 'Latihan & Peringkat' },
-  { href: '/id/tabel-skor-iq', label: 'Tabel Distribusi Skor IQ', badge: '', group: 'Sains & Referensi' },
-  { href: '/id/kalkulator-persentil-iq', label: 'Kalkulator Persentil', badge: '', group: 'Sains & Referensi' },
-  { href: '/id/metodologi', label: 'Metodologi Psikometri', badge: '2PL IRT', group: 'Sains & Referensi' },
-  { href: '/id/blog', label: 'Artikel Riset & Blog', badge: '', group: 'Sains & Referensi' },
+const mobileAccordionSections = [
+  {
+    id: "assessments",
+    iconKey: "folder",
+    title: "Asesmen & Tes",
+    description: "Diagnostik kognitif & sensori",
+    links: [
+      {
+        href: "/id/tes",
+        label: "Tes IQ Lengkap (20 menit)",
+        badge: "Resmi",
+        desc: "24 soal 4 domain CHC berskala psikometri",
+        iconKey: "target",
+      },
+      {
+        href: "/id/tes-singkat",
+        label: "Skrining Cepat (10 menit)",
+        badge: "Cepat",
+        desc: "12 soal adaptif untuk skrining kognitif cepat",
+        iconKey: "bolt",
+      },
+      {
+        href: "/id/latihan",
+        label: "Pusat Latihan Mandiri",
+        badge: "",
+        desc: "Latihan soal santai tanpa batas waktu",
+        iconKey: "puzzle",
+      },
+    ],
+  },
+  {
+    id: "games",
+    iconKey: "gamepad",
+    title: "Latihan & Peringkat",
+    description: "Permainan kognitif & skor global",
+    links: [
+      {
+        href: "/id/permainan",
+        label: "Permainan Kognitif",
+        badge: "Hub",
+        desc: "Latihan memori, refleks & kecepatan berpikir",
+        iconKey: "gamepad",
+      },
+      {
+        href: "/id/papan-peringkat",
+        label: "Papan Peringkat Global",
+        badge: "",
+        desc: "Bandingkan peringkat persentil seluruh dunia",
+        iconKey: "trophy",
+      },
+      {
+        href: "/id/profil",
+        label: "Profil Kognitif Saya",
+        badge: "",
+        desc: "Riwayat tes dan grafik radar domain",
+        iconKey: "user",
+      },
+    ],
+  },
+  {
+    id: "science",
+    iconKey: "tools",
+    title: "Sains & Referensi",
+    description: "Statistik, kalkulator & metodologi",
+    links: [
+      {
+        href: "/id/tabel-skor-iq",
+        label: "Tabel Distribusi Skor IQ",
+        badge: "",
+        desc: "Kurva lonceng Gauss & simpangan baku",
+        iconKey: "chart",
+      },
+      {
+        href: "/id/kalkulator-persentil-iq",
+        label: "Kalkulator Persentil",
+        badge: "",
+        desc: "Konversi skor IQ ke peringkat persentil",
+        iconKey: "percent",
+      },
+      {
+        href: "/id/metodologi",
+        label: "Metodologi Psikometri",
+        badge: "2PL IRT",
+        desc: "Kalibrasi 2PL IRT & teori CHC",
+        iconKey: "microscope",
+      },
+      {
+        href: "/id/blog",
+        label: "Artikel Riset & Blog",
+        badge: "",
+        desc: "Psikometrika & sains kognitif modern",
+        iconKey: "book",
+      },
+    ],
+  },
 ];
-
-const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as const;
 ---
 
 <header class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-zinc-950/85 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-200">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
     
     <!-- 1. Logo Brand -->
     <a href="/id" class="flex items-center gap-2.5 group shrink-0" aria-label="Beranda FreeIQExam Indonesia">
@@ -94,13 +176,13 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
       <span class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-zinc-950 dark:text-white leading-tight">
         Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
       </span>
-      <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300 ml-1">
+      <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase rounded border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 ml-0.5">
         ID
       </span>
     </a>
 
     <!-- 2. Navigasi Desktop -->
-    <nav class="hidden lg:flex items-center gap-5 xl:gap-6 text-[13.5px] font-medium" aria-label="Navigasi Utama">
+    <nav class="hidden lg:flex items-center gap-6 xl:gap-7 text-[13.5px] font-medium" aria-label="Navigasi Utama">
       
       <!-- Beranda -->
       <a
@@ -119,7 +201,7 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
       <div class="relative group" id="nav-dropdown-assessments">
         <button
           type="button"
-          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
+          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md cursor-pointer ${
             isAssessmentsActive
               ? 'text-blue-600 dark:text-blue-400 font-semibold'
               : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
@@ -134,59 +216,73 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
         </button>
 
         <div class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50">
-          <div class="w-72 p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40">
-            <a
-              href="/id/tes-singkat"
-              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
-            >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
-                ⚡
-              </div>
-              <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                  Tes Singkat (10 Menit)
+          <div class="w-80 p-2 rounded-2xl bg-white/95 dark:bg-[#0c0d12]/95 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/60">
+            <div class="px-3 pt-2 pb-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-white/5 mb-1.5">
+              Diagnostik Kognitif
+            </div>
+            <div class="space-y-0.5">
+              <a
+                href="/id/tes"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>
+                  </svg>
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                  12 soal adaptif untuk skrining kognitif cepat
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tes IQ Lengkap (20m)
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono text-[10px] font-medium tracking-wide uppercase">Resmi</span>
+                  </div>
+                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    24 soal 4 domain CHC
+                  </div>
                 </div>
-              </div>
-            </a>
+              </a>
 
-            <a
-              href="/id/tes"
-              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
-            >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
-                🎯
-              </div>
-              <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                  Tes Lengkap (20 Menit)
+              <a
+                href="/id/tes-singkat"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                  </svg>
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                  24 soal 4 domain CHC berskala psikometri IRT
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Skrining Cepat (10m)
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono text-[10px] font-medium tracking-wide uppercase">Cepat</span>
+                  </div>
+                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    12 soal adaptif cepat
+                  </div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </div>
 
-            <div class="my-1 border-t border-zinc-100 dark:border-zinc-800"></div>
-
-            <a
-              href="/id/latihan"
-              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
-            >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
-                📚
-              </div>
-              <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                  Pusat Latihan Mandiri
-                </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                  Latihan soal santai tanpa batas waktu dan penjelasan
-                </div>
-              </div>
-            </a>
+            <!-- Footer Dock: Latihan Mandiri -->
+            <div class="mt-1.5 pt-2 border-t border-zinc-100 dark:border-white/5">
+              <a
+                href="/id/latihan"
+                class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/dock"
+              >
+                <span class="flex items-center gap-2.5">
+                  <span class="w-5 h-5 rounded flex items-center justify-center text-zinc-400 group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                    </svg>
+                  </span>
+                  <span class="font-medium text-zinc-800 dark:text-zinc-200 group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Pusat Latihan Mandiri</span>
+                </span>
+                <span class="text-zinc-400 dark:text-zinc-500 font-mono text-xs group-hover/dock:text-blue-600 dark:group-hover/dock:text-blue-400 transition-colors">Buka latihan →</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -217,7 +313,7 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
       <div class="relative group" id="nav-dropdown-science">
         <button
           type="button"
-          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
+          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md cursor-pointer ${
             isScienceActive
               ? 'text-blue-600 dark:text-blue-400 font-semibold'
               : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
@@ -232,57 +328,75 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
         </button>
 
         <div class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50">
-          <div class="w-72 p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40">
-            <a
-              href="/id/tabel-skor-iq"
-              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
-            >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
-                📊
-              </div>
-              <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                  Tabel Distribusi Skor IQ
+          <div class="w-80 p-2 rounded-2xl bg-white/95 dark:bg-[#0c0d12]/95 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/60">
+            <div class="px-3 pt-2 pb-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-white/5 mb-1.5">
+              Statistik &amp; Psikometrika
+            </div>
+            <div class="space-y-0.5">
+              <a
+                href="/id/tabel-skor-iq"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                  </svg>
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                  Kurva lonceng Gauss normal &amp; simpangan baku
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Tabel Distribusi Skor IQ
+                    </span>
+                  </div>
+                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Kurva lonceng Gauss normal
+                  </div>
                 </div>
-              </div>
-            </a>
+              </a>
 
-            <a
-              href="/id/kalkulator-persentil-iq"
-              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
-            >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm font-mono font-bold">
-                %
-              </div>
-              <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                  Kalkulator Persentil
+              <a
+                href="/id/kalkulator-persentil-iq"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+                  </svg>
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                  Konversi skor IQ ke peringkat persentil populasi
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Kalkulator Persentil
+                    </span>
+                  </div>
+                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Konversi skor IQ ke persentil
+                  </div>
                 </div>
-              </div>
-            </a>
+              </a>
 
-            <a
-              href="/id/metodologi"
-              class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
-            >
-              <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm">
-                🔬
-              </div>
-              <div>
-                <div class="font-semibold text-zinc-900 dark:text-white text-xs sm:text-sm group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
-                  Metodologi Psikometri
+              <a
+                href="/id/metodologi"
+                class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer"
+              >
+                <div class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 dark:text-zinc-400 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 group-hover/item:border-blue-500/30 transition-colors">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0-7-7h1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>
+                  </svg>
                 </div>
-                <div class="text-[11.5px] text-zinc-500 dark:text-zinc-400 leading-snug">
-                  Kalibrasi 2PL IRT &amp; kerangka teori CHC
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Metodologi Psikometri
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-[10px] font-medium text-zinc-500 dark:text-zinc-400 tracking-wide uppercase">2PL IRT</span>
+                  </div>
+                  <div class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1">
+                    Kalibrasi 2PL IRT & teori CHC
+                  </div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -305,7 +419,7 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
       
       <!-- Language Switcher Capsule (EN | ID | RU) -->
       <div
-        class="inline-flex items-center rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 p-0.5 text-xs font-semibold shadow-2xs"
+        class="inline-flex items-center rounded-xl bg-zinc-100/90 dark:bg-white/[0.05] border border-zinc-200/80 dark:border-white/10 p-0.5 text-xs font-semibold shadow-2xs"
         aria-label="Pilih Bahasa"
       >
         <a
@@ -317,7 +431,7 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
           EN
         </a>
         <span
-          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 shadow-xs font-bold"
+          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-white dark:bg-white/[0.12] text-blue-600 dark:text-blue-400 shadow-xs font-bold"
           title="Bahasa Indonesia (Aktif)"
         >
           ID
@@ -336,13 +450,13 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
       <button
         id="theme-toggle-btn"
         type="button"
-        class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-white/10 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
         aria-label="Alihkan tema gelap dan terang"
       >
-        <svg class="w-4 h-4 hidden dark:block text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg class="w-4.5 h-4.5 hidden dark:block text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
         </svg>
-        <svg class="w-4 h-4 block dark:hidden text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg class="w-4.5 h-4.5 block dark:hidden text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
         </svg>
       </button>
@@ -350,7 +464,7 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
       <!-- Tombol Profil Pengguna -->
       <a
         href="/id/profil"
-        class={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl hidden sm:flex items-center justify-center bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
+        class={`w-10 h-10 rounded-xl hidden sm:flex items-center justify-center bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-white/10 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
           currentNorm === '/id/profil' ? 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800' : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white'
         }`}
         title="Profil Kognitif &amp; Riwayat Skor Saya"
@@ -362,18 +476,20 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
       </a>
 
       <!-- Kapsul Tombol Aksi CTA -->
-      <div class="hidden sm:inline-flex items-center bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 rounded-full p-[3px] shadow-xs">
+      <div class="hidden sm:inline-flex items-center bg-zinc-100/90 dark:bg-white/[0.05] border border-zinc-200/80 dark:border-white/10 rounded-full p-[3px] shadow-xs">
         <a
           href="/id/tes-singkat"
-          class="px-3 py-1.5 rounded-full text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors flex items-center gap-1 whitespace-nowrap"
+          class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors flex items-center gap-1.5 whitespace-nowrap"
           title="Skrining adaptif 12 soal"
         >
-          <span class="text-amber-500 font-bold">⚡</span>
+          <svg class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
           <span>Singkat 10m</span>
         </a>
         <a
           href="/id/tes"
-          class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-xs shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1 whitespace-nowrap"
+          class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-xs shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1 whitespace-nowrap"
           title="Tes klinis 24 soal"
         >
           <span>Tes Lengkap</span>
@@ -385,7 +501,7 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
       <button
         id="mobile-menu-btn"
         type="button"
-        class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        class="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
         aria-label="Buka menu navigasi"
         aria-controls="mobile-drawer"
         aria-expanded="false"
@@ -403,127 +519,368 @@ const mobileGroups = ['Asesmen', 'Latihan & Peringkat', 'Sains & Referensi'] as 
 <!-- Backdrop Menu Seluler -->
 <div
   id="mobile-menu-backdrop"
-  class="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 transition-opacity duration-300 opacity-0 pointer-events-none hidden"
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 opacity-0 pointer-events-none hidden"
   aria-hidden="true"
 ></div>
 
 <!-- Laci Menu Seluler -->
-<div
+<aside
   id="mobile-drawer"
-  class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl"
-  aria-label="Menu Seluler"
+  class="fixed inset-y-0 right-0 z-50 w-[85vw] max-w-sm bg-white dark:bg-[#0c0d12] border-l border-zinc-200 dark:border-white/10 shadow-2xl transition-transform duration-300 transform translate-x-full overflow-y-auto overscroll-contain flex flex-col pointer-events-none"
   role="dialog"
   aria-modal="true"
-  tabindex="-1"
+  aria-label="Menu Seluler"
+  aria-hidden="true"
 >
-  <div class="p-4 border-b border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
-    <span class="font-heading font-bold text-base text-zinc-900 dark:text-white">Menu Navigasi</span>
+  <!-- Drawer Header -->
+  <div class="h-16 px-5 border-b border-zinc-200/80 dark:border-white/10 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-2.5">
+      <svg class="w-7 h-7 shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="9.5" r="5.5" class="fill-blue-600 dark:fill-blue-500" />
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600" />
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400" />
+      </svg>
+      <span class="font-heading font-extrabold text-base text-zinc-950 dark:text-white">
+        Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
+      </span>
+    </div>
     <button
-      id="mobile-menu-close"
+      id="mobile-drawer-close"
       type="button"
-      class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+      class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
       aria-label="Tutup menu"
     >
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
   </div>
 
-  <div class="flex-1 overflow-y-auto p-4 space-y-6">
-    <!-- Language Capsule in Drawer (EN | ID | RU) -->
-    <div class="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800">
-      <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Pilih Bahasa</span>
-      <div class="inline-flex items-center rounded-lg bg-zinc-200/70 dark:bg-zinc-800 p-0.5 text-xs font-semibold">
-        <a href={resolvedEnHref} hreflang="en" class="px-2.5 py-1 rounded-md text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors">EN</a>
-        <span class="px-2.5 py-1 rounded-md bg-white dark:bg-zinc-700 text-blue-600 dark:text-blue-400 shadow-xs font-bold">ID</span>
-        <a href={resolvedRuHref} hreflang="ru" class="px-2.5 py-1 rounded-md text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors">RU</a>
-      </div>
+  <!-- Mobile Drawer Fast Action Capsule -->
+  <div class="p-4 border-b border-zinc-100 dark:border-white/5 bg-zinc-50/70 dark:bg-white/[0.02] space-y-3">
+    <div class="flex items-center gap-2">
+      <a
+        href="/id/tes-singkat"
+        class="flex-1 py-2.5 px-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-white/10 text-xs font-semibold text-zinc-800 dark:text-zinc-200 text-center flex items-center justify-center gap-1.5 shadow-2xs"
+      >
+        <svg class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+        <span>Singkat 10m</span>
+      </a>
+      <a
+        href="/id/tes"
+        class="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold text-center flex items-center justify-center gap-1 shadow-xs"
+      >
+        <span>Tes Lengkap →</span>
+      </a>
     </div>
 
-    <!-- Group Links -->
-    {mobileGroups.map((group) => (
-      <div>
-        <h3 class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-2 px-2">
-          {group}
-        </h3>
-        <div class="space-y-1">
-          {allMobileLinks
-            .filter((l) => l.group === group)
-            .map((link) => (
-              <a
-                href={link.href}
-                class={`flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors ${
-                  currentNorm === link.href
-                    ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold'
-                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900'
-                }`}
-              >
-                <span>{link.label}</span>
-                {link.badge && (
-                  <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-                    {link.badge}
-                  </span>
-                )}
-              </a>
-            ))}
-        </div>
-      </div>
-    ))}
+    <!-- Mobile language switcher EN | ID | RU -->
+    <div class="inline-flex items-center rounded-xl bg-white dark:bg-zinc-900 p-0.5 text-xs font-semibold border border-zinc-200/80 dark:border-white/10 w-full justify-between">
+      <a
+        href={resolvedEnHref}
+        hreflang="en"
+        class="flex-1 py-1.5 rounded-lg text-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
+        >EN</a
+      >
+      <span
+        class="flex-1 py-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.1] text-center text-blue-600 dark:text-blue-400 font-bold"
+        >ID</span
+      >
+      <a
+        href={resolvedRuHref}
+        hreflang="ru"
+        class="flex-1 py-1.5 rounded-lg text-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
+        >RU</a
+      >
+    </div>
   </div>
 
-  <div class="p-4 border-t border-zinc-100 dark:border-zinc-900 bg-zinc-50/50 dark:bg-zinc-900/40">
+  <!-- Drawer Grouped Links -->
+  <div class="p-4 flex flex-col gap-3 overflow-y-auto flex-1">
+    <!-- Home Link -->
     <a
-      href="/id/tes"
-      class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-colors"
+      href="/id"
+      class={`min-h-[42px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
+        basePath === '/'
+          ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold'
+          : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.05] hover:text-zinc-950 dark:hover:text-white'
+      }`}
+      aria-current={basePath === '/' ? 'page' : undefined}
     >
-      <span>Mulai Tes IQ Lengkap</span>
-      <span class="font-mono">→</span>
+      <span class="flex items-center gap-2.5 font-medium">
+        <span class="w-6 h-6 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-400">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </span>
+        <span>Beranda</span>
+      </span>
+      <span class="text-xs text-zinc-400 font-mono">/</span>
     </a>
-  </div>
-</div>
 
-<script is:inline>
-  (function() {
-    // Theme toggle
-    const themeBtn = document.getElementById('theme-toggle-btn');
-    if (themeBtn) {
-      themeBtn.addEventListener('click', function() {
+    <!-- 3 Collapsible Accordion Sections -->
+    {
+      mobileAccordionSections.map((section) => {
+        const hasActiveLink = section.links.some(
+          (l) => currentNorm === normalizePath(l.href)
+        );
+
+        return (
+          <details
+            class="group rounded-2xl border border-zinc-200/80 dark:border-white/10 bg-zinc-50/40 dark:bg-white/[0.02] overflow-hidden transition-colors"
+            open={hasActiveLink ? true : undefined}
+          >
+            <summary class="flex items-center justify-between p-3 cursor-pointer list-none select-none text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100/70 dark:hover:bg-white/[0.04] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-2xl">
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-400">
+                  {section.iconKey === "folder" && (
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  )}
+                  {section.iconKey === "gamepad" && (
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4m-2-2v4m10-2h.01M14 10h.01"/></svg>
+                  )}
+                  {section.iconKey === "tools" && (
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  )}
+                </span>
+                <div>
+                  <span class="font-heading font-semibold text-xs sm:text-sm text-zinc-950 dark:text-white block">
+                    {section.title}
+                  </span>
+                  <span class="text-[12px] text-zinc-400 dark:text-zinc-500 font-normal">
+                    {section.description}
+                  </span>
+                </div>
+              </div>
+              <svg
+                class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 ml-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </summary>
+
+            <div class="p-2 pt-1 border-t border-zinc-100 dark:border-white/5 flex flex-col gap-0.5 bg-white dark:bg-[#0c0d12]/60">
+              {section.links.map((link) => {
+                const isActive = currentNorm === normalizePath(link.href);
+                return (
+                  <a
+                    href={link.href}
+                    class={`min-h-[40px] px-2.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-between transition-colors ${
+                      isActive
+                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold'
+                        : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.05] hover:text-zinc-950 dark:hover:text-white'
+                    }`}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <div class="flex items-center gap-2.5 truncate pr-2">
+                      <span class="w-6 h-6 rounded-md bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-400">
+                        {link.iconKey === "target" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>
+                        )}
+                        {link.iconKey === "bolt" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        )}
+                        {link.iconKey === "puzzle" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+                        )}
+                        {link.iconKey === "gamepad" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4m-2-2v4m10-2h.01M14 10h.01"/></svg>
+                        )}
+                        {link.iconKey === "trophy" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M6 4h12a2 2 0 0 1 2 2v3a8 8 0 0 1-16 0V6a2 2 0 0 1 2-2z"/></svg>
+                        )}
+                        {link.iconKey === "user" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        )}
+                        {link.iconKey === "chart" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        )}
+                        {link.iconKey === "percent" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                        )}
+                        {link.iconKey === "microscope" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0-7-7h1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg>
+                        )}
+                        {link.iconKey === "book" && (
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        )}
+                      </span>
+                      <span class="truncate">{link.label}</span>
+                    </div>
+                    {link.badge && (
+                      <span
+                        class={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wide ${
+                          link.badge === 'Resmi' || link.badge === 'Cepat'
+                            ? 'border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                            : 'border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-500 dark:text-zinc-400'
+                        }`}
+                      >
+                        {link.badge}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
+            </div>
+          </details>
+        );
+      })
+    }
+  </div>
+</aside>
+
+<script>
+  // 1. Theme toggle script
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      try {
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      } catch (e) {}
+    });
+  }
+
+  // 2. Mobile Drawer Toggle logic
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileDrawer = document.getElementById('mobile-drawer');
+  const mobileDrawerClose = document.getElementById('mobile-drawer-close');
+  const mobileBackdrop = document.getElementById('mobile-menu-backdrop');
+
+  function openDrawer() {
+    if (!mobileDrawer || !mobileBackdrop || !mobileMenuBtn) return;
+    mobileBackdrop.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      mobileBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+      mobileBackdrop.classList.add('opacity-100', 'pointer-events-auto');
+      mobileDrawer.classList.remove('translate-x-full', 'pointer-events-none');
+      mobileDrawer.classList.add('translate-x-0', 'pointer-events-auto');
+      mobileDrawer.setAttribute('aria-hidden', 'false');
+      mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      if (mobileDrawerClose) mobileDrawerClose.focus();
+    });
+  }
+
+  function closeDrawer() {
+    if (!mobileDrawer || !mobileBackdrop || !mobileMenuBtn) return;
+    mobileBackdrop.classList.remove('opacity-100', 'pointer-events-auto');
+    mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+    mobileDrawer.classList.remove('translate-x-0', 'pointer-events-auto');
+    mobileDrawer.classList.add('translate-x-full', 'pointer-events-none');
+    mobileDrawer.setAttribute('aria-hidden', 'true');
+    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      mobileBackdrop.classList.add('hidden');
+      mobileMenuBtn.focus();
+    }, 300);
+  }
+
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+  }
+
+  if (mobileDrawerClose) {
+    mobileDrawerClose.addEventListener('click', closeDrawer);
+  }
+
+  if (mobileBackdrop) {
+    mobileBackdrop.addEventListener('click', closeDrawer);
+  }
+
+  window.addEventListener('keydown', (e) => {
+    const isDrawerOpen = mobileMenuBtn?.getAttribute('aria-expanded') === 'true';
+    if (!isDrawerOpen) return;
+
+    if (e.key === 'Escape') {
+      closeDrawer();
+      return;
+    }
+
+    if (e.key === 'Tab' && mobileDrawer) {
+      const focusableEls = mobileDrawer.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusableEls.length === 0) return;
+      const firstEl = focusableEls[0] as HTMLElement;
+      const lastEl = focusableEls[focusableEls.length - 1] as HTMLElement;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstEl) {
+          e.preventDefault();
+          lastEl.focus();
+        }
+      } else {
+        if (document.activeElement === lastEl) {
+          e.preventDefault();
+          firstEl.focus();
+        }
+      }
+    }
+  });
+
+  // 3. Desktop Dropdown hover/click toggle & aria-expanded synchronization
+  const dropdownAssessments = document.getElementById('nav-dropdown-assessments');
+  const dropdownScience = document.getElementById('nav-dropdown-science');
+
+  [dropdownAssessments, dropdownScience].forEach((dd) => {
+    if (!dd) return;
+    const btn = dd.querySelector('button');
+    if (!btn) return;
+
+    const setExpanded = (expanded: boolean) => {
+      btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    };
+
+    dd.addEventListener('mouseenter', () => setExpanded(true));
+    dd.addEventListener('mouseleave', () => {
+      if (!dd.classList.contains('active-click')) setExpanded(false);
+    });
+
+    dd.addEventListener('focusin', () => setExpanded(true));
+    dd.addEventListener('focusout', (e) => {
+      if (!dd.contains((e as FocusEvent).relatedTarget as Node)) {
+        if (!dd.classList.contains('active-click')) setExpanded(false);
+      }
+    });
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isCurrentlyOpen = dd.classList.contains('active-click');
+      [dropdownAssessments, dropdownScience].forEach((d) => {
+        d?.classList.remove('active-click');
+        d?.querySelector('button')?.setAttribute('aria-expanded', 'false');
       });
-    }
+      if (!isCurrentlyOpen) {
+        dd.classList.add('active-click');
+        setExpanded(true);
+      }
+    });
+  });
 
-    // Mobile menu drawer
-    const menuBtn = document.getElementById('mobile-menu-btn');
-    const closeBtn = document.getElementById('mobile-menu-close');
-    const drawer = document.getElementById('mobile-drawer');
-    const backdrop = document.getElementById('mobile-menu-backdrop');
-
-    function openMenu() {
-      if (!drawer || !backdrop) return;
-      backdrop.classList.remove('hidden');
-      requestAnimationFrame(function() {
-        backdrop.classList.remove('opacity-0');
-        backdrop.classList.add('opacity-100', 'pointer-events-auto');
-        drawer.classList.remove('translate-x-full');
-      });
-      if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
-    }
-
-    function closeMenu() {
-      if (!drawer || !backdrop) return;
-      backdrop.classList.remove('opacity-100', 'pointer-events-auto');
-      backdrop.classList.add('opacity-0');
-      drawer.classList.add('translate-x-full');
-      setTimeout(function() {
-        backdrop.classList.add('hidden');
-      }, 300);
-      if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    if (menuBtn) menuBtn.addEventListener('click', openMenu);
-    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-    if (backdrop) backdrop.addEventListener('click', closeMenu);
-  })();
+  document.addEventListener('click', () => {
+    [dropdownAssessments, dropdownScience].forEach((d) => {
+      d?.classList.remove('active-click');
+      d?.querySelector('button')?.setAttribute('aria-expanded', 'false');
+    });
+  });
 </script>

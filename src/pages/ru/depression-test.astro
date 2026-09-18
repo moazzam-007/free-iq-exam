@@ -1,0 +1,566 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = 'Бесплатный клинический тест на депрессию (PHQ-9) онлайн | Конфиденциальная оценка';
+const description = 'Пройдите официальный клинически валидированный скрининг депрессии PHQ-9 онлайн. 100% бесплатно, конфиденциально, мгновенный результат и сводка для клинициста. Без регистрации.';
+const canonicalUrl = 'https://freeiqexam.com/ru/depression-test';
+
+const faqItems = [
+  ['Что такое PHQ-9 и кто его разработал?', 'PHQ-9 - это модуль депрессии из 9 пунктов Опросника здоровья пациента, разработанный доктором Робертом Л. Шпитцером, доктором Джанет Б. У. Уильямс, доктором Куртом Крёнке и коллегами при образовательном гранте Pfizer. Каждый пункт напрямую соответствует одному из девяти критериев DSM-5 для большого депрессивного эпизода и оценивается от 0 до 3 за двухнедельный период.'],
+  ['Насколько точен PHQ-9 при выявлении депрессии?', 'В оригинальных валидационных исследованиях и последующих метаанализах порог 10 и выше даёт объединённую чувствительность и специфичность около 88% для большого депрессивного расстройства относительно структурированного клинического интервью. Чувствительность и специфичность несколько варьируются в зависимости от популяции и условий, поэтому балл рассматривается как сигнал скрининга, а не диагноз.'],
+  ['Может ли этот тест диагностировать у меня депрессию?', 'Нет. PHQ-9 - валидированный инструмент скрининга, а не диагностический. Формальный диагноз требует клинической оценки лицензированным специалистом здравоохранения, который может оценить длительность, нарушения, историю и альтернативные объяснения. Высокий балл означает, что паттерн симптомов заслуживает профессиональной оценки, а не то, что у вас подтверждённый диагноз.'],
+  ['Как интерпретировать балл от 10 до 14?', 'Балл от 10 до 14 попадает в умеренный диапазон и достигает стандартного порога PHQ-9 для вероятной большой депрессии. На этом уровне рекомендуется клиническая оценка, и обычно рассматривается структурированная психотерапия или фармакотерапия. Это также точка, в которой активное лечение обычно превосходит выжидательную тактику.'],
+  ['Что значит, если я получил больше 0 по вопросу о самоповреждении?', 'Пункт 9 спрашивает о мыслях о том, что вам лучше было бы умереть, или о том, чтобы причинить себе вред. Любой балл выше 0 по этому пункту рассматривается как флаг безопасности независимо от суммарного балла. Это не обязательно означает, что вы в непосредственной опасности, но означает, что тема заслуживает прямого разговора с клиницистом или кризисной службой, а не откладывания.'],
+  ['Почему есть десятый вопрос, если в PHQ-9 девять пунктов?', 'Десятый пункт - вопрос о нарушении функционирования. Он не входит в суммарный балл от 0 до 27. Он спрашивает, насколько трудными ваши симптомы сделали работу, домашние дела или отношения с другими людьми. Клиницисты придают этому большое значение, потому что тяжесть симптомов и нарушение функционирования связаны, но действительно различны, и именно нарушения часто определяют решения о лечении.'],
+  ['Чем депрессия отличается от выгорания или обычной грусти?', 'Грусть обычно пропорциональна событию и уходит по мере изменения обстоятельств. Выгорание обычно привязано к контексту, связано с хронической рабочей или заботливой нагрузкой и улучшается при отдыхе и изменении границ. Большая депрессия более всеобъемлюща, сохраняется в разных контекстах и обычно включает ангедонию, вину и нейровегетативные симптомы, такие как изменение сна и аппетита. Различия важны, потому что лечение различается.'],
+  ['Как часто нужно повторять PHQ-9?', 'Если вы не лечитесь, повторный скрининг каждые две-четыре недели разумен при лёгких симптомах и раньше, если они нарастают. Если вы начали лечение, PHQ-9 обычно повторяют каждые две недели, чтобы ответ можно было измерить, а не оценить приблизительно. Изменение на 5 баллов и более обычно считается клинически значимым.']
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Скрининг депрессии и настроения PHQ-9',
+    url: canonicalUrl,
+    medicalAudience: 'Patient',
+    aspect: 'Diagnostic',
+    isAccessibleForFree: true,
+    inLanguage: 'ru',
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Большое депрессивное расстройство',
+      alternateName: ['Депрессия', 'Клиническая депрессия', 'Большая депрессия'],
+      code: { '@type': 'MedicalCode', code: 'F32', codingSystem: 'ICD-10' }
+    },
+    lastReviewed: '2026-09-15'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Бесплатный клинический тест на депрессию (PHQ-9)',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    accessibilitySummary: 'Управление ответами с клавиатуры (клавиши 1–4), видимые состояния фокуса, семантические заголовки, live-объявления, кризисные интерстициалы и печатная сводка для клинициста.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://freeiqexam.com/ru/' },
+      { '@type': 'ListItem', position: 2, name: 'Тесты', item: 'https://freeiqexam.com/ru/test' },
+      { '@type': 'ListItem', position: 3, name: 'Тест на депрессию (PHQ-9)', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'Опросник скрининга депрессии PHQ-9 - 9 пунктов',
+    url: canonicalUrl,
+    numberOfQuestions: 9,
+    isAccessibleForFree: true,
+    inLanguage: 'ru',
+    about: { '@type': 'MedicalCondition', name: 'Большое депрессивное расстройство' }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map(([name, text]) => ({
+      '@type': 'Question',
+      name,
+      acceptedAnswer: { '@type': 'Answer', text }
+    }))
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/depression-test" idPath="/id/tes-depresi" schema={schemas}>
+  <Header currentPath="/depression-test" enPath="/depression-test" idPath="/id/tes-depresi" />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+      <nav aria-label="Хлебные крошки" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/ru/" class="hover:text-[#0066cc] dark:hover:text-[#2997ff]">Главная</a><span aria-hidden="true">/</span>
+        <a href="/ru/test" class="hover:text-[#0066cc] dark:hover:text-[#2997ff]">Тесты</a><span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white">Тест на депрессию</span>
+      </nav>
+
+      <header class="relative mx-auto max-w-4xl text-center">
+        <div class="dep-hero-glow" aria-hidden="true"></div>
+        <div class="relative inline-flex items-center rounded-full border border-zinc-300 bg-zinc-100 px-4 py-2 text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 sm:text-sm">
+          PHQ-9 · Клинически валидированный инструмент
+        </div>
+        <h1 class="mt-6 text-4xl font-extrabold tracking-[-0.025em] leading-[1.08] sm:text-5xl md:text-6xl">Бесплатный клинический тест на депрессию</h1>
+        <p class="mx-auto mt-6 max-w-3xl text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Пройдите Опросник здоровья пациента-9, самый широко используемый инструмент скрининга депрессии в клинической практике. Девять вопросов, мгновенный подсчёт, разбор по осям симптомов и печатная сводка для клинициста - бесплатно, конфиденциально и без регистрации или e-mail.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['9 клинических пунктов', 'Период 2 недели', 'Мгновенный балл 0–27', 'Версия для печати', 'Без регистрации'].map((item) => (
+            <span class="rounded-full border border-zinc-200 px-4 py-2.5 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <section id="depression-app" class="mx-auto mt-12 max-w-4xl">
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-8">
+          <div id="assessment-intro" class="border-t border-zinc-200 pt-6 dark:border-zinc-800 sm:pt-8">
+            <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Перед началом</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Скрининг - это не диагноз</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Отвечайте исходя из того, как часто каждый симптом беспокоил вас за <strong>последние две недели</strong>. PHQ-9 оценивает бремя симптомов относительно валидированных порогов тяжести. Он не может подтвердить или исключить депрессию и не заменяет оценку квалифицированным клиницистом.
+            </p>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Всё, что вы вводите, остаётся в вашем браузере. Ответы не передаются, не сохраняются и не связываются с вашей личностью.
+            </p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <button id="begin-assessment" type="button" class="min-h-[44px] rounded-2xl bg-[#0066cc] px-7 py-4 text-base font-semibold text-white transition hover:bg-[#0071e3] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] sm:rounded-full">Начать скрининг PHQ-9</button>
+              <span class="self-center text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">Клавиатура: 1–4 для ответа · ← / → для навигации</span>
+            </div>
+            <p class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200 sm:text-base">
+              <strong>Если вы в непосредственной опасности,</strong> немедленно свяжитесь с местным экстренным номером. В США и Канаде звоните или пишите <strong>988</strong>. Этот инструмент не отслеживается и не может вызвать помощь.
+            </p>
+          </div>
+
+          <section id="questionnaire-section" class="hidden" aria-labelledby="question-heading">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p id="question-part" class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">PHQ-9 · Последние 2 недели</p>
+                <p id="question-domain" class="mt-2 text-base font-semibold text-zinc-700 dark:text-zinc-300">Аффективный · настроение и ангедония</p>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="question-number" class="text-base font-semibold sm:text-lg">Вопрос 1 из 9</div>
+                <div id="progress-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">0% отвечено</div>
+              </div>
+            </div>
+            <div class="mt-5 h-[2px] overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"><div id="progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-300" style="width:4%"></div></div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-wrap gap-2 text-sm font-semibold text-zinc-500 dark:text-zinc-400 sm:text-base">
+                <span class="rounded-full border border-zinc-200 px-3 py-1.5 dark:border-zinc-800">Выберите один вариант</span>
+                <span class="rounded-full border border-zinc-200 px-3 py-1.5 dark:border-zinc-800">За последние 2 недели, как часто вас беспокоили…</span>
+              </div>
+              <h2 id="question-heading" class="mt-6 text-2xl font-bold tracking-tight sm:text-3xl"></h2>
+              <p id="question-context" class="mt-3 text-base text-zinc-500 dark:text-zinc-400 sm:text-lg"></p>
+              <div id="likert-options" class="mt-8 grid gap-3 sm:grid-cols-4" role="group" aria-label="Варианты частотных ответов"></div>
+              <p id="question-safety-note" class="mt-6 hidden rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200 sm:text-base">
+                Этот пункт задаётся всем и не является обвинением. Отвечайте честно - это меняет то, какая помощь будет предложена, а не то, как к вам относятся. Ресурсы поддержки появятся, когда вы выберете ответ выше нуля.
+              </p>
+              <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+                <button id="back-button" type="button" class="min-h-[44px] rounded-2xl border border-zinc-300 bg-white px-6 py-4 text-base font-semibold transition active:scale-[0.97] dark:border-zinc-700 dark:bg-zinc-900 sm:rounded-full">Назад</button>
+                <button id="next-button" type="button" class="min-h-[44px] rounded-2xl bg-[#0066cc] px-7 py-4 text-base font-semibold text-white transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-[#2997ff] sm:rounded-full">Следующий вопрос</button>
+              </div>
+            </article>
+          </section>
+
+          <section id="crisis-interstitial" class="hidden" role="alertdialog" aria-labelledby="crisis-interstitial-title" aria-describedby="crisis-interstitial-body">
+            <div class="rounded-[1.75rem] border-2 border-red-300 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40 sm:p-9">
+              <p class="text-xs font-semibold uppercase tracking-wider text-red-700 dark:text-red-300 sm:text-sm">Проверка безопасности</p>
+              <h2 id="crisis-interstitial-title" class="mt-3 text-2xl font-bold tracking-tight text-red-950 dark:text-red-100 sm:text-3xl">Спасибо за честный ответ</h2>
+              <p id="crisis-interstitial-body" class="mt-4 text-base leading-relaxed text-red-950 dark:text-red-100 sm:text-lg">
+                Вы указали на мысли о том, что вам лучше было бы умереть, или о том, чтобы причинить себе вред. Эти мысли - признак того, какую боль вы несёте, а не недостаток характера и не то, что вы должны нести в одиночку. Разговор с кем-то сейчас действительно помогает.
+              </p>
+              <ul class="mt-7 grid gap-3 sm:grid-cols-2">
+                <li class="crisis-line"><span class="crisis-flag"><span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">RU</span> Россия</span><strong>8-800-200-0122</strong><span>Единая линия психологической помощи · 24/7 · бесплатно (или 112)</span></li>
+                <li class="crisis-line"><span class="crisis-flag"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg> Везде остальное</span><strong>findahelpline.com</strong><span>Бесплатные линии помощи в 130+ странах</span></li>
+                <li class="crisis-line"><span class="crisis-flag"><span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">US</span> <span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">CA</span> США и Канада</span><strong>988</strong><span>Suicide &amp; Crisis Lifeline · 24/7 · бесплатно</span></li>
+                <li class="crisis-line"><span class="crisis-flag"><span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">GB</span> Великобритания и Ирландия</span><strong>116 123</strong><span>Samaritans · 24/7 · или NHS 111</span></li>
+                <li class="crisis-line"><span class="crisis-flag"><span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">DE</span> Германия</span><strong>0800 111 0 111</strong><span>TelefonSeelsorge · бесплатно и анонимно</span></li>
+                <li class="crisis-line"><span class="crisis-flag"><span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">AU</span> Австралия</span><strong>13 11 14</strong><span>Lifeline Australia · 24/7</span></li>
+              </ul>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="crisis-continue" type="button" class="min-h-[44px] rounded-2xl bg-zinc-950 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] dark:bg-white dark:text-zinc-950 sm:rounded-full">Я прочитал(а) - перейти к результатам</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div id="crisis-banner" class="hidden mb-6 rounded-[1.75rem] border-2 border-red-300 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40 sm:p-8">
+              <p class="text-xs font-semibold uppercase tracking-wider text-red-700 dark:text-red-300 sm:text-sm">Доступна немедленная поддержка</p>
+              <h2 class="mt-3 text-2xl font-bold tracking-tight text-red-950 dark:text-red-100 sm:text-3xl">Вы отметили мысли о самоповреждении</h2>
+              <p class="mt-4 text-base leading-relaxed text-red-950 dark:text-red-100 sm:text-lg">
+                Независимо от суммарного балла, этот пункт рассматривается как приоритет безопасности. Пожалуйста, обратитесь к одному из этих ресурсов сейчас - они бесплатны, конфиденциальны и укомплектованы людьми, обученными именно такому разговору.
+              </p>
+              <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+                <li class="crisis-line"><span class="crisis-flag"><span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">RU</span> Россия</span><strong>8-800-200-0122</strong><span>Единая линия психологической помощи · 24/7 (или 112)</span></li>
+                <li class="crisis-line"><span class="crisis-flag"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg> Глобально</span><strong>findahelpline.com</strong><span>Также befrienders.org</span></li>
+                <li class="crisis-line"><span class="crisis-flag"><span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">US</span> <span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">CA</span> США и Канада</span><strong>988</strong><span>Suicide &amp; Crisis Lifeline · 24/7</span></li>
+                <li class="crisis-line"><span class="crisis-flag"><span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200" aria-hidden="true">GB</span> Великобритания</span><strong>116 123</strong><span>Samaritans · или NHS 111</span></li>
+              </ul>
+            </div>
+
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge minimal">Минимальные симптомы депрессии или их отсутствие</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">Ваш результат PHQ-9</h2>
+                  <p id="result-classification" class="mt-2 text-xl font-bold text-[#0066cc] dark:text-[#2997ff]">Минимальная или отсутствует</p>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                  <div class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-sm">Суммарный балл</div>
+                  <div id="result-score" class="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">0 / 27</div>
+                </div>
+              </div>
+
+              <p id="result-narrative" class="mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card"><div class="score-label">Аффективный</div><div id="affective-score" class="mt-3 text-3xl font-extrabold">0 / 9</div><div id="affective-status" class="score-status">Низкая выраженность</div><div class="meter"><span id="affective-bar"></span></div><p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">Настроение, ангедония, вина - пункты 1, 2, 6</p></article>
+                <article class="score-card"><div class="score-label">Соматический</div><div id="somatic-score" class="mt-3 text-3xl font-extrabold">0 / 9</div><div id="somatic-status" class="score-status">Низкая выраженность</div><div class="meter"><span id="somatic-bar"></span></div><p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">Сон, энергия, аппетит - пункты 3, 4, 5</p></article>
+                <article class="score-card"><div class="score-label">Когнитивный / моторный</div><div id="cognitive-score" class="mt-3 text-3xl font-extrabold">0 / 9</div><div id="cognitive-status" class="score-status">Низкая выраженность</div><div class="meter"><span id="cognitive-bar"></span></div><p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">Внимание, психомоторика, надежда - пункты 7, 8, 9</p></article>
+              </div>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-base">Стратификация тяжести</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">Где находится ваш балл</h3>
+                <div id="severity-scale" class="mt-6 space-y-2"></div>
+              </article>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-base">Оси симптомов</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">Клинический профиль поддоменов</h3>
+                <div id="profile-matrix" class="mt-6 space-y-5"></div>
+              </article>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-3">
+                <div class="stat-card"><span>Диагностический порог (≥ 10)</span><strong id="cutoff-status">Ниже валидированного порога 10</strong></div>
+                <div class="stat-card"><span>Критерии алгоритма PHQ-9</span><strong id="algorithm-status">Не выполнены</strong></div>
+                <div class="stat-card"><span>Нарушение функционирования</span><strong id="functional-score">Нет ответа</strong></div>
+              </div>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 bg-zinc-50/60 p-6 dark:border-zinc-800 dark:bg-zinc-900/40">
+                <h3 class="text-xl font-bold sm:text-2xl">Рекомендуемые следующие шаги</h3>
+                <ul id="next-steps-list" class="mt-5 space-y-4"></ul>
+              </article>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="min-h-[44px] rounded-2xl bg-[#0066cc] px-7 py-4 text-base font-semibold text-white transition active:scale-[0.97] dark:bg-[#2997ff] sm:rounded-full">Печать сводки для клинициста</button>
+                <button id="share-result" type="button" class="min-h-[44px] rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.97] dark:border-zinc-700 sm:rounded-full">Поделиться сводкой</button>
+                <button id="retake-result" type="button" class="min-h-[44px] rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.97] dark:border-zinc-700 sm:rounded-full">Пройти заново</button>
+              </div>
+
+              <div class="mt-8 rounded-3xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+                <h3 class="text-xl font-bold sm:text-2xl">Как читать результат в контексте</h3>
+                <p class="mt-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+                  Балл PHQ-9 - это подсчёт симптомов, а не диагноз. На баллы влияют медицинские заболевания, лекарства, горе, травма, употребление психоактивных веществ, заболевания щитовидной железы, анемия, расстройства сна и ситуационный кризис. Высокий балл означает, что ваши симптомы заслуживают профессионального внимания. Низкий балл не обесценивает страдание, которое вы действительно испытываете.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <p id="depression-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+        <section>
+          <p class="eyebrow">Клинический гид</p>
+          <h2 class="mt-3 section-title">Понимание депрессии вне одного балла</h2>
+          <p class="mt-6">Большое депрессивное расстройство - одно из самых распространённых и самых излечимых состояний в медицине, и при этом одно из самых часто недооцениваемых. PHQ-9 существует потому, что структурированный воспроизводимый подсчёт симптомов выявляет депрессию гораздо надёжнее, чем одно клиническое впечатление. Этот гид объясняет, что измеряет инструмент, где лежат его ограничения и что говорит доказательная база о следующих шагах.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">1. Нейробиология большого депрессивного расстройства</h2>
+          <p class="mt-5">Депрессия - не единичный химический дефицит, и популярное упрощение о «дисбалансе ��еротонина» не выдержало тщательной проверки. Современные модели описывают депрессию как расстройство распределённых систем - влияющее на синаптическую пластичность, регуляцию стрессовых гормонов, воспалительную сигнализацию и цепи, приписывающие ценность вознаграждению. Три механизма особенно хорошо охарактеризованы.</p>
+          <p class="mt-5"><strong>BDNF и нейропластичность гиппокампа.</strong> Нейротрофический фактор мозга - сигнальный белок, поддерживающий выживание нейронов, рост синапсов и долговременную потенциацию - клеточный процесс, лежащий в основе обучения. При депрессии сигнализация BDNF снижена, а гиппокамп - область, центральная для памяти и контекстуализации эмоционального опыта, - показывает измеримое уменьшение объёма при хроническом и рецидивирующем течении. Это ведущее объяснение того, почему депрессия так убедительно нарушает концентрацию и память, и почему состояние описывают как нейродегенеративное в хронической форме, а не чисто психологическое. Это также лежит в основе терапевтической задержки: антидепрессанты и физическая нагрузка повышают BDNF, и обоим нужны недели для клинического эффекта, потому что они перестраивают синаптическую инфраструктуру, а не исправляют временный дефицит.</p>
+          <p class="mt-5"><strong>Нарушение регуляции оси HPA.</strong> Гипоталамо-гипофизарно-надпочечниковая ось управляет стрессовой реакцией. У значительной части людей с депрессией эта ось хронически гиперактивна: кортизол повышен, его нормальное суточное снижение сглажено, а петля отрицательной обратной связи, которая должна отключать стрессовую реакцию, становится нечувствительной. Следствие - тело, удерживаемое в состоянии слабого стресса, что объясняет характерный паттерн раннего пробуждения, потери аппетита и суточного ухудшения настроения, о котором сообщают многие. Детские неблагоприятные события и хронический психосоциальный стресс - наиболее установленные драйверы этой сенситизации, поэтому депрессия часто является кумулятивным состоянием, а не реакцией на одно событие.</p>
+          <p class="mt-5"><strong>Нейровоспаление.</strong> Воспалительные цитокины могут вызывать поведенческий кластер, известный как болезненное поведение - усталость, ангедония, социальная изоляция, изменение аппетита, - почти неотличимый от депрессии. Примерно у четверти-трети людей с депрессией повышены воспалительные маркеры, а значительная доля пациентов, получавших интерферон при гепатите или меланоме, развивает большую депрессию как прямое следствие. Это не маргинальная находка; именно поэтому депрессия так часто сосуществует с аутоиммунными заболеваниями, хронической болью и метаболическим синдромом, и почему связь между воспалением и депрессией выглядит двунаправленной.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">2. Клиническая валидность PHQ-9: почему именно этот инструмент</h2>
+          <p class="mt-5">Опросник здоровья пациента-9 был разработан доктором Робертом Л. Шпитцером, доктором Джанет Б. У. Уильямс и доктором Куртом Крёнке и валидирован относительно структурированного клинического интервью на выборке из 6000 пациентов первичного звена и акушерских пациентов. Его девять пунктов соответствуют один к одному девяти критериальным симптомам DSM для большого депрессивного эпизода, с двухнедельным периодом, соответствующим диагностическому требованию длительности. На инструменте нет содержания, которое клиницисту не нужно было бы знать.</p>
+          <p class="mt-5">Именно психометрический профиль обеспечил ему позицию. При стандартном пороге <strong>10 и выше</strong> объединённая чувствительность и специфичность составляют примерно <strong>88%</strong> для большого депрессивного расстройства. Чувствительность и специфичность обмениваются по диапазону: порог 10 максимизирует сумму обоих, тогда как более высокие пороги повышают специфичность и снижают чувствительность. При балле 15 и выше отношение правдоподобия положительного результата для большой депрессии существенно растёт, а при 20 и выше - ещё больше, поэтому полосы тяжести не произвольные подразделения, а соответствуют действительно разным вероятностям заболевания.</p>
+          <p class="mt-5">Инструмент также поддерживает второй, алгоритмический способ подсчёта. Большой депрессивный эпизод вероятен, когда <strong>пять или более пунктов оценены в 2 и выше</strong>, <em>и</em> хотя бы один из двух ключевых пунктов - подавленное настроение или ангедония - также оценён в 2 и выше. Требование ключевого симптома не позволяет алгоритм�� срабатывать на чисто соматический паттерн сна, аппетита и усталости, который может иметь медицинскую причину. Ваши результаты выше сообщают как порог суммарного балла, так и критерии алгоритма, потому что они иногда расходятся, и это расхождение информативно.</p>
+          <p class="mt-5">Два свойства заслуживают выделения. Во-первых, PHQ-9 - это мера <em>тяжести</em>, а также инструмент скрининга: изменение на пять баллов и более обычно считается клинически значимым, что делает его полезным для отслеживания ответа на лечение. Во-вторых, это инструмент скрининга, а не диагностический. Он не может отличить большую депрессию от биполярной, а лечение биполярной депрессии только антидепрессантом может спровоцировать маниакальный переключ. Это различие требует клинической истории, а не опросника.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">3. Интерпретация балла по пяти полосам</h2>
+          <p class="mt-5"><strong>0–4 · Минимальная или отсутствует.</strong> Мало симптомов или симптомы с низкой частотой. Лечение на основании одного этого балла не показано. Это не суждение о ценности вашего страдания - человек может переживать горе, тревогу или сложную жизненную ситуацию и всё равно попадать в этот диапазон, потому что PHQ-9 измеряет конкретный кластер депрессивных симптомов и ничего больше.</p>
+          <p class="mt-5"><strong>5–9 · Лёгкая.</strong> Несколько симптомов с низкой частотой. Это ниже стандартного порога лечения, но выше полностью чистого скрининга, и это полоса, где траектория важнее всего. Лёгкая депрессия у одних разрешается, у других закрепляется. Выжидательная тактика здесь разумна только если она действительно активна: повторите скрининг через две-четыре недели и относитесь к растущему баллу как к сигналу, а не ждите ухудшения.</p>
+          <p class="mt-5"><strong>10–14 · Умеренная.</strong> Это достигает валидированного порога для вероятной большой депрессии и является точкой, где рекомендуется клиническая оценка и обычно рассматривается активное лечение. Поведенческая активация и структурированная психотерапия имеют сильную доказательную базу на этом уровне, и решение между психотерапией, фармакотерапией или обоими правильно принимать с клиницистом, знающим вашу историю.</p>
+          <p class="mt-5"><strong>15–19 · Умеренно тяжёлая.</strong> Вероятность большого депрессивного расстройства высока, и нарушение функционирования обычно существенно. Комбинированная психотерапия и фармакотерапия обычно превосходит каждую по отдельности в этом диапазоне. Если вы справлялись без профессиональной поддержки, этот балл указывает, что баланс сместился в сторону лечения.</p>
+          <p class="mt-5"><strong>20–27 · Тяжёлая.</strong> Тяжёлое бремя симптомов с высокой вероятностью большой депрессии и выраженным нарушением. Это требует незамедлительной комплексной оценки. Тяжесть на этом уровне нарушает именно те исполнительные функции, которые нужны для организации помощи, поэтому привлечение другого человека для помощи с записью на приёмы - клиническая рекомендация, а не просто любезность. Лечение эффективно даже при этой тяжести - ответ медленнее и ниже, но он не отсутствует.</p>
+          <p class="mt-5">Ещё один момент. Дополнительный функциональный пункт не входит в сумму 0–27, и это сделано намеренно. Клиницисты придают ему большое значение, потому что нарушение и количество симптомов связаны, но различны, и именно нарушение часто определяет интенсивность лечения. Два человека с одинаковыми баллами часто нуждаются в разных планах, потому что один сохраняет работу, а другой нет.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">4. Дифференциальная диагностика: депрессия, СДВГ, выгорание и гипотиреоз</h2>
+          <p class="mt-5">Эти четыре состояния дают пересекающиеся жалобы - плохая концентрация, низкая энергия, нарушенный сон, сниженная мотивация - и их регулярно путают друг с другом. Различия важны, потому что лечение резко расходится.</p>
+          <p class="mt-5"><strong>СДВГ</strong> - нейроразвивающееся состояние с началом в детстве, поэтому паттерн должен прослеживаться назад через развитие, даже если он никогда формально не распознавался. При СДВГ низкое настроение обычно следует за хронической неуспеваемостью и накопленными неудачами, а не предшествует им. Внимание, основанное на интересе, сохраняется: человек с СДВГ может интенсивно концентрироваться на увлекательном, будучи неспособным начать скучное. При депрессии способность к удовольствию и вовлечённости притупляется глобально. Различие не идеально чистое - эти два состояния часто сосуществуют, и СДВГ сам является фактором риска депрессии - но хронология и паттерн сохранённого против утраченного интереса - наиболее различающие признаки.</p>
+          <p class="mt-5"><strong>Выгорание</strong> по определению привязано к контексту. Оно возникает из хронической рабочей или заботливой нагрузки и улучшается, когда нагрузка снижается или контекст меняется. Человек в отпуске, который чувствует себя существенно лучше, описывает выгорание, а не большую депрессию. Выгорание также склонно сохранять самооценку - люди описывают истощение и цинизм, а не никчёмность и вину - тогда как депрессия разъедает самоуважение независимо от обстоятельств. Выгорание не является формальным диагнозом DSM, что является реальным ограничением, но это клинически полезная и отдельная презентация.</p>
+          <p class="mt-5"><strong>Гипотиреоз</strong> - самый важный медицинский имитатор и причина, по которой проверка функции щитовидной железы входит в любой первый эпизод депрессии. Усталость, низкое настроение, когнитивное замедление, прибавка веса, непереносимость холода, запоры и сухость кожи встречаются в обоих состояниях. Примерно у 1 из 20 людей с депрессией недиагностированный гипотиреоз, и депрессия не разрешится, пока не будет пролечена щитовидная железа. Анемия, дефицит витамина B12 и фолата, обструктивное апноэ сна и несколько лекарств - включая бета-блокаторы, кортикостероиды и некоторые гормональные контрацептивы - дают сопоставимые картины и аналогично обратимы.</p>
+          <p class="mt-5">Практический вывод: первый эпизод умеренной или тяжёлой депрессии требует базовых лабораторных исследований - функция щитовидной железы, общий анализ крови, B12 и фолат, метаболическая панель - а не чисто психологической формулировки. Исключение обратимых причин - не задержка лечения; это его часть.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">5. Научно обоснованные протоколы лечения</h2>
+          <p class="mt-5"><strong>Когнитивно-поведенческая терапия</strong> нацелена на когнитивную триаду, описанную Аароном Беком: негативные убеждения о себе, о мире и о будущем. Эти убеждения работают как фильтры, так что неоднозначные свидетельства читаются как подтверждение никчёмности. КПТ учит явной идентификации и проверке этих автоматических мыслей. Она имеет самую большую доказательную базу среди психологических методов лечения депрессии, сопоставима с лекарствами при лёгких и умеренных формах и показывает более низкий уровень рецидива после прекращения, чем только лекарства - значительное преимущество для рецидивирующего состояния.</p>
+          <p class="mt-5"><strong>Поведенческая активация</strong> проще, дешевле в предоставлении и одинаково хорошо поддержана. Она опирается на наблюдение, что депрессия создаёт самоусиливающуюся петлю отстранения: низкое настроение снижает активность, сниженная активность убирает источники вознаграждения и мастерства, а возникающая пустота углубляет настроение. Поведенческая активация разрывает петлю, планируя ценные и ранее приятные занятия независимо от текущей мотивации. Контринтуитивное ядро - что действие предшествует мотивации, а не следует за ней - и есть механизм, и именно поэтому ожидание желания что-то сделать является ловушкой.</p>
+          <p class="mt-5"><strong>Фармакотерапия.</strong> СИОЗС обычно первая линия из-за переносимости и профиля безопасности при передозировке. Они не более эффективны, чем другие классы, для большинства людей, но их легче продолжать, а синдром отмены управляем при постепенном снижении. СИОЗСН, бупропион, миртазапин и вортиоксетин - разумные альтернативы, когда диктуют ответ или побочные эффекты. Начало действия - две-четыре недели, полный эффект - шесть-восемь. Важный ранний эффект идёт в обратную сторону: энергия и психомоторная активность часто восстанавливаются быстрее настроения, поэтому первые недели лечения несут повышенный риск, и клиническое наблюдение в этом окне важно. Любое предположение о биполярности должно побуждать к стратегии стабилизатора настроения, а не к монотерапии антидепрессантом.</p>
+          <p class="mt-5"><strong>Физическая нагрузка</strong> оказывает скромный, но реальный антидепрессивный эффект, наиболее сильный при умеренно-интенсивной аэробной нагрузке и при лёгкой и умеренной депрессии. Её механизм пересекается с фармакотерапией: аэробная нагрузка повышает BDNF, нормализует реактивность оси HPA и улучшает архитектуру сна. Практическое препятствие в том, что депрессия отнимает способность начинать упражнения, поэтому поведенческая рамка активации - запланировать, снизить порог, не ждать мотивации - важнее конкретного протокола.</p>
+          <p class="mt-5"><strong>Циркадные и lifestyle-рычаги.</strong> Утреннее яркое освещение закрепляет циркадную систему и имеет прямые доказательства при сезонной и несезонной депрессии. Архитектуру сна лучше всего защищать стабильным временем пробуждения, а не временем отхода ко сну. Для тяжёлых, резистентных или психотических форм ЭСТ остаётся самым эффективным доступным лечением, а кетамин и эсетамин дают быстрые эффекты в иначе рефрактерных случаях. Ни одно из них не должно быть самодеятельным - они перечислены, чтобы тяжесть не была ошибочно принята за безнадёжность. Резистентный к лечению не означает неизлечимый; это означает, что первая попытка была не той.</p>
+        </section>
+
+        <section id="faq" class="guide-section">
+          <p class="eyebrow">FAQ</p>
+          <h2 class="section-title mt-3">Частые вопросы о тестировании депрессии</h2>
+          <div class="mt-7 space-y-3">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white px-5 py-5 dark:border-zinc-800 dark:bg-zinc-950">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition group-open:rotate-45">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-200 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300 sm:text-lg">{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9">
+          <h2 class="text-2xl font-bold sm:text-3xl">Клинический дисклеймер и кризисная поддержка</h2>
+          <p class="mt-4">PHQ-9 - валидированный инструмент скрининга, а не диагностический. Формальный диагноз требует клинической оценки лицензированным специалистом здравоохранения. FreeIQExam предоставляет образовательные инструменты и инструменты скрининга и не предоставляет медицинских советов, диагностики или лечения. Не начинайте, не прекращайте и не меняйте назначенное лечение на основании онлайн-балла.</p>
+          <p class="mt-4">Если вы в кризисе или у вас есть мысли о причинении себе вреда, немедленно обратитесь в экстренные службы или на кризисную линию. <strong>США и Канада:</strong> звоните или пишите 988. <strong>Великобритания и Ирландия:</strong> Samaritans 116 123, или NHS 111. <strong>Австралия:</strong> Lifeline 13 11 14. <strong>В других странах:</strong> findahelpline.com и befrienders.org перечисляют бесплатные линии помощи в более чем 130 странах.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h1 class="text-3xl font-extrabold">СВОДКА СКРИНИНГА ДЕПРЕССИИ PHQ-9</h1>
+      <p class="mt-2 text-sm uppercase tracking-wider">Опросник здоровья пациента-9 · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm">
+        <p><strong>Дата:</strong> <span id="report-date">-</span></p>
+        <p><strong>Сессия:</strong> <span id="report-session">-</span></p>
+        <p><strong>Суммарный балл:</strong> <span id="print-total">-</span></p>
+        <p><strong>Статус порога:</strong> <span id="print-cutoff">-</span></p>
+        <p><strong>Критерии алгоритма:</strong> <span id="print-algorithm">-</span></p>
+        <p><strong>Аффективная подшкала:</strong> <span id="print-affective">-</span></p>
+        <p><strong>Соматическая подшкала:</strong> <span id="print-somatic">-</span></p>
+        <p><strong>Когнитивно-моторная подшкала:</strong> <span id="print-cognitive">-</span></p>
+        <p><strong>Нарушение функционирования:</strong> <span id="print-functional">-</span></p>
+        <p><strong>Пункт 9 (самоповреждение):</strong> <span id="print-item9">-</span></p>
+      </div>
+      <p id="print-crisis-row" class="mt-6 hidden border-2 border-red-600 p-4 text-sm font-bold text-red-700">
+        ФЛАГ БЕЗОПАСНОСТИ: Пункт 9 отмечен. Обсудите суицидальные мысли и оценку риска на приёме. Респонденту были предоставлены кризисные ресурсы.
+      </p>
+      <h2 class="mt-8 text-xl font-bold">Запись ответов по пунктам</h2>
+      <table class="mt-4 w-full border-collapse text-sm">
+        <thead>
+          <tr>
+            <th class="border border-zinc-300 px-2 py-2 text-left">№</th>
+            <th class="border border-zinc-300 px-2 py-2 text-left">Ось</th>
+            <th class="border border-zinc-300 px-2 py-2 text-left">Пункт</th>
+            <th class="border border-zinc-300 px-2 py-2 text-left">Балл</th>
+            <th class="border border-zinc-300 px-2 py-2 text-left">Ответ</th>
+          </tr>
+        </thead>
+        <tbody id="print-answer-body"></tbody>
+      </table>
+      <p class="mt-8 text-sm leading-relaxed">Это сводка скрининга, сформированная по ответам самоотчёта за двухнедельный период. Она не является медицинским диагнозом и требует клинической интерпретации. Диапазон суммарного балла 0–27; пункт 10 сообщается отдельно и не входит в сумму.</p>
+    </div>
+  </div>
+
+  <div id="share-toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-full border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm font-semibold text-white opacity-0 transition-all dark:border-zinc-200 dark:bg-white dark:text-zinc-950">Сводка скрининга скопирована.</div>
+
+  <style is:global>
+    .likert-option {
+      position: relative;
+      min-height: 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 1rem 0.75rem;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      color: rgb(24 24 27);
+      cursor: pointer;
+      text-align: center;
+      transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease, box-shadow 200ms ease, background-color 160ms ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .likert-option:hover {
+      transform: translateY(-2px);
+      border-color: rgb(0 102 204);
+      box-shadow: 0 6px 18px rgba(0, 102, 204, 0.14);
+    }
+    .likert-option:active { transform: scale(0.97); }
+    .likert-option:focus-visible { outline: 3px solid rgb(0 102 204); outline-offset: 2px; }
+    .likert-option.safety-zone {
+      background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+      border-color: rgb(254 202 202);
+    }
+    .likert-option.safety-zone:hover { border-color: rgb(248 113 113); }
+    .likert-option.selected {
+      background: #0066cc !important;
+      border-color: #0066cc !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 0 2px #0066cc, 0 10px 25px rgba(0, 102, 204, 0.35);
+      transform: translateY(-2px);
+    }
+    .likert-key {
+      width: 1.75rem;
+      height: 1.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgb(228 228 231);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+      background: rgb(244 244 245);
+      color: rgb(113 113 122);
+      transition: all 0.15s ease;
+    }
+    .likert-option:hover .likert-key { border-color: rgb(0 102 204); color: rgb(0 102 204); }
+    .likert-option.selected .likert-key {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.45);
+      color: #ffffff;
+    }
+    .likert-label { font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
+    .likert-detail { font-size: 13px; font-weight: 600; opacity: 0.65; }
+
+    .crisis-line {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      padding: 1rem 1.15rem;
+      border: 1px solid rgb(254 202 202);
+      border-radius: 1.25rem;
+      background: #ffffff;
+    }
+    .crisis-line strong { font-size: 1.15rem; color: rgb(153 27 27); }
+    .crisis-line span:last-child { font-size: 0.9rem; color: rgb(82 82 91); }
+    .crisis-flag { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgb(185 28 28); }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .55rem 1.1rem; font-size: .95rem; font-weight: 700; }
+    .result-badge.minimal { color: rgb(22 101 52); background: rgb(240 253 244); border-color: rgb(187 247 208); }
+    .result-badge.mild { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.moderate { color: rgb(146 64 14); background: rgb(255 247 237); border-color: rgb(254 215 170); }
+    .result-badge.high { color: rgb(154 52 18); background: rgb(255 237 213); border-color: rgb(253 186 116); }
+    .result-badge.severe { color: rgb(153 27 27); background: rgb(254 242 242); border-color: rgb(254 202 202); }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.35rem; }
+    .score-label { font-size: .9rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .score-status { margin-top: .5rem; color: rgb(0 102 204); font-size: .95rem; font-weight: 600; }
+    .meter { margin-top: 1rem; height: .55rem; overflow: hidden; border-radius: 999px; background: rgb(228 228 231); }
+    .meter span { display: block; width: 0; height: 100%; border-radius: inherit; background: rgb(0 102 204); transition: width .35s ease; }
+    .stat-card { display: flex; flex-direction: column; gap: .5rem; padding: 1.1rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    .stat-card span { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.05rem; line-height: 1.35; }
+
+    .severity-tier {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1.15rem;
+      border: 1px solid rgb(228 228 231);
+      border-radius: 1rem;
+      background: #fff;
+    }
+    .severity-tier.active { border-color: rgb(0 102 204); background: rgb(232 241 253); box-shadow: 0 4px 14px rgba(0, 102, 204, 0.14); }
+    .severity-range { font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace; font-size: 0.9rem; font-weight: 800; color: rgb(82 82 91); min-width: 3.5rem; }
+    .severity-name { font-size: 0.98rem; font-weight: 700; flex: 1; }
+    .severity-tier.active .severity-range, .severity-tier.active .severity-name { color: rgb(0 60 120); }
+    .severity-marker { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #fff; background: rgb(0 102 204); border-radius: 999px; padding: 0.3rem 0.7rem; }
+
+    .matrix-row { display: flex; flex-direction: column; gap: 0.5rem; }
+    .matrix-label { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.98rem; font-weight: 600; }
+    .matrix-label strong { font-family: ui-monospace, monospace; }
+    .matrix-track { height: 0.65rem; border-radius: 999px; background: rgb(228 228 231); overflow: hidden; }
+    .matrix-track span { display: block; height: 100%; border-radius: inherit; background: rgb(0 102 204); transition: width .4s ease; }
+
+    .next-step { position: relative; padding-left: 1.9rem; font-size: 1rem; line-height: 1.6; color: rgb(0 60 120); }
+    .next-step::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 999px;
+      background: rgb(0 102 204);
+    }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(0 102 204); font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace; }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; color: rgb(24 24 27); }
+    .guide-section { margin-top: 3.5rem; }
+    .guide-section p { font-size: 17px; line-height: 1.62; }
+
+    .print-only { display: none; }
+    .dep-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    .dark .dep-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    @media (prefers-reduced-motion: reduce) { .dep-hero-glow { display: none; } }
+
+    .dark .likert-option {
+      border-color: rgb(39 39 42);
+      background: rgb(24 24 27);
+      color: rgb(244 244 245);
+    }
+    .dark .likert-key {
+      border-color: rgb(63 63 70);
+      background: rgb(24 24 27);
+      color: rgb(161 161 170);
+    }
+    .dark .likert-option.selected {
+      background: #2997ff !important;
+      border-color: #2997ff !important;
+      color: #ffffff !important;
+    }
+    .dark .crisis-line { border-color: rgba(127,29,29,0.6); background: rgb(9 9 11); }
+    .dark .crisis-line strong { color: rgb(252 165 165); }
+    .dark .crisis-line span:last-child { color: rgb(161 161 170); }
+    .dark .crisis-flag { color: rgb(248 113 113); }
+    .dark .score-card, .dark .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .meter, .dark .matrix-track { background: rgb(39 39 42); }
+    .dark .severity-tier { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .severity-tier.active { border-color: rgb(41 151 255); background: rgba(41,151,255,0.10); }
+    .dark .section-title { color: rgb(250 250 250); }
+    .dark .eyebrow { color: rgb(147 197 253); }
+    .dark .next-step { color: rgb(147 197 253); }
+
+    #print-answer-body td {
+      border: 1px solid rgb(208 208 212);
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+    }
+    #print-answer-body tr.flagged td {
+      background: rgb(254 242 242);
+      font-weight: 600;
+    }
+
+    @media print {
+      #main-content > header,
+      #main-content > footer,
+      #main-content > #assessment-page-content,
+      #share-toast { display: none !important; }
+      #main-content > #printable-report { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+
+    @media (max-width: 640px) {
+      .section-title { font-size: 1.75rem; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../../scripts/tools/depression-screener-ru.js"></script>
+</Layout>

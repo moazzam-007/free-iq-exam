@@ -1,0 +1,470 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = 'Тест на СДВГ у взрослых онлайн - бесплатный скрининг ASRS v1.1 (ВОЗ) | FreeIQExam';
+const description = 'Пройдите бесплатный скрининг СДВГ у взрослых по методике WHO ASRS v1.1. Разбор ответов части A, паттернов невнимательности и гиперактивности/импульсивности, а также дополнительный тест Go/No-Go.';
+const canonicalUrl = 'https://freeiqexam.com/ru/adhd-test';
+
+const faqItems = [
+  ['Насколько точен онлайн-тест на СДВГ у взрослых?', 'Онлайн-скрининг позволяет выявить паттерн симптомов, который может обосновать более полную оценку, но не может сам по себе диагностировать СДВГ. Клиницист должен учитывать стойкость симптомов, нарушения функционирования, историю развития, контекст и альтернативные объяснения.'],
+  ['В чём разница между ADD и ADHD?', 'ADD - устаревший термин. В современной диагностике используется СДВГ и описываются преимущественно невнимательный, преимущественно гиперактивно-импульсивный или смешанный типы. Говоря ADD, обычно имеют в виду невнимательный тип.'],
+  ['Почему у женщин СДВГ у взрослых проявляется иначе?', 'Симптомы невнимательности, внутреннее беспокойство, перфекционистская компенсация и социальная маскировка делают проявления менее заметными. Гормональные переходы также могут влиять на внимание, сон и выраженность симптомов, но они не специфичны для СДВГ.'],
+  ['Какие шесть вопросов входят в часть A шкалы ASRS?', 'Часть A охватывает завершение последних деталей проекта, организацию задач, память о встречах и обязательствах, откладывание трудоёмких задач, неусидчивость при сидении и ощущение чрезмерной активности или «мотора».'],
+  ['Может ли СДВГ появиться во взрослом возрасте, если в детстве его не было?', 'Браузерный скрининг не может ответить на это окончательно. СДВГ - нейроразвивающееся состояние, поэтому формальная оценка ищет подтверждения симптомов в более раннем возрасте и одновременно рассматривает другие причины новых проблем с концентрацией у взрослых.'],
+  ['Чем СДВГ отличается от хронической тревоги или депрессии?', 'И тревога, и депрессия могут нарушать концентрацию и исполнительные функции. СДВГ также может с ними пер��секаться, и несколько состояний могут сосуществовать. Хронология, триггеры, нарушения, сон, настроение и история развития помогают различить паттерны.'],
+  ['Что делать, если скрининг указывает на высокую вероятность СДВГ?', 'Используйте результат как структурированный повод для разговора. Запишите конкретные примеры, частоту, влияние на функционирование, детскую историю при наличии, факторы сна и настроения, принимаемые препараты и другой релевантный контекст, затем обсудите их с квалифицированным клиницистом.'],
+  ['Считается ли онлайн-скрининг формальным медицинским диагнозом?', 'Нет. Он даёт только информацию скрининга. Формальный диагноз требует более широкой клинической оценки. Дополнительное задание Go/No-Go - это поведенческий ориентир, а не самостоятельный диагностический тест.']
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Шкала самоотчёта ASRS v1.1 (ВОЗ) для скрининга СДВГ у взрослых',
+    url: canonicalUrl,
+    medicalAudience: 'Patient',
+    aspect: 'Diagnostic',
+    isAccessibleForFree: true,
+    inLanguage: 'ru',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Бесплатный онлайн-скрининг СДВГ у взрослых',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    accessibilitySummary: 'Управление ответами с клавиатуры, видимые состояния фокуса, семантические заголовки, live-объявления и версия для печати.',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://freeiqexam.com/ru/' },
+      { '@type': 'ListItem', position: 2, name: 'Тесты', item: 'https://freeiqexam.com/ru/test' },
+      { '@type': 'ListItem', position: 3, name: 'Тест на СДВГ у взрослых', item: canonicalUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'Опросник для скрининга СДВГ у взрослых - 18 пунктов',
+    url: canonicalUrl,
+    numberOfQuestions: 18,
+    isAccessibleForFree: true,
+    inLanguage: 'ru',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map(([name, text]) => ({
+      '@type': 'Question',
+      name,
+      acceptedAnswer: { '@type': 'Answer', text },
+    })),
+  },
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/adhd-test" idPath="/id/tes-adhd" schema={schemas}>
+  <Header currentPath="/adhd-test" enPath="/adhd-test" idPath="/id/tes-adhd" />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+      <nav aria-label="Хлебные крошки" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/ru/" class="hover:text-[#0066cc] dark:hover:text-[#2997ff]">Главная</a><span aria-hidden="true">/</span>
+        <a href="/ru/test" class="hover:text-[#0066cc] dark:hover:text-[#2997ff]">Тесты</a><span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white">Тест на СДВГ</span>
+      </nav>
+
+      <header class="relative mx-auto max-w-4xl text-center">
+        <div class="adhd-hero-glow" aria-hidden="true"></div>
+        <div class="inline-flex items-center rounded-full border border-zinc-300 bg-zinc-100 px-4 py-2 text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 sm:text-sm">
+          WHO ASRS v1.1 · Клиническая психометрия
+        </div>
+        <h1 class="mt-6 text-4xl font-extrabold tracking-[-0.025em] leading-[1.08] sm:text-5xl md:text-6xl">Тест на СДВГ у взрослых онлайн</h1>
+        <p class="mx-auto mt-6 max-w-3xl text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Пройдите бесплатный скрининговый опросник СДВГ для взрослых на основе методики WHO ASRS v1.1. Посмотрите статус скрининга части A, паттерны невнимательности и гиперактивности/импульсивности, а также пройдите дополнительный тест контроля реакции Go/No-Go - без запроса e-mail.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['18 вопросов', 'Пять вариантов ответа', 'Версия для печати', 'Без регистрации'].map((item) => (
+            <span class="rounded-full border border-zinc-200 px-4 py-2.5 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <section id="adhd-app" class="mx-auto mt-12 max-w-4xl">
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-8">
+          <div id="assessment-intro" class="border-t border-zinc-200 pt-6 dark:border-zinc-800 sm:pt-8">
+            <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Перед началом</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Скрининг - это не диагноз</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Отвечайте исходя из вашего типичного опыта. Скрининг оценивает выраженность симптомов относительно порогов, используемых в данной реализации. Он не может подтвердить СДВГ и не заменяет медицинскую или психологическую оценку.
+            </p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <button id="begin-assessment" type="button" class="min-h-[44px] rounded-full bg-[#0066cc] px-7 py-4 text-base font-semibold text-white transition hover:bg-[#0071e3] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg-[#2997ff] dark:hover:bg-[#3b82f6]">Начать скрининг СДВГ</button>
+              <span class="self-center text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">Клавиатура: 1–5 для ответа · ← / → для навигации</span>
+            </div>
+          </div>
+
+          <section id="questionnaire-section" class="hidden" aria-labelledby="question-heading">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p id="question-part" class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Часть A · Основной клинический скрининг</p>
+                <p id="question-domain" class="mt-2 text-base font-semibold text-zinc-700 dark:text-zinc-300">Невнимательность</p>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="question-number" class="text-base font-semibold sm:text-lg">Вопрос 1 из 18</div>
+                <div id="progress-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">0% отвечено</div>
+              </div>
+            </div>
+            <div class="mt-5 h-[2px] overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"><div id="progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-300" style="width:4%"></div></div>
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-wrap gap-2 text-sm font-semibold text-zinc-500 dark:text-zinc-400 sm:text-base">
+                <span class="rounded-full border border-zinc-200 px-3 py-1.5 dark:border-zinc-800">Выберите один вариант</span>
+                <span class="rounded-full border border-zinc-200 px-3 py-1.5 dark:border-zinc-800">Никогда → Очень часто</span>
+              </div>
+              <h2 id="question-heading" class="mt-6 text-2xl font-bold tracking-tight sm:text-3xl"></h2>
+              <p id="question-context" class="mt-3 text-base text-zinc-500 dark:text-zinc-400 sm:text-lg"></p>
+              <div id="likert-options" class="mt-8 grid gap-3 sm:grid-cols-5" role="group" aria-label="Варианты частотных ответов"></div>
+              <p class="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 sm:text-base">Выделенные варианты - это ответы, засчитываемые как клинически значимые для текущего пункта.</p>
+              <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+                <button id="back-button" type="button" class="min-h-[44px] rounded-full border border-zinc-300 bg-white px-6 py-3.5 text-base font-semibold active:scale-[0.97] dark:border-zinc-700 dark:bg-zinc-900">Назад</button>
+                <button id="next-button" type="button" class="min-h-[44px] rounded-full bg-[#0066cc] px-7 py-3.5 text-base font-semibold text-white active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-[#2997ff]">Следующий вопрос</button>
+              </div>
+            </article>
+          </section>
+
+          <section id="cognitive-section" class="hidden" aria-labelledby="cognitive-title">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Дополнительный объективный блок</p>
+                <h2 id="cognitive-title" class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">20 проб: тест импульсного контроля Go/No-Go</h2>
+              </div>
+              <div class="text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Сессия <span id="cognitive-session-id" class="font-mono">-</span></div>
+            </div>
+            <div class="mt-6 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div id="cognitive-start-panel">
+                <p class="text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">Зелёный означает <strong>нажать пробел или коснуться</strong>. Красный означает <strong>воздержаться от нажатия</strong>. Задание фиксирует время реакции на сигнал «идти» и ошибки комиссии на сигнал «не идти». Это поведенческий ориентир, а не диагностический тест.</p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                  <button id="begin-cognitive" type="button" class="min-h-[44px] rounded-full bg-[#0066cc] px-7 py-4 text-base font-semibold text-white transition hover:bg-[#0071e3] active:scale-[0.97] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6]">Начать 20 проб</button>
+                  <button id="skip-cognitive" type="button" class="min-h-[44px] rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold active:scale-[0.97] dark:border-zinc-700">Пропустить и посмотреть результаты опросника</button>
+                </div>
+              </div>
+              <div id="cognitive-countdown" class="hidden py-5 text-center text-5xl font-extrabold tracking-tight text-[#0066cc] dark:text-[#2997ff]" aria-live="polite">3</div>
+              <div class="mt-7 flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400 sm:text-base"><span>Проба</span><span id="cognitive-trial">0 / 20</span></div>
+              <div class="mt-2 h-[2px] overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"><div id="cognitive-progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff]" style="width:0%"></div></div>
+              <button id="cognitive-target" type="button" class="mx-auto mt-10 flex aspect-square w-full max-w-[22rem] items-center justify-center rounded-full border-2 border-zinc-300 bg-zinc-100 opacity-0 transition-transform duration-75 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-600 dark:border-zinc-700 dark:bg-zinc-900" aria-label="Цель ответа Go/No-Go">
+                <span id="cognitive-target-label" class="text-2xl font-extrabold tracking-tight sm:text-3xl">Ожидание…</span>
+              </button>
+              <p class="mt-5 text-center text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Нажмите <kbd class="rounded border border-zinc-300 bg-zinc-100 px-2 py-1 font-mono dark:border-zinc-700 dark:bg-zinc-900">Пробел</kbd> или коснитесь круга.</p>
+            </div>
+          </section>
+
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge low">Низкая клиническая вероятность</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">Ваш профиль скрининга</h2>
+                  <p id="result-classification" class="mt-2 text-xl font-bold text-[#0066cc] dark:text-[#2997ff]">Низкий / субклинический паттерн</p>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 sm:text-base">Это не диагноз</div>
+              </div>
+              <p id="result-narrative" class="mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card"><div class="score-label">Часть A</div><div id="part-a-score" class="mt-3 text-3xl font-extrabold">0 / 6</div><div id="part-a-status" class="score-status">Ниже порога</div><div class="meter"><span id="part-a-bar"></span></div></article>
+                <article class="score-card"><div class="score-label">Невнимательность</div><div id="inattention-score" class="mt-3 text-3xl font-extrabold">0 / 36</div><div id="inattention-status" class="score-status">Низкая выраженность</div><div class="meter"><span id="inattention-bar"></span></div></article>
+                <article class="score-card"><div class="score-label">Гиперактивность / импульсивность</div><div id="hyperactivity-score" class="mt-3 text-3xl font-extrabold">0 / 36</div><div id="hyperactivity-status" class="score-status">Низкая выраженность</div><div class="meter"><span id="hyperactivity-bar"></span></div></article>
+              </div>
+
+              <article id="cognitive-result-card" class="mt-4 hidden rounded-3xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+                <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-sm">Ориентир Go / No-Go</p>
+                <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <div class="stat-card"><span>Среднее ВР</span><strong id="cognitive-rt">-</strong></div>
+                  <div class="stat-card"><span>Вариабельность ВР</span><strong id="cognitive-rtv">-</strong></div>
+                  <div class="stat-card"><span>Ошибки комиссии</span><strong id="cognitive-errors">-</strong></div>
+                  <div class="stat-card"><span>Пропуски</span><strong id="cognitive-omissions">-</strong></div>
+                </div>
+              </article>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-sm">Матрица исполнительных функций</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">Срез по доменам симптомов</h3>
+                <div id="profile-matrix" class="mt-6 space-y-5"></div>
+              </article>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="min-h-[44px] rounded-full bg-[#0066cc] px-7 py-4 text-base font-semibold text-white active:scale-[0.97] dark:bg-[#2997ff]">Печать сводки для клинициста</button>
+                <button id="share-result" type="button" class="min-h-[44px] rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold active:scale-[0.97] dark:border-zinc-700">Поделиться сводкой</button>
+                <button id="retake-result" type="button" class="min-h-[44px] rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold active:scale-[0.97] dark:border-zinc-700">Пройти заново</button>
+              </div>
+
+              <div class="mt-8 rounded-3xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+                <h3 class="text-xl font-bold sm:text-2xl">Как читать результат в контексте</h3>
+                <p class="mt-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">Положительный скрининг означает, что паттерн ответов пересёк порог этой методики. Он не устанавливает СДВГ, степень тяжести, тип ��ли потребность в лечении. Расстройства сна, тревога, депрессия, симптомы биполярного спектра, влияние лекарств, стресс и другие состояния могут пересекаться с жалобами на внимание и исполнительные функции.</p>
+              </div>
+            </div>
+          </section>
+
+          <p id="adhd-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <article class="mx-auto mt-16 max-w-4xl text-[17px] leading-[1.62] text-zinc-700 dark:text-zinc-300 sm:text-lg">
+        <section><p class="eyebrow">Клинический гид</p><h2 class="mt-3 section-title">Понимание СДВГ у взрослых вне одного балла</h2><p class="mt-6">СДВГ у взрослых лучше всего понимать как стойкий паттерн трудностей с регуляцией внимания, торможением, организацией и исполнительными функциями, который создаёт реальные проблемы в повседневной жизни. Опросник помогает упорядочить симптомы, но диагноз зависит от более широкой картины: как долго существует паттерн, насколько он постоянен, насколько нарушает функционирование и какие другие объяснения могут описывать тот же опыт.</p></section>
+
+        <section class="guide-section"><h2 class="section-title">1. Нейробиология СДВГ у взрослых</h2><p class="mt-5">СДВГ связан с различиями в распределённых системах мозга, участвующих во внимании, мотивации, оценке времени, выборе действия и исполнительном контроле. Часто обсуждаются фронтостриарные сети, поскольку они поддерживают планирование, выбор реакции, обработку вознаграждения и удержание цели. Дофамин и норадреналин участвуют в этих сетях. Точнее рассматривать СДВГ как проблему регуляции в системах, а не как простую нехватку одного нейромедиатора.</p><p class="mt-5">Дорсолатеральная префронтальная кора вносит вклад в рабочую память, планирование, торможение и удержание целей, когда отвлекающие факторы конкурируют за внимание. Поэтому человек может знать, что нужно сделать, и всё равно с трудом поддерживать то психическое состояние, которое необходимо для начала или завершения. Это объясняет, почему интеллект и уровень образования не защищают от дисфункции исполнительных функций.</p><p class="mt-5">Сеть пассивного режима активна при внутренне направленном мышлении. Эффективное выполнение задачи требует гибкой координации между внутренне ориентированными и задачно-ориентированными сетями. Трудности с подавлением или переключением от спонтанных внутренних мыслей могут ощущаться как блуждание ума, навязчивые идеи или невозможность удерживать внимание на малоинтересной работе. Эти идеи полезны для понимания исследований, а не для диагностики человека по браузерному тесту.</p></section>
+
+        <section class="guide-section"><h2 class="section-title">2. Критерии DSM-5 и что остаётся за пределами скрининга</h2><p class="mt-5">Скрининговый опросник выборочно оценивает симптомы; диагноз - это клиническая формулировка. Полная оценка СДВГ у взрослых учитывает стойкие симптомы невнимательности и/или гиперактивности-импульсивности, клинически значимые нарушения, свидетельства того, что паттерн присутствовал ранее в развитии, и то, не объясняет ли его лучше другое состояние. Симптомы не следует интерпретировать по одной необычно стрессовой неделе.</p><p class="mt-5">Нарушение функционирования может проявляться как хронические опоздания, пропущенные сроки, незавершённые задачи, повторяющиеся административные ошибки, потеря важных предметов, чрезмерное переключение между задачами, небезопасные импульсивные решения или напряжение в отношениях из-за перебивания и забывчивости. Клиницисты часто ищут примеры более чем в одной среде, потому что контекст имеет значение. Хорошая продуктивность в высокоструктурированной среде не отменяет автоматически трудности в других местах, особенно когда она требует больших компенсаторных усилий.</p></section>
+
+        <section class="guide-section"><h2 class="section-title">3. Три типа проявления у взрослых</h2><h3 class="mt-8 text-xl font-bold sm:text-2xl">Преимущественно невнимательный</h3><p class="mt-4">Этот паттерн строится вокруг отвлекаемости, дезорганизации, забывчивости, потери вещей, трудностей с удержанием внимания и доведением дел до конца. Взрослые могут описывать, что точно знают, что делать, но не могут начать малоинтересную задачу, пока срочность не станет высокой. Оценка времени, нагрузка на рабочую память и переключение между приоритетами могут стать главными узкими местами.</p><h3 class="mt-8 text-xl font-bold sm:text-2xl">Преимущественно гиперактивно-импульсивный</h3><p class="mt-4">Гиперактивность у взрослых может быть внутренней, а не внешне драматичной. Люди могут описывать двигательное беспокойство, трудности высидеть длинные ситуации, трудности с расслаблением, чрезмерную разговорчивость, нетерпеливость, перебивание или действия до завершения разговорной или процедурной очереди.</p><h3 class="mt-8 text-xl font-bold sm:text-2xl">Смешанный тип</h3><p class="mt-4">Смешанный тип включает клинически значимые признаки обоих доменов. Опыт может быть парадоксальным: человек может ощущать физическое или психическое беспокойство и одновременно с трудом начинать важную рутинную задачу. Высокоинтересные занятия всё ещё могут вызывать интенсивную вовлечённость, тогда как скучные, но необходимые задачи остаются трудными для регуляции.</p></section>
+
+        <section class="guide-section"><h2 class="section-title">4. СДВГ у женщин: маскировка и гормональный контекст</h2><p class="mt-5">Исследования подчёркивают невнимательную маскировку, внутреннее беспокойство, компенсаторный перфекционизм и более позднее распознавание у женщин. Человек может создавать сложные системы напоминаний, чрезмерно готовиться к рутинным задачам, многократно перепроверять работу или проводить ночи, догоняя после дневного ухода внимания. Внешняя продуктивность может выглядеть сильной, тогда как внутренняя когнитивная цена высока.</p><p class="mt-5">Гормональные переходы могут менять сон, настроение, энергию и когнитивный опыт. Пубертат, послеродовые изменения и перименопауза могут изменять выраженность существующих симптомов у некоторых людей. Эстроген взаимодействует с дофаминергическими системами, но гормональные изменения - не диагностический короткий путь. Клиницистам также может потребоваться учитывать заболевания щитовидной железы, анемию, влияние лекарств, расстройства сна, депрессию, тревогу и обычный жизненный стресс.</p></section>
+
+        <section class="guide-section"><h2 class="section-title">5. Дифференциальная диагностика и коморбидность</h2><p class="mt-5">Тревога может направлять внимание на беспокойство и мониторинг угрозы. Депрессия может снижать концентрацию, энергию, мотивацию и удовольствие. Расстройства биполярного спектра включают эпизодические изменения настроения, сна, энергии и поведения, а не стабильный пожизненный исполнительный паттерн. Аутизм может пересекаться с исполнительными функциями, сенсорной регуляцией и различиями в социальной коммуникации. Апноэ сна и хроническое ограничение сна могут вызывать значительные дневные проблемы с вниманием.</p><p class="mt-5">Цель - не выбрать самый знакомо звучащий ярлык. Цель - понять полную хронологию, триггеры, нарушения и сопутствующие симптомы. Более одного состояния может присутствовать одновременно, и хорошая оценка учитывает эту возможность, а не втискивает каждый симптом в одну категорию.</p></section>
+
+        <section class="guide-section"><h2 class="section-title">6. Научно обоснованные пути лечения</h2><p class="mt-5">Лечение индивидуально. В зависимости от целей человека и клинической истории помощь может сочетать просвещение, изменения среды, поведенческие стратегии, психотерапию и лекарства. Распространённые категории рецептурных препаратов включают стимуляторы, такие как метилфенидат или амфетаминовые формы, и нестимулирующие средства, такие как атомоксетин или гуанфацин. Эти препараты имеют разные преимущества, риски, противопоказания и требования к мониторингу и должны подбираться совместно с квалифицированным специалистом.</p><p class="mt-5">КПТ, адаптированная для СДВГ, может работать с прокрастинацией, планированием, приоритизацией, эмоциональной регуляцией и доведением дел до конца. Экстернализация рабочей памяти через видимые календари, напоминания, чек-листы и разбивку задач может снижать когнитивную нагрузку. Рабочие приспособления могут включать письменные инструкции, предсказуемое расписание, сокращение перерывов в работе или более тихое рабочее место, когда это уместно и юридически доступно.</p></section>
+
+        <section class="guide-section"><h2 class="section-title">7. Как конструктивно использовать этот результат</h2><p class="mt-5">Скрининг наиболее полезен как структурированный повод для разговора. Запишите несколько конкретных примеров из работы, учёбы, дома, финансов, вождения и отношений. Отметьте частоту, последствия, системы совладания и то, является ли трудность давней. Старые школьные отчёты, наблюдения семьи или другие исторические записи иногда помогают восстановить детские паттерны, которые никогда формально не распознавались.</p><p class="mt-5">Дополнительное задание Go/No-Go может дать интересный срез торможения реакций и стабильности времени реакции, но нормальный или аномальный результат не доказывает и не опровергает СДВГ. Компьютеризированные задачи чувствительны ко многим факторам, включая усталость, тренированность, отвлечения, сон, задержку устройства и мотивацию. Клиницист должен помещать любой результат выполнения в более широкую историю.</p><p class="mt-5">Если опросник указывает на высокую вероятность, а симптомы вызывают реальные нарушения, обсудите этот паттерн с врачом первичного звена, психиатром, психологом или другим квалифицированным специалистом. Если результат низкий, но ваши трудности остаются серьёзными, это также стоит обсудить; низкий скрининг не исключает других психиатрических, медицинских, сонных или средовых причин когнитивных трудностей.</p></section>
+
+        <section id="faq" class="guide-section"><p class="eyebrow">FAQ</p><h2 class="section-title mt-3">Частые вопросы о тестах на СДВГ у взрослых</h2><div class="mt-7 space-y-3">{faqItems.map(([question, answer]) => (<details class="group rounded-2xl border border-zinc-200 bg-white px-5 py-5 dark:border-zinc-800 dark:bg-zinc-950"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold sm:text-lg"><span>{question}</span><span aria-hidden="true" class="transition group-open:rotate-45">+</span></summary><p class="mt-4 border-t border-zinc-200 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300 sm:text-lg">{answer}</p></details>))}</div></section>
+
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9"><h2 class="text-2xl font-bold sm:text-3xl">Клинический дисклеймер</h2><p class="mt-4">FreeIQExam предоставляет образовательные инструменты и инструменты скрининга. Эта страница не заменяет лицензированную клиническую помощь, экстренные службы или персональные медицинские рекомендации. Не начинайте, не прекращайте и не меняйте назначенное лечение на основании онлайн-балла.</p><p class="mt-4">Кризисная поддержка: США и Канада - звоните или пишите 988. Великобритания и Ирландия - Samaritans 116 123. В других странах используйте доступные в вашей стране экстренные или кризисные ресурсы.</p></section>
+      </article>
+    </div>
+  </main>
+
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h1 class="text-3xl font-extrabold">СВОДКА КЛИНИЧЕСКОГО СКРИНИНГА СДВГ У ВЗРОСЛЫХ</h1>
+      <p class="mt-2 text-sm uppercase tracking-wider">Методика WHO ASRS v1.1 · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm"><p><strong>Дата:</strong> <span id="report-date">-</span></p><p><strong>Сессия:</strong> <span id="report-session">-</span></p><p><strong>Часть A:</strong> <span id="print-part-a">-</span></p><p><strong>Невнимательность:</strong> <span id="print-inattention">-</span></p><p><strong>Гиперактивность / импульсивность:</strong> <span id="print-hyperactivity">-</span></p><p><strong>Go / No-Go:</strong> <span id="print-cognitive">Пропущено</span></p></div>
+      <h2 class="mt-8 text-xl font-bold">Запись ответов по 18 пунктам</h2>
+      <table class="mt-4 w-full border-collapse text-sm"><thead><tr><th class="border border-zinc-300 px-2 py-2 text-left">№</th><th class="border border-zinc-300 px-2 py-2 text-left">Часть</th><th class="border border-zinc-300 px-2 py-2 text-left">Домен</th><th class="border border-zinc-300 px-2 py-2 text-left">Ответ</th></tr></thead><tbody id="print-answer-body"></tbody></table>
+      <p class="mt-8 text-sm leading-relaxed">Это сводка скрининга, сформированная по ответам самоотчёта. Она не является медицинским диагнозом и требует клинической интерпретации.</p>
+    </div>
+  </div>
+
+  <div id="share-toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-full border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm font-semibold text-white opacity-0 transition-all dark:border-zinc-200 dark:bg-white dark:text-zinc-950">Сводка скрининга скопирована.</div>
+
+  <style is:global>
+    .likert-option {
+      position: relative;
+      min-height: 5.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 1rem 0.75rem;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      color: rgb(24 24 27);
+      cursor: pointer;
+      transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease, box-shadow 200ms ease, background-color 160ms ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .likert-option:hover {
+      transform: translateY(-2px);
+      border-color: rgb(0 102 204);
+      box-shadow: 0 6px 18px rgba(0, 102, 204, 0.14);
+    }
+    .likert-option:active {
+      transform: scale(0.97);
+    }
+    .likert-option:focus-visible {
+      outline: 3px solid rgb(0 102 204);
+      outline-offset: 2px;
+    }
+    .likert-option.clinical-zone {
+      background: #f4f4f5;
+      border-color: rgb(212 212 216);
+    }
+    .likert-option.clinical-zone:hover {
+      border-color: rgb(0 102 204);
+      background: #e9f1fd;
+    }
+    .likert-option.selected {
+      background: #0066cc !important;
+      border-color: #0066cc !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 0 2px #0066cc, 0 10px 25px rgba(0, 102, 204, 0.35);
+      transform: translateY(-2px);
+    }
+    .likert-key {
+      width: 1.75rem;
+      height: 1.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgb(228 228 231);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+      background: rgb(244 244 245);
+      color: rgb(113 113 122);
+      transition: all 0.15s ease;
+    }
+    .likert-option:hover .likert-key {
+      border-color: rgb(0 102 204);
+      color: rgb(0 102 204);
+      background: #ffffff;
+    }
+    .likert-option.selected .likert-key {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+    .likert-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-align: center;
+    }
+    .likert-clinical-badge {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgb(0 102 204);
+      background: rgba(0, 102, 204, 0.08);
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      margin-top: 0.15rem;
+    }
+    .likert-option.selected .likert-clinical-badge {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .matrix-row { display: grid; gap: 0.55rem; }
+    .matrix-label { display: flex; justify-content: space-between; gap: 1rem; font-weight: 600; }
+    .matrix-track { height: 0.65rem; overflow: hidden; border-radius: 999px; background: rgb(228 228 231); }
+    .matrix-track span { display: block; height: 100%; border-radius: inherit; background: rgb(0 102 204); transition: width 0.4s ease; }
+
+    .dark .likert-option {
+      border-color: rgb(39 39 42);
+      background: rgb(18 18 21);
+      color: rgb(244 244 245);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .dark .likert-option:hover {
+      border-color: rgb(41 151 255);
+      background: rgb(24 24 27);
+    }
+    .dark .likert-option.clinical-zone {
+      background: rgba(41, 151, 255, 0.10);
+      border-color: rgba(41, 151, 255, 0.4);
+    }
+    .dark .likert-option.selected {
+      background: #2997ff !important;
+      border-color: #2997ff !important;
+      color: #ffffff !important;
+    }
+    .dark .likert-key {
+      border-color: rgb(63 63 70);
+      background: rgb(24 24 27);
+      color: rgb(161 161 170);
+    }
+    .dark .likert-clinical-badge {
+      color: rgb(147 197 253);
+      background: rgba(41, 151, 255, 0.18);
+    }
+    .dark .matrix-track { background: rgb(39 39 42); }
+
+    #print-answer-body td {
+      border: 1px solid rgb(208 208 212);
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+    }
+  </style>
+
+  <style>
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(0 102 204); font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace; }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; color: rgb(24 24 27); }
+    .guide-section { margin-top: 3.5rem; }
+    .guide-section p { font-size: 17px; line-height: 1.62; }
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.35rem; }
+    .score-label { font-size: .9rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .score-status { margin-top: .5rem; color: rgb(0 102 204); font-size: .95rem; font-weight: 600; }
+    .meter { margin-top: 1rem; height: .55rem; overflow: hidden; border-radius: 999px; background: rgb(228 228 231); }
+    .meter span { display: block; width: 0; height: 100%; border-radius: inherit; background: rgb(0 102 204); transition: width .35s ease; }
+    .stat-card { display: flex; flex-direction: column; gap: .35rem; padding: 1rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    .stat-card span { font-size: .9rem; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.2rem; }
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .5rem 1rem; font-size: .95rem; font-weight: 700; }
+    .result-badge.low { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.moderate { color: rgb(146 64 14); background: rgb(255 247 237); border-color: rgb(254 215 170); }
+    .result-badge.high { color: rgb(190 18 60); background: rgb(255 241 242); border-color: rgb(253 164 175); }
+
+    #cognitive-target {
+      transition: transform 0.08s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
+      touch-action: manipulation;
+    }
+    #cognitive-target.idle {
+      background: rgb(244 244 245);
+      border-color: rgb(212 212 216);
+      color: rgb(82 82 91);
+    }
+    #cognitive-target.go {
+      background: rgb(22 163 74) !important;
+      border-color: rgb(21 128 61) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 40px rgba(22, 163, 74, 0.45);
+      transform: scale(1.03);
+    }
+    #cognitive-target.nogo {
+      background: rgb(220 38 38) !important;
+      border-color: rgb(185 28 28) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 40px rgba(220, 38, 38, 0.45);
+      transform: scale(1.03);
+    }
+    #cognitive-target.responded {
+      transform: scale(0.95);
+    }
+
+    .dark .eyebrow { color: rgb(147 197 253); }
+    .dark .section-title { color: rgb(250 250 250); }
+    .dark .score-card, .dark .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .meter { background: rgb(39 39 42); }
+    .dark #cognitive-target.idle {
+      background: rgb(24 24 27);
+      border-color: rgb(39 39 42);
+      color: rgb(161 161 170);
+    }
+
+    .print-only { display: none; }
+    .adhd-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    .dark .adhd-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    @media (prefers-reduced-motion: reduce) { .adhd-hero-glow { display: none; } }
+    @media print {
+      #main-content > header,
+      #main-content > footer,
+      #main-content > #assessment-page-content,
+      #share-toast { display: none !important; }
+      #main-content > #printable-report { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+
+    @media (max-width: 640px) {
+      .section-title { font-size: 1.75rem; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../../scripts/tools/adhd-screener-ru.js"></script>
+</Layout>

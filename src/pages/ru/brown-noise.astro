@@ -1,0 +1,764 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const alternates = {
+  en: 'https://freeiqexam.com/brown-noise',
+  id: 'https://freeiqexam.com/id/generator-white-noise-cokelat'
+};
+
+const title = "Генератор коричневого шума онлайн бесплатно | Звуки для сна и бинауральные ритмы";
+const description = "Генератор коричневого, розового и зелёного шума с бинауральными ритмами и звуками дождя для сна и концентрации. 100% бесплатно, процедурный синтез без зацикливания.";
+const canonicalUrl = "https://freeiqexam.com/ru/brown-noise";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Генератор коричневого шума & Mixer Suara Tidur FreeIQExam",
+    "url": "https://freeiqexam.com/id/generator-white-noise-cokelat",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Memerlukan dukungan JavaScript dan Web Audio API",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "100% Sintesis suara prosedural Web Audio API (tanpa file rekaman, tanpa loop, pemutaran tanpa batas)",
+      "4 Warna Derau Terkalibrasi: Brown (1/f² Brownian), Pink (1/f Voss-McCartney), Белый (f⁰), dan Green (500Hz Alami)",
+      "Mesin Стерео бинауральные ритмы dengan preset Delta (Tidur Lelap), Theta (Meditasi), Alpha (Fokus), dan Beta (Belajar)",
+      "Mixer Suara Lingkungan Berlapis: Hujan prosedural, Далёкий гром, Ombak Laut, dan Вентилятор Tidur",
+      "Pengatur Waktu Tidur Cerdas dengan peredupan eksponensial halus 30 detik",
+      "Visualisator Bentuk Gelombang Partikel Reaktif 60 FPS",
+      "Preset Terkurasi untuk Hiperfokus ADHD, Tidur Lelap, Reda Tinitus, dan Meditasi",
+      "Tanpa daftar, tanpa iklan audio saat pemutaran, 100% pemrosesan privat di sisi klien"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/id"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Инструменты",
+        "item": "https://freeiqexam.com/id/tes-kecepatan-mengetik"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Генератор коричневого шума",
+        "item": "https://freeiqexam.com/id/generator-white-noise-cokelat"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Apa perbedaan antara Brown, Pink, dan White noise?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Perbedaannya terletak pada kerapatan spektral daya matematis di berbagai frekuensi. White noise memiliki daya yang sama di seluruh rentang frekuensi, menghasilkan desisan tajam bernada tinggi. Pink noise menurun 3 dB per oktaf (1/f), memberikan energi akustik yang seimbang menyerupai gemercik hujan lembut. Brown noise (Brownian atau derau merah) menurun 6 dB per oktaf (1/f²), menyaring frekuensi tinggi dan menonjolkan gemuruh rendah yang hangat mirip air terjun deras atau kabin pesawat terbang."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mengapa Brown noise sangat efektif untuk fokus dan penderita ADHD?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Penelitian neurosains mengenai model Moderate Brain Arousal (MBA) menunjukkan bahwa individu dengan ADHD memiliki aktivitas dopamin basal yang lebih rendah sehingga memerlukan stimulasi sensorik latar belakang yang optimal. Brown noise menghadirkan fenomena 'resonansi stokastik', di mana frekuensi rendah mengangkat sinyal saraf yang lemah melampaui ambang picu korteks prefrontal, meredakan pikiran yang melayang dan meningkatkan memori kerja tanpa memecah konsentrasi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Bagaimana masking akustik membantu meredakan tinitus (telinga berdenging)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tinitus sering kali timbul akibat hiperaktivitas di korteks pendengaran yang memproduksi dengingan semu. Suara berspektrum luas seperti Pink dan Brown noise menyediakan selimut akustik penuh yang menutupi suara denging tersebut, sekaligus melatih sistem saraf untuk mengabaikan sinyal tinitus sebagai suara latar belakang biasa."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah saya wajib memakai headphone untuk mendengarkan gelombang binaural?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya, headphone atau earphone stereo sangat wajib digunakan. Gelombang binaural bekerja ketika dua frekuensi yang sedikit berbeda dihantarkan secara independen ke masing-masing telinga (misalnya 100 Hz di telinga kiri dan 102 Hz di telinga kanan). Batang otak akan memproses selisih fase tersebut dan memicu persepsi gelombang 2 Hz. Jika diputar melalui speaker ruangan, kedua gelombang akan bercampur di udara sebelum sampai ke telinga sehingga efek binaural hilang."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Apakah aman mendengarkan Brown noise sepanjang malam saat tidur?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ya, Brown noise aman didengarkan sepanjang malam selama intensitas volumenya dijaga di bawah 60 dBA (setara suara percakapan tenang atau hujan rintik-rintik). Untuk kebersihan tidur yang optimal, Anda juga dapat memanfaatkan Pengatur Waktu Tidur terpasang yang akan meredupkan audio secara eksponensial selama 30 detik sebelum mati total secara otomatis."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  alternates={alternates}
+  enPath="/brown-noise"
+>
+  <Header currentPath="/id/generator-white-noise-cokelat" enPath="/brown-noise" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200 relative overflow-hidden">
+    <div class="brown-hero-glow" aria-hidden="true"></div>
+    
+    <!-- Hero Header -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider mb-4 shadow-2xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff]"></span>
+        <span>SINTESIS AKUSTIK 10-BAND · TANPA LOOP REKAMAN</span>
+      </div>
+
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-[-0.025em] text-zinc-950 dark:text-white mb-4">
+        Генератор коричневого шума Online Gratis
+      </h1>
+
+      <p class="text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
+        Lanskap suara Web Audio 100% prosedural yang dapat disesuaikan untuk hiperfokus ADHD, tidur lelap restoratif, peredam tinitus, dan meditasi mendalam. Padukan Brown, Pink, dan Green noise dengan gelombang binaural dan suasana hujan alami.
+      </p>
+    </section>
+
+    <!-- Main Sound Control Deck -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16 relative z-10">
+      
+      <!-- Sound Control Box -->
+      <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-8 shadow-xl">
+        
+        <!-- Hero Play & Visualizer Surface -->
+        <div class="relative mb-8 rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800/80 shadow-2xl">
+          
+          <!-- Canvas Waveform / Particle Visualizer -->
+          <canvas id="visualizerCanvas" class="w-full h-[200px] sm:h-[220px] block"></canvas>
+
+          <!-- Centered Play/Pause Button Overlay -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <button
+              type="button"
+              id="masterPlayBtn"
+              class="pointer-events-auto flex items-center gap-3 px-8 py-4 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white dark:text-zinc-950 font-bold text-base sm:text-lg shadow-xl shadow-blue-500/20 transition-transform duration-150 active:scale-[0.97] cursor-pointer"
+            >
+              <svg id="masterPlayIcon" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+              </svg>
+              <span id="masterPlayText">Mulai Suara</span>
+            </button>
+          </div>
+
+          <!-- Master Volume Slider Top-Right -->
+          <div class="absolute top-3 right-3 flex items-center gap-2 bg-zinc-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-zinc-800 text-[13px] text-zinc-300">
+            <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg></span>
+            <input
+              type="range"
+              id="masterVolumeSlider"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.8"
+              class="w-20 accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+              aria-label="Volume Utama"
+            />
+          </div>
+
+          <!-- Sleep Timer Countdown Badge Top-Left -->
+          <div id="timerCountdownDisplay" class="hidden absolute top-3 left-3 bg-[#0066cc]/10 border border-[#0066cc]/30 text-[#0066cc] dark:bg-[#2997ff]/10 dark:border-[#2997ff]/30 dark:text-[#2997ff] font-mono text-[13px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+            <span>00:00</span>
+          </div>
+
+        </div>
+
+        <!-- Quick Sound Presets Bar -->
+        <div class="mb-8">
+          <label class="block text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z" /></svg>Preset Cepat Lanskap Suara</span>
+          </label>
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              class="preset-btn active min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-700 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="deep-sleep"
+            >
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>Глубокий сон (Delta + Kipas)</span>
+            </button>
+            <button
+              type="button"
+              class="preset-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-100 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="adhd-focus"
+            >
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>Fokus ADHD (Alpha + Hujan)</span>
+            </button>
+            <button
+              type="button"
+              class="preset-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-100 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="tinnitus-relief"
+            >
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /></svg>Reda Tinitus (Pink + Ombak)</span>
+            </button>
+            <button
+              type="button"
+              class="preset-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-100 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="cozy-storm"
+            >
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2" /><path d="M16 14v6" /><path d="M8 14v6" /><path d="M12 16v6" /></svg>Badai Petir Nyaman</span>
+            </button>
+            <button
+              type="button"
+              class="preset-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-100 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="meditation"
+            >
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3" /><path d="M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5" /><path d="M12 7.5V9" /><path d="M7.5 12H9" /><path d="M16.5 12H15" /><path d="M12 16.5V15" /></svg>Meditasi Zen (Hijau + Theta)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Noise Color Selector -->
+        <div class="mb-8 pb-8 border-b border-zinc-200 dark:border-zinc-800/80">
+          <label class="block text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" /><circle cx="17.5" cy="10.5" r=".5" fill="currentColor" /><circle cx="8.5" cy="7.5" r=".5" fill="currentColor" /><circle cx="6.5" cy="12.5" r=".5" fill="currentColor" /><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h2.36c2.583 0 4.65-2.066 4.65-4.65 0-5.5-4.5-10-10-10z" /></svg>Spektrum Dasar Derau</span>
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            
+            <button
+              type="button"
+              class="noise-color-btn active min-h-[44px] p-4 rounded-2xl border border-blue-600 bg-blue-600/10 text-blue-600 dark:border-blue-400 dark:text-blue-400 text-left transition-all duration-150 active:scale-[0.97] cursor-pointer flex flex-col justify-between"
+              data-color="brown"
+            >
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-[15px]">Brown Noise</span>
+                <span class="text-[13px] font-mono opacity-80">1/f²</span>
+              </div>
+              <span class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug">Gemuruh hangat & dalam untuk tidur & fokus ADHD.</span>
+            </button>
+
+            <button
+              type="button"
+              class="noise-color-btn min-h-[44px] p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-zinc-800 dark:text-zinc-200 text-left transition-all duration-150 active:scale-[0.97] cursor-pointer flex flex-col justify-between hover:border-[#0066cc] dark:hover:border-[#2997ff]"
+              data-color="pink"
+            >
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-[15px]">Pink Noise</span>
+                <span class="text-[13px] font-mono opacity-80">1/f</span>
+              </div>
+              <span class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug">Profil hujan seimbang untuk menutupi tinitus.</span>
+            </button>
+
+            <button
+              type="button"
+              class="noise-color-btn min-h-[44px] p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-zinc-800 dark:text-zinc-200 text-left transition-all duration-150 active:scale-[0.97] cursor-pointer flex flex-col justify-between hover:border-[#0066cc] dark:hover:border-[#2997ff]"
+              data-color="white"
+            >
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-[15px]">White Noise</span>
+                <span class="text-[13px] font-mono opacity-80">f⁰</span>
+              </div>
+              <span class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug">Spektrum datar penutup suara bising tiba-tiba.</span>
+            </button>
+
+            <button
+              type="button"
+              class="noise-color-btn min-h-[44px] p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-zinc-800 dark:text-zinc-200 text-left transition-all duration-150 active:scale-[0.97] cursor-pointer flex flex-col justify-between hover:border-[#0066cc] dark:hover:border-[#2997ff]"
+              data-color="green"
+            >
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-[15px]">Green Noise</span>
+                <span class="text-[13px] font-mono opacity-80">500Hz</span>
+              </div>
+              <span class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug">Frekuensi alami penenang kecemasan somatik.</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Multi-Track Mixer Section -->
+        <div class="mb-8 pb-8 border-b border-zinc-200 dark:border-zinc-800/80">
+          <label class="block text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-4">
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="21" y1="4" x2="14" y2="4" /><line x1="10" y1="4" x2="3" y2="4" /><line x1="21" y1="12" x2="12" y2="12" /><line x1="8" y1="12" x2="3" y2="12" /><line x1="21" y1="20" x2="16" y2="20" /><line x1="12" y1="20" x2="3" y2="20" /><line x1="14" y1="2" x2="14" y2="6" /><line x1="8" y1="10" x2="8" y2="14" /><line x1="16" y1="18" x2="16" y2="22" /></svg>Mixer Lanskap Suara Multi-Trek</span>
+          </label>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            
+            <!-- Track 1: Base Noise -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="2" /><path d="M4.93 19.07a10 10 0 0 1 0-14.14" /><path d="M7.76 16.24a6 6 0 0 1 0-8.49" /><path d="M16.24 7.76a6 6 0 0 1 0 8.49" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg></span>
+                  <span>Volume Derau Dasar</span>
+                </span>
+                <span class="text-[13px] font-mono text-[#0066cc] dark:text-[#2997ff] font-semibold">Utama</span>
+              </div>
+              <input
+                type="range"
+                id="noiseVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.75"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Volume Derau Dasar"
+              />
+            </div>
+
+            <!-- Track 2: Binaural Carrier -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" /><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" /></svg></span>
+                  <span>Gelombang Binaural</span>
+                </span>
+                <div class="flex gap-1 text-[13px] font-mono">
+                  <button type="button" class="binaural-wave-btn active px-2.5 py-1 rounded-lg bg-blue-600/10 text-blue-600 border border-blue-600/40 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40 font-semibold transition-all active:scale-[0.97]" data-wave="delta">Delta</button>
+                  <button type="button" class="binaural-wave-btn px-2.5 py-1 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all active:scale-[0.97]" data-wave="theta">Theta</button>
+                  <button type="button" class="binaural-wave-btn px-2.5 py-1 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all active:scale-[0.97]" data-wave="alpha">Alpha</button>
+                  <button type="button" class="binaural-wave-btn px-2.5 py-1 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all active:scale-[0.97]" data-wave="beta">Beta</button>
+                </div>
+              </div>
+              <input
+                type="range"
+                id="binauralVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.35"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Volume Gelombang Binaural"
+              />
+            </div>
+
+            <!-- Track 3: Procedural Rain -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2" /><path d="M16 14v6" /><path d="M8 14v6" /><path d="M12 16v6" /></svg></span>
+                  <span>Tetesan Hujan Lembut</span>
+                </span>
+                <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">Highpass Filter</span>
+              </div>
+              <input
+                type="range"
+                id="rainVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.0"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Volume Hujan"
+              />
+            </div>
+
+            <!-- Track 4: Distant Thunder -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg></span>
+                  <span>Далёкий гром Kejauhan</span>
+                </span>
+                <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">Sub-Bass Claps</span>
+              </div>
+              <input
+                type="range"
+                id="thunderVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.0"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Volume Petir"
+              />
+            </div>
+
+            <!-- Track 5: Ocean Waves -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /></svg></span>
+                  <span>Ombak Laut Bergulung</span>
+                </span>
+                <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">0.12Hz LFO</span>
+              </div>
+              <input
+                type="range"
+                id="oceanVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.0"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Volume Ombak"
+              />
+            </div>
+
+            <!-- Track 6: Mechanical Sleep Fan -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" /><path d="M9.6 4.6A2 2 0 1 1 11 8H2" /><path d="M12.6 19.4A2 2 0 1 0 14 16H2" /></svg></span>
+                  <span>Вентилятор Tidur</span>
+                </span>
+                <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">120Hz Drone</span>
+              </div>
+              <input
+                type="range"
+                id="fanVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.0"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Volume Вентилятор"
+              />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Sleep Timer Section -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <label class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+<span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2.5 2.5" /><path d="M9 2h6" /></svg>Pengatur Waktu Tidur (Peredupan Halus 30 Detik)</span>
+            </label>
+            <span class="text-[13px] text-zinc-500 dark:text-zinc-400">Mencegah terbangun tiba-tiba</span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" class="timer-btn active min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-bold bg-blue-600/10 text-blue-600 border border-blue-600/40 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40 transition-all active:scale-[0.97] cursor-pointer" data-mins="0">Выкл (Kontinu)</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="15">15 Menit</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="30">30 Menit</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="45">45 Menit</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="60">60 Menit</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="90">90 Menit (1 Siklus)</button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Floating Master Playbar (Muncul saat suara aktif) -->
+    <div id="floatingBar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+      <div class="pointer-events-auto flex items-center gap-4 bg-zinc-950/90 text-white px-5 py-3 rounded-full border border-zinc-700 shadow-2xl backdrop-blur-md">
+        <button
+          type="button"
+          id="floatingPlayBtn"
+          class="w-10 h-10 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white dark:text-zinc-950 flex items-center justify-center transition-transform active:scale-[0.97] cursor-pointer"
+          aria-label="Alihkan Lanskap Suara"
+        >
+          <svg id="floatingPlayIcon" class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+          </svg>
+        </button>
+        <div class="text-[13px] font-medium">
+          <span class="text-zinc-400 block text-[11px] uppercase font-mono tracking-wider">Lanskap Suara Aktif</span>
+          <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">Prosedural Web Audio Live</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dokumentasi Ilmiah & Panduan Psikoakustik -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 text-[17px] leading-[1.62] space-y-12">
+      
+      <!-- Seksi 1: Fisika & Spektral Matematika -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-[-0.02em]">
+          1. Fisika & Spektral Matematika Warna Derau
+        </h2>
+        <p>
+          Dalam akustik dan pemrosesan sinyal digital, warna suara ditentukan oleh <strong>Power Spectral Density (PSD)</strong>—yakni bagaimana energi didistribusikan secara matematis di seluruh rentang frekuensi yang dapat didengar manusia (20 Hz hingga 20.000 Hz). Meskipun sering disederhanakan sebagai "suara latar belakang", warna derau yang berbeda memberikan dampak neurologis yang sangat kontras terhadap fokus kognitif dan arsitektur tidur.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+          
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-bold text-amber-500 dark:text-amber-400 text-base flex items-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="#8B5A2B" /></svg>
+              <span>Brown Noise (Derau Brownian / Red Noise)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Daya berkurang <strong>6 dB per oktaf ($1/f^2$)</strong>. Karena frekuensi tinggi disaring tajam sementara frekuensi bas ditingkatkan, Brown noise menghasilkan gemuruh beludru yang kaya menyerupai air terjun lebat atau kabin pesawat terbang.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-bold text-pink-500 dark:text-pink-400 text-base flex items-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="#EC4899" /></svg>
+              <span>Pink Noise (Kemiringan Spektral 1/f)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Daya berkurang <strong>3 dB per oktaf ($1/f$)</strong>, menjaga energi yang setara di setiap oktaf musik. Pink noise mencerminkan respons logaritmik telinga manusia dan menjadi standar klinis pereda tinitus.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-bold text-sky-500 dark:text-sky-400 text-base flex items-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="#ffffff" stroke="#a1a1aa" stroke-width="1.5" /></svg>
+              <span>White Noise (Spektrum Datar $f^0$)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Kerapatan daya yang sama rata di setiap Hertz ($f^0$). Mengandung energi yang sama di semua pita frekuensi terdengar, menghasilkan desisan statis cerah yang sangat efektif memblokir suara kejutan bernada tinggi.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-bold text-emerald-500 dark:text-emerald-400 text-base flex items-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="#10B981" /></svg>
+              <span>Green Noise (Pita Alami Menengah)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Kurva frekuensi berpusat di sekitar 500 Hz ($Q \approx 0.9$). Meniru lingkungan bio-akustik alami seperti desau dedaunan hutan, menurunkan aktivasi sistem saraf simpatis.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Seksi 2: Resonansi Stokastik & ADHD -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          2. Resonansi Stokastik: Mengapa Brown Noise Menenangkan Otak ADHD
+        </h2>
+        <p>
+          Attention-Deficit/Hyperactivity Disorder (ADHD) secara neurokimiawi ditandai oleh disregulasi transmisi dopamin di korteks prefrontal dan jalur striatal. Menurut <strong>model Moderate Brain Arousal (MBA)</strong> yang dirumuskan oleh ahli neurosains Sikström dan Söderlund (2007), individu dengan kadar dopamin basal rendah mengalami defisiensi rasio sinyal-terhadap-derau saraf internal, memicu kegelisahan motorik dan kegagalan fungsi eksekutif.
+        </p>
+        <p>
+          Ketika terpapar derau akustik frekuensi rendah berkelanjutan (khususnya Brown noise), otak mengalami <strong>Resonansi Stokastik (Stochastic Resonance)</strong>. Resonansi stokastik adalah fenomena biofisik non-linear di mana derau latar belakang pada intensitas optimal memperkuat sinyal saraf sub-ambang batas, mengangkatnya melampaui potensi aksi tanpa mengacaukan pemrosesan kognitif.
+        </p>
+        <p>
+          Dalam uji klinis terstruktur, peserta dengan ADHD yang mendengarkan Brown dan Pink noise terkalibrasi menunjukkan peningkatan memori kerja, pemahaman membaca, dan daya tahan fokus yang signifikan dibandingkan kondisi kontrol yang hening. Selimut akustik frekuensi rendah mengisi kanal sensorik perifer, mencegah talamus yang hiperaktif dari memicu pengalihan perhatian involunter.
+        </p>
+      </section>
+
+      <!-- Seksi 3: Reda Tinitus -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          3. Manajemen Tinitus: Masking Akustik & Inhibisi Residual
+        </h2>
+        <p>
+          Tinitus subjektif umumnya timbul akibat kerusakan sel rambut koklea atau de-aferentasi pendengaran. Ketika batang otak tidak lagi menerima sinyal frekuensi normal dari telinga bagian dalam, korteks pendengaran primer (A1) menaikkan penguatan sentralnya (central gain), memproduksi persepsi denging semu.
+        </p>
+        <p>
+          Lanskap suara prosedural memberikan dua manfaat klinis nyata:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Masking Akustik Penuh:</strong> Derau spektrum luas Pink dan Brown noise mengangkat ambang pendengaran sekitar melampaui intensitas nada tinitus, memberikan kelegaan psikologis instan.
+          </li>
+          <li>
+            <strong>Inhibisi Residual & Habituasi:</strong> Paparan berkelanjutan terhadap suara alami non-repetitif meredakan hiperaktivitas korteks pendengaran. Pasien sering kali menikmati periode hening sementara setelah suara derau dimatikan.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Seksi 4: Gelombang Binaural -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          4. Neurosains Gelombang Binaural & Frequency Following Response (FFR)
+        </h2>
+        <p>
+          Pertama kali ditemukan oleh fisikawan Heinrich Wilhelm Dove pada tahun 1839, <strong>gelombang binaural</strong> adalah ilusi pendengaran yang diproduksi di <em>Superior Olivary Complex</em> batang otak. Ketika dua nada sinus murni dengan selisih frekuensi kecil ($\Delta f$) dihantarkan secara independen ke masing-masing telinga melalui headphone stereo, otak mengintegrasikan perbedaan fase dan menyesuaikan osilasi listrik saraf agar selaras dengan selisih tersebut.
+        </p>
+
+        <!-- Binaural Table -->
+        <div class="overflow-x-auto my-4">
+          <table class="w-full text-left text-xs border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Pita Gelombang Otak</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Selisih Frekuensi ($\Delta f$)</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Status Saraf Utama</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Target Klinis</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-indigo-400">Gelombang Delta</td>
+                <td class="p-3">0,5 Hz – 4,0 Hz</td>
+                <td class="p-3">Tidur Gelombang Lambat NREM Tahap 3</td>
+                <td class="p-3">Perbaikan seluler, pelepasan hormon pertumbuhan, istirahat bawah sadar mendalam</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-cyan-400">Gelombang Theta</td>
+                <td class="p-3">4,0 Hz – 8,0 Hz</td>
+                <td class="p-3">Mimpi REM, Transisi Hipnagogik</td>
+                <td class="p-3">Meditasi mendalam, intuisi kreatif, konsolidasi memori jangka panjang</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Gelombang Alpha</td>
+                <td class="p-3">8,0 Hz – 13,0 Hz</td>
+                <td class="p-3">Kewaspadaan Rileks, Status Flow</td>
+                <td class="p-3">Pereda kecemasan somatik, konsentrasi belajar tenang, membaca tanpa lelah</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-amber-400">Gelombang Beta</td>
+                <td class="p-3">13,0 Hz – 30,0 Hz</td>
+                <td class="p-3">Pemrosesan Analitis Aktif</td>
+                <td class="p-3">Pemecahan masalah intensitas tinggi, kesigapan mental, kecepatan reaksi</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Seksi 5: Panduan Desibel Klinis -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          5. Panduan Desibel Klinis & Higienitas Suara Tidur Malam yang Aman
+        </h2>
+        <p>
+          Meskipun lanskap suara tidur membantu mempercepat waktu terlelap dan melindungi dari suara kejut lingkungan (seperti suara lalu lintas jalanan atau gonggongan anjing), intensitas desibel harus selalu mematuhi panduan kesehatan internasional:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Volume Tidur Dewasa Optimal (45 dBA – 55 dBA):</strong> Organisasi Kesehatan Dunia (WHO) menetapkan 50 dBA sebagai batas ambang akustik ideal untuk masking malam hari. Suara di atas 65 dBA berisiko memicu mikro-arousal saraf simpatis yang mengurangi durasi tidur delta restoratif.
+          </li>
+          <li>
+            <strong>Keamanan Suara Bayi & Anak (&lt;50 dBA pada Jarak 2 Meter):</strong> American Academy of Pediatrics (AAP) merekomendasikan penempatan sumber suara minimal berjarak 2 meter (7 kaki) dari tempat tidur bayi serta membatasi volume di bawah 50 dBA demi melindungi gendang telinga yang masih berkembang.
+          </li>
+          <li>
+            <strong>Peredupan Eksponensial 30 Detik:</strong> Penghentian suara audio secara mendadak dapat memicu keterkejutan otonom yang membangunkan tidur. Generator kami secara otomatis menerapkan kurva redam 30 detik saat timer tidur berakhir.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Seksi 6: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          6. Pertanyaan yang Sering Diajukan (FAQ)
+        </h2>
+
+        <div class="space-y-3">
+          
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa perbedaan antara Brown, Pink, dan White noise?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              White noise memiliki daya yang sama di seluruh frekuensi, menciptakan suara mendesis tajam. Pink noise menurun 3 dB per oktaf (1/f), menghasilkan suara hujan lembut yang seimbang di setiap oktaf. Brown noise menurun 6 dB per oktaf (1/f²), memproduksi gemuruh hangat dan dalam seperti air terjun deras atau kabin pesawat terbang.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Mengapa Brown noise sangat efektif untuk fokus dan penderita ADHD?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Individu dengan ADHD umumnya memiliki tingkat dopamin basal yang lebih rendah. Brown noise memperkenalkan fenomena 'resonansi stokastik', di mana derau frekuensi rendah memperkuat sinyal saraf yang lemah melampaui ambang picu korteks prefrontal, meredakan pikiran yang melayang dan meningkatkan kapasitas memori kerja.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Bagaimana masking akustik membantu meredakan tinitus?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Tinitus disebabkan oleh hiperaktivitas pada korteks pendengaran yang menciptakan dengingan semu. Pink dan Brown noise berspektrum luas menutupi sinyal denging tersebut dan melatih kembali korteks pendengaran seiring berjalannya waktu untuk mengabaikan sinyal tersebut.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apakah saya wajib memakai headphone untuk gelombang binaural?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Ya, headphone atau earphone stereo sangat wajib. Gelombang binaural tercipta ketika dua frekuensi yang berbeda sedikit dihantarkan secara independen ke masing-masing telinga agar batang otak dapat memproses selisih fase tersebut. Memutarnya lewat speaker eksternal akan mencampurkan kedua gelombang di udara bebas sehingga efeknya hilang.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apakah aman mendengarkan Brown noise sepanjang malam saat tidur?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Ya, Brown noise aman didengarkan sepanjang malam asalkan volumenya dijaga di bawah 60 dBA. Untuk higienitas tidur optimal, Anda juga dapat memanfaatkan Pengatur Waktu Tidur otomatis dengan fitur peredupan halus 30 detik.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Apa itu Green noise dan kapan sebaiknya saya menggunakannya?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Green noise adalah profil suara alami yang berpusat di sekitar 500 Hz, menyerupai gemerisik angin di antara pepohonan dan aliran sungai hutan. Suara ini sangat ideal digunakan untuk meredakan ketegangan tubuh, stres harian, dan meditasi kesadaran penuh (mindfulness).
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Bisakah generator suara atau Brown noise membantu bayi tidur dengan aman?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Ya, suara frekuensi rendah meniru lingkungan akustik intrauterin (aliran darah dan denyut kardiovaskular ibu), membantu menenangkan bayi. Namun, American Academy of Pediatrics menyarankan untuk meletakkan alat suara setidaknya berjarak 2 meter dari boks bayi dan menjaga intensitas suara di bawah 50 dBA.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Mengapa Web Audio prosedural lebih unggul daripada memutar rekaman suara MP3/audio?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Rekaman audio MP3/WAV berulang setiap beberapa menit, menciptakan jeda loop terprediksi yang dapat dideteksi oleh otak bawah sadar dan memicu terbangun saat tidur ringan. Web Audio prosedural mensintesis setiap milidetik derau secara langsung dan matematis, menyajikan suara tanpa batas, tanpa artefak perulangan, dan tanpa memakan kuota internet.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <script src="../../scripts/tools/brown-noise-engine-ru.js"></script>
+
+  <style is:global>
+    .brown-hero-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1000px;
+      height: 480px;
+      background: radial-gradient(50% 50% at 50% 20%, rgba(0, 102, 204, 0.08) 0%, rgba(0, 102, 204, 0.02) 55%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .dark .brown-hero-glow {
+      background: radial-gradient(50% 50% at 50% 20%, rgba(41, 151, 255, 0.12) 0%, rgba(41, 151, 255, 0.03) 55%, transparent 100%);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .brown-hero-glow {
+        display: none;
+      }
+    }
+  </style>
+</Layout>

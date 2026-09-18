@@ -1,0 +1,685 @@
+---
+import Layout from '../../../components/ru/LayoutRu.astro';
+import Header from '../../../components/ru/HeaderRu.astro';
+import Footer from '../../../components/ru/FooterRu.astro';
+
+const title = "Тест скорости кликов (CPS) - проверка кликов в секунду онлайн | FreeIQExam";
+const description = "Измерьте скорость кликов в секунду (CPS) с помощью бесплатного онлайн-теста. Рассчитайте средний CPS, пиковый темп и ритмичность кликов мгновенно.";
+
+const DURATIONS = [5, 10, 30];
+const DEFAULT_DURATION = 10;
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Тест скорости кликов в секунду (CPS)",
+    "url": "https://freeiqexam.com/ru/games/click-speed-test",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Бесплатный тест скорости кликов, измеряющий сырую частоту нажатий (CPS), пиковый темп за 1 секунду и ритмичность нажатий за 5, 10 или 30 секунд."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Когнитивные игры",
+        "item": "https://freeiqexam.com/ru/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Тест скорости кликов",
+        "item": "https://freeiqexam.com/ru/games/click-speed-test"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/games/click-speed-test" idPath="/permainan/click-speed-test" canonicalUrl="https://freeiqexam.com/ru/games/click-speed-test">
+  <Header enPath="/games/click-speed-test" idPath="/permainan/click-speed-test" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Хлебные крошки">
+      <a href="/ru" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Главная</a>
+      <span class="mx-2">/</span>
+      <a href="/ru/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Когнитивные игры</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Тест скорости кликов</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-yellow mb-1.5">
+          Gs &bull; Моторная скорость
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            Тест скорости кликов (CPS)
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[32px] px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            aria-haspopup="dialog"
+          >
+            Как играть
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="pastel-hud pastel-hud-accent-yellow rounded-xl px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Время</div>
+          <div id="hud-time" class="text-lg font-heading font-extrabold tabular-nums leading-tight">10.0s</div>
+        </div>
+        <div class="pastel-hud pastel-hud-accent-mint rounded-xl px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Клики</div>
+          <div id="hud-clicks" class="text-lg font-heading font-extrabold tabular-nums leading-tight">0</div>
+        </div>
+        <div class="pastel-hud pastel-hud-accent-sky rounded-xl px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Текущий CPS</div>
+          <div id="hud-cps" class="text-lg font-heading font-extrabold tabular-nums leading-tight">0.0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Duration selector -->
+    <div class="mb-6 flex flex-wrap items-center justify-center gap-2.5" role="group" aria-label="Длительность теста">
+      {DURATIONS.map((d) => (
+        <button
+          type="button"
+          data-duration={d}
+          class={`duration-chip pastel-chip min-h-[44px] ${d === DEFAULT_DURATION ? 'active' : ''}`}
+          aria-pressed={d === DEFAULT_DURATION ? 'true' : 'false'}
+        >
+          {d} секунд
+        </button>
+      ))}
+    </div>
+
+    <!-- Arena -->
+    <section class="mb-6" aria-label="Поле теста кликов">
+      <button
+        id="cps-arena"
+        type="button"
+        class="game-pastel-arena relative w-full rounded-3xl flex flex-col items-center justify-center gap-3 px-6 py-12 sm:py-14 min-h-[260px] sm:min-h-[320px] select-none cursor-pointer transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+      >
+        <!-- Layer: awaiting start -->
+        <div id="arena-ready" class="flex flex-col items-center gap-3 text-center">
+          <div class="pastel-icon pastel-icon-yellow w-16 h-16 rounded-2xl">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
+            </svg>
+          </div>
+          <div class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+            Нажмите на поле, чтобы начать
+          </div>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm">
+            Таймер запустится с первым нажатием. Кликайте так быстро, как можете, пока не истечёт время.
+          </p>
+        </div>
+
+        <!-- Layer: running -->
+        <div id="arena-running" class="hidden flex-col items-center gap-2 text-center">
+          <div id="arena-click-count" class="text-6xl sm:text-7xl font-heading font-extrabold text-zinc-950 dark:text-white tabular-nums leading-none">
+            0
+          </div>
+          <div class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+            Продолжайте!
+          </div>
+        </div>
+
+        <!-- Layer: finished / locked -->
+        <div id="arena-done" class="hidden flex-col items-center gap-3 text-center">
+          <div class="pastel-icon pastel-icon-cyan w-16 h-16 rounded-2xl">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+            Тест завершён
+          </div>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">Нажмите «Повторить», чтобы сделать ещё одну попытку.</p>
+        </div>
+      </button>
+    </section>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+      <button
+        id="btn-start"
+        type="button"
+        class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+      >
+        <span id="btn-start-label">Начать тест</span>
+      </button>
+      <button
+        id="btn-reset"
+        type="button"
+        class="min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+      >
+        Сбросить
+      </button>
+    </div>
+
+    <!-- Results -->
+    <section id="results-panel" class="hidden mb-12" aria-live="polite" aria-label="Результаты теста">
+      <div class="game-pastel-arena rounded-3xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div class="pastel-eyebrow pastel-eyebrow-mint mb-2">Результат</div>
+            <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+              <span id="res-cps" class="tabular-nums">0.0</span>
+              <span class="text-base sm:text-lg font-semibold text-zinc-500 dark:text-zinc-400">кликов в секунду</span>
+            </h2>
+          </div>
+          <div id="res-tier" class="px-4 py-2 rounded-xl border text-sm font-bold text-center"></div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div class="pastel-metric rounded-2xl p-4 text-center">
+            <small class="block">Всего кликов</small>
+            <strong id="res-total" class="text-2xl font-heading tabular-nums">0</strong>
+          </div>
+          <div class="pastel-metric rounded-2xl p-4 text-center">
+            <small class="block">Пик за 1 сек</small>
+            <strong id="res-peak" class="text-2xl font-heading tabular-nums">0</strong>
+          </div>
+          <div class="pastel-metric rounded-2xl p-4 text-center">
+            <small class="block">Медианный интервал</small>
+            <strong id="res-median" class="text-2xl font-heading tabular-nums">--</strong>
+          </div>
+          <div class="pastel-metric rounded-2xl p-4 text-center">
+            <small class="block">Ритмичность</small>
+            <strong id="res-rhythm" class="text-2xl font-heading tabular-nums">--</strong>
+          </div>
+        </div>
+
+        <p id="res-description" class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6"></p>
+
+        <div class="pt-5 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+            Личный рекорд: <strong id="res-best" class="text-zinc-700 dark:text-zinc-200">--</strong>
+          </span>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="/ru/profile"
+              class="inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            >
+              Профиль
+            </a>
+            <button
+              id="btn-retake"
+              type="button"
+              class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            >
+              Повторить
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational section -->
+    <section class="border-t border-[var(--pastel-line)] dark:border-zinc-800 pt-12 pb-6">
+      <div class="bg-white/90 dark:bg-zinc-900/60 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-4">
+          Что измеряет тест скорости кликов?
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+          Показатель кликов в секунду (CPS) объединяет моторную скорость пальцев, задержку устройства ввода и устойчивость внимания, необходимую для поддержания равномерного ритма. В модели Каттелла-Хорна-Кэрролла (CHC) это относится к скорости обработки информации (Gs) &mdash; в частности к беглости психомоторных реакций.
+        </p>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+          Обычный пользователь мыши делает от 5 до 7 кликов в секунду. Показатели выше 8 CPS обычно требуют специальных техник (баттерфляй или джиттер-кликинг). Тест отображает как средний темп за всю попытку, так и пиковый показатель за одну секунду.
+        </p>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          <strong class="text-zinc-900 dark:text-zinc-100">Ритмичность</strong> отображается в процентах и отражает стабильность промежутков между нажатиями.
+        </p>
+        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-medium">
+          Примечание: Результат CPS сильно зависит от частоты опроса мыши, экрана и браузера. Это показатель моторной скорости, а не общего интеллекта, и его нельзя считать тестом IQ.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- How to Play modal -->
+  <div
+    id="how-to-play-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="how-to-play-title"
+  >
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 mb-4">
+        <h2 id="how-to-play-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+          Как играть
+        </h2>
+        <button
+          id="btn-close-how-to-play"
+          type="button"
+          class="min-h-[32px] min-w-[32px] rounded-lg text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          aria-label="Закрыть"
+        >
+          &times;
+        </button>
+      </div>
+      <ol class="list-decimal list-inside space-y-3 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        <li>Выберите длительность: <strong class="text-zinc-900 dark:text-zinc-100">5, 10 или 30 секунд</strong>. Длинные попытки проверяют выносливость; короткие - пиковую скорость.</li>
+        <li>Нажмите <strong class="text-zinc-900 dark:text-zinc-100">Начать тест</strong>, затем кликните по полю. Таймер включится с первым нажатием.</li>
+        <li>Кликайте как можно быстрее до окончания времени. Можно использовать мышь, трекпад, сенсорный экран или клавишу <kbd class="px-1.5 py-0.5 rounded border border-zinc-300 dark:border-zinc-600 font-mono text-xs">Пробел</kbd>.</li>
+        <li>Ваши результаты сохраняются автоматически в вашем <a href="/ru/profile" class="text-blue-600 dark:text-blue-400 hover:underline">когнитивном профиле</a>.</li>
+      </ol>
+      <div class="mt-5 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Совет: положите предплечье на стол и совершайте движения пальцами. Напряжение всей руки приводит к быстрому утомлению.
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord, getPerformanceTier, getProfile } from '../../../utils/profileStore';
+
+  type Phase = 'ready' | 'running' | 'done';
+
+  let durationSeconds = 10;
+  let phase: Phase = 'ready';
+  let clickTimes: number[] = [];
+  let trialStart = 0;
+  let rafId = 0;
+  let endTimerId = 0;
+
+  const byId = (id: string) => document.getElementById(id);
+
+  const arena = byId('cps-arena') as HTMLButtonElement | null;
+  const arenaReady = byId('arena-ready');
+  const arenaRunning = byId('arena-running');
+  const arenaDone = byId('arena-done');
+  const arenaClickCount = byId('arena-click-count');
+
+  const hudTime = byId('hud-time');
+  const hudClicks = byId('hud-clicks');
+  const hudCps = byId('hud-cps');
+
+  const btnStart = byId('btn-start') as HTMLButtonElement | null;
+  const btnStartLabel = byId('btn-start-label');
+  const btnReset = byId('btn-reset') as HTMLButtonElement | null;
+  const btnRetake = byId('btn-retake') as HTMLButtonElement | null;
+  const resultsPanel = byId('results-panel');
+
+  const modal = byId('how-to-play-modal');
+
+  function show(node: HTMLElement | null, visible: boolean) {
+    if (!node) return;
+    if (visible) {
+      node.classList.remove('hidden');
+      node.style.display = '';
+    } else {
+      node.classList.add('hidden');
+    }
+  }
+
+  function showLayer(node: HTMLElement | null, visible: boolean) {
+    if (!node) return;
+    node.classList.toggle('hidden', !visible);
+  }
+
+  function setPhase(next: Phase) {
+    phase = next;
+    showLayer(arenaReady, next === 'ready');
+    showLayer(arenaRunning, next === 'running');
+    showLayer(arenaDone, next === 'done');
+
+    if (arena) {
+      arena.disabled = next === 'done';
+      arena.setAttribute('aria-busy', next === 'running' ? 'true' : 'false');
+    }
+
+    if (btnStartLabel) {
+      btnStartLabel.textContent = next === 'running' ? 'Идёт тест...' : 'Начать тест';
+    }
+    if (btnStart) {
+      btnStart.disabled = next === 'running';
+    }
+  }
+
+  function resetReadouts() {
+    if (hudTime) hudTime.textContent = `${durationSeconds.toFixed(1)}s`;
+    if (hudClicks) hudClicks.textContent = '0';
+    if (hudCps) hudCps.textContent = '0.0';
+    if (arenaClickCount) arenaClickCount.textContent = '0';
+  }
+
+  function armTrial() {
+    window.clearTimeout(endTimerId);
+    window.cancelAnimationFrame(rafId);
+    clickTimes = [];
+    trialStart = 0;
+    resetReadouts();
+    setPhase('ready');
+    show(resultsPanel, false);
+  }
+
+  function registerClick() {
+    if (phase === 'done') return;
+
+    const now = performance.now();
+    if (phase === 'ready') {
+      phase = 'running';
+      trialStart = now;
+      clickTimes = [0];
+      setPhase('running');
+
+      endTimerId = window.setTimeout(() => {
+        finishTrial();
+      }, durationSeconds * 1000);
+
+      tickHud();
+      updateClickCounter();
+      return;
+    }
+
+    clickTimes.push(now - trialStart);
+    updateClickCounter();
+  }
+
+  function updateClickCounter() {
+    const total = clickTimes.length;
+    if (arenaClickCount) arenaClickCount.textContent = String(total);
+    if (hudClicks) hudClicks.textContent = String(total);
+  }
+
+  function tickHud() {
+    if (phase !== 'running') return;
+    const elapsedMs = performance.now() - trialStart;
+    const remainingMs = Math.max(0, durationSeconds * 1000 - elapsedMs);
+
+    if (hudTime) {
+      hudTime.textContent = `${(remainingMs / 1000).toFixed(1)}s`;
+    }
+
+    if (elapsedMs > 0 && hudCps) {
+      const liveCps = (clickTimes.length / (elapsedMs / 1000));
+      hudCps.textContent = liveCps.toFixed(1);
+    }
+
+    if (remainingMs > 0) {
+      rafId = window.requestAnimationFrame(tickHud);
+    }
+  }
+
+  function computeMetrics() {
+    const total = clickTimes.length;
+    const averageCps = durationSeconds > 0 ? total / durationSeconds : 0;
+
+    let peakBurst = 0;
+    for (let i = 0; i < clickTimes.length; i++) {
+      const windowStart = clickTimes[i];
+      const windowEnd = windowStart + 1000;
+      let count = 0;
+      for (let j = i; j < clickTimes.length; j++) {
+        if (clickTimes[j] <= windowEnd) count++;
+        else break;
+      }
+      if (count > peakBurst) peakBurst = count;
+    }
+
+    const intervals: number[] = [];
+    for (let i = 1; i < clickTimes.length; i++) {
+      intervals.push(clickTimes[i] - clickTimes[i - 1]);
+    }
+
+    let medianInterval: number | null = null;
+    let rhythmScore = 100;
+    if (intervals.length > 0) {
+      const sorted = [...intervals].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      medianInterval =
+        sorted.length % 2 === 1
+          ? sorted[mid]
+          : (sorted[mid - 1] + sorted[mid]) / 2;
+
+      const mean = intervals.reduce((acc, v) => acc + v, 0) / intervals.length;
+      if (mean > 0) {
+        const variance =
+          intervals.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) /
+          intervals.length;
+        const cv = Math.sqrt(variance) / mean;
+        rhythmScore = Math.max(0, Math.min(100, Math.round((1 - cv) * 100)));
+      }
+    }
+
+    const performanceScore = Math.max(
+      0,
+      Math.min(100, Math.round((averageCps / 12) * 100))
+    );
+
+    return {
+      total,
+      averageCps,
+      peakBurst,
+      medianInterval,
+      rhythmScore,
+      performanceScore,
+    };
+  }
+
+  function setText(id: string, value: string) {
+    const el = byId(id);
+    if (el) el.textContent = value;
+  }
+
+  function finishTrial() {
+    window.cancelAnimationFrame(rafId);
+    setPhase('done');
+
+    if (hudTime) hudTime.textContent = '0.0s';
+
+    const {
+      total,
+      averageCps,
+      peakBurst,
+      medianInterval,
+      rhythmScore,
+      performanceScore,
+    } = computeMetrics();
+
+    if (hudCps) hudCps.textContent = averageCps.toFixed(1);
+
+    setText('res-cps', averageCps.toFixed(1));
+    setText('res-total', String(total));
+    const peak = peakBurst || total;
+    setText('res-peak', String(peak));
+    setText(
+      'res-median',
+      medianInterval === null ? '--' : `${Math.round(medianInterval)} ms`
+    );
+    setText(
+      'res-rhythm',
+      intervalsAvailable(total) ? `${rhythmScore}%` : '--'
+    );
+
+    const tier = getPerformanceTier(performanceScore, 'ru');
+    const tierNode = byId('res-tier');
+    if (tierNode) {
+      tierNode.textContent = tier.tier;
+      tierNode.className = `px-4 py-2 rounded-xl border text-sm font-bold text-center ${tier.badgeClass}`;
+    }
+
+    setText(
+      'res-description',
+      total === 0
+        ? 'Клики не зарегистрированы. Нажмите «Повторить» и кликайте сразу после запуска таймера.'
+        : `${tier.description} Ваш лучший результат за 1 секунду: ${peak} кликов.`
+    );
+
+    show(resultsPanel, true);
+
+    if (total > 0) {
+      try {
+        saveGameRecord({
+          gameId: 'click-speed-test',
+          completedAt: new Date().toISOString(),
+          durationSeconds,
+          mode: 'standard',
+          metrics: {
+            performanceScore,
+            accuracy: 1,
+            trialsCompleted: total,
+            correctCount: total,
+            errorCount: 0,
+            ...(medianInterval === null ? {} : { medianRT: Math.round(medianInterval) }),
+            bestStreak: peak,
+            maxLevel: durationSeconds,
+          },
+        });
+      } catch (e) {
+        console.warn('Could not save click speed record:', e);
+      }
+    }
+
+    renderPersonalBest();
+
+    if (resultsPanel) {
+      resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function intervalsAvailable(count: number) {
+    return count >= 3;
+  }
+
+  function renderPersonalBest() {
+    const node = byId('res-best');
+    if (!node) return;
+    try {
+      const games = getProfile().games || [];
+      let best = 0;
+      games.forEach((session) => {
+        if (session.gameId !== 'click-speed-test') return;
+        const score = session.metrics?.performanceScore ?? 0;
+        if (score > best) best = score;
+      });
+      node.textContent = best > 0 ? `${(best / 10).toFixed(2)} CPS` : '--';
+    } catch {
+      node.textContent = '--';
+    }
+  }
+
+  function initDurationChips() {
+    const chips = document.querySelectorAll<HTMLButtonElement>('.duration-chip');
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        if (phase === 'running') return;
+        const value = parseInt(chip.getAttribute('data-duration') || '', 10);
+        if (Number.isNaN(value)) return;
+        durationSeconds = value;
+
+        chips.forEach((other) => {
+          const isActive = other === chip;
+          other.classList.toggle('active', isActive);
+          other.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
+        armTrial();
+      });
+    });
+  }
+
+  function initModal() {
+    const openBtn = byId('btn-how-to-play') as HTMLButtonElement | null;
+    const closeBtn = byId('btn-close-how-to-play') as HTMLButtonElement | null;
+    if (!modal) return;
+
+    const open = () => {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      closeBtn?.focus();
+    };
+    const close = () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      openBtn?.focus();
+    };
+
+    openBtn?.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) close();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !modal.classList.contains('hidden')) close();
+    });
+  }
+
+  function initArena() {
+    if (!arena) return;
+
+    arena.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      registerClick();
+    });
+
+    arena.addEventListener('click', (event) => event.preventDefault());
+    arena.addEventListener('contextmenu', (event) => event.preventDefault());
+
+    arena.addEventListener('keydown', (event) => {
+      if (event.key !== ' ' && event.key !== 'Enter') return;
+      event.preventDefault();
+      if (event.repeat) return;
+      registerClick();
+    });
+  }
+
+  function init() {
+    resetReadouts();
+    setPhase('ready');
+    show(resultsPanel, false);
+    renderPersonalBest();
+
+    initDurationChips();
+    initModal();
+    initArena();
+
+    btnStart?.addEventListener('click', () => {
+      if (phase === 'running') return;
+      armTrial();
+      arena?.focus();
+    });
+
+    btnReset?.addEventListener('click', () => {
+      armTrial();
+    });
+
+    btnRetake?.addEventListener('click', () => {
+      armTrial();
+      arena?.focus();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

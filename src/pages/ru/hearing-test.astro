@@ -1,0 +1,760 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const alternates = {};
+
+const title = "Бесплатный онлайн-тест слуха и калькулятор возраста ушей | Аудиограмма частот";
+const description = "Проверьте слух онлайн с помощью бесплатного клинического аудиометра и частотной развёртки. Независимая калибровка левого и правого уха, тональная аудиограмма и мгновенный результат возраста ушей.";
+const canonicalUrl = "https://freeiqexam.com/ru/hearing-test";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Клиническая тональная аудиометрия и высокочастотный тест слуха",
+    "description": "Онлайн-скрининг слуха с тональной аудиометрией по Хьюсону-Вестлейку (125 Гц – 8 000 Гц) и высокочастотным анализом пресбиакузиса (8 000 Гц – 20 000 Гц).",
+    "url": canonicalUrl,
+    "medicalAudience": "Patient",
+    "aspect": "Screening",
+    "inLanguage": "ru"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Онлайн-тест слуха и калькулятор возраста ушей FreeIQExam",
+    "url": canonicalUrl,
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Требуется поддержка Web Audio API и стереонаушники",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": [
+      "Скрининг тональной аудиометрии (125 Гц – 8 000 Гц) методом лестницы Хьюсона-Вестлейка",
+      "Высокочастотная развёртка слуха (8 000 Гц – 20 000 Гц) с картированием пресбиакузиса",
+      "Стереоизоляция каналов для независимой оценки левого и правого уха",
+      "Интерактивная аудиограмма на canvas с наложением речевого банана",
+      "Анти-щелчковые 15-мс экспоненциальные огибающие усиления для защиты акустических преобразователей",
+      "Загружаемая сводка скрининга и сгенерированная браузером аудиограмма",
+      "Нулевой пейволл, нулевая регистрация по e-mail, синтез Web Audio в браузере"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://freeiqexam.com/ru/" },
+      { "@type": "ListItem", "position": 2, "name": "Когнитивные игры", "item": "https://freeiqexam.com/ru/games" },
+      { "@type": "ListItem", "position": 3, "name": "Тест слуха и возраст ушей", "item": canonicalUrl }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Насколько точен онлайн-тест слуха?", "acceptedAnswer": { "@type": "Answer", "text": "Онлайн-тесты слуха с использованием Web Audio API дают раннее предупреждение; уровни звука браузера не эквивалентны калиброванной клинической аудиометрии при использовании качественных накладных наушников в тихой среде. Хотя они не могут заменить формальное диагностическое обследование в звукоизолированной кабине с калиброванными аудиометрическими преобразователями, они могут выявить различия, которые стоит обсудить со специалистом по слуху, но не могут надёжно установить клинический диагноз или калиброванный порог слуха." } },
+      { "@type": "Question", "name": "Нужны ли наушники для этого теста слуха?", "acceptedAnswer": { "@type": "Answer", "text": "Да, стереонаушники или внутриканальные мониторы (IEM) необходимы. Громкоговорители акустически смешивают левый и правый аудиоканалы в комнате, что делает невозможной независимую оценку каждого уха. Кроме того, отражения в комнате и окружающий шум искажают уровни звукового давления, а стандартные динамики ноутбуков быстро срезают частоты выше 10 000 Гц. Для достоверных результатов используйте проводные наушники и отключите пространственный звук, объёмное звучание и активные эквалайзеры." } },
+      { "@type": "Question", "name": "Что такое высокочастотный слух и как он рассчитывается?", "acceptedAnswer": { "@type": "Answer", "text": "Биологический возраст уха - это оценка слухового износа на основе вашей самой высокой слышимой акустической частоты. Здоровые новорождённые имеют примерно 16 000 волосковых клеток улитки и могут слышать до 20 000 Гц. За десятилетия накопленное шумовое воздействие, микроваскулярные изменения и механический стресс повреждают стереоцилии у основания улитки, снижая слышимый потолок: 19 кГц соответствует возрасту до 18 лет, 17 кГц - ~24 годам, 15 кГц - ~34 годам, 14 кГц - ~44 годам, 12 кГц - ~54 годам, 8 кГц - 65+ лет." } },
+      { "@type": "Question", "name": "В чём разница между герцами (Гц) и децибелами (дБ)?", "acceptedAnswer": { "@type": "Answer", "text": "Герцы (Гц) измеряют частоту или высоту тона - как быстро звуковые волны колеблются каждую секунду (например, низкий басовый гул 250 Гц против высокого комариного писка 17 000 Гц). Децибелы (дБ) измеряют уровень звукового давления или громкость по логарифмической шкале. В клинической аудиологии дБ HL (уровень слуха) указывает порог слышимости относительно молодого здорового человеческого уха (0 дБ HL), где разговорная речь регистрируется между 40 и 60 дБ HL." } },
+      { "@type": "Question", "name": "Почему молодые люди слышат комариный рингтон, а пожилые - нет?", "acceptedAnswer": { "@type": "Answer", "text": "Комариный тон работает на частоте примерно 17 400 Гц (17,4 кГц). Волосковые клетки, отвечающие за обнаружение этой ультравысокой частоты, находятся у входа (основания) улитки и испытывают наибольшие гидравлические сдвиговые силы в течение жизни. К 25 годам большинство людей уже испытали достаточную естественную потерю волосковых клеток (пресбиакузис), что 17,4 кГц становится неслышимым, тогда как подростки и молодые люди сохраняют интактные базальные волосковые клетки и легко воспринимают его." } },
+      { "@type": "Question", "name": "Что такое «речевой банан» на аудиограмме?", "acceptedAnswer": { "@type": "Answer", "text": "Речевой банан - это характерная банановидная область на клинической аудиограмме, охватывающая частоты от 250 Гц до 6 000 Гц и уровни интенсивности от 20 дБ HL до 55 дБ HL. Почти все фонемы человеческой речи попадают в эту зону: низкочастотные гласные (у, о, а) находятся между 250 и 1 000 Гц, тогда как критические высокочастотные согласные (с, ф, ш, к) располагаются выше 2 000 Гц. Потеря слуха, входящая в речевой банан, делает речь приглушённой и неразборчивой." } },
+      { "@type": "Question", "name": "Что такое правило безопасного прослушивания 60/60 ВОЗ?", "acceptedAnswer": { "@type": "Answer", "text": "Правило 60/60 Всемирной организации здравоохранения (ВОЗ) рекомендует слушать персональные аудиоустройства не громче 60% максимальной громкости не дольше 60 минут подряд, после чего следует минимум 10–15 минут акустического отдыха. Соблюдение этого руководства предотвращает метаболическое истощение и окислительное повреждение волосковых клеток улитки, значительно снижая риск шумовой потери слуха (NIHL) и постоянного тиннитуса." } },
+      { "@type": "Question", "name": "Можно ли обратить или вылечить постоянную потерю слуха?", "acceptedAnswer": { "@type": "Answer", "text": "Сенсоневральная потеря слуха - вызванная разрушением волосковых клеток улитки или волокон слухового нерва - в настоящее время необратима у людей, потому что сенсорные волосковые клетки не регенерируют после потери. Однако кондуктивная потеря слуха, вызванная серной пробкой или выпотом в среднем ухе, часто может быть вылечена медикаментозно. Сенсоневральная потеря может быть успешно реабилитирована с помощью современных слуховых аппаратов, алгоритмов понижения частоты или кохлеарных имплантов." } }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/hearing-test" idPath="/id/tes-pendengaran" schema={schema}>
+  <Header currentPath="/hearing-test" enPath="/hearing-test" idPath="/id/tes-pendengaran" />
+
+  <style>
+    .earage-waveform { display: flex; align-items: center; justify-content: center; gap: 5px; height: 64px; margin: 24px 0; }
+    .earage-waveform .bar { width: 4px; background: #0066cc; border-radius: 9999px; height: 8px; transition: height 0.1s ease; }
+    .dark .earage-waveform .bar { background: #2997ff; }
+    .earage-waveform.active .bar { animation: waveBar 0.8s infinite ease-in-out; }
+    .earage-waveform.active .bar:nth-child(2) { animation-delay: 0.05s; }
+    .earage-waveform.active .bar:nth-child(3) { animation-delay: 0.10s; }
+    .earage-waveform.active .bar:nth-child(4) { animation-delay: 0.15s; }
+    .earage-waveform.active .bar:nth-child(5) { animation-delay: 0.20s; }
+    .earage-waveform.active .bar:nth-child(6) { animation-delay: 0.25s; }
+    .earage-waveform.active .bar:nth-child(7) { animation-delay: 0.30s; }
+    .earage-waveform.active .bar:nth-child(8) { animation-delay: 0.35s; }
+    .earage-waveform.active .bar:nth-child(9) { animation-delay: 0.40s; }
+    .earage-waveform.active .bar:nth-child(10) { animation-delay: 0.45s; }
+    .earage-waveform.active .bar:nth-child(11) { animation-delay: 0.50s; }
+    .earage-waveform.active .bar:nth-child(12) { animation-delay: 0.55s; }
+    .earage-waveform.active .bar:nth-child(13) { animation-delay: 0.60s; }
+    .earage-waveform.active .bar:nth-child(14) { animation-delay: 0.65s; }
+    .earage-waveform.active .bar:nth-child(15) { animation-delay: 0.70s; }
+    .earage-waveform.active .bar:nth-child(16) { animation-delay: 0.75s; }
+    .earage-waveform.active .bar:nth-child(17) { animation-delay: 0.80s; }
+    .earage-waveform.active .bar:nth-child(18) { animation-delay: 0.85s; }
+    .earage-waveform.active .bar:nth-child(19) { animation-delay: 0.90s; }
+    .earage-waveform.active .bar:nth-child(20) { animation-delay: 0.95s; }
+    @keyframes waveBar { 0%, 100% { height: 10px; } 50% { height: 58px; } }
+    details summary::-webkit-details-marker { display: none; }
+    .hear-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    .dark .hear-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    #test-arena button { min-height: 44px; }
+    #test-arena button:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+    #test-arena .hearing-mode-card:hover { transform: translateY(-2px); }
+    #test-arena .hearing-mode-card:active { transform: scale(0.97); }
+    @media (prefers-reduced-motion: reduce) { .hear-hero-glow { display: none; } }
+    details[open] summary .faq-chevron { transform: rotate(180deg); }
+    @media print {
+      header, footer, #calibrationPanel, .no-print { display: none !important; }
+      #resultsWrap { display: block !important; }
+      body { background: #ffffff !important; color: #000000 !important; }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <nav class="flex items-center text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Хлебные крошки">
+      <a href="/ru/" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Главная</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <a href="/ru/games" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Когнитивные игры</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Тест слуха и возраст ушей</span>
+    </nav>
+
+    <header class="relative text-center max-w-3xl mx-auto mb-10">
+      <div class="hear-hero-glow" aria-hidden="true"></div>
+      <div class="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[13px] sm:text-sm font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Клиническая тональная аудиометрия · Высокочастотная развёртка</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-[-0.025em] leading-[1.08] mb-4">
+        Бесплатный онлайн-тест слуха и калькулятор возраста ушей
+      </h1>
+      <p class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-300 leading-[1.62] max-w-2xl mx-auto">
+        Проверьте слуховую остроту с клинической точностью. Выполните высокочастотные развёртки слуха (8–20 кГц) или полную тональную аудиометрию (125–8 000 Гц) с независимой стереоизоляцией левого и правого уха.
+      </p>
+    </header>
+
+    <div class="max-w-3xl mx-auto mb-10 p-5 rounded-3xl bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-amber-900 dark:text-amber-200 text-sm shadow-xs transition-all">
+      <div class="flex items-start gap-3">
+        <svg class="w-6 h-6 shrink-0 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 18v-6a9 9 0 0 1 18 0v6" /><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" /></svg>
+        <div class="space-y-1">
+          <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Акустическая безопасность и требование наушников</h4>
+          <p class="text-amber-800 dark:text-amber-300/90 text-[13px] sm:text-sm leading-relaxed">
+            <strong>1)</strong> Наденьте качественные стереонаушники. <strong>2)</strong> Никогда не устанавливайте системную громкость на максимум; начните с 50% и используйте наш калибровочный тон 1 000 Гц для подтверждения комфортной слышимости. <strong>3)</strong> Отключите пространственный звук, Dolby Atmos и эквалайзеры для клинической точности. Клинический диапазон воздушной проводимости: 125 Гц – 20 000 Гц. Результаты зависят от наушников и оборудования и не заменяют калиброванную клиническую аудиометрию.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <section id="test-arena" class="relative w-full max-w-4xl mx-auto mb-16 scroll-mt-6">
+
+      <div id="modeSelector" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <button
+          type="button"
+          data-mode="ear-age"
+          class="hearing-mode-card group relative p-8 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 dark:hover:border-blue-400/50 shadow-xl hover:shadow-2xl transition-all duration-300 text-left flex flex-col justify-between cursor-pointer overflow-hidden"
+        >
+          <div class="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-all"></div>
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-[#0066cc]/10 border border-[#0066cc]/20 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center font-mono font-bold text-xl mb-6 transition-transform">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+            </div>
+            <div class="text-[13px] font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
+              Высокочастотная развёртка (8–20 кГц)
+            </div>
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              Высокочастотный тест слуха
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Найдите самую высокую частоту, которую слышат ваши уши. Сопоставляет вашу акустическую отсечку с эпидемиологическими данными пресбиакузиса для расчёта биологического слухового возраста.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+            <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">Длительность: ~60 секунд</span>
+            <span class="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              Начать тест возраста ушей →
+            </span>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          data-mode="audiometry"
+          class="hearing-mode-card group relative p-8 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 dark:hover:border-blue-400/50 shadow-xl hover:shadow-2xl transition-all duration-300 text-left flex flex-col justify-between cursor-pointer overflow-hidden"
+        >
+          <div class="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-all"></div>
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-[#0066cc]/10 border border-[#0066cc]/20 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center font-mono font-bold text-xl mb-6 transition-transform">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
+            </div>
+            <div class="text-[13px] font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
+              Клинический протокол Хьюсона-Вестлейка
+            </div>
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              Тональная аудиометрия
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Стандартный клинический скрининг, оценивающий 125 Гц – 8 000 Гц независимо в левом и правом ухе. Строит официальную аудиограмму относительно порогов нормального слуха.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+            <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">Длительность: ~3 минуты</span>
+            <span class="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              Начать аудиометрию →
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <div id="workspace" class="hidden rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-8">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
+            <h2 id="workspaceTitle" class="font-heading font-bold text-lg sm:text-xl text-zinc-900 dark:text-white">
+              Акустическое тестирование
+            </h2>
+          </div>
+          <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+            Шаг <span id="stepNum" class="font-bold text-blue-600 dark:text-blue-400">1</span> из 3
+          </div>
+        </div>
+
+        <div id="calibrationPanel" class="max-w-xl mx-auto text-center space-y-6">
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>
+          </div>
+          <div class="space-y-2">
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white">
+              Калибровка эталонной громкости
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Мы воспроизводим безопасный эталонный тон 1 000 Гц. Отрегулируйте системную громкость, пока звук не станет чётко слышимым, комфортным и не слишком громким.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 space-y-4">
+            <div class="flex items-center justify-between text-[13px] font-mono font-semibold text-zinc-500 dark:text-zinc-400">
+              <span>Уровень калибровки</span>
+              <span id="calibDbDisplay" class="text-blue-600 dark:text-blue-400 font-bold">40 дБ HL</span>
+            </div>
+            <input
+              id="calibSlider"
+              type="range"
+              min="20"
+              max="80"
+              step="5"
+              value="40"
+              class="w-full h-2 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+            />
+            <div class="flex gap-3 justify-center pt-2">
+              <button
+                id="calibPlayBtn"
+                type="button"
+                class="px-5 py-2.5 rounded-full bg-[#0066cc]/10 hover:bg-[#0066cc]/20 text-[#0066cc] dark:text-[#2997ff] border border-[#0066cc]/30 text-[13px] sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" fill="currentColor" /></svg> Тестовый тон (1 кГц)
+              </button>
+              <button
+                id="calibStopBtn"
+                type="button"
+                class="px-5 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 text-[13px] sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" /></svg> Стоп
+              </button>
+            </div>
+          </div>
+
+          <button
+            id="startTestBtn"
+            type="button"
+            class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-heading font-bold text-base shadow-lg hover:shadow-blue-600/25 active:scale-[0.97] min-h-[44px] transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+          >
+            <span>Громкость настроена · Начать тест</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <div id="earAgePanel" class="hidden max-w-xl mx-auto text-center space-y-6">
+          <div class="space-y-1">
+            <div class="text-[13px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Текущий частотный тон</div>
+            <div class="flex items-baseline justify-center gap-2 font-mono font-extrabold text-5xl sm:text-6xl text-blue-600 dark:text-blue-400 tracking-tight">
+              <span id="earAgeFreq">20 000</span>
+              <span class="text-2xl text-zinc-400 font-bold">Гц</span>
+            </div>
+            <p id="earAgeStatus" class="text-sm text-zinc-600 dark:text-zinc-400 pt-1">
+              Слушайте внимательно. Слышите ли вы этот высокочастотный тон?
+            </p>
+          </div>
+
+          <div class="earage-waveform active" id="earAgeWave">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+
+          <div class="w-full bg-zinc-100 dark:bg-zinc-800/80 rounded-full h-2 overflow-hidden">
+            <div id="earAgeProgress" class="bg-[#0066cc] dark:bg-[#2997ff] h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+            <button
+              id="earAgeHearBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-blue-500/10 hover:bg-blue-500/20 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-3 shadow-xs"
+            >
+              <span class="text-lg">✓</span>
+              <span>Я слышу это</span>
+            </button>
+            <button
+              id="earAgeNoHearBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-3 shadow-xs"
+            >
+              <span class="text-lg">✕</span>
+              <span>Я не слышу это</span>
+            </button>
+          </div>
+
+          <div class="pt-2">
+            <button
+              id="earAgeReplayBtn"
+              type="button"
+              class="text-[13px] font-mono text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>↻</span> Повторить текущую частоту
+            </button>
+          </div>
+        </div>
+
+        <div id="audiometryPanel" class="hidden max-w-xl mx-auto text-center space-y-6">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-4 text-left">
+              <div id="audEarIndicator" class="w-12 h-12 rounded-full flex items-center justify-center border-2 border-blue-500 bg-blue-500/10 text-blue-500 font-bold font-mono text-lg">
+                L
+              </div>
+              <div>
+                <div id="audEarLabel" class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  Левое ухо (синий)
+                </div>
+                <div id="audFreqValue" class="font-heading font-extrabold text-2xl text-zinc-900 dark:text-white">
+                  1 000 Гц
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                Интенсивность теста
+              </div>
+              <div class="font-mono font-extrabold text-2xl text-blue-600 dark:text-blue-400">
+                <span id="audDbValue">40</span> <span class="text-sm font-normal text-zinc-400">дБ HL</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="audProgress" class="flex items-center gap-1.5 w-full"></div>
+
+          <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Тон воспроизводится 1,5 секунды. Нажмите, слышали ли вы звук чётко.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              id="audYesBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-blue-500/10 hover:bg-blue-500/20 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <span>✓</span>
+              <span>Да, я слышал(а)</span>
+            </button>
+            <button
+              id="audNoBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <span>✕</span>
+              <span>Не слышал(а)</span>
+            </button>
+          </div>
+
+          <div class="pt-2">
+            <button
+              id="audReplayBtn"
+              type="button"
+              class="text-[13px] font-mono text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>↻</span> Повторить тон
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="resultsWrap" class="hidden mt-12 space-y-8">
+
+        <div id="panel-earage" class="hidden p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl text-center space-y-8">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+            Оценка слухового здоровья
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-[13px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Оценка высокочастотного слуха</div>
+            <div class="font-heading font-black text-6xl sm:text-7xl md:text-8xl text-zinc-950 dark:text-white tracking-tight">
+              <span id="resultEarAge">--</span>
+            </div>
+            <p id="resultEarAgeDesc" class="text-base text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed pt-2">
+              --
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Акустическая отсечка</div>
+              <div class="font-mono font-bold text-2xl text-blue-600 dark:text-blue-400">
+                <span id="resultMaxFreq">--</span> Гц
+              </div>
+            </div>
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Индекс остроты</div>
+              <div class="font-mono font-bold text-2xl text-[#0066cc] dark:text-[#2997ff]">
+                <span id="resultScore">--</span>/100
+              </div>
+            </div>
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Оценка</div>
+              <div id="resultRating" class="font-heading font-bold text-xl text-zinc-900 dark:text-white">
+                --
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              id="downloadEarAgeBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-heading font-bold text-sm shadow-lg hover:shadow-blue-600/25 active:scale-[0.97] min-h-[44px] transition-all cursor-pointer flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Скачать сводку возраста ушей
+            </button>
+            <button
+              id="retakeEarAgeBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Пройти заново
+            </button>
+            <button
+              id="tryOtherBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Пройти тональную аудиограмму →
+            </button>
+          </div>
+        </div>
+
+        <div id="panel-audiogram" class="hidden p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-8">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-zinc-100 dark:border-zinc-800/80 pb-6">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">
+                Тональная аудиограмма
+              </div>
+              <h3 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                Клиническая таблица порогов
+              </h3>
+            </div>
+            <div class="flex items-center gap-6 font-mono text-[13px] font-semibold">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                <span class="text-zinc-700 dark:text-zinc-300">Левое ухо (X)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                <span class="text-zinc-700 dark:text-zinc-300">Правое ухо (O)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full overflow-x-auto rounded-2xl bg-zinc-50 dark:bg-[#09090b] p-4 border border-zinc-200 dark:border-zinc-800">
+            <canvas id="audiogramCanvas" width="820" height="500" class="w-full max-w-[820px] mx-auto block"></canvas>
+          </div>
+
+          <div id="audiogramSummary" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
+            <button
+              id="downloadAudiogramBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-heading font-bold text-sm shadow-lg hover:shadow-blue-600/25 active:scale-[0.97] min-h-[44px] transition-all cursor-pointer flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Скачать клиническую аудиограмму (PNG)
+            </button>
+            <button
+              id="retakeAudBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Пройти аудиометрию заново
+            </button>
+            <button
+              id="tryEarAgeBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 active:scale-[0.97] dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Проверить высокочастотный слух →
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 1 · Физиология слуха
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Анатомия слуха и тонотопическая организация улитки
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Человеческий слух - сложная биомеханическая последовательность трансдукции, преобразующая микроскопические колебания атмосферного давления в связные нервные импульсы. Слуховая периферия включает три отдельных анатомических отдела: <strong>наружное ухо</strong> (ушная раковина и наружный слуховой проход), <strong>среднее ухо</strong> (барабанная перепонка и слуховая цепочка косточек) и <strong>внутреннее ухо</strong> (заполненная жидкостью улитка и вестибулярный аппарат).
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Звуковые волны, собранные ушной раковиной, идут по слуховому проходу и ударяют в барабанную перепонку, заставляя её колебаться. Эти колебания механически усиливаются тремя самыми маленькими костями человеческого тела - молоточком, наковальней и стремечком. Основание стремечка ритмично покачивается против овального окна улитки, создавая гидравлические бегущие волны в перилимфе и эндолимфе улитки.
+        </p>
+
+        <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+          <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+            <span class="inline-flex items-center gap-2"><svg class="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 18h8" /><path d="M3 22h18" /><path d="M14 22a7 7 0 1 0-7-7h1" /><path d="M9 14h2" /><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" /><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" /></svg>Биомеханика тонотопии</span>
+          </h4>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Сенсорное сердце слуха - <strong>кортиев орган</strong>, расположенный вдоль базилярной мембраны внутри улитки. Люди рождаются с примерно 16 000 сенсорных волосковых клеток на каждое ухо: внутренние волосковые клетки (передающие 95% акустической сенсорной информации в слуховую кору по восьмому черепному нерву) и наружные волосковые клетки (действующие как активные соматические электромоторные усилители). Базилярная мембрана структурно градиентна по жёсткости и ширине от основания к верхушке, устанавливая строгую пространственную карту высоты тона, известную как <strong>тонотопия</strong>:
+          </p>
+          <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-zinc-700 dark:text-zinc-300 pt-2">
+            <li class="p-3 rounded-xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+              <strong class="text-blue-600 dark:text-blue-400">Основание улитки:</strong> жёсткое, узкое и натянутое. Избирательно отвечает на ультравысокие частоты (10 000 Гц – 20 000 Гц).
+            </li>
+            <li class="p-3 rounded-xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+              <strong class="text-blue-600 dark:text-blue-400">Верхушка улитки:</strong> широкая, податливая и дряблая. Избирательно отвечает на глубокие низкие частоты (20 Гц – 500 Гц).
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 2 · Механика пресбиакузиса
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Почему высокие частоты деградируют первыми: биология пресбиакузиса
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Возрастная потеря слуха, или <strong>пресбиакузис</strong>, - самое распространённое сенсорное нарушение среди стареющих популяций во всём мире, затрагивающее более чем одного из трёх взрослых старше 65 лет. Отличительный признак пресбиакузиса - двусторонняя, симметричная потеря, неизменно начинающаяся на самых высоких слышимых частотах (выше 8 000 Гц), прежде чем постепенно спускаться вниз в жизненно важные речевые частоты.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Биологическая уязвимость высокочастотного слуха прямо проистекает из гидравлической архитектуры улитки:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-cyan-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Гидравлический передний край</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Поскольку волны жидкости входят у овального окна рядом с основанием, базальные волосковые клетки испытывают физическое механическое смещение при <em>каждом</em> звуке, входящем в улитку, независимо от частоты.
+            </p>
+          </div>
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-amber-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Метаболическое истощение</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Базальные волосковые клетки колеблются с высокой скоростью до 20 000 раз в секунду, генерируя экстремальные активные формы кислорода (АФК) и клеточный окислительный стресс в митохондриальных мембранах.
+            </p>
+          </div>
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-rose-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Нулевая регенерация</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              В отличие от волосковых клеток птиц или амфибий, стереоцилии улитки млекопитающих не регенерируют. Когда акустическая перегрузка или микроваскулярная атрофия их разрушает, эта акустическая частота теряется навсегда.
+            </p>
+          </div>
+        </div>
+
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Эта физиологическая реальность породила культурный феномен <strong>«комариного рингтона»</strong> (17,4 кГц). Изначально разработанный как акустическое средство отпугивания подростков, подростки быстро обнаружили, что могут слышать высокий писк чётко, тогда как их учителя и родители - чьи базальные волосковые клетки естественно деградировали выше 15 кГц - не слышат ничего.
+        </p>
+      </section>
+
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 3 · Клиническая интерпретация
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Расшифровка клинической аудиограммы: дБ HL и «речевой банан»
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Тональная аудиограмма - золотой стандарт диагностической таблицы, используемой аудиологами и оториноларингологами во всём мире. В отличие от стандартных математических графиков, аудиограмма имеет <strong>инвертированную вертикальную ось</strong>, представляющую интенсивность в <strong>децибелах уровня слуха (дБ HL)</strong>. Ноль децибел (0 дБ HL) не означает полную акустическую тишину; скорее, это стандартизированная медианная пороговая слышимость для здоровых молодых взрослых.
+        </p>
+
+        <div class="overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-2">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-mono text-[13px] uppercase">
+                <th class="p-4">Степень потери слуха</th>
+                <th class="p-4">Диапазон дБ HL</th>
+                <th class="p-4">Влияние на речь в реальном мире</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr>
+                <td class="p-4 font-bold text-blue-600 dark:text-blue-400">Нормальный слух</td>
+                <td class="p-4 font-mono font-bold">-10 до 20 дБ HL</td>
+                <td class="p-4">Воспринимает тихий шёпот, шелест листьев и тонкие нюансы речи в любой среде.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-blue-600 dark:text-blue-400">Лёгкая потеря слуха</td>
+                <td class="p-4 font-mono font-bold">21 до 40 дБ HL</td>
+                <td class="p-4">Трудности со слабой или отдалённой речью. Проблемы в фоновом шуме; высокочастотные согласные (с, ф, ш) угасают.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-blue-600 dark:text-blue-400">Умеренная потеря слуха</td>
+                <td class="p-4 font-mono font-bold">41 до 70 дБ HL</td>
+                <td class="p-4">Разговорная речь становится трудной без визуальных подсказок или чтения по губам. Слуховые аппараты дают немедленную чёткость.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-blue-600 dark:text-blue-400">Тяжёлая потеря слуха</td>
+                <td class="p-4 font-mono font-bold">71 до 90 дБ HL</td>
+                <td class="p-4">Не может понимать нормальный разговор. Слышны только крики или громкие окружающие шумы (например, пылесос, интенсивное движение).</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-blue-700 dark:text-blue-300">Глубокая потеря слуха</td>
+                <td class="p-4 font-mono font-bold">91+ дБ HL</td>
+                <td class="p-4">Экстремальное нарушение. Большинство звуков полностью неслышимы; показана оценка для кохлеарной имплантации.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="space-y-4 pt-2">
+          <h3 class="font-heading font-bold text-xl text-zinc-900 dark:text-white">
+            Речевой банан и разборчивость согласных
+          </h3>
+          <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            <strong>Речевой банан</strong> описывает критическую зону на аудиограмме между 250 Гц и 6 000 Гц и 20–55 дБ HL, где находятся фонемы человеческой речи. Гласные звуки (а, е, и, о, у) низкочастотны (250–1 000 Гц) и несут примерно 90% речевой энергии и акустической громкости. Напротив, гл��хие согласные (с, ф, ш, п, т, к) высокочастотны (2 000–6 000 Гц) и несут очень мало мощности, но передают более 90% <em>разборчивости</em> речи.
+          </p>
+          <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Когда поражает высокочастотный пресбиакузис, громкость речи кажется нормальной, потому что низкие гласные слышны хорошо, но речь звучит приглушённо, как под водой. Пациенты часто жалуются: <em>«Я слышу, что люди говорят, но не могу понять, что они говорят»</em>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 4 · Диагностическое сравнение
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Высокочастотный слух против клинической тональной аудиометрии
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Хотя оба теста оценивают здоровье слуховой периферии, они отвечают на разные клинические вопросы:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+            <h3 class="font-heading font-bold text-xl text-blue-600 dark:text-blue-400">
+              1. Высокочастотный тест слуха
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Развёртывается исключительно в ультравысоком диапазоне 8 000–20 000 Гц. Действует как <strong>радар раннего предупреждения</strong> о пожизненном акустическом повреждении. Поскольку волосковые клетки у основания улитки сдаются первыми, 25-летний человек с отсечкой 12 кГц сразу обнаруживает, что его уши постарели до биологического профиля 50 лет, что предупреждает его защищать уши до того, как речевые частоты ухудшатся.
+            </p>
+            <div class="font-mono text-[13px] text-zinc-500 dark:text-zinc-400">
+              Основная метрика: верхний порог слышимой частоты (Гц)
+            </div>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+            <h3 class="font-heading font-bold text-xl text-blue-600 dark:text-blue-400">
+              2. Тональная аудиометрия (речевые частоты)
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Фокусируется на 125 Гц, 250 Гц, 500 Гц, 1 000 Гц, 2 000 Гц, 4 000 Гц и 8 000 Гц с использованием клинического <strong>протокола Хьюсона-Вестлейка</strong>. Оценивает фактическое социальное коммуникационное нарушение, рассчитывает средний тональный порог (PTA) и выявляет кондуктивные или сенсоневральные асимметрии между ушами.
+            </p>
+            <div class="font-mono text-[13px] text-zinc-500 dark:text-zinc-400">
+              Основная метрика: пороговая интенсивность по частоте (дБ HL)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 5 · Сохранение слуха
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Лучшие практики слухового здоровья и шумовая потеря слуха (NIHL)
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          По данным Всемирной организации здравоохранения (ВОЗ), более 1,1 миллиарда молодых взрослых во всём мире подвержены повышенному риску постоянной шумовой потери слуха (NIHL) из-за небезопасного использования наушников и посещения клубов. Акустическая травма вызывает кумулятивное физическое сдвиговое повреждение кончиков стереоцилий и нарушает синаптические связи между волосковыми клетками и спиральными ганглиозными нейронами улиткового нерва (состояние, известное как <em>скрытая потеря слуха</em> или кохлеарная синаптопатия).
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+              <span class="inline-flex items-center gap-2"><svg class="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2.5 2.5" /><path d="M9 2h6" /></svg>Правило 60/60 ВОЗ</span>
+            </h4>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Ограничьте громкость личного прослушивания не более чем <strong>60% максимальной громкости</strong> и не дольше <strong>60 непрерывных минут</strong> за раз. После часа дайте ушам обязательный 15-минутный тихий период восстановления, чтобы предотвратить закрепление временных пороговых сдвигов (TTS) в постоянную клеточную смерть.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+              <span class="inline-flex items-center gap-2"><svg class="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>Тиннитус: сигнал дистресса улитки</span>
+            </h4>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Тиннитус - постоянный высокочастотный звон, жужжание или шипение в ушах без внешнего источника - часто является самым ра��ним признаком повреждённых базальных стереоцилий. Когда волосковые клетки лишаются слухового входа, дорсальное кохлеарное ядро мозга увеличивает свою спонтанную частоту нейронных разрядов, пытаясь усилить отсутствующую частоту, создавая фантомное акустическое восприятие.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-red-50/60 dark:bg-red-950/20 border border-red-200 dark:border-red-800/60 space-y-2">
+          <h4 class="font-heading font-bold text-base text-red-950 dark:text-red-200">
+            Клинический красный флаг: внезапная сенсоневральная потеря слуха (SSNHL)
+          </h4>
+          <p class="text-sm text-red-900 dark:text-red-300/90 leading-relaxed">
+            Если вы когда-либо испытаете внезапное падение слуха в одном ухе (часто сопровождаемое ощущением заложенности, давления или внезапным ревущим тиннитусом), отнеситесь к этому как к <strong>медицинской неотложности</strong>. Внезапная сенсоневральная потеря слуха имеет строгое 72-часовое клиническое окно, в течение которого высокодозная пероральная или интратимпанальная кортикостероидная терапия может восстановить слуховую функцию. Не откладывайте обращение за срочной ЛОР-помощью.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6 pt-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 6 · Часто задаваемые вопросы
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Частые вопросы о слухе и возрасте ушей
+        </h2>
+
+        <div class="space-y-4 pt-4">
+          {schema[3].mainEntity.map((item) => (
+            <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+              <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+                <span>{item.name}</span>
+                <svg class="faq-chevron ml-4 w-5 h-5 text-blue-600 dark:text-blue-400 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+              </summary>
+              <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                {item.acceptedAnswer.text}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+
+  <script src="../../scripts/tools/hearing-engine-ru.js"></script>
+</Layout>

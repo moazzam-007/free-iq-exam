@@ -1,0 +1,631 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const alternates = {};
+
+const title = "Тест на цветослепоту - 22 таблицы Исихары | FreeIQExam";
+const description = "Пройдите бесплатный скрининг цветового зрения в стиле Исихары онлайн. Проверка красно-зелёной цветовой слепоты, протанопии и дейтеранопии с 22 таблицами и детским режимом.";
+const canonicalUrl = "https://freeiqexam.com/ru/color-blind-test";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Онлайн-тест на цветослепоту по таблицам Исихары",
+    "description": "Скрининг из 22 таблиц в стиле Исихары для красно-зелёной (дейтеранопия, протанопия) недостаточности цветового зрения.",
+    "url": canonicalUrl,
+    "medicalAudience": "Patient",
+    "aspect": "Screening",
+    "inLanguage": "ru"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Онлайн-тест на цветослепоту FreeIQExam",
+    "url": canonicalUrl,
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Требуется JavaScript и поддержка HTML5 Canvas/SVG",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": [
+      "Скрининг из 22 таблиц в стиле Исихары",
+      "Проверка дейтеранопии и протанопии (красно-зелёный дефицит)",
+      "Интерактивный симулятор недостаточности цветового зрения",
+      "Детский режим с фигурами для нечитающих детей",
+      "Проценты чувствительности L-, M- и S-колбочек",
+      "Нулевой пейволл, мгновенный отчёт скрининга"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://freeiqexam.com/ru/" },
+      { "@type": "ListItem", "position": 2, "name": "Когнитивные игры", "item": "https://freeiqexam.com/ru/games" },
+      { "@type": "ListItem", "position": 3, "name": "Тест на цветослепоту", "item": canonicalUrl }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Как называется клинический тест на цветослепоту?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Клинический тест на цветослепоту официально называется тестом Исихары, по имени японского офтальмолога доктора Синобу Исихары, опубликовавшего его в 1917 году. Другие специализированные диагностические инструменты включают тест Farnsworth D-15 / 100-Hue, аномалоскоп Нагеля (диагностический золотой стандарт), тест HRR (Hardy-Rand-Rittler) и авиационные фонарные тесты, такие как Farnsworth Lantern (Falant)." }
+      },
+      {
+        "@type": "Question",
+        "name": "Как проверить цветослепоту дома?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Чтобы пройти бесплатный онлайн-скрининг цветового зрения дома: 1) Установите яркость экрана на 100%, 2) Отключите Night Shift, TrueTone, f.lux или фильтры синего света, 3) Расположитесь примерно на расстоянии вытянутой руки (75 см) от экрана, 4) Пройдите 22 таблицы Исихары без угадывания. Наш онлайн-тест оценивает красно-зелёную (Deutan/Protan) ось путаницы с мгновенными оценками скрининга." }
+      },
+      {
+        "@type": "Question",
+        "name": "Что такое обратный тест на цветослепоту?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Обратный тест на цветослепоту использует псевдоизохроматические таблицы, специально разработанные так, что люди с нормальным цветовым зрением видят только случайные точки или не могут различить число, тогда как люди с красно-зелёной цветовой слепотой легко читают скрытую цифру. Это происходит потому, что наблюдатели с цветослепотой не отвлекаются на камуфляжные оттенки и воспринимают тонкие границы яркости, которые трихроматы упускают." }
+      },
+      {
+        "@type": "Question",
+        "name": "Как проверить маленьких детей на цветослепоту?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Стандартные таблицы Исихары требуют чтения чисел, что непригодно для малышей и дошкольников. Для педиатрического скрининга используйте тест на цветослепоту для детей, который использует геометрические фигуры (круг, квадрат, треугольник, звезда) или извилистые пути. Дети указывают на фигуру или обводят путь пальцем, что позволяет точно проводить скрининг уже с 3–4 лет." }
+      },
+      {
+        "@type": "Question",
+        "name": "Можно ли пройти или обмануть тест Исихары?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Обмануть подлинный клинический тест на цветослепоту невозможно, потому что настоящие тесты Исихары и аномалоскопа опираются на биологические фотопигменты колбочек сетчатки. Хотя некоторые пытаются запомнить номера таблиц, профессиональные экзамены (авиация, морской флот, военные) используют рандомизированные последовательности таблиц или альтернативные тесты, такие как Farnsworth Lantern и аномалоскоп Нагеля, где запоминание невозможно. Цветокорректирующие линзы (например, EnChroma) запрещены при официальном сертификационном тестировании." }
+      },
+      {
+        "@type": "Question",
+        "name": "В чём разница между очками EnChroma и Pilestone для цветослепоты?",
+        "acceptedAnswer": { "@type": "Answer", "text": "EnChroma и Pilestone - два ведущих производителя оптических notch-фильтров для цветослепоты. Обе компании предлагают онлайн-скрининги Исихары. Их очки используют специальные спектральные multi-notch покрытия, отфильтровывающие перекрывающиеся длины волн между полосами поглощения красных и зелёных колбочек, усиливая цветовой контраст для аномальных трихроматов (дейтераномалия и протаномалия). Однако ни одни очки не лечат цветослепоту и не работают для дихроматов, у которых полностью отсутствует функциональный фотопигмент колбочек." }
+      },
+      {
+        "@type": "Question",
+        "name": "Что на самом деле видят люди с красно-зелёной цветослепотой?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Люди с красно-зелёной цветослепотой не видят в чёрно-белом. Вместо этого красные, зелёные, оранжевые и коричневые цвета выглядят как приглушённые вариации жёлтого, хаки, оливкового и коричневого. Для протанопов (красно-слепых) красные объекты также кажутся существенно темнее или почти чёрными. Для дейтеранопов (зелёно-слепых) зелёные и красные объекты сохраняют нормальную яркость, но имеют одинаковый желтовато-коричневый оттенок." }
+      },
+      {
+        "@type": "Question",
+        "name": "Можно ли стать пилотом коммерческой авиалинии с цветослепотой?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Да, условно. FAA (Федеральное управление гражданской авиации США) и международные органы гражданской авиации требуют нормального цветового зрения для неограниченной медицинской сертификации класса 1. Если кандидат не проходит стандартные таблицы Исихары, он может запросить Operational Color Vision Test (OCVT), включая тест светового пистолета диспетчерской вышки и медицинский лётный тест, чтобы получить Letter of Evidence (LOE), предоставляющее полные лётные привилегии." }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/color-blind-test" idPath="/id/tes-buta-warna" schema={schema}>
+  <Header currentPath="/color-blind-test" enPath="/color-blind-test" idPath="/id/tes-buta-warna" />
+
+  <svg class="hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <filter id="deutan-filter">
+      <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="protan-filter">
+      <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="tritan-filter">
+      <feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" />
+    </filter>
+  </svg>
+
+  <style>
+    .plate-container { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+    @keyframes pilestonePop {
+      0% { transform: scale(1); }
+      30% { transform: scale(0.96); opacity: 0.9; }
+      70% { transform: scale(1.02); opacity: 0.98; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pilestone-transition { animation: pilestonePop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .timeline-dot { transition: all 0.25s ease; }
+    .plate-dot { vector-effect: non-scaling-stroke; shape-rendering: geometricPrecision; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .faq-chevron { transform: rotate(180deg); }
+
+    .filter-normal { filter: none; }
+    .filter-deutan { filter: url('#deutan-filter'); }
+    .filter-protan { filter: url('#protan-filter'); }
+    .filter-tritan { filter: url('#tritan-filter'); }
+    .filter-achroma { filter: grayscale(100%); }
+
+    .cb-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    .dark .cb-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    #test-card .key-btn:active, #test-card .shape-btn:active, .sim-filter-btn:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+    @media (prefers-reduced-motion: reduce) { .cb-hero-glow { display: none; } }
+
+    @media print {
+      header, footer, #calibration-banner, #keypad-numbers, #keypad-kids, .mode-toggle-container, #btn-restart-link, .no-print { display: none !important; }
+      #results-view { display: flex !important; }
+      body { background: white !important; color: black !important; }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <nav class="flex items-center text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Хлебные крошки">
+      <a href="/ru/" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Главная</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <a href="/ru/games" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Когнитивные игры</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Тест на цветослепоту</span>
+    </nav>
+
+    <header class="relative text-center max-w-3xl mx-auto mb-10">
+      <div class="cb-hero-glow" aria-hidden="true"></div>
+      <div class="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[13px] sm:text-sm font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Скрининг 22 таблиц в стиле Исихары · Цветовое зрение</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-[-0.025em] leading-[1.08] mb-4">
+        Тест на цветослепоту онлайн
+      </h1>
+      <p class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-300 leading-[1.62] max-w-2xl mx-auto">
+        Оцените своё цветовосприятие с подлинным 22-табличным <strong class="text-zinc-900 dark:text-zinc-100 font-semibold">тестом Исихары</strong>. Высокоразрешающие процедурные точечные таблицы выявляют <strong class="text-blue-600 dark:text-blue-400 font-bold">дейтеранопию</strong> и <strong class="text-blue-600 dark:text-blue-400 font-bold">протанопию</strong> (красно-зелёный дефицит) без пейволла.
+      </p>
+    </header>
+
+    <div id="calibration-banner" class="max-w-3xl mx-auto mb-8 p-5 rounded-3xl bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-amber-900 dark:text-amber-200 text-sm shadow-xs transition-all">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3">
+          <svg class="w-6 h-6 shrink-0 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+          <div class="space-y-1">
+            <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Проверка калибровки экрана перед тестом</h4>
+            <p class="text-amber-800 dark:text-amber-300/90 text-sm leading-relaxed">
+              Для диагностической точности: <strong>1)</strong> Установите яркость экрана на 100%, <strong>2)</strong> Отключите Night Shift, TrueTone, f.lux или фильтры синего света, <strong>3)</strong> Сохраняйте расстояние вытянутой руки (~50–75 см).
+            </p>
+          </div>
+        </div>
+        <button id="btn-dismiss-calibration" type="button" class="text-amber-600 dark:text-amber-400 hover:text-amber-950 dark:hover:text-white p-1 cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Закрыть предупреждение калибровки"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" /></svg></button>
+      </div>
+    </div>
+
+    <div class="mode-toggle-container max-w-md mx-auto mb-8 flex items-center justify-center p-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs font-medium text-[13px] sm:text-sm">
+      <button id="mode-btn-numbers" type="button" class="flex-1 min-h-[44px] py-3 px-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-bold shadow-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="4" y1="9" x2="20" y2="9" /><line x1="4" y1="15" x2="20" y2="15" /><line x1="10" y1="3" x2="8" y2="21" /><line x1="16" y1="3" x2="14" y2="21" /></svg><span>Стандартные числа (22 таблицы)</span>
+      </button>
+      <button id="mode-btn-kids" type="button" class="flex-1 min-h-[44px] py-3 px-4 rounded-full text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg><span>Детский режим с фигурами</span>
+      </button>
+    </div>
+
+    <div class="relative w-full max-w-4xl mx-auto">
+      <div id="test-card" class="plate-container w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col items-center">
+
+        <div class="w-full flex items-center justify-between pb-4 mb-6 text-[13px] sm:text-sm font-mono border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400">
+          <div class="flex items-center gap-2">
+            <span class="font-heading font-extrabold tracking-wider uppercase text-zinc-900 dark:text-zinc-100 text-[13px] sm:text-sm">
+              FREE<span class="text-blue-600 dark:text-blue-500">IQ</span>EXAM <span class="text-zinc-400 dark:text-zinc-500 font-normal">ИСИХАРА</span>
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="plate-counter-badge" class="px-3 py-1 rounded-full text-[13px] font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-zinc-200 dark:border-zinc-700">
+              ТАБЛИЦА 1 ИЗ 22
+            </span>
+          </div>
+        </div>
+
+        <div class="w-full mb-8 px-1 sm:px-4">
+          <div id="timeline-chain" class="relative flex items-center justify-between w-full h-8">
+            <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 h-[2px] bg-zinc-200 dark:bg-zinc-800 z-0"></div>
+            <div id="timeline-dots" class="relative z-10 flex items-center justify-between w-full"></div>
+          </div>
+        </div>
+
+        <div id="active-test-view" class="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 my-2">
+
+          <div id="plate-stage" class="relative w-[300px] sm:w-[380px] lg:w-[440px] aspect-square rounded-full bg-zinc-100 dark:bg-[#18181c] p-2 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center shrink-0">
+            <svg id="plate-svg" class="w-full h-full rounded-full block cursor-pointer select-none" viewBox="0 0 666 666" role="img" aria-label="Подлинная таблица Исихары для теста на цветослепоту" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="333" cy="333" r="328" fill="#121215"></circle>
+              <g id="plate-dots"></g>
+            </svg>
+          </div>
+
+          <div class="flex flex-col items-center justify-center w-full max-w-[300px]">
+            <div class="text-center mb-5">
+              <p id="prompt-main-text" class="text-[13px] sm:text-sm font-mono uppercase tracking-wider text-zinc-600 dark:text-zinc-300 font-semibold mb-1">Выберите число, которое видите</p>
+              <p id="prompt-sub-text" class="text-[13px] text-zinc-400 dark:text-zinc-500">Клавиатура: [1-9], [N] Ничего, [U] Не уверен</p>
+            </div>
+
+            <div id="keypad-numbers" class="w-full flex flex-col items-center">
+              <div class="grid grid-cols-3 gap-3 w-full mb-3">
+                <button type="button" data-val="1" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">1</button>
+                <button type="button" data-val="2" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">2</button>
+                <button type="button" data-val="3" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">3</button>
+                <button type="button" data-val="4" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">4</button>
+                <button type="button" data-val="5" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">5</button>
+                <button type="button" data-val="6" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">6</button>
+                <button type="button" data-val="7" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">7</button>
+                <button type="button" data-val="8" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">8</button>
+                <button type="button" data-val="9" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">9</button>
+              </div>
+              <div class="grid grid-cols-2 gap-3 w-full mb-4">
+                <button type="button" data-val="nothing" class="key-btn h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-[13px] sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center cursor-pointer">
+                  НИЧЕГО
+                </button>
+                <button type="button" data-val="unsure" class="key-btn h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-[13px] sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center cursor-pointer">
+                  НЕ УВЕРЕН
+                </button>
+              </div>
+            </div>
+
+            <div id="keypad-kids" class="w-full flex flex-col items-center hidden">
+              <div class="grid grid-cols-2 gap-3 w-full mb-4">
+                <button type="button" data-val="Circle" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border-2 border-emerald-500/40 hover:border-emerald-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-emerald-500"><svg class="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="currentColor" /></svg></span><span>Круг</span>
+                </button>
+                <button type="button" data-val="Square" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border-2 border-blue-500/40 hover:border-blue-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-blue-500"><svg class="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor" /></svg></span><span>Квадрат</span>
+                </button>
+                <button type="button" data-val="Triangle" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border-2 border-amber-500/40 hover:border-amber-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-amber-500"><svg class="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="12 4 21 20 3 20" fill="currentColor" /></svg></span><span>Треугольник</span>
+                </button>
+                <button type="button" data-val="Star" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border-2 border-purple-500/40 hover:border-purple-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-purple-500"><svg class="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" /></svg></span><span>Звезда</span>
+                </button>
+              </div>
+              <button type="button" data-val="nothing" class="shape-btn w-full h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-[13px] sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center mb-4 cursor-pointer">
+<span class="inline-flex items-center gap-2"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>Я не вижу фигуру</span>
+              </button>
+            </div>
+
+            <button id="btn-restart-link" type="button" class="text-[13px] sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline underline-offset-4 transition-colors cursor-pointer py-1">
+              Начать заново
+            </button>
+          </div>
+        </div>
+
+        <div id="results-view" class="w-full hidden flex flex-col items-center">
+          <div class="w-16 h-16 rounded-full bg-blue-100 text-[#0066cc] dark:bg-blue-950 dark:text-[#2997ff] flex items-center justify-center mb-4 shadow-lg">
+            <svg class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+
+          <h3 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white text-center mb-1">
+            Клиническая оценка завершена
+          </h3>
+          <p class="text-[13px] sm:text-sm text-zinc-500 dark:text-zinc-400 font-mono text-center mb-8">
+            Оценено по подлинной псевдоизохроматической матрице таблиц Исихары
+          </p>
+
+          <div class="w-full p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm text-center mb-8">
+            <div class="text-[13px] sm:text-sm font-mono font-semibold text-zinc-500 uppercase tracking-wider mb-2">Классификация скрининга</div>
+            <div id="diag-title" class="text-2xl sm:text-4xl font-heading font-extrabold text-[#0066cc] dark:text-[#2997ff] mb-3">
+              Нормальное трихроматическое зрение
+            </div>
+            <p id="diag-desc" class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+              Ваши ответы указывают на стандартную функциональную активность всех трёх колбочковых фоторецепторов (L-, M- и S-колбочек) без красно-зелёной или сине-жёлтой недостаточности цветового зрения.
+            </p>
+          </div>
+
+          <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 font-mono text-[13px] sm:text-sm">
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>L-колбочка (красный / 560нм)</span>
+                <span id="cone-l-val" class="font-bold text-[#0066cc] dark:text-[#2997ff]">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-l-bar" class="h-full bg-[#0066cc] rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>M-колбочка (зелёный / 530нм)</span>
+                <span id="cone-m-val" class="font-bold text-[#0066cc] dark:text-[#2997ff]">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-m-bar" class="h-full bg-[#0066cc] rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>S-колбочка (синий / 420нм)</span>
+                <span id="cone-s-val" class="font-bold text-[#0066cc] dark:text-[#2997ff]">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-s-bar" class="h-full bg-[#0066cc] rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8">
+            <div class="text-center max-w-md mx-auto mb-6">
+              <span class="px-3 py-1 rounded-full text-[13px] font-mono font-bold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+                СИМУЛЯТОР CVD
+              </span>
+              <h4 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mt-2 mb-1">
+                Как другие глаза видят мир
+              </h4>
+              <p class="text-[13px] sm:text-sm text-zinc-500 dark:text-zinc-400">
+                Нажмите режим зрения ниже, чтобы смоделировать реальные недостаточности цветового зрения на стандартных эталонных оттенках светофора.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-6 text-[13px] sm:text-sm font-semibold">
+              <button type="button" data-filter="normal" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-[#0066cc] text-white shadow-xs cursor-pointer">Норма</button>
+              <button type="button" data-filter="deutan" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Дейтеранопия (зелёный)</button>
+              <button type="button" data-filter="protan" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Протанопия (красный)</button>
+              <button type="button" data-filter="tritan" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Тританопия (синий)</button>
+              <button type="button" data-filter="achroma" class="sim-filter-btn px-4 py-2 min-h-[44px] rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Монохромазия</button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-8 p-6 rounded-3xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+              <div id="sim-target" class="flex items-center gap-6 transition-all duration-300 filter-normal">
+                <div class="w-16 p-2.5 rounded-3xl bg-zinc-900 border-2 border-zinc-800 flex flex-col items-center gap-2.5 shadow-md">
+                  <div class="w-10 h-10 rounded-full bg-red-600 shadow-sm"></div>
+                  <div class="w-10 h-10 rounded-full bg-amber-400 shadow-sm"></div>
+                  <div class="w-10 h-10 rounded-full bg-emerald-500 shadow-sm"></div>
+                </div>
+                <div class="space-y-1.5 text-[13px] sm:text-sm font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  <div class="flex items-center gap-2.5"><span class="w-4 h-4 rounded-md bg-red-500 shrink-0"></span><span>Красный (клубника)</span></div>
+                  <div class="flex items-center gap-2.5"><span class="w-4 h-4 rounded-md bg-amber-400 shrink-0"></span><span>Жёлтый (бананы)</span></div>
+                  <div class="flex items-center gap-2.5"><span class="w-4 h-4 rounded-md bg-emerald-500 shrink-0"></span><span>Зелёный (яблоки / лаймы)</span></div>
+                  <div class="flex items-center gap-2.5"><span class="w-4 h-4 rounded-md bg-blue-500 shrink-0"></span><span>Синий (небо)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <details class="w-full rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8 p-6 overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+              <div class="flex items-center gap-2.5">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="2" width="8" height="4" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M9 12h6" /><path d="M9 16h4" /></svg>
+                <span>Диагностическая матрица по таблицам</span>
+              </div>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-6 overflow-x-auto border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              <table class="w-full text-left border-collapse text-[13px] sm:text-sm">
+                <thead>
+                  <tr class="bg-zinc-100/80 dark:bg-zinc-800/80 text-zinc-950 dark:text-white font-mono uppercase text-[13px]">
+                    <th class="py-3 px-4">Таблица</th>
+                    <th class="py-3 px-4">Тип / функция</th>
+                    <th class="py-3 px-4">Норма видит</th>
+                    <th class="py-3 px-4">CVD видит</th>
+                    <th class="py-3 px-4">Ваш ответ</th>
+                    <th class="py-3 px-4">Статус</th>
+                  </tr>
+                </thead>
+                <tbody id="review-matrix-body" class="divide-y divide-zinc-200 dark:divide-zinc-800"></tbody>
+              </table>
+            </div>
+          </details>
+
+          <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button id="btn-copy-summary" type="button" class="w-full sm:w-auto min-h-[44px] px-8 py-4 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-semibold text-base shadow-md active:scale-[0.97] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="2" width="8" height="4" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M9 12h6" /><path d="M9 16h4" /></svg><span>Копировать клиническую сводку</span>
+            </button>
+            <button id="btn-print-report" type="button" class="w-full sm:w-auto min-h-[44px] px-8 py-4 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-semibold text-base shadow-md active:scale-[0.97] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></svg><span>Печать / сохранить PDF</span>
+            </button>
+            <button id="btn-restart-test" type="button" class="w-full sm:w-auto min-h-[44px] px-8 py-4 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-semibold text-base active:scale-[0.97] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg><span>Пройти тест заново</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="share-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium border border-zinc-800 dark:border-zinc-200">
+        <span>✓</span>
+        <span>Сводка теста скопирована в буфер обмена!</span>
+      </div>
+    </div>
+
+    <section class="mt-20 sm:mt-28 space-y-16 border-t border-zinc-200 dark:border-zinc-800/80 pt-16">
+
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Фотобиология сетчатки и хроматические пути
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Что такое недостаточность цветового зрения (CVD)?
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <strong>Недостаточность цветового зрения (CVD)</strong>, в обиходе известная как <strong>цветослепота</strong> или <em>дальтонизм</em>, - распространённое сенсорное состояние, характеризующееся нарушенной способностью различать определённые оттенки видимого спектра. Термин <em>дальтонизм</em> чтит английского химика Джона Дальтона, опубликовавшего первый научный трактат о цветослепоте в 1794 году после открытия, что он и его брат воспринимали спелые вишни и зелёные листья как неразличимые. Вопреки распространённому заблуждению, люди с цветослепотой редко видят мир в чистом градационном сером; скорее их хроматический диапазон сдвинут, сжат или лишён ключевых каналов различения длин волн.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Восприятие цвета у человека зависит от специализированных фоторецепторных клеток в нейросенсорной сетчатке: примерно <strong>120 миллионов палочек</strong> (опосредующих скотопическое ночное зрение и ахроматическую яркость) и <strong>6–7 миллионов колбочек</strong> (сосредоточенных в центральной <em>fovea centralis</em> для высокоостротного фотопическог�� цветового восприятия). У людей с <strong>нормальной трихромазией</strong> цветовое зрение опосредовано тремя дискретными колбочковыми фотопигментами, каждый с характерным спектральным пиком поглощения. Когда любой из этих колбочковых фотопигментов подвергается генетической мутации или отсутствует, требуется стандартизированный <strong>тест на недостаточность цвета</strong> или <strong>тест на цветослепоту</strong>, чтобы количественно оценить точный фотопический дефект:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              L-Cone
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Эритролаб (длинноволновый)</h3>
+            <div class="text-[13px] sm:text-sm font-mono text-blue-600 dark:text-blue-400 font-bold mb-3">Пик поглощения: ~560 нм (красный)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Кодируется геном <em>OPN1LW</em> на X-хромосоме. Спектральные сдвиги или делеции вызывают протаномалию (слабость красного) или протанопию (слепота на красный).
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              M-Cone
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Хлоролаб (средневолновый)</h3>
+            <div class="text-[13px] sm:text-sm font-mono text-blue-600 dark:text-blue-400 font-bold mb-3">Пик поглощения: ~530 нм (зелёный)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Кодируется массивом генов <em>OPN1MW</em> на X-хромосоме. Дефициты вызывают дейтераномалию (слабость зелёного) или дейтеранопию (слепота на зелёный) - около 75% всех случаев CVD.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold mb-4 text-base font-mono">
+              S-Cone
+            </div>
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">Цианолаб (коротковолновый)</h3>
+            <div class="text-[13px] sm:text-sm font-mono text-blue-600 dark:text-blue-400 font-bold mb-3">Пик поглощения: ~420 нм (синий)</div>
+            <p class="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Кодируется геном <em>OPN1SW</em> на аутосомной хромосоме 7. Мутации вызывают тританомалию или тританопию (сине-жёлтая путаница), поражая биологических мужчин и женщин одинаково.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Классификация и хроматические фенотипы
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          7 типов цветослепоты с объяснением
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Клиницисты классифицируют недостаточность цветового зрения по тому, являются ли колбочковые фотопигменты <strong>аномальными</strong> (сдвинутая спектральная чувствительность) или <strong>полностью отсутствующими</strong> (дихромазия или монохромазия).
+        </p>
+
+        <div class="w-full overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-zinc-100 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white font-mono text-[13px] uppercase">
+                <th class="py-4 px-5">Состояние</th>
+                <th class="py-4 px-5">Классификация</th>
+                <th class="py-4 px-5">Распространённость</th>
+                <th class="py-4 px-5">Дефектная колбочка</th>
+                <th class="py-4 px-5">Клиническое влияние</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Дейтераномалия</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Аномальная трихромазия</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">~5,0% мужчин, 0,35% женщин</td>
+                <td class="py-4 px-5 font-mono">M-колбочка (сдвинута)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Умеренная слабость зелёного; различение красно-зелёных оттенков затруднено при низком контрасте или тусклом свете.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Дейтеранопия</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Дихромазия</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">~1,0% мужчин, 0,01% женщин</td>
+                <td class="py-4 px-5 font-mono">M-колбочка (отсутствует)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Полная слепота на зелёный; зелёные, жёлтые и оранжевые отображаются в бежево-коричневые тона.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Протаномалия</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Аномальная трихромазия</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">~1,0% мужчин, 0,02% женщин</td>
+                <td class="py-4 px-5 font-mono">L-колбочка (сдвинута)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Слабость красного; красные кажутся тусклее, тёмно-розовые - сероватыми.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Протанопия</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Дихромазия</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">~1,0% мужчин, 0,02% женщин</td>
+                <td class="py-4 px-5 font-mono">L-колбочка (отсутствует)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Полная слепота на красный; красный свет кажется потухшим или чёрным (критический риск в движении и авиации).</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Тританомалия</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Аномальная трихромазия</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">&lt;0,001% (крайне редко)</td>
+                <td class="py-4 px-5 font-mono">S-колбочка (сдвинута)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Слабость сине-жёлтого; синие кажутся зеленоватыми, жёлтый путается с фиолетовым.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Тританопия</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Дихромазия</td>
+                <td class="py-4 px-5 font-mono text-blue-600 dark:text-blue-400 font-bold">~0,003% (одинаково у обоих полов)</td>
+                <td class="py-4 px-5 font-mono">S-колбочка (отсутствует)</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Полная слепота на сине-жёлтое; видит мир в оттенках красного, розового и бирюзового.</td>
+              </tr>
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white">Ахроматопсия</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">Монохромазия</td>
+                <td class="py-4 px-5 font-mono text-zinc-500">1 на 33 000 (0,003%)</td>
+                <td class="py-4 px-5 font-mono">Все 3 колбочки не работают</td>
+                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Полное отсутствие цветового восприятия; выраженная дневная фотофобия и нистагм.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          Историческая психометрия и функциональные категории таблиц
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Прорыв доктора Синобу Исихары (1917)
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          В 1917 году доктор Синобу Исихара, военный офтальмолог и профессор Токийского университета, опубликовал свою новаторскую серию псевдоизохроматических таблиц для скрининга новобранцев Императорской японской армии. Его клиническая гениальность заключалась в понимании, что людей с дефектами цветового зрения нельзя просто тестировать однородными цветовыми образцами, потому что вариации яркости и насыщенности позволяют сообразительным наблюдателям угадывать оттенки.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Исихара систематически откалибровал <strong>4 функциональные категории таблиц</strong>, чтобы изолировать специфические ответы колбочек сетчатки:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">1. Демонстрационные таблицы</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Высококонтрастные таблицы (например, таблица 1 с «9» или «12»), разработанные так, чтобы быть чётко видимыми как для людей с нормальной трихромазией, так и с аномальной трихромазией и полной дихромазией. Используются исключительно для калибровки понимания пользователя и выявления симуляции.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">2. Трансформационные таблицы</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Таблицы, в которых люди с нормальным зрением видят одно число, а люди с красно-зелёной цветослепотой - другое. Выявляют конкретную ось путаницы (протан/дейтеран) путём использования изохроматических оттенков вдоль одной оси.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">3. Исчезающие таблицы</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Таблицы, в которых число видно людям с нормальным цветовым зрением, но невидимо для людей с цветослепотой, потому что цифра и фон изохроматичны вдоль оси путаницы и различаются только по хроматичности.
+            </p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">4. Диагностические таблицы</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Таблицы, различающие дейтеран и протан дефекты. Люди с протанопией склонны читать один набор цифр, а люди с дейтеранопией - другой, что позволяет клиницисту дифференцировать ось дефекта.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-[13px] sm:text-sm uppercase font-semibold">
+          FAQ · Клинические вопросы
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Часто задаваемые вопросы
+        </h2>
+        <div class="space-y-4">
+          {schema[3].mainEntity.map((item) => (
+            <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+              <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+                <span>{item.name}</span>
+                <svg class="w-5 h-5 text-[#0066cc] shrink-0 ml-4 transition-transform duration-200 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+              </summary>
+              <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                {item.acceptedAnswer.text}
+              </div>
+            </details>
+          ))}
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <Footer />
+
+  <script src="../../scripts/tools/color-blind-engine-ru.js"></script>
+
+  <!-- Persist monitor-calibration banner dismissal across visits -->
+  <script is:inline>
+    (function () {
+      try {
+        var KEY = 'fiq_cb_calibrated';
+        var banner = document.getElementById('calibration-banner');
+        var btn = document.getElementById('btn-dismiss-calibration');
+        if (banner && localStorage.getItem(KEY) === 'true') banner.classList.add('hidden');
+        if (btn && banner) btn.addEventListener('click', function () {
+          try { localStorage.setItem(KEY, 'true'); } catch (e) {}
+          banner.classList.add('hidden');
+        });
+      } catch (e) {}
+    })();
+  </script>
+</Layout>

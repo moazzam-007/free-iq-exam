@@ -46,9 +46,11 @@ const enHref = effectiveEnPath.startsWith('http')
     : `${siteOrigin}${effectiveEnPath.startsWith('/') ? '' : '/'}${effectiveEnPath}`;
 const idHref = effectiveIdPath.startsWith('http')
   ? effectiveIdPath
-  : effectiveIdPath === '/'
+  : effectiveIdPath === '/' || effectiveIdPath === '/id' || effectiveIdPath === '/id/'
     ? `${siteOrigin}/id/`
-    : `${siteOrigin}/id${effectiveIdPath.startsWith('/') ? '' : '/'}${effectiveIdPath}`;
+    : effectiveIdPath.startsWith('/id/')
+      ? `${siteOrigin}${effectiveIdPath}`
+      : `${siteOrigin}/id${effectiveIdPath.startsWith('/') ? '' : '/'}${effectiveIdPath}`;
 ---
 
 <!doctype html>
@@ -126,10 +128,10 @@ const idHref = effectiveIdPath.startsWith('http')
     <!-- Schema.org JSON-LD Structured Data -->
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
-    <!-- Google Fonts: Inter & Outfit -->
+    <!-- Google Fonts: Geist + Geist Mono + Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- Analytics: Google Analytics 4 (guarded by PUBLIC_GA_ID) -->
     {publicGaId && publicGaId !== 'G-XXXXXXXXXX' && (

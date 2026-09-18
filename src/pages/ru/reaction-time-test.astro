@@ -1,0 +1,1582 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = 'Тест времени реакции онлайн - проверьте свои рефлексы (мс) | FreeIQExam';
+const description =
+  'Измерьте скорость зрительной реакции в миллисекундах с помощью бесплатного теста из пяти проб. Мгновенно получите среднее значение, оценку процентиля, личный рекорд и уровень рефлексов - без регистрации.';
+const canonicalUrl = 'https://freeiqexam.com/ru/reaction-time-test';
+
+const faqItems = [
+  {
+    name: 'Какой результат онлайн-теста времени реакции считается хорошим?',
+    answer:
+      'В простой зрительной задаче многие здоровые взрослые показывают результат около 250 миллисекунд, хотя точное значение зависит от методики, устройства и выборки. В FreeIQExam результаты ниже примерно 220 мс отображаются как более быстрые, чем эталонное распределение, используемое моделью процентилей, а очень низкие значения следует воспринимать как исключительную результативность, а не как клиническое измерение.'
+  },
+  {
+    name: 'Почему на смартфоне моё время реакции значительно медленнее, чем на ПК?',
+    answer:
+      'Телефон может добавлять задержку через цикл обновления экрана, сенсорный дигитайзер, обработку в операционной системе, планирование браузера и конвейер от касания до отрисовки. Настольный компьютер с высокочастотным дисплеем и проводной мышью с низкой задержкой обычно имеет более короткий и предсказуемый путь ввода. Размер различия сильно зависит от устройства и браузера, поэтому универсального штрафа в 40–75 мс не существует.'
+  },
+  {
+    name: 'Каков абсолютный биологический предел скорости реакции человека?',
+    answer:
+      'Единого универсального биологического предела нет, потому что время реакции зависит от сенсорной модальности, стимула, ответа и метода измерения. Простое слуховое время реакции в тренировочных или лабораторных условиях может быть близким к 150 мс или ниже, тогда как простая зрительная реакция обычно медленнее. Чрезвычайно короткие значения могут отражать предугадывание, артефакты измерения или совсем иное определение задачи.'
+  },
+  {
+    name: 'Как время реакции профессиональных геймеров отличается от времени реакции неиграющих?',
+    answer:
+      'Соревновательные геймеры часто показывают более быстрые средние ответы в простых зрительных задачах, чем люди, которые не играют, но разрыв варьируется между исследованиями и задачами. Тренировка может улучшать внимание, зрительный поиск, выбор ответа и моторную подготовку; она не ускоряет проведение импульса по каждому нерву.'
+  },
+  {
+    name: 'Почему человек реагирует на внезапный звук быстрее, чем на внезапный свет?',
+    answer:
+      'Слуховые сигналы обычно достигают осознания и запускают моторный ответ быстрее зрительных, потому что слуховая трансдукция и ранний нейронный путь для простых стимулов могут быть быстрее. Зрение добавляет фототрансдукцию в сетчатке и дополнительную корковую обработку до выбора моторного ответа.'
+  },
+  {
+    name: 'Насколько игровой монитор 144 Гц или 240 Гц может улучшить мой результат?',
+    answer:
+      'Более высокая частота обновления сокращает время между доступными кадрами: около 16,67 мс при 60 Гц, 6,94 мс при 144 Гц и 4,17 мс при 240 Гц. Это уменьшает один компонент неопределённости предъявления, но не вычитает всю эту разницу из результата каждого пользователя, поскольку реальный конвейер включает рендеринг, вывод кадра, ввод и задержку операционной системы.'
+  },
+  {
+    name: 'Какое время реакции считается нормальным в 50 лет?',
+    answer:
+      'Единого клинического порога нормального времени реакции в 50 лет не существует. Скорость реакции обычно меняется с возрастом постепенно, а результат здорового человека зависит от зрения, сна, лекарств, задержки устройства, практики и методики теста. Сравнивать свои повторные результаты в одинаковых условиях полезнее, чем воспринимать один интернет-ориентир как диагноз.'
+  },
+  {
+    name: 'Можно ли натренировать и улучшить зрительное время реакции навсегда?',
+    answer:
+      'Да, некоторые компоненты результативности улучшаются с практикой, особенно внимание, обнаружение стимула, подготовка ответа и знакомство с задачей. Улучшения обычно специфичны для задачи и ограничены физиологией. Стабильный сон, физическая активность, хорошие условия освещения и повторная практика по одной и той же методике - более обоснованная стратегия, чем погоня за одним экстремальным результатом.'
+  }
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#app`,
+    name: 'Бесплатный тест времени зрительной реакции',
+    url: canonicalUrl,
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Any',
+    browserRequirements:
+      'Требуется поддержка JavaScript, Performance API, Pointer Events и HTML5',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    },
+    description:
+      'Браузерный тест времени зрительной реакции из пяти проб, который сообщает скорость ответа в миллисекундах и модельную оценку популяционного процентиля.',
+    isAccessibleForFree: true,
+    inLanguage: 'ru',
+    creator: {
+      '@type': 'Organization',
+      name: 'FreeIQExam',
+      url: 'https://freeiqexam.com'
+    },
+    featureList: [
+      'Пять калиброванных проб зрительной реакции',
+      'Ввод мышью, касанием и с клавиатуры',
+      'Хранение личного рекорда на стороне клиента',
+      'Модельная оценка популяционного процентиля',
+      'Необязательные синтезированные звуковые сигналы',
+      'Отправка результата через буфер обмена'
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Главная',
+        item: 'https://freeiqexam.com/ru/'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Когнитивные игры',
+        item: 'https://freeiqexam.com/ru/games'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Тест времени реакции',
+        item: canonicalUrl
+      }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'Тест времени зрительной реакции из пяти проб',
+    url: canonicalUrl,
+    description:
+      'Простая задача на время реакции, в которой участник отвечает, когда арена меняет цвет с красного на зелёный.',
+    numberOfQuestions: 5,
+    isAccessibleForFree: true,
+    inLanguage: 'ru',
+    educationalAlignment: {
+      '@type': 'AlignmentObject',
+      alignmentType: 'educationalSubject',
+      targetName:
+        'Скорость восприятия и сенсомоторная задержка ответа'
+    }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.name,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer
+      }
+    }))
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  enPath="/reaction-time-test"
+  idPath="/id/tes-waktu-reaksi"
+  schema={schema}
+>
+  <Header currentPath="/reaction-time-test" enPath="/reaction-time-test" idPath="/id/tes-waktu-reaksi" />
+
+  <style>
+    .reaction-page {
+      --reaction-border: #e4e4e7;
+      --reaction-muted: #52525b;
+      background: #ffffff;
+    }
+
+    .dark .reaction-page {
+      --reaction-border: #27272a;
+      --reaction-muted: #a1a1aa;
+      background: #000000;
+    }
+
+    .reaction-arena {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      transition:
+        transform 90ms ease-out,
+        background 120ms ease-out;
+    }
+
+    .reaction-arena:active {
+      transform: scale(0.997);
+    }
+
+    .state-start {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #2563eb 0%,
+          #1d4ed8 62%,
+          #1e40af 100%
+        );
+    }
+
+    .dark .state-start {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #1d4ed8 0%,
+          #0f172a 70%,
+          #09090b 100%
+        );
+    }
+
+    .state-waiting {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #e11d48 0%,
+          #be123c 62%,
+          #9f1239 100%
+        );
+    }
+
+    .dark .state-waiting {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #be123c 0%,
+          #881337 68%,
+          #4c0519 100%
+        );
+    }
+
+    .state-active {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #10b981 0%,
+          #059669 62%,
+          #047857 100%
+        );
+    }
+
+    .dark .state-active {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #10b981 0%,
+          #047857 68%,
+          #064e3b 100%
+        );
+    }
+
+    .state-toosoon {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #f97316 0%,
+          #ea580c 65%,
+          #c2410c 100%
+        );
+    }
+
+    .state-result {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #38bdf8 0%,
+          #0284c7 65%,
+          #0369a1 100%
+        );
+    }
+
+    .dark .state-result {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #0ea5e9 0%,
+          #0369a1 68%,
+          #082f49 100%
+        );
+    }
+
+    .state-summary {
+      background: #fafafa;
+    }
+
+    .dark .state-summary {
+      background: #09090b;
+    }
+
+    .summary-card {
+      background: rgba(255, 255, 255, 0.97);
+      border: 1px solid #e4e4e7;
+      backdrop-filter: blur(16px);
+    }
+
+    .dark .summary-card {
+      background: rgba(18, 18, 21, 0.97);
+      border-color: #27272a;
+    }
+
+    .reaction-copy p {
+      max-width: 75ch;
+    }
+
+    .reaction-copy table {
+      min-width: 760px;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    @keyframes reaction-shake {
+      10%,
+      90% {
+        transform: translateX(-2px);
+      }
+
+      20%,
+      80% {
+        transform: translateX(4px);
+      }
+
+      30%,
+      50%,
+      70% {
+        transform: translateX(-6px);
+      }
+
+      40%,
+      60% {
+        transform: translateX(6px);
+      }
+    }
+
+    .animate-reaction-shake {
+      animation:
+        reaction-shake
+        0.4s
+        cubic-bezier(.36, .07, .19, .97)
+        both;
+    }
+
+    .rt-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    .dark .rt-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-reaction-shake {
+        animation: none;
+      }
+      .rt-hero-glow { display: none; }
+    }
+  </style>
+
+  <main
+    id="main-content"
+    class="reaction-page min-h-screen flex-1 w-full"
+  >
+    <div
+      class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16"
+    >
+      <nav
+        class="flex items-center gap-2 mb-8 text-[13px] sm:text-sm font-medium text-zinc-500 dark:text-zinc-400"
+        aria-label="Хлебные крошки"
+      >
+        <a
+          href="/ru/"
+          class="hover:text-zinc-950 dark:hover:text-white transition-colors"
+        >
+          Главная
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <a
+          href="/ru/games"
+          class="hover:text-zinc-950 dark:hover:text-white transition-colors"
+        >
+          Когнитивные игры
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <span class="text-zinc-900 dark:text-zinc-100">
+          Тест времени реакции
+        </span>
+      </nav>
+
+      <header
+        class="relative text-center max-w-3xl mx-auto mb-10 sm:mb-12"
+      >
+        <div class="rt-hero-glow" aria-hidden="true"></div>
+        <div
+          class="relative inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-zinc-100 px-4 py-2 text-[13px] sm:text-sm font-mono font-semibold uppercase tracking-wider text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+        >
+          <span
+            class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"
+            aria-hidden="true"
+          ></span>
+
+          <span>
+            Скорость восприятия · Хронометрия Gs
+          </span>
+        </div>
+
+        <h1
+          class="mt-5 text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.025em] leading-[1.08] text-zinc-950 dark:text-white"
+        >
+          Тест времени реакции онлайн
+        </h1>
+
+        <p
+          class="mt-5 text-[17px] sm:text-lg leading-[1.62] text-zinc-600 dark:text-zinc-300"
+        >
+          Проверьте скорость зрительных рефлексов в миллисекундах. Дождитесь,
+          пока красная арена станет зелёной, а затем кликните, коснитесь,
+          нажмите пробел или Enter как можно быстрее. Пять зачётных проб дают
+          среднее время реакции, модельную оценку процентиля, уровень рефлексов
+          и проверку личного рекорда.
+        </p>
+      </header>
+
+      <section
+        aria-labelledby="arena-heading"
+        class="max-w-3xl mx-auto"
+      >
+        <h2 id="arena-heading" class="sr-only">
+          Интерактивный тест времени реакции
+        </h2>
+
+        <div
+          class="flex items-center justify-between gap-4 px-1 mb-4 text-sm sm:text-base"
+        >
+          <div class="flex items-center gap-2">
+            <span
+              class="text-zinc-500 dark:text-zinc-400 font-medium"
+            >
+              ПРОБА
+            </span>
+
+            <strong
+              id="hud-round-counter"
+              class="text-zinc-950 dark:text-white"
+            >
+              0 / 5
+            </strong>
+          </div>
+
+          <div
+            class="flex items-center gap-3 sm:gap-5"
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="text-zinc-500 dark:text-zinc-400 font-medium"
+              >
+                РЕКОРД
+              </span>
+
+              <strong
+                id="hud-personal-best"
+                class="text-emerald-600 dark:text-emerald-400"
+              >
+                -
+              </strong>
+            </div>
+
+            <button
+              id="btn-sound-toggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Отключить звуковые эффекты"
+              class="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-2.5 font-semibold text-zinc-800 dark:text-zinc-200 transition-smooth active:scale-[0.97]"
+            >
+              <span id="sound-icon" aria-hidden="true" class="inline-flex">
+                <svg id="sound-icon-on" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>
+                <svg id="sound-icon-off" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" /></svg>
+              </span>
+
+              <span id="sound-label">
+                Звук
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="mb-4 flex items-center gap-2"
+          aria-label="Прогресс проб"
+        >
+          <span
+            id="pill-trial-1"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-2"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-3"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-4"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-5"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+        </div>
+
+        <div
+          id="reaction-box"
+          role="button"
+          tabindex="0"
+          aria-label="Арена теста времени реакции. Кликните или коснитесь, когда арена станет зелёной."
+          aria-busy="false"
+          class="reaction-arena state-start relative min-h-[430px] sm:min-h-[500px] rounded-[2rem] overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/40 shadow-2xl"
+        >
+          <div
+            class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,.18),transparent_34%),radial-gradient(circle_at_50%_100%,rgba(0,0,0,.16),transparent_60%)]"
+          ></div>
+
+          <div
+            id="content-start"
+            class="relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg"
+            >
+              <svg
+                class="w-10 h-10 sm:w-12 sm:h-12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+
+            <div class="space-y-3 max-w-xl">
+              <h3
+                class="text-3xl sm:text-5xl font-extrabold tracking-tight"
+              >
+                Нажмите или коснитесь, чтобы начать
+              </h3>
+
+              <p
+                class="text-base sm:text-lg leading-relaxed text-white/90"
+              >
+                Дождитесь зелёного. Затем реагируйте немедленно.
+                Преждевременные нажатия не засчитываются в пять зачётных проб.
+              </p>
+            </div>
+
+            <div
+              class="inline-flex flex-wrap items-center justify-center gap-2 rounded-full bg-white/15 border border-white/20 px-5 py-3 text-sm font-semibold"
+            >
+              <span>Клавиатура:</span>
+
+              <kbd
+                class="rounded-lg bg-white/20 px-3 py-1 font-mono"
+              >
+                ПРОБЕЛ
+              </kbd>
+
+              <span>или</span>
+
+              <kbd
+                class="rounded-lg bg-white/20 px-3 py-1 font-mono"
+              >
+                ENTER
+              </kbd>
+            </div>
+          </div>
+
+          <div
+            id="content-waiting"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="flex items-center gap-3"
+              aria-hidden="true"
+            >
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping"
+              ></span>
+
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping [animation-delay:150ms]"
+              ></span>
+
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping [animation-delay:300ms]"
+              ></span>
+            </div>
+
+            <div>
+              <h3
+                class="text-4xl sm:text-6xl font-extrabold tracking-tight uppercase"
+              >
+                Ждите зелёного…
+              </h3>
+
+              <p
+                class="mt-3 text-base sm:text-lg text-white/85"
+              >
+                Не предугадывайте. Держите палец наготове, но не нажимайте.
+              </p>
+            </div>
+          </div>
+
+          <div
+            id="content-active"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="w-20 h-20 rounded-full bg-white/25 border border-white/30 flex items-center justify-center shadow-2xl"
+            >
+              <svg
+                class="w-12 h-12"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <h3
+                class="text-5xl sm:text-7xl font-extrabold tracking-tight uppercase"
+              >
+                ЖМИ СЕЙЧАС!
+              </h3>
+
+              <p
+                class="mt-3 text-sm sm:text-base font-semibold uppercase tracking-widest text-white/90"
+              >
+                Касание, клик, пробел или Enter
+              </p>
+            </div>
+          </div>
+
+          <div
+            id="content-toosoon"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-5 px-6 sm:px-10 text-center text-white animate-reaction-shake"
+          >
+            <div
+              class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center"
+            >
+              <svg
+                class="w-10 h-10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3.732 1.732 3z"
+                />
+              </svg>
+            </div>
+
+            <h3
+              class="text-4xl sm:text-5xl font-extrabold tracking-tight"
+            >
+              Слишком рано!
+            </h3>
+
+            <p
+              class="text-base sm:text-lg text-white/90 max-w-xl"
+            >
+              Вы нажали, пока арена была красной. Попытка отброшена, и этот же
+              раунд будет повторён.
+            </p>
+
+            <span
+              class="rounded-full bg-white px-6 py-3 font-bold text-orange-700 shadow-xl"
+            >
+              Нажмите, чтобы повторить
+            </span>
+          </div>
+
+          <div
+            id="content-result"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-5 px-6 sm:px-10 text-center text-white"
+          >
+            <span
+              id="result-round-indicator"
+              class="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold uppercase tracking-wider"
+            >
+              РАУНД 1 ИЗ 5
+            </span>
+
+            <div class="flex items-baseline gap-2">
+              <span
+                id="round-ms-display"
+                class="text-6xl sm:text-8xl font-extrabold tracking-tight"
+              >
+                250
+              </span>
+
+              <span
+                class="text-2xl sm:text-3xl font-mono font-bold text-white/80"
+              >
+                мс
+              </span>
+            </div>
+
+            <p
+              id="round-quick-feedback"
+              class="text-base sm:text-lg font-semibold text-white/90"
+            >
+              Сильная зрительная реакция.
+            </p>
+
+            <span
+              class="rounded-full bg-white px-7 py-3.5 text-base font-bold text-sky-700 shadow-xl"
+            >
+              Нажмите, чтобы продолжить
+            </span>
+          </div>
+
+          <div
+            id="content-summary"
+            class="hidden relative z-10 w-full min-h-[430px] sm:min-h-[500px] flex items-center justify-center p-4 sm:p-8"
+          >
+            <div
+              class="summary-card w-full max-w-xl rounded-[2rem] p-6 sm:p-8 text-zinc-900 dark:text-white shadow-2xl"
+            >
+              <div
+                class="mx-auto w-14 h-14 rounded-2xl bg-[#0066cc]/10 dark:bg-[#2997ff]/10 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center"
+              >
+                <svg
+                  class="w-8 h-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+
+              <h3
+                class="mt-4 text-2xl sm:text-3xl font-bold text-center tracking-tight"
+              >
+                Тест завершён
+              </h3>
+
+              <p
+                class="mt-1 text-base text-zinc-500 dark:text-zinc-400 text-center"
+              >
+                Пять зачётных проб · среднее время зрительной реакции
+              </p>
+
+              <div
+                class="mt-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-5 text-center"
+              >
+                <p
+                  class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+                >
+                  Средняя реакция
+                </p>
+
+                <div
+                  class="mt-2 flex items-baseline justify-center gap-2"
+                >
+                  <span
+                    id="final-avg-ms"
+                    class="text-6xl sm:text-7xl font-extrabold tracking-tight text-[#0066cc] dark:text-[#2997ff]"
+                  >
+                    250
+                  </span>
+
+                  <span
+                    class="text-2xl font-mono font-bold text-zinc-500"
+                  >
+                    мс
+                  </span>
+                </div>
+
+                <div
+                  class="mt-4 flex flex-wrap items-center justify-center gap-2"
+                >
+                  <span
+                    id="final-percentile-badge"
+                    class="rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 px-4 py-2 text-sm font-bold text-emerald-700 dark:text-emerald-300"
+                  >
+                    Быстрее 50% людей (50-й процентиль)
+                  </span>
+
+                  <span
+                    id="final-tier-badge"
+                    class="rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                  >
+                    Норма - медиана человека
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-5">
+                <p
+                  class="mb-2 text-sm font-semibold uppercase tracking-wider text-center text-zinc-500 dark:text-zinc-400"
+                >
+                  Скорость проб
+                </p>
+
+                <div
+                  id="summary-trials-grid"
+                  class="grid grid-cols-5 gap-2 text-center font-mono text-sm"
+                ></div>
+              </div>
+
+              <div
+                class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
+              >
+                <button
+                  id="btn-share-score"
+                  type="button"
+                  class="min-h-[44px] rounded-full border border-[#0066cc] dark:border-[#2997ff] bg-[#0066cc] dark:bg-[#2997ff] px-6 py-3.5 text-base font-semibold text-white transition-smooth active:scale-[0.97] hover:bg-[#0071e3] dark:hover:bg-[#3b82f6]"
+                >
+                  <span id="share-btn-text">
+                    Поделиться результатом
+                  </span>
+                </button>
+
+                <button
+                  id="btn-restart-game"
+                  type="button"
+                  class="min-h-[44px] rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 text-base font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth active:scale-[0.97] hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                >
+                  Пройти заново
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p
+          class="mt-4 text-center text-sm sm:text-base text-zinc-500 dark:text-zinc-400"
+        >
+          Измеренный результат - это задержка от стимула до ввода, видимая
+          браузеру. Частота обновления экрана, планировщик браузера, устройство
+          ввода и сенсорный экран могут влиять на результат.
+        </p>
+      </section>
+
+      <section
+        class="reaction-copy mt-20 sm:mt-28 border-t border-zinc-200 dark:border-zinc-800 pt-16 sm:pt-20"
+        aria-labelledby="guide-title"
+      >
+        <div class="max-w-3xl mx-auto">
+          <p
+            class="text-sm font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff]"
+          >
+            Нейробиология · Ориентиры · Оборудование
+          </p>
+
+          <h2
+            id="guide-title"
+            class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white"
+          >
+            Время зрительной реакции: как быстро может ответить нервная система
+            человека?
+          </h2>
+
+          <p
+            class="mt-6 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+          >
+            Время реакции - это не одно биологическое число. Это совокупная
+            задержка восприятия стимула, распознавания значимого сигнала, выбора
+            ответа, передачи команды по нервной системе, движения мышцы и
+            регистрации физического ввода на устройстве. Поэтому браузерный тест
+            времени реакции измеряет полную сенсомоторную петлю, а не скорость
+            одного изолированного нерва.
+          </p>
+        </div>
+
+        <article
+          class="mt-12 grid gap-14 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+        >
+          <section aria-labelledby="neurobiology-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              01 · Физиология
+            </p>
+
+            <h3
+              id="neurobiology-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Физиология скорости реакции
+            </h3>
+
+            <p class="mt-5">
+              Зрительная реакция начинается, когда фотоны попадают на сетчатку.
+              Палочки и колбочки преобразуют падающий свет в изменения
+              мембранного потенциала посредством фототрансдукции. Это
+              биохимический процесс, поэтому зрение имеет раннюю стоимость
+              обработки, прежде чем потенциал действия сможет пойти по
+              зрительному нерву. Затем зрительные сигналы проходят несколько
+              этапов передачи и обработки, включая латеральное коленчатое тело
+              (ЛКТ) таламуса и первичную зрительную кору (V1) в затылочной доле.
+              Оттуда распределённые сети внимания и выбора действия помогают
+              определить, что именно этот стимул должен запустить ответ.
+            </p>
+
+            <p class="mt-5">
+              Упрощённый путь можно представить так:
+              <strong class="text-zinc-900 dark:text-white">
+                сетчатка → зрительный нерв → ЛКТ → V1 → сети внимания и выбора
+                действия → моторная кора → кортикоспинальные пути → спинальные
+                мотонейроны → мышцы пальца → устройство ввода
+              </strong>.
+              Крупные миелинизированные аксоны в благоприятных условиях проводят
+              импульс примерно со скоростью 100 м/с, но это впечатляющее число -
+              лишь часть общей задержки. Синапсы, сенсорная трансдукция, решения
+              сетей, активация мышц и конвейер устройства добавляют время.
+            </p>
+
+            <p class="mt-5">
+              Слуховое время реакции в экспериментах с простым ответом часто
+              меньше зрительного. В ухе вызванное звуком движение в улитке
+              механически отклоняет стереоцилии и быстро меняет рецепторные токи
+              волосковых клеток. Зрительная система, напротив, должна завершить
+              фототрансдукцию, прежде чем сигнал покинет сетчатку. Значения
+              порядка 140–170 мс для простых слуховых ответов и порядка
+              200–300 мс для простых зрительных ответов - полезные широкие
+              ориентиры, но конкретные эксперименты дают разные числа.
+            </p>
+
+            <div
+              class="mt-7 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6 sm:p-7"
+            >
+              <p
+                class="text-sm font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff]"
+              >
+                Важное замечание об измерении
+              </p>
+
+              <p class="mt-3">
+                Этот тест - ориентир результативности, а не клиническое
+                неврологическое обследование. Процентиль здесь представляет
+                собой статистическое сравнение с моделью, используемой на этой
+                странице; это не диагноз, не решение о допуске к вождению и не
+                доказательство рефлексов профессионального уровня.
+              </p>
+            </div>
+          </section>
+
+          <section aria-labelledby="benchmark-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              02 · Популяционный контекст
+            </p>
+
+            <h3
+              id="benchmark-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Мировые ориентиры и популяционные процентили
+            </h3>
+
+            <p class="mt-5">
+              В литературе по времени реакции используются разное оборудование,
+              стимулы, инструкции и критерии включения, поэтому единую мировую
+              таблицу следует воспринимать как иллюстративную, а не как
+              нормативную. Строки ниже намеренно сформулированы как широкие
+              ориентировочные диапазоны для простых задач на зрительный ответ, а
+              не как лабораторные нормы для каждой популяции.
+            </p>
+
+            <div
+              class="mt-7 overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800"
+            >
+              <table
+                class="w-full text-left border-collapse text-sm sm:text-base"
+              >
+                <caption class="sr-only">
+                  Ориентировочные диапазоны времени реакции
+                </caption>
+
+                <thead>
+                  <tr
+                    class="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
+                  >
+                    <th
+                      scope="col"
+                      class="px-5 py-4 font-semibold text-zinc-950 dark:text-white"
+                    >
+                      Группа / контекст
+                    </th>
+
+                    <th
+                      scope="col"
+                      class="px-5 py-4 font-semibold text-zinc-950 dark:text-white"
+                    >
+                      Ориентировочное время зрительной реакции
+                    </th>
+
+                    <th
+                      scope="col"
+                      class="px-5 py-4 font-semibold text-zinc-950 dark:text-white"
+                    >
+                      Интерпретация
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody
+                  class="divide-y divide-zinc-200 dark:divide-zinc-800"
+                >
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Элитные гонщики / военные лётчики
+                    </td>
+
+                    <td class="px-5 py-4">
+                      ~140–160 мс*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      Исключительная тренированная результативность; определения
+                      задачи различаются.
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Киберспортсмены
+                    </td>
+
+                    <td class="px-5 py-4">
+                      ~160–190 мс*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      В простых задачах часто сообщается о быстрых реакциях.
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Спортсмены студенческого возраста
+                    </td>
+
+                    <td class="px-5 py-4">
+                      ~190–220 мс*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      Часто быстрее, чем базовый уровень нетренированных
+                      взрослых.
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Средние здоровые взрослые
+                    </td>
+
+                    <td class="px-5 py-4">
+                      ~250–270 мс*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      Полезный широкий ориентир для простых зрительных тестов.
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Усталость / конфигурация с высокой задержкой
+                    </td>
+
+                    <td class="px-5 py-4">
+                      &gt;320 мс*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      Может отражать сонливость, неустойчивое внимание или
+                      задержку устройства.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p
+              class="mt-4 text-sm sm:text-base text-zinc-500 dark:text-zinc-400"
+            >
+              *Ориентировочные диапазоны, приведённые для образовательного
+              контекста этой страницы. Их не следует воспринимать как
+              универсальную клиническую норму или как доказательство того, что
+              каждый представитель профессии попадает в указанный диапазон.
+            </p>
+          </section>
+
+          <section aria-labelledby="hardware-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              03 · Задержка оборудования
+            </p>
+
+            <h3
+              id="hardware-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Задержка монитора, мыши и сенсорного экрана может изменить
+              результат
+            </h3>
+
+            <p class="mt-5">
+              Онлайн-тест времени реакции не измеряет биологию в вакууме.
+              Наблюдаемое число включает время между отрисовкой видимого
+              изменения в браузере и сообщением устройства о вводе пользователя.
+              Частоту обновления понять особенно легко: дисплей 60 Гц
+              предъявляет новое обновление каждые 16,67 мс, 144 Гц - каждые
+              6,94 мс, 240 Гц - каждые 4,17 мс, а 360 Гц - каждые 2,78 мс.
+              Более высокая частота обновления тем самым сокращает максимальный
+              интервал между кадрами, хотя фактическая сквозная задержка также
+              зависит от позиции вывода кадра, рендеринга, синхронизации и самого
+              дисплея.
+            </p>
+
+            <p class="mt-5">
+              Опрос мыши - ещё один компонент. Интервал опроса USB 125 Гц
+              соответствует 8 мс между опросами в идеализированной модели
+              наихудшего интервала; 1000 Гц соответствует 1 мс. Это не то же
+              самое, что общая задержка ввода, потому что прошивка устройства,
+              планирование USB, доставка событий операционной системой,
+              диспетчеризация событий браузером и сам физический клик добавляют
+              дополнительную вариативность времени.
+            </p>
+
+            <p class="mt-5">
+              Сенсорные экраны могут быть ещё более вариативными. Выборка
+              дигитайзера, фильтрация касаний, распознавание жестов в
+              операционной системе, обработка в браузере, композитинг и
+              обновление экрана - всё это может добавлять задержку. Разумно
+              ожидать десятки миллисекунд дополнительной задержки в некоторых
+              мобильных конфигурациях, но универсальный штраф в 40–75 мс - это
+              слишком сильное утверждение: устройства различаются, реализации
+              браузеров различаются, а некоторые современные телефоны
+              существенно быстрее других.
+            </p>
+
+            <div class="mt-7 grid gap-4 sm:grid-cols-2">
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Интервал обновления
+                </h4>
+
+                <p class="mt-2">
+                  60 Гц → 16,67 мс · 144 Гц → 6,94 мс · 240 Гц → 4,17 мс · 360
+                  Гц → 2,78 мс.
+                </p>
+              </div>
+
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Интервал опроса
+                </h4>
+
+                <p class="mt-2">
+                  125 Гц → 8 мс · 500 Гц → 2 мс · 1000 Гц → 1 мс, до учёта
+                  остального конвейера ввода.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section aria-labelledby="aging-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              04 · Время суток и старение
+            </p>
+
+            <h3
+              id="aging-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Хронобиология, сон и возраст меняют скорость реакции
+            </h3>
+
+            <p class="mt-5">
+              Результативность реакции чувствительна к уровню бодрствования и
+              циркадным ритмам. Во многих лабораторных условиях скорость ответа
+              улучшается от сонной части утра к дню, хотя пик зависит от
+              хронотипа, режима сна, освещения, употребления кофеина и задачи.
+              Поэтому поздний дневной интервал тестирования - разумный
+              практический выбор для некоторых людей, но это не универсальное
+              биологическое правило.
+            </p>
+
+            <p class="mt-5">
+              Возраст - ещё одно сильное влияние. Простое время реакции обычно
+              минимально в молодом взрослом возрасте, а затем постепенно растёт.
+              Это изменение не объясняется одним механизмом. Более медленная
+              сенсорная обработка, изменения внимания, снижение скорости
+              движений, изменённый набор нейромышечных единиц и возрастные
+              изменения нервной системы вносят свой вклад. Утверждение вроде
+              «ровно +2–6 мс за десятилетие» может быть полезным образовательным
+              приближением, но индивидуальные траектории шире, чем предполагает
+              эта единственная формула.
+            </p>
+
+            <p class="mt-5">
+              Недостаток сна может сильно влиять на бдительность и стабильность
+              ответов. Тяжёлая депривация сна давала уровни нарушений, которые
+              исследователи сравнивали с нарушениями, связанными с алкоголем, но
+              точная эквивалентность зависит от задачи, длительности
+              бодрствования и дизайна исследования. Вместо запоминания одного
+              «эквивалента алкоголя» практический вывод проще: не судите о своих
+              обычных рефлексах по результату, полученному в состоянии острого
+              недостатка сна.
+            </p>
+          </section>
+
+          <section aria-labelledby="optimization-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              05 · Тактическая оптимизация
+            </p>
+
+            <h3
+              id="optimization-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Как улучшить результат теста времени реакции, не гоняясь за
+              артефактами
+            </h3>
+
+            <p class="mt-5">
+              Самая полезная цель - не выжать невозможное маленькое число, а
+              снизить избегаемую вариативность. Держите взгляд мягким и
+              центрированным на арене, вместо того чтобы жёстко смотреть в один
+              пиксель. Расслабленная стратегия фокусировки помогает замечать
+              общее изменение яркости без лишних движений глаз. Держите
+              отвечающую руку в нейтральном положении, а палец - близко к
+              элементу ввода, но не нажимайте заранее и не давите на кнопку.
+            </p>
+
+            <p class="mt-5">
+              Упреждающая моторная подготовка может ускорить простые ответы,
+              потому что моторная система способна подготовить вероятное
+              движение до появления стимула. Обратная сторона - преждевременные
+              нажатия: подготовка должна останавливаться до угадывания точного
+              момента запуска. Стабильная поза, одно и то же устройство, один и
+              тот же браузер и одинаковое расстояние до экрана часто ценнее, чем
+              смена оборудования между пробами.
+            </p>
+
+            <div class="mt-7 grid gap-4 md:grid-cols-3">
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Мягкий сфокусированный взгляд
+                </h4>
+
+                <p class="mt-2">
+                  Держите всю арену в поле зрения и избегайте лишних саккад.
+                </p>
+              </div>
+
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Моторная подготовка
+                </h4>
+
+                <p class="mt-2">
+                  Держите отвечающий палец рядом с элементом управления, не
+                  нажимая заранее.
+                </p>
+              </div>
+
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Повторяйте в одинаковых условиях
+                </h4>
+
+                <p class="mt-2">
+                  Используйте одно устройство и одинаковые условия, чтобы
+                  изменения отражали результативность, а не оборудование.
+                </p>
+              </div>
+            </div>
+
+            <p class="mt-5">
+              Практика может помочь, но улучшение часто специфично для задачи.
+              Повторение именно этого теста снижает затраты на знакомство и
+              стратегию, тогда как более широкие игры могут улучшать внимание или
+              выбор ответа без такого же выигрыша в другом тесте. Сон,
+              физическая активность и здоровые условия для зрения - базовые
+              факторы; стимуляторы не должны заменять достаточный отдых.
+            </p>
+
+            <p class="mt-5">
+              Один из самых полезных принципов тренировки - постоянство.
+              Проводите несколько сессий примерно в одно и то же время суток,
+              используйте один и тот же браузер, дисплей, мышь или телефон и
+              сидите на одном и том же расстоянии. Браузерные таймеры - не
+              инструменты жёсткого реального времени: операционная система может
+              ненадолго приостановить вкладку, браузер может отдать приоритет
+              другой работе, а цикл обновления может сместить момент, когда
+              визуальное изменение становится доступным. Среднее по пяти пробам
+              снижает часть случайного шума, но не может полностью убрать эти
+              источники задержки.
+            </p>
+
+            <p class="mt-5">
+              Движения глаз тоже важны. Мягкий сфокусированный взгляд удерживает
+              целевую область в периферическом зрении и минимизирует лишние
+              саккады. В простой задаче на смену цвета цель не в том, чтобы
+              «охотиться» за зелёным сигналом, а в том, чтобы сохранять
+              готовность по всей арене. Предмоторная подготовка может сократить
+              финальный моторный шаг, но чрезмерное напряжение делает клик менее
+              надёжным. Поэтому лучшая соревновательная поза - настороженная, но
+              расслабленная: глаза по центру, рука с опорой, палец рядом с
+              элементом управления и без намеренного предсказания момента
+              запуска.
+            </p>
+          </section>
+
+          <section aria-labelledby="measurement-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              06A · Качество измерения
+            </p>
+
+            <h3
+              id="measurement-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Как сделать онлайн-тест реакции более воспроизводимым
+            </h3>
+
+            <p class="mt-5">
+              Хороший ориентир воспроизводим прежде, чем впечатляющ. Держите
+              арену полностью видимой, закрывайте тяжёлые фоновые вкладки, не
+              меняйте масштаб между попытками и используйте стабильную цель для
+              указателя или касания. Браузерные таймеры - не инструменты жёсткого
+              реального времени: операционная система может ненадолго
+              приостановить вкладку, браузер может отдать приоритет другой
+              работе, а цикл обновления может сместить момент, когда визуальное
+              изменение становится доступным. Среднее по пяти пробам снижает
+              часть случайного шума, но не может полностью убрать эти источники
+              задержки.
+            </p>
+
+            <p class="mt-5">
+              Именно поэтому ваша личная базовая линия часто оказывается самым
+              полезным сравнением. Протестируйтесь в одной конфигурации,
+              запишите среднее, затем повторите тест позже в той же
+              конфигурации. Изменение, которое сохраняется в нескольких сессиях,
+              значимее единичного необычно быстрого результата. Такой подход
+              также помогает отделить реальные изменения внимания от эффектов
+              устройства.
+            </p>
+          </section>
+
+          <section aria-labelledby="interpretation-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              06 · Как читать результат
+            </p>
+
+            <h3
+              id="interpretation-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Что на самом деле означают процентили времени реакции?
+            </h3>
+
+            <p class="mt-5">
+              FreeIQExam использует гауссову эталонную модель со средним 265 мс и
+              стандартным отклонением 42 мс, чтобы превратить среднее по пяти
+              пробам в рейтинг в стиле процентиля. Меньшее измеренное время
+              соответствует более высокому процентилю, поскольку быстрый ответ
+              считается лучшей результативностью. Это математическое сравнение,
+              а не утверждение, что население мира действительно подчиняется
+              идеальному нормальному распределению с именно такими параметрами.
+            </p>
+
+            <p class="mt-5">
+              По той же причине результат на 95-м процентиле на этой странице не
+              означает «научно доказано, что вы быстрее 95% всех людей». Он
+              означает, что ваш результат попадает примерно в верхние 5%
+              эталонного распределения, используемого калькулятором. Относитесь к
+              этому числу как к игровому ориентиру и сравнивайте его со своими
+              предыдущими результатами в сопоставимых условиях.
+            </p>
+
+            <div
+              class="mt-7 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6 sm:p-7"
+            >
+              <h4
+                class="font-bold text-xl text-zinc-950 dark:text-white"
+              >
+                Почему пять проб?
+              </h4>
+
+              <p class="mt-3">
+                Отдельные пробы шумны. Пять зачётных наблюдений дают более
+                стабильное среднее, сохраняя тест достаточно коротким для
+                обычного использования. Поскольку преждевременные нажатия
+                отбрасываются, пять значений в итоговой сводке всегда
+                представляют зачётные ответы на зелёный сигнал, а не штрафные
+                попытки.
+              </p>
+            </div>
+          </section>
+
+          <section id="faq" aria-labelledby="faq-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              07 · Частые вопросы
+            </p>
+
+            <h3
+              id="faq-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Частые вопросы о тестах времени реакции
+            </h3>
+
+            <div class="mt-7 space-y-3">
+              {
+                faqItems.map((item) => (
+                  <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-5 py-5">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base sm:text-lg font-semibold text-zinc-950 dark:text-white">
+                      <span>{item.name}</span>
+
+                      <svg
+                        class="faq-chevron w-5 h-5 shrink-0 text-zinc-500 transition-transform duration-200"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="m19 9-7 7-7-7"
+                        />
+                      </svg>
+                    </summary>
+
+                    <div
+                      class="mt-4 border-t border-zinc-200 dark:border-zinc-800 pt-4 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+                    >
+                      {item.answer}
+                    </div>
+                  </details>
+                ))
+              }
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="related-title"
+            class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-7 sm:p-9"
+          >
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              Продолжите измерение
+            </p>
+
+            <h3
+              id="related-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Тренируйте другие стороны когнитивных способностей
+            </h3>
+
+            <p class="mt-4">
+              Скорость реакции - лишь одна часть познания. Продолжите с задачами
+              на рабочую память, торможение, зрительно-пространственные
+              способности и мышление в библиотеке когнитивных игр FreeIQExam.
+            </p>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a
+                href="/ru/games"
+                class="min-h-[44px] inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth active:scale-[0.97]"
+              >
+                Все когнитивные игры
+              </a>
+
+              <a
+                href="/ru/games/stroop-clash"
+                class="min-h-[44px] inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth active:scale-[0.97]"
+              >
+                Попробовать Stroop Color Clash
+              </a>
+
+              <a
+                href="/ru/games/digit-span"
+                class="min-h-[44px] inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth active:scale-[0.97]"
+              >
+                Попробовать Digit Span
+              </a>
+            </div>
+          </section>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <!-- Всплывающее уведомление об отправке результата -->
+  <div
+    id="share-toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-16 pointer-events-none opacity-0 rounded-full bg-zinc-950 dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-zinc-950 shadow-2xl transition-all duration-300 border border-zinc-800 dark:border-zinc-200"
+  >
+    Результат скопирован в буфер обмена!
+  </div>
+
+  <Footer />
+
+  <script src="../../scripts/tools/reaction-timer-ru.js"></script>
+</Layout>

@@ -1,0 +1,676 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = "Тест на знание флагов мира | Тренажёр географической памяти по 195+ странам";
+const description = "Проверьте зрительную память и знание флагов 195+ суверенных государств. Четыре режима: спринт из 20 вопросов, выживание на выбывание, обратный подбор и сложный режим вексиллологии.";
+const canonicalUrl = "https://freeiqexam.com/ru/flag-quiz";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Тест на знание флагов мира и географической памяти",
+    "url": "https://freeiqexam.com/ru/flag-quiz",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "База флагов 195+ суверенных государств, признанных ООН",
+      "4 когнитивных игровых режима: спринт на 20 раундов, выживание на выбывание, обратный подбор и сложный режим вексиллологии",
+      "Детальные фильтры по континентам (весь мир, Европа, Азия, Америка, Африка, Океания)",
+      "Динамическое измерение скорости реакции с точностью до миллисекунд",
+      "Адаптивный множитель очков за серию правильных ответов с гармоническим синтезом через Web Audio",
+      "Разбор мастерства по регионам и экран повторения пропущенных флагов",
+      "Векторный рендеринг на стороне клиента"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Игры",
+        "item": "https://freeiqexam.com/ru/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Тест на знание флагов мира",
+        "item": "https://freeiqexam.com/ru/flag-quiz"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Как тест на знание флагов рассчитывает когнитивный балл и процентиль?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Итоговый балл объединяет точность ответов, время реакции в миллисекундах и множители за серию правильных ответов. Быстрые последовательные правильные ответы дают максимум очков (до 100 000), а результат сравнивается с мировыми психометрическими процентилями."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Чем отличаются режим спринта, режим выживания и сложный режим вексиллологии?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Режим спринта проверяет точность на 20 случайных флагах. Режим выживания - испытание на выносливость, где одна ошибка завершает сессию. Сложный режим вексиллологии намеренно сталкивает между собой известные похожие пары (например, Монако и Индонезия или Чад и Румыния)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Почему некоторые флаги почти неразличимы (например, Чад и Румыния, Монако и Индонезия)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Чад и Румыния используют одинаковые сине-жёлто-красные вертикальные триколоры из-за независимого исторического развития. Монако и Индонезия используют красно-белые горизонтальные биколоры, различаясь только пропорциями (Монако 4:5 против Индонезии 2:3) и геральдическим происхождением."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как тренировка распознавания флагов улучшает зрительную память?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Распознавание флагов задействует теорию двойного кодирования Пайвио, связывая семантические географические знания (столицы, названия стран, континенты) со зрительно-пространственными цветовыми узорами и геральдической геометрией, укрепляя синаптические пути памяти."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Сколько флагов суверенных государств включено в этот тест?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Движок включает все 195+ общепризнанных суверенных государств Европы, Азии, Африки, Америки и Океании, каждое с проверенной столицей и региональными данными."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Что такое стандарт из 5 правил Североамериканской вексиллологической ассоциации (NAVA)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "NAVA формулирует пять универсальных принципов дизайна флага: (1) он должен быть достаточно простым, чтобы нарисовать его по памяти, (2) использовать осмысленную символику, (3) ограничиваться 2–3 основными цветами, (4) избегать надписей и сложных гербов и (5) быть узнаваемым или явно связанным с наследием региона."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Можно ли использовать этот тест для подготовки к географическим олимпиадам и конкурсам?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да. Тренажёр предлагает фильтрацию по континентам и обратный подбор (определение флага по названию страны), что делает его полноценным инструментом подготовки для географических конкурсов, делегатов Модели ООН и исследователей вексиллологии."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Сохраняются ли мои результаты или игровые данные на ваших серверах?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Нет. Весь движок теста, алгоритмы подсчёта очков и синтезаторы Web Audio работают на 100% локально в вашем браузере. Никакие персональные данные или записи о прохождении не передаются на удалённые серверы."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/flag-quiz" idPath="/id/kuis-bendera" schema={schema}>
+  <Header currentPath="/flag-quiz" enPath="/flag-quiz" idPath="/id/kuis-bendera" />
+
+  <main class="min-h-screen bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+
+    <!-- Hero Header -->
+    <section class="relative pt-12 pb-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center overflow-hidden">
+      <!-- Ambient Background Glow (single masked wash, no aurora blobs) -->
+      <div class="flag-hero-glow" aria-hidden="true"></div>
+
+      <!-- Navigation Breadcrumb -->
+      <nav class="flex items-center justify-center gap-2 text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Хлебные крошки">
+        <a href="/ru/" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Главная</a>
+        <span>/</span>
+        <a href="/ru/games" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Игры</a>
+        <span>/</span>
+        <span class="text-zinc-800 dark:text-zinc-200">Тест на знание флагов мира</span>
+      </nav>
+
+      <!-- Badge Pill -->
+      <div class="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[#0066cc] dark:text-[#2997ff] text-[13px] font-mono font-bold tracking-wide uppercase mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+        Пространственная география и зрительная память
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[-0.025em] leading-[1.08] text-zinc-950 dark:text-white mb-4">
+        Тест на знание флагов мира и <span class="text-[#0066cc] dark:text-[#2997ff]">географическая арена</span>
+      </h1>
+
+      <p class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-[1.62] mb-6">
+        Проверьте распознавание визуальных образов и географическую память по 195+ суверенным государствам. Измеряйте время реакции, осваивайте похожие флаги и узнайте свой мировой процентиль.
+      </p>
+
+      <!-- Feature Chips -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[13px] font-mono text-zinc-600 dark:text-zinc-400">
+        <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 shadow-sm flex items-center gap-1.5">
+          <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">195+</span> суверенных государств
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 shadow-sm flex items-center gap-1.5">
+          <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">4</span> когнитивных режима
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 shadow-sm flex items-center gap-1.5">
+          <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">мс</span> измерение времени реакции
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 shadow-sm flex items-center gap-1.5">
+          <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">100%</span> приватно и бесплатно
+        </span>
+      </div>
+    </section>
+
+    <!-- Interactive Flag Quiz Arena -->
+    <style>
+      .flag-hero-glow { position: absolute; inset-inline: 0; top: 0; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+      .dark .flag-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+      .flag-mode-btn { min-height: 44px; }
+      .flag-mode-btn:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+      #flagOptionsGrid button { min-height: 44px; }
+      #flagOptionsGrid button:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+      #flagContinentSelect { min-height: 44px; }
+      @media (prefers-reduced-motion: reduce) { .flag-hero-glow { display: none; } }
+    </style>
+    <section class="px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto mb-16">
+      <div class="relative rounded-3xl bg-zinc-900/90 dark:bg-zinc-950/80 border border-zinc-800/90 shadow-2xl p-6 sm:p-8 backdrop-blur-xl transition-all">
+
+        <!-- 1. START / CONFIGURATION CARD -->
+        <div id="flagStartCard" class="space-y-6">
+
+          <div class="text-center space-y-2">
+            <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Настройте свою сессию на арене</h2>
+            <p class="text-[13px] sm:text-sm text-zinc-400">Выберите когнитивный режим тренировки и географические границы.</p>
+          </div>
+
+          <!-- Mode Selector Grid -->
+          <div class="space-y-2">
+            <label class="block text-[13px] font-mono uppercase tracking-wider text-zinc-400">Выберите игровой режим</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button type="button" data-mode="sprint" class="flag-mode-btn active p-3.5 rounded-2xl bg-zinc-900/80 border border-blue-500/40 bg-blue-500/10 text-blue-400 text-left transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm">Спринт на 20 вопросов</span>
+                  <span class="text-[13px] font-mono opacity-80">Стандарт</span>
+                </div>
+                <p class="text-[13px] text-zinc-400 leading-tight">Стандартизированный когнитивный тест на 20 раундов с измерением точности и времени реакции.</p>
+              </button>
+
+              <button type="button" data-mode="survival" class="flag-mode-btn p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800 text-zinc-300 hover:border-zinc-700 text-left transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm">Бесконечное выживание</span>
+                  <span class="text-[13px] font-mono text-rose-400">На выбывание</span>
+                </div>
+                <p class="text-[13px] text-zinc-400 leading-tight">Непрерывная серия. Одна ошибка завершает забег. Множители комбо растут с каждым ответом.</p>
+              </button>
+
+              <button type="button" data-mode="reverse" class="flag-mode-btn p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800 text-zinc-300 hover:border-zinc-700 text-left transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm">Обратный подбор</span>
+                  <span class="text-[13px] font-mono text-cyan-400">Название → флаг</span>
+                </div>
+                <p class="text-[13px] text-zinc-400 leading-tight">По названию страны и столице нужно найти правильный флаг среди 4 вариантов.</p>
+              </button>
+
+              <button type="button" data-mode="hard" class="flag-mode-btn p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800 text-zinc-300 hover:border-zinc-700 text-left transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm">Сложный режим вексиллологии</span>
+                  <span class="text-[13px] font-mono text-amber-400">Микродетали</span>
+                </div>
+                <p class="text-[13px] text-zinc-400 leading-tight">Намеренно сталкивает одинаковые флаги (Монако и Индонезия, Чад и Румыния, Ирландия и Кот-д'Ивуар).</p>
+              </button>
+            </div>
+          </div>
+
+          <!-- Continent Filter -->
+          <div class="space-y-2">
+            <label for="flagContinentSelect" class="block text-[13px] font-mono uppercase tracking-wider text-zinc-400">Географический фильтр</label>
+            <div class="relative">
+              <select id="flagContinentSelect" class="w-full p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-sm font-semibold text-white focus:outline-none focus:border-blue-500 transition-colors appearance-none cursor-pointer">
+                <option value="all">Все суверенные государства (195+ стран)</option>
+                <option value="Europe">Европа (44 страны)</option>
+                <option value="Asia">Азия (49 стран)</option>
+                <option value="Americas">Америка (35 стран)</option>
+                <option value="Africa">Африка (54 страны)</option>
+                <option value="Oceania">Океания (14 стран)</option>
+              </select>
+              <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 text-[13px]">▼</div>
+            </div>
+          </div>
+
+          <!-- Start Action Button -->
+          <button id="startFlagQuizBtn" type="button" class="w-full py-4 min-h-[44px] rounded-2xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-extrabold text-base tracking-wide uppercase transition-all shadow-lg shadow-blue-600/20 active:scale-[0.97] cursor-pointer">
+            Запустить арену географической памяти
+          </button>
+        </div>
+
+        <!-- 2. LIVE GAMEPLAY ARENA CARD (Hidden by default) -->
+        <div id="flagArenaCard" class="hidden space-y-6">
+
+          <!-- Arena Header: Stats & Progress -->
+          <div class="flex items-center justify-between border-b border-zinc-800/80 pb-4">
+            <div class="space-y-0.5">
+              <span id="flagQuizProgress" class="text-[13px] font-mono text-zinc-400 uppercase tracking-wider">Вопрос 1 / 20</span>
+              <div class="flex items-center gap-2">
+                <span class="text-[13px] font-bold text-zinc-300">Очки:</span>
+                <span id="flagLiveScore" class="text-base font-extrabold font-mono text-white">0</span>
+              </div>
+            </div>
+
+            <!-- Streak Combo Badge -->
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800">
+              <span class="text-[13px] text-zinc-400 font-sans">Серия:</span>
+              <span id="flagLiveStreak" class="text-sm font-extrabold font-mono text-white">0x</span>
+            </div>
+          </div>
+
+          <!-- Target Presentation (Flag or Reverse Question) -->
+          <div class="flex flex-col items-center justify-center py-4 space-y-4">
+            <!-- Normal Mode Flag Image -->
+            <div class="relative p-2 rounded-2xl bg-zinc-900 border border-zinc-800 shadow-xl overflow-hidden max-w-sm w-full flex items-center justify-center min-h-[160px]">
+              <img id="flagTargetImage" src="" alt="Иско��ый флаг" class="max-h-40 w-auto rounded-lg shadow object-contain transition-transform duration-200" />
+            </div>
+
+            <!-- Reverse Mode Country Title (Hidden during normal mode) -->
+            <h3 id="flagCountryTitle" class="hidden text-xl sm:text-2xl font-extrabold text-white text-center tracking-tight"></h3>
+          </div>
+
+          <!-- Multiple Choice Options Grid -->
+          <div id="flagOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Dynamically populated 4 options -->
+          </div>
+
+        </div>
+
+        <!-- 3. DETAILED RESULTS SCORECARD (Hidden by default) -->
+        <div id="flagResultsCard" class="hidden space-y-8">
+
+          <!-- Hero Score Banner -->
+          <div class="text-center space-y-2 p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+            <span class="text-[13px] font-mono uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff]">Когнитивная арена пройдена</span>
+            <div id="resFlagScore" class="text-4xl sm:text-6xl font-black font-mono text-white">
+              0
+            </div>
+            <div class="flex items-center justify-center gap-2 pt-1">
+              <span id="resFlagTier" class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 font-extrabold text-[13px] tracking-wide">
+                Вексиллологический гроссмейстер
+              </span>
+              <span id="resFlagPercentile" class="text-[13px] font-mono text-zinc-400">
+                Топ 1% процентиль
+              </span>
+            </div>
+            <p id="resFlagDesc" class="text-[13px] sm:text-sm text-zinc-400 max-w-md mx-auto pt-2 leading-relaxed"></p>
+          </div>
+
+          <!-- Core Metric Badges -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-0.5">
+              <span class="text-[13px] font-mono text-zinc-400 uppercase">Точность</span>
+              <div id="resFlagAccuracy" class="text-lg sm:text-xl font-bold font-mono text-white">0%</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-0.5">
+              <span class="text-[13px] font-mono text-zinc-400 uppercase">Ср. реакция</span>
+              <div id="resFlagReaction" class="text-lg sm:text-xl font-bold font-mono text-[#2997ff]">0ms</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-0.5">
+              <span class="text-[13px] font-mono text-zinc-400 uppercase">Верно</span>
+              <div id="resFlagCorrect" class="text-lg sm:text-xl font-bold font-mono text-white">0 / 0</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-0.5">
+              <span class="text-[13px] font-mono text-zinc-400 uppercase">Макс. серия</span>
+              <div id="resFlagMaxStreak" class="text-lg sm:text-xl font-bold font-mono text-white">0x</div>
+            </div>
+          </div>
+
+          <!-- Regional Mastery Breakdown -->
+          <div class="space-y-3">
+            <h4 class="text-[13px] font-mono uppercase tracking-wider text-zinc-400">Мастерство по континентам</h4>
+            <div id="resFlagRegionsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <!-- Dynamically populated progress bars -->
+            </div>
+          </div>
+
+          <!-- Missed Flags Review Section -->
+          <div id="resFlagMissedWrap" class="hidden space-y-3">
+            <h4 class="text-[13px] font-mono uppercase tracking-wider text-rose-400">Пропущенные флаги и разбор вексиллологии</h4>
+            <div id="resFlagMissedList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+              <!-- Dynamically populated missed flag rows -->
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button id="retakeFlagQuizBtn" type="button" class="flex-1 py-3.5 min-h-[44px] rounded-2xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-extrabold text-sm uppercase tracking-wider transition-all shadow-md active:scale-[0.97] cursor-pointer">
+              Пройти арену заново
+            </button>
+            <a href="/ru/games" class="py-3.5 px-6 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-center text-sm font-bold text-zinc-300 transition-colors">
+              Все игры для мозга
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Comprehensive 2,000+ Word Authoritative Guide & Educational Text -->
+    <article class="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-12">
+
+      <!-- Section 1 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          1. Когнитивная наука географической памяти и зрительного узнавания
+        </h2>
+        <p>
+          Человеческая зрительная память - одна из самых мощных и эволюционно отточенных когнитивных подсистем мозга. В отличие от абстрактных буквенно-цифровых строк, визуальная геометрия, цветовые контрасты и пространственные ориентации обрабатываются одновременно в первичной зрительной коре (от V1 до V4) и напрямую кодируются в вентральном потоке - нейронном пути, отвечающем за распознавание объектов и семантическую категоризацию.
+        </p>
+        <p>
+          В когнитивной психологии процесс распознавания и определения государственных флагов иллюстрирует <strong>теорию двойного кодирования Пайвио</strong>. Согласно этой теории, информация кодируется в долговременной памяти человека по двум различным, но взаимосвязанным каналам:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <span class="text-[13px] font-mono font-bold text-blue-500 uppercase tracking-wider">Зрите��ьно-пространственный канал (образы)</span>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Кодирует геометрические формы, цветовые сочетания, крыжи, геральдические фигуры и пропорции в мгновенную зрительно-пространственную рабочую память.</p>
+          </div>
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <span class="text-[13px] font-mono font-bold text-cyan-500 uppercase tracking-wider">Вербально-семантический канал (язык)</span>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Кодирует названия стран, столицы, принадлежность к континентам, геополитические договоры и историческое происхождение в семантические сети памяти.</p>
+          </div>
+        </div>
+        <p>
+          Когда вы работаете с нашей ареной географической памяти, оба нейронных пути активируются параллельно. Связывая визуальный образ государственного флага с его географическим названием и столицей, вы строите устойчивые ассоциативные следы памяти (энграммы), которые значительно лучше сопротивляются ретроактивной интерференции и естественному когнитивному угасанию.
+        </p>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          2. Принципы вексиллологии: 5 универсальных правил дизайна флага
+        </h2>
+        <p>
+          Вексиллология - научное изучение истории, символики и использования флагов - была оформлена в 1957 году американским учёным доктором Уитни Смитом. В 2006 году Североамериканская вексиллологическая ассоциация (NAVA) совместно с Институтом флагов опубликовала определяющее руководство <em>«Good Flag, Bad Flag»</em> авторства Теда Кея. Этот стандарт формулирует пять основополагающих принципов эффективной национальной символики:
+        </p>
+
+        <div class="space-y-3 my-4">
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-blue-500">01</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Простота</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Государственный флаг должен быть настолько простым, чтобы ребёнок мог нарисовать его по памяти. Примеры - минималистичный японский Хиномару (солнечный диск на белом полотне) и белый крест на красном поле у Швейцарии.</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-blue-500">02</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Осмысленная символика</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Каждый цвет, фигура или полоса должны отражать историю страны, её культурный дух или природную географию (например, трезубец Барбадоса символизирует независимость от колониального правления в окружении синих вод Карибского моря).</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-blue-500">03</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Ограничение 2–3 основными цветами</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Выбирайте стандартные высококонтрастные основные и дополнительные цвета: красный, синий, зелёный, жёлтый, белый и чёрный. Избегайте мутных оттенков и избыточных градиентов, которые размываются на расстоянии и на экранах мобильных устройств.</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-blue-500">04</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Без надписей и государственных гербов</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Написание слов или размещение сложных многоэлементных государственных гербов на флаге противоречит задаче быстрой визуальной передачи сигнала. Если флагу требуется напечатанное на нём название, значит, визуальная символика не справилась.</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+            <span class="text-lg font-black font-mono text-blue-500">05</span>
+            <div>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Быть узнаваемым или явно отсылать к общему наследию</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Флаг должен избегать путающего дублирования, если только он не утверждает региональное единство осознанно (как скандинавская семья северных крестов или центральноамериканские сине-бело-синие федерации).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          3. Крупные панрегиональные цветовые системы и вексиллологическая символика
+        </h2>
+        <p>
+          На протяжении мировой истории народы, связанные географической близостью, культурным родством или общей борьбой за суверенитет, принимали стандартизированные цветовые палитры. Знание этих базовых цветовых семейств позволяет мгновенно сузить загадочный флаг до конкретного континента:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+              <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Панафриканские цвета</h3>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Восходят к историческому флагу Эфиопии - единственной африканской страны, сопротивлявшейся колонизации XIX века. Красный символизирует кровь, пролитую за освобождение, жёлтый (золотой) - минеральные богатства и солнце, зелёный - плодородную африканскую землю. Встречаются у Ганы, Сенегала, Мали, Камеруна и Гвинеи.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-white border border-zinc-400"></span>
+              <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+              <span class="w-3 h-3 rounded-full bg-red-600"></span>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Панславянские триколоры</h3>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Приняты на Пражском славянском съезде 1848 года под влиянием российского торгового флага XVII века (который, в свою очередь, испытал воздействие нидерландского триколора). Распространены в Чехии, Словакии, Словении, Хорватии, Сербии и России.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-zinc-950 border border-zinc-700"></span>
+              <span class="w-3 h-3 rounded-full bg-white border border-zinc-400"></span>
+              <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+              <span class="w-3 h-3 rounded-full bg-red-600"></span>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Панарабские цвета</h3>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Возникли во время арабского восстания 1916 года против Османской империи; каждый цвет символизирует исторический халифат: чёрный (Аббасиды), белый (Омейяды), зелёный (Фатимиды) и красный (Хашимиты). Присутствуют на флагах Иордании, ОАЭ, Кувейта, Ирака, Сирии и Палестины.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+              <span class="w-3 h-3 rounded-full bg-red-500"></span>
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Скандинавский крест</h3>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Смещённый от центра вертикальный крест, доходящий до краёв полотнища, символизирует христианство и скандинавское морское наследие. Даннеброг Дании (известный с 1219 года) - старейший непрерывно используемый государственный флаг, вдохновивший Швецию, Норвегию, Финляндию и Исландию.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          4. 10 самых запутанных пар флагов и как их освоить
+        </h2>
+        <p>
+          В сложном режиме вексиллологии движок специально сталкивает между собой визуально обманчивые пары флагов. Вот исчерпывающая памятка, чтобы больше никогда их не путать:
+        </p>
+
+        <div class="space-y-4 my-4">
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇲🇨 Монако и 🇮🇩 Индонезия</span>
+              <span class="text-[13px] font-mono text-blue-500">Соотношение сторон</span>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400">
+              Оба флага имеют одинаковые горизонтальные полосы: красная сверху, белая снизу. Ключевое различие - в пропорциях: <strong>у Монако приземистое соотношение 4:5</strong>, тогда как <strong>у Индонезии более вытянутое 2:3</strong>. (У Польши порядок обратный: белая сверху, красная снизу).
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇹🇩 Чад и 🇷🇴 Румыния</span>
+              <span class="text-[13px] font-mono text-blue-500">Индиго против кобальта</span>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400">
+              Оба используют вертикальный триколор из синего, жёлтого и красного. <strong>У Чада более тёмный, насыщенный индигово-синий</strong> (Pantone 281C), тогда как <strong>у Румынии чуть более яркий кобальтово-синий</strong> (Pantone 280C). В цифровых тестах ищите более тёмный синий оттенок у Чада.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇮🇪 Ирландия и 🇨🇮 Кот-д’Ивуар</span>
+              <span class="text-[13px] font-mono text-blue-500">Порядок у древка</span>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400">
+              <strong>У Ирландии порядок зелёный - белый - оранжевый</strong> (зелёный символизирует ирландский национализм у древка). <strong>У Кот-д’Ивуара порядок оранжевый - белый - зелёный</strong> (оранжевый символизирует саванны у древка).
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇦🇺 Австралия и 🇳🇿 Новая Зеландия</span>
+              <span class="text-[13px] font-mono text-blue-500">Звёзды Южного Креста</span>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400">
+              <strong>У Австралии 6 белых звёзд</strong> (пять семиконечных и одна пятиконечная, включая крупную звезду Содружества под крыжем). <strong>У Новой Зеландии всего 4 красные звезды с белой окантовкой</strong>, все пятиконечные.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between font-bold text-sm text-zinc-950 dark:text-white">
+              <span>🇳🇱 Нидерланды и 🇱🇺 Люксембург</span>
+              <span class="text-[13px] font-mono text-blue-500">Небесно-голубой против ультрамарина</span>
+            </div>
+            <p class="text-[13px] text-zinc-600 dark:text-zinc-400">
+              У обоих горизонтальные красно-бело-синие полосы. <strong>У Люксембурга заметно светло-голубая полоса</strong> и пропорции 1:2 или 3:5, тогда как <strong>Нидерланды используют глубокий ультрамариново-кобальтовый синий</strong> с соотношением 2:3.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 5: FAQ Accordion -->
+      <section class="space-y-4 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          Часто задаваемые вопросы (FAQ)
+        </h2>
+
+        <div class="space-y-3 pt-2">
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Как тест на знание флагов рассчитывает когнитивный балл и процентиль?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Итоговый балл объединяет точность ответов, время реакции в миллисекундах и множители за серию правильных ответов. Быстрые последовательные правильные ответы дают максимум очков (до 100 000), а результат сравнивается с мировыми психометрическими процентилями.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Чем отличаются режим спринта, режим выживания и сложный режим вексиллологии?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Режим спринта проверяет точность на 20 случайных флагах. Режим выживания - испытание на выносливость, где одна ошибка завершает сессию. Сложный режим вексиллологии намеренно сталкивает между собой известные похожие пары (например, Монако и Индонезия или Чад и Румыния).
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Почему некоторые флаги почти неразличимы (например, Чад и Румыния, Монако и Индонезия)?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Чад и Румыния используют одинаковые сине-жёлто-красные вертикальные триколоры из-за независимого исторического развития. Монако и Индонезия используют красно-белые горизонтальные биколоры, различаясь только пропорциями (Монако 4:5 против Индонезии 2:3) и геральдическим происхождением.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Как тренировка распознавания флагов улучшает зрительную память?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Распознавание флаг��в задействует теорию двойного кодирования Пайвио, связывая семантические географические знания (столицы, названия стран, континенты) со зрительно-пространственными цветовыми узорами и геральдической геометрией, укрепляя синаптические пути памяти.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Сколько флагов суверенных государств включено в этот тест?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Движок включает все 195+ общепризнанных суверенных государств Европы, Азии, Африки, Америки и Океании, каждое с проверенной столицей и региональными данными.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Что такое стандарт из 5 правил Североамериканской вексиллологической ассоциации (NAVA)?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              NAVA формулирует пять универсальных принципов дизайна флага: (1) он должен быть достаточно простым, чтобы нарисовать его по памяти, (2) использовать осмысленную символику, (3) ограничиваться 2–3 основными цветами, (4) избегать надписей и сложных гербов и (5) быть узнаваемым или явно связанным с наследием региона.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Можно ли использовать этот тест для подготовки к географическим олимпиадам и конкурсам?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Да. Тренажёр предлагает фильтрацию по континентам и обратный подбор (определение флага по названию страны), что делает его полноценным инструментом подготовки для географических конкурсов, делегатов Модели ООН и исследователей вексиллологии.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Сохраняются ли мои результаты или игровые данные на ваших серверах?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Нет. Весь движок теста, алгоритмы подсчёта очков и синтезаторы Web Audio работают на 100% локально в вашем браузере. Никакие персональные данные или записи о прохождении не передаются на удалённые серверы.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <script src="../../scripts/tools/flag-quiz-engine-ru.js"></script>
+</Layout>

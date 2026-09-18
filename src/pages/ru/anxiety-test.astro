@@ -1,0 +1,727 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = 'Бесплатный клинический тест на тревожность (GAD-7) онлайн | Конфиденциальная оценка';
+const description = 'Пройдите официальный клинически валидированный скрининг тревожности GAD-7 онлайн. 100% бесплатно, конфиденциально, мгновенный двухдоменный подсчёт (когнитивное беспокойство и соматическое напряжение) и сводка для клинициста.';
+const canonicalUrl = 'https://freeiqexam.com/ru/anxiety-test';
+
+const faqItems = [
+  ['Что такое GAD-7 и кто его разработал?', 'GAD-7 (шкала генерализованного тревожного расстройства из 7 пунктов) - научно обоснованный клинический инструмент скрининга, разработанный доктором Робертом Л. Шпитцером, доктором Куртом Крёнке, доктором Джанет Б. У. Уильямс и доктором Берндом Лёве в 2006 году. Он измеряет частоту и тяжесть ключевых симптомов генерализованной тревоги за предшествующие две недели с использованием стандартизированной 4-балльной шкалы ответов.'],
+  ['Насколько точен GAD-7 при выявлении тревожных расстройств?', 'В оригинальных валидационных исследованиях и обширных клинических метаанализах балл GAD-7 от 10 и выше демонстрирует чувствительность 89% и специфичность 82% для генерализованного тревожного расстройства относительно структурированных клинических интервью. Он также служит умеренно эффективным инструментом скрининга для панического расстройства, социального тревожного расстройства и посттравматического стрессового расстройства.'],
+  ['Может ли этот тест диагностировать у меня тревожное расстройство?', 'Нет. GAD-7 - валидированный скрининговый опросник, а не медицинский диагноз. Формальный диагноз требует клинической оценки лицензированным врачом, психиатром или клиническим психологом, который может оценить историю болезни, длительность симптомов, исключить физиологические имитаторы (такие как гипертиреоз) и оценить нарушение функционирования.'],
+  ['В чём разница между когнитивным беспокойством и соматической тревогой?', 'Когнитивное беспокойство включает психическое персеверирование, навязчивые катастрофические мысли, ориентированное на будущее предвосхищение и трудности с контролем петель беспокойства (пункты GAD-7 1, 2, 3 и 7). Соматическая тревога включает физическое автономное возбуждение, мышечное напряжение, психомоторное беспокойство и раздражительность (пункты GAD-7 4, 5 и 6).'],
+  ['Чем генерализованное тревожное расстройство отличается от обычного стресса?', 'Повседневный стресс обычно пропорционален идентифицируемому внешнему требованию и стихает, когда ситуация разрешается. Генерализованное тревожное расстройство характеризуется стойким, чрезмерным и неконтролируемым беспокойством, которое возникает в большинстве дней в течение как минимум шести месяцев в нескольких жизненных сферах, часто сопровождаясь физическим напряжением и нарушением сна.'],
+  ['Что означают разные диапазоны баллов GAD-7?', 'Баллы стратифицируются по четырём клиническим ступеням: 0–4 - минимальная тревожность (здоровые базовые колебания); 5–9 - лёгкая тревожность (субклиническое повышение; выжидательная тактика и lifestyle-ритм); 10–14 - умеренная тревожность (клинический порог достигнут; рекомендуется оценка); 15–21 - тяжёлая тревожность (высокое бремя симптомов; показана активная клиническая помощь).'],
+  ['Что делать, если мой балл 10 или выше?', 'Балл 10 и выше указывает, что ваши симптомы достигли клинической значимости. Стоит рассмотреть возможность поделиться результатами с врачом первичного звена или специалистом по психическому здоровью. Вы можете распечатать сводку для клинициста, сформированную этим инструментом, и взять её на консультацию.'],
+  ['Как часто нужно повторять GAD-7?', 'Если вы наблюдаете за симптомами без лечения, повторный скрининг каждые 2–4 недели - обычная практика. Если вы начали научно обоснованную психотерапию (например, КПТ) или фармакотерапию (например, СИОЗС), клиницисты часто повторяют GAD-7 каждые 2–4 недели, чтобы объективно измерить ответ на лечение. Изменение на 4–5 баллов обычно считается клинически значимым.']
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Скрининг генерализованного тревожного расстройства GAD-7 и ориентир нервной системы',
+    url: canonicalUrl,
+    medicalAudience: 'Patient',
+    aspect: 'Diagnostic',
+    isAccessibleForFree: true,
+    inLanguage: 'ru',
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Генерализованное тревожное расстройство',
+      alternateName: ['ГТР', 'Хроническая тревожность', 'Тревожный невроз', 'Генерализованная тревога'],
+      code: { '@type': 'MedicalCode', code: 'F41.1', codingSystem: 'ICD-10' }
+    },
+    lastReviewed: '2026-09-15'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Бесплатный клинический тест на тревожность (GAD-7)',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    accessibilitySummary: 'Управление ответами с клавиатуры (клавиши 1–4), высококонтрастные состояния фокуса, семантические заголовки, aria-live объявления, кризисный каталог и печатная сводка для клинициста.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://freeiqexam.com/ru/' },
+      { '@type': 'ListItem', position: 2, name: 'Тесты', item: 'https://freeiqexam.com/ru/test' },
+      { '@type': 'ListItem', position: 3, name: 'Тест на тревожность (GAD-7)', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'Опросник генерализованного тревожного расстройства GAD-7 - 7 пунктов',
+    url: canonicalUrl,
+    numberOfQuestions: 7,
+    isAccessibleForFree: true,
+    inLanguage: 'ru'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map(([question, answer]) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer }
+    }))
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/anxiety-test" idPath="/id/tes-kecemasan" schema={schemas}>
+  <Header currentPath="/anxiety-test" enPath="/anxiety-test" idPath="/id/tes-kecemasan" />
+
+  <main class="min-h-screen bg-white px-4 py-12 text-zinc-900 transition-colors duration-300 dark:bg-[#09090b] dark:text-zinc-100 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-4xl">
+
+      <header class="relative text-center">
+        <div class="anx-hero-glow" aria-hidden="true"></div>
+        <nav class="flex items-center justify-center gap-2 text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-4" aria-label="Хлебные крошки">
+          <a href="/ru/" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Главная</a>
+          <span>/</span>
+          <a href="/ru/test" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Тесты</a>
+          <span>/</span>
+          <span class="text-zinc-800 dark:text-zinc-200">Тест на тревожность (GAD-7)</span>
+        </nav>
+
+        <p class="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-1.5 text-[13px] font-mono font-bold uppercase tracking-wider text-[#0066cc] dark:border-zinc-800 dark:bg-zinc-900 dark:text-[#2997ff]">
+          <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+          Клинический психометрический скрининг GAD-7
+        </p>
+
+        <h1 class="mt-4 text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.025em] leading-[1.08] text-zinc-950 dark:text-white">
+          Клинический тест на тревожность & <span class="text-[#0066cc] dark:text-[#2997ff]">ориентир нервной системы</span>
+        </h1>
+
+        <p class="mx-auto mt-4 max-w-2xl text-[17px] sm:text-lg leading-[1.62] text-zinc-600 dark:text-zinc-300">
+          Измерьте бремя симптомов, различите петли когнитивного беспокойства и соматическое напряжение и оцените результат относительно стандартизированных психиатрических порогов тяжести. 100% конфиденциально, обработка полностью в вашем браузере.
+        </p>
+
+        <div class="mt-6 flex flex-wrap justify-center gap-2.5 text-[13px] sm:text-sm font-mono text-zinc-600 dark:text-zinc-400">
+          <span class="rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">7 стандартных пунктов GAD</span>
+          <span class="rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">Двухдоменный разбор</span>
+          <span class="rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">Сводка для клинициста</span>
+          <span class="rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">100% на стороне клиента</span>
+        </div>
+      </header>
+
+      <aside class="mt-8 rounded-2xl border border-amber-200 bg-amber-50/80 p-4 sm:p-5 text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/25 dark:text-amber-200" aria-label="Кризисные ресурсы">
+        <div class="flex items-start gap-3.5">
+          <svg class="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="M9 12l2 2 4-4" /></svg>
+          <div class="text-[13px] sm:text-sm leading-relaxed">
+            <strong class="font-bold">Нужна немедленная поддержка?</strong> Если вы испытываете непреодолимую панику, острый дистресс или мысли о самоповреждении, конфиденциальная бесплатная помощь доступна 24/7. В России звоните <strong>8-800-200-0122</strong> (Единая линия) или <strong>112</strong>. В США/Канаде: <strong>988</strong>. В Великобритании: <strong>111</strong> или <strong>116 123</strong>. По всему миру: <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" class="underline font-bold hover:text-amber-800 dark:hover:text-white">findahelpline.com</a>.
+          </div>
+        </div>
+      </aside>
+
+      <section id="anxiety-app" class="mt-8">
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/90 p-5 dark:border-zinc-800 dark:bg-zinc-950/80 sm:p-8 shadow-xl backdrop-blur-xl">
+
+          <div id="assessment-intro" class="border-t border-zinc-200 pt-6 dark:border-zinc-800 sm:pt-8">
+            <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff]">Клинический протокол</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-3xl">Перед началом</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Отвечайте исходя из того, как часто каждый симптом беспокоил вас за <strong>последние 2 недели</strong>. GAD-7 количественно оценивает бремя тревоги относительно валидированных клинических ориентиров. Это инструмент скрининга, а не медицинский диагноз.
+            </p>
+            <p class="mt-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Всё работает локально в вашем браузере. Никакие персональные медицинские записи не передаются, не логируются и не сохраняются на внешних серверах.
+            </p>
+            <div class="mt-7 flex flex-wrap items-center gap-3">
+              <button id="begin-assessment" type="button" class="min-h-[44px] rounded-2xl bg-[#0066cc] px-8 py-4 text-base font-bold text-white transition-all hover:bg-[#0071e3] active:scale-[0.97] shadow-lg shadow-blue-600/20 cursor-pointer dark:bg-[#2997ff] dark:hover:bg-[#3b82f6]">
+                Начать скрининг GAD-7
+              </button>
+              <span class="text-[13px] sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">Горячие клавиши: 1–4 для ответа · ← / → для навигации</span>
+            </div>
+          </div>
+
+          <section id="questionnaire-section" class="hidden" aria-labelledby="question-heading">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p id="question-part" class="text-[13px] font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">GAD-7 · Последние 2 недели</p>
+                <p id="question-domain" class="mt-1 text-sm sm:text-base font-bold text-zinc-700 dark:text-zinc-300">Когнитивное / аффективное беспокойство</p>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="question-number" class="text-base font-bold sm:text-lg text-zinc-950 dark:text-white">Вопрос 1 из 7</div>
+                <div id="progress-label" class="mt-0.5 text-[13px] sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">0% отвечено</div>
+              </div>
+            </div>
+
+            <div class="mt-4 h-[2px] overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+              <div id="progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-300" style="width:4%"></div>
+            </div>
+
+            <article class="mt-6 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900/90 sm:p-9 shadow-sm">
+              <div class="flex flex-wrap gap-2 text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+                <span class="rounded-full border border-zinc-200 dark:border-zinc-800 px-3 py-1">Выберите один ответ</span>
+                <span class="rounded-full border border-zinc-200 dark:border-zinc-800 px-3 py-1">Период: последние 2 недели</span>
+              </div>
+
+              <h2 id="question-heading" class="mt-5 text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white"></h2>
+              <p id="question-context" class="mt-2 text-sm sm:text-base font-medium text-[#0066cc] dark:text-[#2997ff]"></p>
+
+              <div id="likert-options" class="mt-8 grid gap-3 sm:grid-cols-4" role="group" aria-label="Варианты частотных ответов"></div>
+
+              <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+                <button id="back-button" type="button" class="min-h-[44px] rounded-2xl border border-zinc-300 bg-white px-6 py-3.5 text-sm font-bold transition active:scale-[0.97] dark:border-zinc-700 dark:bg-zinc-900 disabled:opacity-40 cursor-pointer">
+                  ← Назад
+                </button>
+                <button id="next-button" type="button" class="min-h-[44px] rounded-2xl bg-[#0066cc] px-7 py-3.5 text-sm font-bold text-white transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-[#2997ff] cursor-pointer">
+                  Следующий вопрос →
+                </button>
+              </div>
+            </article>
+          </section>
+
+          <section id="results-section" class="hidden space-y-8" aria-labelledby="results-title">
+
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900/90 sm:p-9 shadow-lg">
+
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between border-b border-zinc-200 dark:border-zinc-800/80 pb-6">
+                <div>
+                  <div id="result-badge" class="result-badge minimal">Минимальная тревожность</div>
+                  <h2 id="results-title" class="mt-4 text-3xl sm:text-4xl font-black tracking-tight text-zinc-950 dark:text-white">Ваш результат GAD-7</h2>
+                  <p id="result-classification" class="mt-1 text-xl font-bold text-[#0066cc] dark:text-[#2997ff]">Минимальная тревожность</p>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-6 py-4 text-center dark:border-zinc-800 dark:bg-zinc-950">
+                  <div class="text-[13px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Суммарный балл GAD-7</div>
+                  <div id="result-score" class="mt-1 text-4xl font-black font-mono tracking-tight text-zinc-950 dark:text-white">0 / 21</div>
+                </div>
+              </div>
+
+              <p id="result-narrative" class="mt-6 text-base sm:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300"></p>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-2">
+
+                <article class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950/70 border border-zinc-200 dark:border-zinc-800 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[13px] font-mono uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] font-bold">Домен когнитивного беспокойства</span>
+                    <span id="cognitive-status" class="text-[13px] font-bold text-zinc-500 dark:text-zinc-400">Низкая выраженность</span>
+                  </div>
+                  <div class="flex items-baseline justify-between pt-1">
+                    <div id="cognitive-score" class="text-3xl font-black font-mono text-zinc-950 dark:text-white">0 / 12</div>
+                    <span class="text-[13px] font-mono text-zinc-500">Пункты 1, 2, 3, 7</span>
+                  </div>
+                  <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden mt-2">
+                    <div id="cognitive-bar" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                  <p class="text-[13px] text-zinc-500 dark:text-zinc-400 leading-normal pt-1">
+                    Опасения, неконтролируемость беспокойства, диффузные катастрофические идеи и предвосхищение надвигающейся беды.
+                  </p>
+                </article>
+
+                <article class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950/70 border border-zinc-200 dark:border-zinc-800 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[13px] font-mono uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] font-bold">Домен соматического напряжения</span>
+                    <span id="somatic-status" class="text-[13px] font-bold text-zinc-500 dark:text-zinc-400">Низкая выраженность</span>
+                  </div>
+                  <div class="flex items-baseline justify-between pt-1">
+                    <div id="somatic-score" class="text-3xl font-black font-mono text-zinc-950 dark:text-white">0 / 9</div>
+                    <span class="text-[13px] font-mono text-zinc-500">Пункты 4, 5, 6</span>
+                  </div>
+                  <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden mt-2">
+                    <div id="somatic-bar" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                  <p class="text-[13px] text-zinc-500 dark:text-zinc-400 leading-normal pt-1">
+                    Нервно-мышечное напряжение, трудности с расслаблением, психомоторное беспокойство и раздражительность нервной системы.
+                  </p>
+                </article>
+
+              </div>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Клиническая стратификация</p>
+                <h3 class="mt-1 text-xl font-bold sm:text-2xl text-zinc-950 dark:text-white">Спектр тяжести</h3>
+                <div id="severity-scale" class="mt-5 space-y-2"></div>
+              </article>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Распределение симптомов</p>
+                <h3 class="mt-1 text-xl font-bold sm:text-2xl text-zinc-950 dark:text-white">Разбор подшкал</h3>
+                <div id="profile-matrix" class="mt-5 space-y-4"></div>
+              </article>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-3">
+                <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+                  <span class="text-[13px] font-mono text-zinc-500 block">Диагностический порог (≥ 10)</span>
+                  <strong id="cutoff-status" class="text-sm font-bold text-zinc-950 dark:text-white block mt-1">Ниже клинического порога</strong>
+                </div>
+                <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+                  <span class="text-[13px] font-mono text-zinc-500 block">Широта симптомов</span>
+                  <strong id="breadth-status" class="text-sm font-bold text-zinc-950 dark:text-white block mt-1">0 из 7 пунктов</strong>
+                </div>
+                <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+                  <span class="text-[13px] font-mono text-zinc-500 block">Нарушение функционирования</span>
+                  <strong id="functional-score" class="text-sm font-bold text-zinc-950 dark:text-white block mt-1">Нет ответа</strong>
+                </div>
+              </div>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 bg-zinc-50/60 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+                <h3 class="text-xl font-bold sm:text-2xl text-zinc-950 dark:text-white">Научно обоснованные следующие шаги</h3>
+                <ul id="next-steps-list" class="mt-4 space-y-3"></ul>
+              </article>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="min-h-[44px] rounded-2xl bg-[#0066cc] px-7 py-4 text-sm font-bold text-white transition active:scale-[0.97] dark:bg-[#2997ff] cursor-pointer shadow-md">
+                  Печать сводки для клинициста
+                </button>
+                <button id="share-result" type="button" class="min-h-[44px] rounded-2xl border border-zinc-300 px-6 py-4 text-sm font-bold transition active:scale-[0.97] dark:border-zinc-700 cursor-pointer">
+                  Поделиться сводкой скрининга
+                </button>
+                <button id="retake-result" type="button" class="min-h-[44px] rounded-2xl border border-zinc-300 px-6 py-4 text-sm font-bold transition active:scale-[0.97] dark:border-zinc-700 cursor-pointer">
+                  Пройти заново
+                </button>
+              </div>
+
+              <div class="mt-8 rounded-3xl border border-zinc-200 bg-zinc-50/80 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+                <h3 class="text-lg font-bold text-zinc-950 dark:text-white">Клинический контекст и медицинские соображения</h3>
+                <p class="mt-2 text-sm leading-relaxed text-zinc-800 dark:text-zinc-300">
+                  Балл GAD-7 - это скрининговая оценка бремени симптомов за предшествующие две недели. Повышенные баллы также могут возникать при остром ситуационном стрессе, гипертиреозе, апноэ сна, вестибулярных дисфункциях, отмене психоактивных веществ, СДВГ или больших депрессивных эпизодах. Формальный диагноз требует клинической оценки лицензированным специалистом здравоохранения.
+                </p>
+              </div>
+
+            </div>
+          </section>
+
+          <p id="anxiety-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <div id="print-report-container" class="print-only">
+        <div class="p-8 font-sans text-black">
+          <div class="border-b-2 border-black pb-4">
+            <h1 class="text-2xl font-bold uppercase tracking-tight">Сводка скрининга тревожности GAD-7 - FreeIQExam</h1>
+            <p class="text-[13px] text-zinc-600 mt-1">Стандартизированная шкала генерализо��анного тревожного расстройства из 7 пунктов (Spitzer et al., 2006)</p>
+          </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+            <p><strong>Дата оценки:</strong> <span id="report-date">-</span></p>
+            <p><strong>ID сессии:</strong> <span id="report-session" class="font-mono">-</span></p>
+            <p><strong>Суммарный балл GAD-7:</strong> <span id="print-total" class="font-bold">-</span></p>
+            <p><strong>Клинический порог (≥10):</strong> <span id="print-cutoff">-</span></p>
+            <p><strong>Подшкала когнитивного беспокойства:</strong> <span id="print-cognitive">-</span></p>
+            <p><strong>Подшкала соматического напряжения:</strong> <span id="print-somatic">-</span></p>
+            <p><strong>Нарушение функционирования:</strong> <span id="print-functional">-</span></p>
+          </div>
+
+          <h2 class="mt-6 text-lg font-bold">Запись ответов по пунктам (период: 2 недели)</h2>
+          <table class="mt-3 w-full border-collapse text-[13px]">
+            <thead>
+              <tr class="border-b border-black text-left">
+                <th class="py-1 px-2">№</th>
+                <th class="py-1 px-2">Ось</th>
+                <th class="py-1 px-2">Описание пункта</th>
+                <th class="py-1 px-2">Балл</th>
+                <th class="py-1 px-2">Значение ответа</th>
+              </tr>
+            </thead>
+            <tbody id="print-answer-body"></tbody>
+          </table>
+
+          <p class="mt-6 text-[13px] text-zinc-600 leading-relaxed border-t border-zinc-300 pt-4">
+            <strong>Клинический дисклеймер:</strong> Этот отчёт сформирован на основе конфиденциальных ответов пациента о самоотчёте. Он предназначен для помощи клиницистам при диагностической оценке и не является формальным психиатрическим диагнозом. Диапазон суммарного балла 0–21; пункт 8 (нарушение функционирования) сообщается отдельно.
+          </p>
+        </div>
+      </div>
+
+      <article class="mt-16 text-base sm:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300 space-y-12">
+
+        <section class="space-y-4">
+          <p class="text-[13px] font-mono uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff] font-bold">Раздел 1 · Нейробиология</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white border-b border-zinc-200 dark:border-zinc-800 pb-3">
+            Нейробиология генерализованного тревожного расстройства
+          </h2>
+          <p>
+            Генерализованное тревожное расстройство (ГТР) - не психологический дефект силы воли; это сложное биологически обоснованное нейроаффективное состояние, характеризующееся нарушением регуляции в ключевых нейронных цепях, управляющих обнаружением угрозы, автономным возбуждением и исполнительной эмоциональной регуляцией.
+          </p>
+          <p>
+            Функциональные нейровизуализационные исследования (фМРТ и ПЭТ) последовательно выявляют изменённую функциональную связность в <strong>фронто-амигдалярной цепи</strong>. В нормальных физиологических условиях базолатеральная амигдала действует как немедленный датчик угрозы, обнаруживая новизну или потенциальную опасность. <strong>Вентромедиальная префронтальная кора (vmPFC)</strong> и <strong>передняя цингулярная кора (ACC)</strong> осуществляют нисходящий тормозной контроль над этой сигнальной системой, сигнализируя о безопасности, когда неоднозначный стимул определён как безобидный. У людей с генерализованным тревожным расстройством:
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+              <span class="text-[13px] font-mono font-bold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">Дефицит нисходящего торможения</span>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">vmPFC демонстрирует гипоактивацию и сниженную структурно-функциональную связность с амигдалой, что приводит к нарушению угасания обусловливания страха и стойкому предвосхищающему ужасу.</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+              <span class="text-[13px] font-mono font-bold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">Гиперреактивность оси HPA</span>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">Гипоталамо-гипофизарно-надпочечниковая ось поддерживает повышенную базальную секрецию кортикотропин-рилизинг-гормона (CRH), сглаживая суточные кривые кортизола и поддерживая системную гиперактивацию.</p>
+            </div>
+          </div>
+          <p>
+            На уровне нейромедиаторов ГТР включает сложные дисбалансы в системах гамма-аминомасляной кислоты (ГАМК), серотонина (5-HT) и норадреналина (НЭ). Сниженная чувствительность или плотность комплексов ГАМК-А рецепторов уменьшает основной тормозной механизм мозга, снижая порог активации норадренергических нейронов голубого пятна.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <p class="text-[13px] font-mono uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff] font-bold">Раздел 2 · Двухдоменный фенотип</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white border-b border-zinc-200 dark:border-zinc-800 pb-3">
+            Когнитивное беспокойство vs. соматические проявления тревоги
+          </h2>
+          <p>
+            Тревога - многомерный феномен, выражающийся вдоль двух различных, но взаимодействующих векторов: <strong>когнитивно-аффективного домена беспокойства</strong> и <strong>соматически-автономного домена возбуждения</strong>. Дифференциация этих компонентов критична для подбора терапевтических вмешательств:
+          </p>
+
+          <div class="space-y-4 my-4">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-sm sm:text-base text-zinc-950 dark:text-white">1. Подшкала когнитивного беспокойства (пункты GAD-7 1, 2, 3, 7)</h3>
+                <span class="text-[13px] font-mono text-[#0066cc] dark:text-[#2997ff]">Нетерпимость к неопределённости</span>
+              </div>
+              <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Когнитивное беспокойство при ГТР характеризуется вербально-лингвистическим персеверированием («а что если») скорее, чем яркими визуальными образами. Согласно модели избегания беспокойства Томаса Борковеца, вербальное беспокойство функционирует как дезадаптивная когнитивная стратегия избегания: оставаясь погружённым в абстрактное вербальное решение проблем, человек притупляет интенсивные соматические ощущения. Однако это препятствует эмоциональной обработке и подкрепляет убеждение, что катастрофических исходов удалось избежать только благодаря самому беспокойству.
+              </p>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-sm sm:text-base text-zinc-950 dark:text-white">2. Подшкала соматического напряжения (пункты GAD-7 4, 5, 6)</h3>
+                <span class="text-[13px] font-mono text-[#0066cc] dark:text-[#2997ff]">Симпатическое доминирование</span>
+              </div>
+              <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Соматическая тревога отражает длительную активацию симпатической нервной системы и отвод вагусного тонуса (сниженная вариабельность сердечного ритма / ВСР). Симптомы включают хроническое напряжение трапециевидных и шейных мышц, головные боли напряжения, поверхностную диафрагмальную экскурсию, желудочно-кишечную ги��ермоторику (симптомы СРК), психомоторную суетливость и эмоциональную раздражительность из-за сенсорной перегрузки.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <p class="text-[13px] font-mono uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff] font-bold">Раздел 3 · Клинические вмешательства</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white border-b border-zinc-200 dark:border-zinc-800 pb-3">
+            Научно обоснованное лечение и снижение возбуждения нервной системы
+          </h2>
+          <p>
+            Генерализованное тревожное расстройство хорошо отвечает на научно обоснованные психотерапевтические и медицинские подходы. Поддерживаемые клиническим консенсусом методы первой линии включают:
+          </p>
+
+          <div class="space-y-3 my-4">
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+              <span class="text-lg font-black font-mono text-[#0066cc] dark:text-[#2997ff]">КПТ</span>
+              <div>
+                <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Когнитивно-поведенческая терапия (золотой стандарт)</h3>
+                <p class="text-[13px] text-zinc-600 dark:text-zinc-400">КПТ при ГТР нацелена на нетерпимость к неопределённости, декатастрофизацию переоценок вероятности худшего случая и включает поведенческую экспозицию к беспокойству, разрывая петли когнитивного избегания.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+              <span class="text-lg font-black font-mono text-[#0066cc] dark:text-[#2997ff]">ACT</span>
+              <div>
+                <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Терапия принятия и ответственности</h3>
+                <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Фокусируется на когнитивной дефузии (наблюдении мыслей как психических событий, а не буквальных истин), психологической гибкости и согласовании ежедневных действий с ключевыми личными ценностями независимо от внутренних тревожных состояний.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+              <span class="text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">МЕД</span>
+              <div>
+                <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Фармакотерапия (СИОЗС / СИОЗСН)</h3>
+                <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Селективные ингибиторы обратного захвата серотонина (например, эсциталопрам, сертралин) и ингибиторы обратного захвата серотонина-норадреналина (например, венлафаксин, дулоксетин) - терапия первой линии, повышающая нейропластичность и фронто-лимбический регуляторный тонус за 4–8 недель.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex gap-4">
+              <span class="text-lg font-black font-mono text-[#0066cc] dark:text-[#2997ff]">СОМ</span>
+              <div>
+                <h3 class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Физиологический вздох и парасимпатическая активация</h3>
+                <p class="text-[13px] text-zinc-600 dark:text-zinc-400">Два быстрых носовых вдоха, за которыми следует продолжительный, ненапряжённый выдох через рот (физиологический вздох), быстро расправляют спавшиеся альвеолы и задействуют блуждающий нерв, замедляя сердечный ритм за секунды через респираторную синусовую аритмию.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <p class="text-[13px] font-mono uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff] font-bold">Раздел 4 · Дифференциальная диагностика</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white border-b border-zinc-200 dark:border-zinc-800 pb-3">
+            Дифференциальная диагностика и клинические границы
+          </h2>
+          <p>
+            Тревога - транодиагностический симптом, пересекающийся с несколькими другими психологическими и медицинскими состояниями. Клиницисты дифференцируют ГТР по конкретным диагностическим границам:
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-1">
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">ГТР vs. паническое расстройство</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Паническое расстройство характеризуется внезапными дискретными всплесками интенсивного страха с острыми сердечно-сосудистыми симптомами (сердцебиение, одышка, ужас смерти), достигающими пика за минуты. ГТР характеризуется непрерывным напряжением от низкого до умеренного уровня и диффузным беспокойством.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-1">
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">ГТР vs. большая депрессия (PHQ-9)</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Хотя они сильно коморбидны (перекрытие до 60%), депрессия определяется всеобъемлющей ангедонией, беспомощностью и негативными когнитивными триадами относительно прошлого/себя. ГТР движима чувствительностью к угрозе и предвосхищающим беспокойством о будущей неопределённости.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-1">
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">ГТР vs. СДВГ у взрослых</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Оба могут включать двигательное беспокойство, суетливость и незавершённость задач. При СДВГ беспокойство проистекает из дофаминергического недо-возбуждения и дисфункции исполнительных функций; при ГТР беспокойство вызвано симпатической автономной гиперактивацией и страхом неудачи.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-1">
+              <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Медицинские и эндокринные имитаторы</h3>
+              <p class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Заболевания щитовидной железы (гипертиреоз), феохромоцитома, нарушения сердечного ритма, обструктивное апноэ сна и кофеиновая интоксикация могут имитировать соматическую тревогу. Медицинское обследование стандартно перед формальным психиатрическим подтверждением.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4 pt-4">
+          <p class="text-[13px] font-mono uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff] font-bold">Раздел 5 · Клинический FAQ</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white border-b border-zinc-200 dark:border-zinc-800 pb-3">
+            Частые вопросы (FAQ)
+          </h2>
+
+          <div class="space-y-3 pt-2">
+            {faqItems.map(([question, answer]) => (
+              <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+                <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+                  <span>{question}</span>
+                  <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+                </summary>
+                <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+                  {answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+
+  <div id="share-toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-full border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm font-semibold text-white opacity-0 transition-all dark:border-zinc-200 dark:bg-white dark:text-zinc-950 shadow-2xl">Сводка скрининга скопирована.</div>
+
+  <Footer />
+
+  <style>
+    .anx-hero-glow { position: absolute; inset-inline: -1rem; top: -2rem; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    .dark .anx-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    @media (prefers-reduced-motion: reduce) { .anx-hero-glow { display: none; } }
+  </style>
+
+  <script src="../../scripts/tools/anxiety-screener-ru.js"></script>
+
+  <style is:global>
+    .likert-option {
+      position: relative;
+      min-height: 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 1rem 0.75rem;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      color: rgb(24 24 27);
+      cursor: pointer;
+      text-align: center;
+      transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease, box-shadow 200ms ease, background-color 160ms ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .dark .likert-option {
+      border-color: rgb(39 39 42);
+      background: rgb(24 24 27);
+      color: rgb(244 244 245);
+    }
+    .dark .likert-option:hover { border-color: rgb(41 151 255); }
+    .likert-option:hover {
+      transform: translateY(-2px);
+      border-color: rgb(0 102 204);
+      box-shadow: 0 6px 18px rgba(0, 102, 204, 0.14);
+    }
+    .likert-option:active { transform: scale(0.97); }
+    .likert-option:focus-visible { outline: 3px solid rgb(0 102 204); outline-offset: 2px; }
+
+    .likert-option.selected {
+      background: #0066cc !important;
+      border-color: #0066cc !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 0 2px #0066cc, 0 10px 25px rgba(0, 102, 204, 0.35);
+      transform: translateY(-2px);
+    }
+    .likert-key {
+      width: 1.75rem;
+      height: 1.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgb(228 228 231);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+      background: rgb(244 244 245);
+      color: rgb(113 113 122);
+      transition: all 0.15s ease;
+    }
+    .dark .likert-key {
+      border-color: rgb(63 63 70);
+      background: rgb(39 39 42);
+      color: rgb(161 161 170);
+    }
+    .likert-option:hover .likert-key { border-color: rgb(0 102 204); color: rgb(0 102 204); }
+    .likert-option.selected .likert-key {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.45);
+      color: #ffffff;
+    }
+    .likert-label { font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
+    .likert-detail { font-size: 13px; font-weight: 600; opacity: 0.65; }
+
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .result-badge.minimal {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: rgb(5 150 105);
+    }
+    .dark .result-badge.minimal {
+      color: rgb(52 211 153);
+    }
+    .result-badge.mild {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: rgb(37 99 235);
+    }
+    .dark .result-badge.mild {
+      color: rgb(96 165 250);
+    }
+    .result-badge.moderate {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: rgb(217 119 6);
+    }
+    .dark .result-badge.moderate {
+      color: rgb(251 191 36);
+    }
+    .result-badge.severe {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: rgb(220 38 38);
+    }
+    .dark .result-badge.severe {
+      color: rgb(248 113 113);
+    }
+
+    .severity-tier {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
+      border: 1px solid rgb(228 228 231);
+      background: #ffffff;
+      font-size: 0.88rem;
+      transition: all 0.2s ease;
+    }
+    .dark .severity-tier {
+      border-color: rgb(39 39 42);
+      background: rgb(24 24 27);
+    }
+    .severity-tier.active {
+      border-color: rgb(0 102 204);
+      background: rgba(0, 102, 204, 0.08);
+      font-weight: 700;
+    }
+    .severity-range {
+      font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+      font-weight: 800;
+      color: rgb(0 102 204);
+      width: 3.5rem;
+    }
+    .severity-marker {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgb(0 102 204);
+      color: #ffffff;
+    }
+
+    .matrix-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .matrix-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: rgb(113 113 122);
+    }
+    .dark .matrix-label { color: rgb(161 161 170); }
+    .matrix-track {
+      height: 0.45rem;
+      border-radius: 999px;
+      background: rgb(228 228 231);
+      overflow: hidden;
+    }
+    .dark .matrix-track { background: rgb(39 39 42); }
+    .matrix-track span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: rgb(0 102 204);
+      transition: width 0.5s ease-out;
+    }
+
+    .next-step {
+      position: relative;
+      padding-left: 1.5rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .next-step::before {
+      content: "•";
+      position: absolute;
+      left: 0.4rem;
+      color: rgb(0 102 204);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .print-only { display: none; }
+    @media print {
+      body * { visibility: hidden; }
+      #print-report-container, #print-report-container * {
+        visibility: visible;
+      }
+      #print-report-container {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</Layout>

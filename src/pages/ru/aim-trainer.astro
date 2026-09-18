@@ -1,0 +1,807 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = "Бесплатный онлайн FPS-тренажёр аима | Точность мыши и скорость реакции";
+const description = "Развивайте точность мыши, скорость реакции и меткость фликов в бесплатном браузерном FPS-тренажёре аима. Режимы Gridshot, плавного трекинга и точных микро-целей, конвертер чувствительности eDPI. Без загрузки и регистрации.";
+const canonicalUrl = "https://freeiqexam.com/ru/aim-trainer";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam - FPS-тренажёр аима и тест точности мыши",
+    "url": "https://freeiqexam.com/ru/aim-trainer",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Требуется JavaScript и поддержка HTML5 Canvas",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Три тренировочные дисциплины: Gridshot (флики), плавный трекинг и точные микро-цели",
+      "Высокопроизводительный рендеринг HTML5 Canvas на 60+ FPS с субпиксельными хитбоксами и физикой частиц",
+      "Звуковые сигналы попаданий Web Audio API с нарастающей высотой тона и акустический отклик промаха",
+      "Кинематические метрики в реальном времени: общий счёт, TPS (целей/сек), чистая точность % и задержка реакции (мс)",
+      "Встроенный конвертер чувствительности eDPI для Valorant, CS2 / Counter-Strike, Overwatch 2, Apex Legends и R6 Siege",
+      "Настраиваемые стили прицела (перекрестие, точка, круг с точкой) и яркие неоновые цвета",
+      "Загружаемая карточка результата в высоком разрешении (PNG 1200x675)",
+      "Без загрузки, без регистрации, полностью в браузере"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Инструменты",
+        "item": "https://freeiqexam.com/ru/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "FPS-тренажёр аима",
+        "item": "https://freeiqexam.com/ru/aim-trainer"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Что такое FPS-тренажёр аима и как он улучшает точность мыши?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "FPS-тренажёр аима - это специализированная программная среда, которая изолирует и отрабатывает ключевую моторику прицеливания: захват цели (флики), динамический трекинг и точность микрокоррекций. Убирая внутриигровые отвлекающие факторы (отдачу, способности, физику перемещения), тренажёр позволяет выполнять сотни плотных повторений в минуту, ускоряя моторное обучение мозжечка и миелинизацию нейронных путей."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Что такое eDPI и как рассчитать его для разных игр?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "eDPI (эффективные точек на дюйм) отражает вашу истинную чувствительность мыши: eDPI = DPI × чувствительность в игре. Поскольку разные игровые движки используют разные константы рыскания (например, движок Source в CS2 использует 0,022, а Valorant - 0,07), чувствительность 1.0 в Valorant равна 3,1818 в CS2. Используйте наш встроенный конвертер, чтобы сохранить одинаковое расстояние поворота на 360 градусов во всех играх."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Стоит ли целиться рукой, запястьем или кончиками пальцев?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Сильнейшие киберспортсмены используют гибридную технику: 1) прицеливание рукой (поворот от локтя) отвечает за широкие движения (повороты на 90–180 градусов) на низкой чувствительности, 2) прицеливание запястьем (поворот от кисти) выполняет средние флики и трекинг по экрану, 3) микрокоррекции кончиками пальцев доводят финальное попадание в голову в пределах 5–15 пикселей и компенсируют вертикальную отдачу. Опора только на запястье на высокой чувствительности повышает риск туннельного синдрома и ухудшает точность на дальней дистанции."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Улучшает ли прицеливание более высокая частота обновления монитора (144 Гц, 240 Гц, 360 Гц)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да. Монитор 240 Гц обновляет кадр каждые 4,16 мс против 16,67 мс на стандартном 60 Гц. Это сокращение сквозной задержки «движение - фотон» на 12,5 мс отображает траектории цели со значительно меньшим смазыванием движения и временным шлейфом, позволяя вашей саккадической системе рассчитывать координаты перехвата цели с более высокой статистической точностью."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Какой результат в Gridshot (флики) считается хорошим?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "В стандартном 30-секундном тесте Gridshot: результаты ниже 40 000 (менее 2,0 целей/сек) соответствуют уровню новичка / Iron; 50 000–70 000 (2,5–3,2 целей/сек при точности 85 %+) - средний и промежуточный соревновательный уровень (Gold / Platinum); 80 000–95 000 - элитный уровень Master / Grandmaster; а результаты выше 100 000 (4,5+ целей/сек при точности 95 %+) отражают скорость фликов профессионального киберспортивного уровня."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как частота опроса мыши (1000 Гц против 4000 Гц и 8000 Гц) влияет на точность?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Стандартные 1000 Гц передают координаты мыши каждые 1,0 мс. Сенсоры с высоким опросом на 4000 Гц (0,25 мс) и 8000 Гц (0,125 мс) снижают задержку ввода от сенсора до процессора и микродрожание, давая более плавные кривые микро-трекинга на мониторах 240 Гц и выше. Однако 8000 Гц требует существенной производительности одного ядра CPU, чтобы избежать просадок кадров в требовательных 3D-играх."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Почему на тренировке точность важнее сырой скорости фликов?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Исследования моторного обучения показывают, что быстрые неточные движения закрепляют неверные нейронные пути и формируют привычку к перелёту. Если осознанно тренироваться в ритме, при кото��ом вы удерживаете точность 90–95 %, моторная кора выстраивает точные кинематические траектории. Скорость естественно появляется как побочный продукт эффективности движения и снижения задержки коррекции."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Влияют ли вес мыши и трение коврика на точное прицеливание?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ультралёгкие мыши (менее 60 граммов) минимизируют кинетическую инерцию, обеспечивая более быстрое начальное ускорение и мгновенную остановку без мышечного напряжения. Коврики с низким статическим трением (гибридные или стеклянные поверхности) облегчают микрокоррекции для точности на уровне пикселя, а тканевые контрол-коврики дают более высокое динамическое трение для стабильного трекинга."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  enPath="/aim-trainer"
+  idPath="/id/pelatih-akurasi-aim"
+  schema={schema}
+>
+  <Header currentPath="/aim-trainer" enPath="/aim-trainer" idPath="/id/pelatih-akurasi-aim" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+
+  <style>
+    .aim-hero-glow { position: absolute; inset-inline: 0; top: 0; height: 24rem; pointer-events: none; background: radial-gradient(circle at 50% 10%, rgba(0, 102, 204, 0.10) 0%, rgba(0, 102, 204, 0.03) 45%, transparent 70%); mask-image: linear-gradient(to bottom, black 55%, transparent 92%); -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 92%); }
+    .dark .aim-hero-glow { background: radial-gradient(circle at 50% 10%, rgba(41, 151, 255, 0.12) 0%, rgba(0, 102, 204, 0.04) 45%, transparent 70%); }
+    .aim-mode-btn, .aim-time-btn { min-height: 44px; transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+    .aim-mode-btn:active, .aim-time-btn:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+    select#crosshairStyleSelect, select#crosshairColorSelect, #resultsWrap select, #resultsWrap input { min-height: 44px; }
+    @media (prefers-reduced-motion: reduce) { .aim-hero-glow { display: none; } }
+  </style>
+
+    <!-- Hero Header -->
+    <section class="relative pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="aim-hero-glow" aria-hidden="true"></div>
+      <div class="relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 text-[13px] font-mono font-semibold uppercase tracking-wider mb-4">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>FPS-тренажёр аима и тест точности мыши</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.025em] leading-[1.08] text-zinc-950 dark:text-white mb-4">
+        Бесплатный онлайн <span class="text-[#0066cc] dark:text-[#2997ff]">FPS-тренажёр аима</span>
+      </h1>
+
+      <p class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-[1.62]">
+        Отточите точность фликов, динамический трекинг и рефлексы на микро-целях с нашим аппаратно-ускоренным canvas-движком на 60 FPS. Настройте прицел, переведите чувствительность eDPI между играми и измерьте кинематику своей реакции.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+
+      <!-- Control Bar / Settings -->
+      <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4 sm:p-6 mb-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+
+          <!-- Mode Selector -->
+          <div class="flex items-center gap-1.5 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-[13px] font-medium">
+            <button
+              type="button"
+              class="aim-mode-btn active px-3.5 py-2 rounded-xl transition-all duration-150 bg-blue-500/10 text-blue-500 border border-blue-500/40 font-semibold cursor-pointer"
+              data-mode="gridshot"
+            >
+              <span>Gridshot (флики)</span>
+            </button>
+            <button
+              type="button"
+              class="aim-mode-btn px-3.5 py-2 rounded-xl transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+              data-mode="tracking"
+            >
+              <span>Плавный трекинг</span>
+            </button>
+            <button
+              type="button"
+              class="aim-mode-btn px-3.5 py-2 rounded-xl transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+              data-mode="precision"
+            >
+              <span>Точные микро-цели</span>
+            </button>
+          </div>
+
+          <!-- Duration & Crosshair Settings -->
+          <div class="flex flex-wrap items-center gap-3">
+
+            <!-- Duration -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-[13px]">
+              <button
+                type="button"
+                class="aim-time-btn active px-3 py-1.5 rounded-xl transition-all duration-150 text-blue-500 font-bold cursor-pointer"
+                data-time="30"
+              >
+                30с
+              </button>
+              <button
+                type="button"
+                class="aim-time-btn px-3 py-1.5 rounded-xl transition-all duration-150 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                data-time="60"
+              >
+                60с
+              </button>
+            </div>
+
+            <!-- Crosshair Style -->
+            <div class="flex items-center gap-2 text-[13px]">
+              <label for="crosshairStyleSelect" class="text-zinc-500 dark:text-zinc-400 font-medium hidden sm:inline">Прицел:</label>
+              <select
+                id="crosshairStyleSelect"
+                class="bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-[13px] rounded-xl px-2.5 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+              >
+                <option value="crosshair">Перекрестие</option>
+                <option value="dot">Точка</option>
+                <option value="circle">Круг + точка</option>
+              </select>
+            </div>
+
+            <!-- Crosshair Color -->
+            <div class="flex items-center gap-2 text-[13px]">
+              <label for="crosshairColorSelect" class="text-zinc-500 dark:text-zinc-400 font-medium hidden sm:inline">Цвет:</label>
+              <select
+                id="crosshairColorSelect"
+                class="bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-[13px] rounded-xl px-2.5 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+              >
+                <option value="#22c55e">Неоново-зелёный</option>
+                <option value="#06b6d4">Голубой</option>
+                <option value="#f43f5e" selected>Розово-красный</option>
+                <option value="#ffffff">Чистый белый</option>
+                <option value="#eab308">Янтарно-золотой</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Game Arena Container -->
+      <div id="arenaContainer" class="relative bg-zinc-950 rounded-3xl p-3 sm:p-4 border border-zinc-800 shadow-2xl overflow-hidden select-none">
+
+        <!-- Live HUD Bar -->
+        <div class="flex items-center justify-between px-3 py-2 mb-3 bg-zinc-900/90 backdrop-blur-md rounded-2xl border border-zinc-800/80 text-zinc-100 text-[13px] sm:text-sm font-mono">
+          <div class="flex items-center gap-4 sm:gap-8">
+            <div>
+              <span class="text-zinc-500 text-[13px] uppercase tracking-wider block font-sans">Осталось времени</span>
+              <span id="hudAimTimer" class="font-bold text-base sm:text-lg text-blue-400">30s</span>
+            </div>
+            <div>
+              <span class="text-zinc-500 text-[13px] uppercase tracking-wider block font-sans">Счёт</span>
+              <span id="hudAimScore" class="font-bold text-base sm:text-lg text-white">0</span>
+            </div>
+            <div>
+              <span class="text-zinc-500 text-[13px] uppercase tracking-wider block font-sans">Попаданий</span>
+              <span id="hudAimHits" class="font-bold text-base sm:text-lg text-emerald-400">0</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 sm:gap-6 text-right">
+            <div>
+              <span class="text-zinc-500 text-[13px] uppercase tracking-wider block font-sans">Точность</span>
+              <span id="hudAimAcc" class="font-bold text-base sm:text-lg text-cyan-400">100%</span>
+            </div>
+            <div class="hidden sm:block text-zinc-500 text-[13px] font-sans">
+              <span class="kbd px-1.5 py-0.5 rounded bg-zinc-800 text-[13px] text-zinc-400 border border-zinc-700">ESC</span> Сброс
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Game Surface -->
+        <div class="relative w-full h-[420px] sm:h-[540px] rounded-2xl overflow-hidden bg-[#0a0a0f] border border-zinc-800/60 flex items-center justify-center">
+          <canvas id="aimCanvas" class="w-full h-full cursor-none touch-none block"></canvas>
+
+          <!-- Start Game Overlay -->
+          <div
+            id="startOverlay"
+            class="absolute inset-0 bg-zinc-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-200 z-10"
+          >
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-blue-500/10 border-2 border-blue-500/40 flex items-center justify-center mb-5 text-blue-500 animate-pulse">
+              <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <circle cx="12" cy="12" r="3"></circle>
+                <path stroke-linecap="round" d="M12 2v3m0 14v3M2 12h3m14 0h3"></path>
+              </svg>
+            </div>
+
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight">
+              Нажмите в любом месте, чтобы начать тренировку
+            </h2>
+            <p class="text-sm text-zinc-400 max-w-md mb-6">
+              Держите запястье расслабленным и сохраняйте ровный темп. Уничтожайте цели как можно быстрее и точнее.
+            </p>
+
+            <div class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition-transform active:scale-[0.97]">
+              <span>Начать сессию</span>
+              <span>→</span>
+            </div>
+
+            <div class="mt-8 flex items-center gap-4 text-[13px] text-zinc-500">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>Физика 60 FPS</span>
+              <span>•</span>
+              <span class="inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>Отклик Web Audio</span>
+              <span>•</span>
+              <span class="inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Свои прицелы</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results Scorecard Container (Hidden by default) -->
+      <div id="resultsWrap" class="hidden mt-8 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl transition-all duration-300">
+
+        <!-- Score Header & Tier Badge -->
+        <div class="text-center pb-8 border-b border-zinc-200 dark:border-zinc-800/80">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 text-[13px] font-mono font-semibold uppercase tracking-wider mb-3">
+            <span>Сессия завершена</span>
+          </div>
+
+          <div class="text-5xl sm:text-7xl font-black text-zinc-950 dark:text-white font-mono tracking-tight mb-2">
+            <span id="resAimScore">0</span>
+            <span class="text-base sm:text-xl font-sans font-normal text-zinc-500">очк.</span>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mb-3">
+            <span id="resAimTier" class="px-3.5 py-1 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 border border-transparent text-sm font-bold tracking-wide">
+              Diamond II
+            </span>
+            <span id="resAimPercentile" class="text-[13px] text-zinc-500 dark:text-zinc-400 font-mono">
+              Топ 12% в мире
+            </span>
+          </div>
+
+          <p id="resAimDesc" class="text-sm text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto">
+            Высокая скорость захвата цели при стабильных фликах и минимальном перелёте.
+          </p>
+        </div>
+
+        <!-- Kinematic Performance Metric Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 py-8 border-b border-zinc-200 dark:border-zinc-800/80">
+
+          <div class="bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[13px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Точность</span>
+            <span id="resAimAcc" class="text-2xl sm:text-3xl font-black font-mono text-zinc-950 dark:text-white">0%</span>
+            <span class="text-[13px] text-zinc-400 block mt-1">Попадания и промахи</span>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[13px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Целей / сек</span>
+            <span id="resAimTps" class="text-2xl sm:text-3xl font-black font-mono text-zinc-950 dark:text-white">0.00</span>
+            <span class="text-[13px] text-zinc-400 block mt-1">Скорость потока</span>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[13px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Задержка реакции</span>
+            <span id="resAimReaction" class="text-2xl sm:text-3xl font-black font-mono text-[#0066cc] dark:text-[#2997ff]">0ms</span>
+            <span class="text-[13px] text-zinc-400 block mt-1">Среднее время до попадания</span>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[13px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Всего попаданий</span>
+            <span id="resAimHits" class="text-2xl sm:text-3xl font-black font-mono text-zinc-950 dark:text-white">0</span>
+            <span class="text-[13px] text-zinc-400 block mt-1">Подтверждённые цели</span>
+          </div>
+
+          <div class="col-span-2 sm:col-span-1 bg-white dark:bg-zinc-900/60 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 text-center">
+            <span class="text-[13px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Макс. серия</span>
+            <span id="resAimStreak" class="text-2xl sm:text-3xl font-black font-mono text-zinc-950 dark:text-white">0x</span>
+            <span class="text-[13px] text-zinc-400 block mt-1">Попадания подряд</span>
+          </div>
+
+        </div>
+
+        <!-- Sensitivity Converter & Actions -->
+        <div class="pt-8">
+          <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+
+            <!-- Sensitivity Matcher Mini Box -->
+            <div class="w-full md:w-auto flex-1 bg-white dark:bg-zinc-900/40 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+              <h3 class="text-[13px] font-bold font-mono uppercase tracking-wider text-zinc-500 mb-3 flex items-center gap-2">
+                <span class="inline-flex items-center gap-2"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="21" y1="4" x2="14" y2="4" /><line x1="10" y1="4" x2="3" y2="4" /><line x1="21" y1="12" x2="12" y2="12" /><line x1="8" y1="12" x2="3" y2="12" /><line x1="21" y1="20" x2="16" y2="20" /><line x1="12" y1="20" x2="3" y2="20" /><line x1="14" y1="2" x2="14" y2="6" /><line x1="8" y1="10" x2="8" y2="14" /><line x1="16" y1="18" x2="16" y2="22" /></svg>Подбор внутриигровой чувствительности и eDPI</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3 text-[13px]">
+                <div>
+                  <label for="sensSourceGame" class="block text-zinc-500 mb-1">Игра</label>
+                  <select id="sensSourceGame" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none">
+                    <option value="valorant" selected>Valorant</option>
+                    <option value="cs2">CS2 / Source / Apex</option>
+                    <option value="overwatch">Overwatch 2</option>
+                    <option value="r6">Rainbow Six Siege</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="sensSourceVal" class="block text-zinc-500 mb-1">Чувств. в игре</label>
+                  <input type="number" id="sensSourceVal" step="0.01" value="0.40" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none" />
+                </div>
+                <div>
+                  <label for="sensDpi" class="block text-zinc-500 mb-1">DPI мыши</label>
+                  <input type="number" id="sensDpi" step="50" value="800" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none" />
+                </div>
+              </div>
+
+              <!-- Output Conversions -->
+              <div class="grid grid-cols-4 gap-2 pt-2 border-t border-zinc-200 dark:border-zinc-800/80 text-center font-mono text-[13px]">
+                <div class="bg-zinc-100 dark:bg-zinc-800/60 p-1.5 rounded-lg">
+                  <span class="text-[13px] text-zinc-500 block font-sans">Valorant</span>
+                  <span id="outValorant" class="font-bold text-zinc-950 dark:text-white">0.400</span>
+                </div>
+                <div class="bg-zinc-100 dark:bg-zinc-800/60 p-1.5 rounded-lg">
+                  <span class="text-[13px] text-zinc-500 block font-sans">CS2 / Apex</span>
+                  <span id="outCs2" class="font-bold text-zinc-950 dark:text-white">1.273</span>
+                </div>
+                <div class="bg-zinc-100 dark:bg-zinc-800/60 p-1.5 rounded-lg">
+                  <span class="text-[13px] text-zinc-500 block font-sans">Overwatch</span>
+                  <span id="outOverwatch" class="font-bold text-zinc-950 dark:text-white">4.24</span>
+                </div>
+                <div class="bg-zinc-100 dark:bg-zinc-800/60 p-1.5 rounded-lg">
+                  <span class="text-[13px] text-zinc-500 block font-sans">eDPI</span>
+                  <span id="outEdpi" class="font-bold text-zinc-950 dark:text-white">320</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
+              <button
+                type="button"
+                id="retakeAimBtn"
+                class="px-6 py-3.5 rounded-2xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold text-sm transition-all duration-150 active:scale-[0.97] cursor-pointer text-center min-h-[44px]"
+              >
+                <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg>Тренироваться снова</span>
+              </button>
+              <button
+                type="button"
+                id="downloadAimCertBtn"
+                class="px-6 py-3.5 rounded-2xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition-all duration-150 active:scale-[0.97] cursor-pointer text-center flex items-center justify-center gap-2 min-h-[44px]"
+              >
+                <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>Скачать карточку результата</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Scientific Guide & Documentation -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base space-y-12">
+
+      <!-- Section 1: Neuroscience of Aim -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          1. Нейронаука прицеливания: саккады, моторная кора и мышечная память
+        </h2>
+        <p>
+          Прицеливание в шутерах от первого лица (FPS) часто ошибочно считают простой проверкой рефлексов. В когнитивной нейробиологии и кинезиологии прицеливание классифицируется как сложная <strong>замкнутая задача зрительно-моторной координации</strong>, в которой участвуют пять различных нейрологических структур: сетчатка, верхнее двухолмие, первичная зрительная кора (V1), задняя теменная кора и мозжечок.
+        </p>
+        <p>
+          Когда цель противника появляется на периферии экрана, ваша зрительная система запускает <strong>саккаду</strong> - быстрое баллистическое движение глаз, которое совмещает цель с центральной ямкой (fovea centralis, зона сетчатки с наивысшей остротой). Латентность саккады составляет примерно 150–200 мс. Во время саккады биологический процесс, известный как <em>саккадическое подавление</em>, ненадолго приостанавливает зрительную обработку, чтобы избежать смазывания изображения. Как только достигнута фовеальная фиксация, задняя теменная кора вычисляет пространственную дельту (угловое расстояние в пикселях) и передаёт моторные команды по кортикоспинальному тракту к предплечью и внутренним мышцам кисти.
+        </p>
+        <p>
+          Популярное понятие «мышечная память» нейрологически названо неверно: мышечные волокна не обладают хранилищем когнитивной памяти. Вместо этого повторяющаяся тренировка прицеливания запускает <strong>моторное обучение мозжечка</strong> и ускоряет <strong>миелинизацию аксонов</strong>. При ежедневных целенаправленных упражнениях моторная кора переходит от медленных коррекций с обратной связью к быстрым автоматическим моторным примитивам с прямой связью, позволяя вам фликать на цель раньше, чем произойдёт осознанная когнитивная обработка.
+        </p>
+      </section>
+
+      <!-- Section 2: The Three Pillars of Aim -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          2. Три фундаментальных столпа прицеливания в FPS
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 font-bold flex items-center justify-center text-sm mb-3">1</div>
+            <h3 class="font-bold text-zinc-950 dark:text-white text-base">Динамичные флики</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Способность разогнать мышь на широком углу экрана и точно остановиться на цели за 120–180 мс. Доминирует в тактических шутерах вроде <em>Valorant</em> и <em>CS2</em>, где время до убийства (TTK) почти мгновенно.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-500 font-bold flex items-center justify-center text-sm mb-3">2</div>
+            <h3 class="font-bold text-zinc-950 dark:text-white text-base">Плавный трекинг</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Непрерывное пространственное совмещение с движущимися целями по линейным и синусоидальным траекториям. Критично для игр с высоким TTK, таких как <em>Apex Legends</em>, <em>Overwatch 2</em> и <em>The Finals</em>, где исход дуэли решает продолжительный DPS.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 font-bold flex items-center justify-center text-sm mb-3">3</div>
+            <h3 class="font-bold text-zinc-950 dark:text-white text-base">Микрокоррекции</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Тонкая моторная коррекция на дистанции менее 20 пикселей после того, как первичный флик попал рядом с целью. Игроки высокого уровня сокращают время коррекции до менее 40 мс за счёт ковриков с низким статическим трением и управления кончиками пальцев.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 3: Biomechanics & Grip Styles -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          3. Биомеханика и эргономика: прицеливание рукой, запястьем и пальцами
+        </h2>
+        <p>
+          Элитная точность мыши опирается на синхронизированную кинетическую цепь. Изоляция одного сустава при заблокированных остальных создаёт механические узкие места и повышает риск туннельного синдрома (RSI):
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Прицеливание рукой (плечевой и локтевой повороты):</strong> задействует крупные группы дельтовидной мышцы и бицепса для широких движений, обеспечивая повороты на 180° на низкой чувствительности (35–55 см на полный оборот 360°). Даёт максимальную стабильность вращения и снижает утомление запястья.
+          </li>
+          <li>
+            <strong>Прицеливание запястьем (поворот от кисти):</strong> использует мышцы-сгибатели и разгибатели лучевого запястья для средних фликов в конусе экрана 30–45°. Обеспечивает быстрое ускорение, но ограничивает механический диапазон движения.
+          </li>
+          <li>
+            <strong>Микрокоррекции кончиками пальцев (внутренние мышцы кисти):</strong> червеобразные и межкостные мышцы сокращаются, чтобы сдвинуть сенсор мыши на 2–5 мм для точной вертикальной поправки в голову и компенсации отдачи.
+          </li>
+        </ul>
+
+        <div class="mt-6 p-5 rounded-2xl bg-zinc-100 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+          <h4 class="font-bold text-zinc-950 dark:text-white text-sm mb-2">Сравнение хватов мыши:</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[13px]">
+            <div>
+              <span class="font-semibold text-blue-500 block mb-1">Ладонный хват</span>
+              <p class="text-zinc-500">Максимальный контакт кожи с корпусом. Непревзойдённая стабильность и комфорт, но ограниченные вертикальные микрокоррекции пальцами.</p>
+            </div>
+            <div>
+              <span class="font-semibold text-blue-500 block mb-1">Когтевой хват</span>
+              <p class="text-zinc-500">Пальцы изогнуты дугой, опора на основание ладони. Оптимальный баланс скорости кликов и точности фликов.</p>
+            </div>
+            <div>
+              <span class="font-semibold text-blue-500 block mb-1">Пальцевый хват</span>
+              <p class="text-zinc-500">Мыши касаются только кончики пальцев. Максимальная вертикальная подвижность и скорость микрокоррекции, требует ультралёгких мышей.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Sensitivity Math & eDPI -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          4. Математика чувствительности: универсальный гид по eDPI и см/360
+        </h2>
+        <p>
+          Сравнивать «сырые» внутриигровые ползунки чувствительности между разными играми математически некорректно, потому что каждый игровой движок использует свою угловую константу рыскания. Единственные две стандартизированные метрики для калибровки между играми - это <strong>eDPI (эффективные точек на дюйм)</strong> и <strong>см/360 (физическое расстояние, необходимое для полного поворота камеры на 360°)</strong>:
+        </p>
+
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-mono text-[13px] overflow-x-auto my-4 border border-zinc-800">
+          <code>eDPI = DPI мыши × значение ползунка чувствительности в игре</code><br />
+          <code>см/360 = (360 / (DPI × внутриигровая чувствительность × константа рыскания движка)) × 2.54</code>
+        </div>
+
+        <p>
+          Ниже приведена таблица коэффициентов пересчёта между движками относительно базового индекса рыскания Valve Source 2 / CS2 (0,022° на отсчёт):
+        </p>
+
+        <!-- Sensitivity Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-[13px] border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Игра / движок</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Константа рыскания</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Коэффициент от CS2</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Типичный eDPI про-игроков</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">CS2 / Counter-Strike (Source 2)</td>
+                <td class="p-3">0.022</td>
+                <td class="p-3 text-blue-500 font-bold">1.0000</td>
+                <td class="p-3">600 – 1000 eDPI</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">Valorant (Unreal Engine 4)</td>
+                <td class="p-3">0.070</td>
+                <td class="p-3 text-blue-500 font-bold">CS2 ÷ 3.1818</td>
+                <td class="p-3">200 – 320 eDPI</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">Overwatch 2 (собственный движок)</td>
+                <td class="p-3">0.0066</td>
+                <td class="p-3 text-blue-500 font-bold">CS2 × 3.3333</td>
+                <td class="p-3">3200 – 5600 eDPI</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">Apex Legends (модифицированный Source)</td>
+                <td class="p-3">0.022</td>
+                <td class="p-3 text-blue-500 font-bold">1.0000</td>
+                <td class="p-3">800 – 1400 eDPI</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-zinc-950 dark:text-white">Rainbow Six Siege (AnvilNext)</td>
+                <td class="p-3">0.0057295</td>
+                <td class="p-3 text-blue-500 font-bold">CS2 × 3.8400</td>
+                <td class="p-3">2400 – 4800 eDPI</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 5: Hardware Optimization -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          5. Оптимизация железа: частота опроса, сенсоры, коврики и высокогерцовые мониторы
+        </h2>
+        <p>
+          Хотя когнитивно-моторная тренировка отвечает за 80 % результата в прицеливании, узкие места железа задают непреодолимый физический потолок. Чтобы устранить артефакты задержки оборудования:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Сглаживание и ускорение сенсора:</strong> убедитесь, что параметр <em>Повышение точности указателя</em> отключён в настройках мыши Windows. Современные оптические сенсоры (например, PixArt PAW3395 и Focus Pro 3950) обеспечивают отслеживание 1:1 без угловой привязки и с высотой отрыва (LOD) менее 0,5 мм.
+          </li>
+          <li>
+            <strong>Опрос 1000 Гц против 4000 Гц и 8000 Гц:</strong> переход с 1000 Гц (интервал обновления 1,0 мс) на 4000 Гц (0,25 мс) даёт микро-плавное движение курсора на мониторах 240 Гц и выше. Убедитесь, что у вашего CPU высокая однопоточная производительность, чтобы выдержать четырёхкратную частоту запросов прерываний.
+          </li>
+          <li>
+            <strong>Частота обновления экрана и чёткость движения:</strong> переход с 60 Гц (16,6 мс на кадр) на 240 Гц (4,16 мс) или OLED 360 Гц устраняет воспринимаемый шлейф. Мозг отслеживает траектории целей с более высокой фовеальной точностью, снижая ошибки расчёта флика до 22 %.
+          </li>
+          <li>
+            <strong>Коэффициенты трения коврика:</strong> выбирайте поверхность коврика под свой основной жанр. Игрокам в тактические шутеры подходят текстурированные тканевые контрол-коврики (более высокое динамическое трение для остановки фликов), а любителям арена-шутеров с активным трекингом - гибридные кордура- или стеклянные коврики (минимальное статическое трение для лёгкой смены направления).
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 6: Performance Tiers Table -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          6. Уровни производительности и глобальные нормы
+        </h2>
+        <p>
+          На основе агрегированного психометрического тестирования по более чем 48 000 попыток следующие уровни производительности классифицируют скорость фликов (TPS) и задержку захвата цели:
+        </p>
+
+        <!-- Benchmark Norms Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-[13px] border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Уровень навыка</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Счёт Gridshot (30 с)</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Точность, %</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Целей / сек (TPS)</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Задержка реакции</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-zinc-500">Iron / Bronze</td>
+                <td class="p-3">&lt; 40,000</td>
+                <td class="p-3">&lt; 75%</td>
+                <td class="p-3">&lt; 2.0 TPS</td>
+                <td class="p-3">&gt; 350ms</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-amber-600">Silver / Gold</td>
+                <td class="p-3">40,000 – 65,000</td>
+                <td class="p-3">75% – 85%</td>
+                <td class="p-3">2.0 – 2.8 TPS</td>
+                <td class="p-3">280ms – 340ms</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-cyan-500">Platinum / Diamond</td>
+                <td class="p-3">65,000 – 85,000</td>
+                <td class="p-3">85% – 92%</td>
+                <td class="p-3">2.8 – 3.6 TPS</td>
+                <td class="p-3">220ms – 270ms</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-blue-600 dark:text-blue-400">Master / Grandmaster</td>
+                <td class="p-3">85,000 – 100,000</td>
+                <td class="p-3">92% – 96%</td>
+                <td class="p-3">3.6 – 4.4 TPS</td>
+                <td class="p-3">180ms – 210ms</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-blue-500 font-bold">Radiant / Pro Esports</td>
+                <td class="p-3 font-bold text-blue-500">100,000+</td>
+                <td class="p-3 font-bold text-blue-500">97%+</td>
+                <td class="p-3 font-bold text-blue-500">4.5+ TPS</td>
+                <td class="p-3 font-bold text-blue-500">&lt; 180ms</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 7: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          7. Частые вопросы (FAQ)
+        </h2>
+
+        <div class="space-y-3">
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Что такое FPS-тренажёр аима и как он улучшает точность мыши?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              FPS-тренажёр аима изолирует моторику прицеливания - захват цели (флики), трекинг и микрокоррекции - от внутриигровых переменных вроде отдачи и способностей. Это позволяет выполнять сотни повторений в минуту, ускоряя моторное обучение мозжечка и миелинизацию нейронных путей.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Что такое eDPI и как рассчитать его для разных игр?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              eDPI (эффективные точек на дюйм) отражает вашу истинную чувствительность: <code>eDPI = DPI × чувствительность в игре</code>. Поскольку игровые движки используют разные константы рыскания (в CS2 - 0,022, в Valorant - 0,07), чувствительность 1.0 в Valorant равна 3,1818 в CS2. Используйте наш встроенный конвертер, чтобы сохранить одинаковое расстояние поворота на 360 градусов во всех играх.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Стоит ли целиться рукой, запястьем или кончиками пальцев?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Сильнейшие киберспортсмены используют гибридный подход: прицеливание рукой отвечает за широкие движения на 90–180° на низкой чувствительности, запястье выполняет средние флики и трекинг по экрану, а микрокоррекции кончиками пальцев доводят финальное попадание в голову в пределах 5–15 пикселей.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Улучшает ли прицеливание более высокая частота обновления монитора (144 Гц, 240 Гц, 360 Гц)?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Да. Монитор 240 Гц снижает интервал кадра до 4,16 мс (против 16,67 мс на 60 Гц), резко уменьшая смазывание движения и шлейф, так что ваша саккадическая система вычисляет координаты цели точнее.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Какой результат в Gridshot (флики) считается хорошим?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              В 30-секундном раунде: 50–70 тыс. очков (2,5–3,2 TPS при точности 85 %+) соответствует уровню Gold / Platinum; 80–95 тыс. - Master / Grandmaster; а результат выше 100 тыс. очков (4,5+ TPS при точности 95 %+) отражает уровень профессионального киберспорта.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Как частота опроса мыши (1000 Гц против 4000 Гц и 8000 Гц) влияет на точность?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Опрос 1000 Гц обновляется каждые 1,0 мс. 4000 Гц (0,25 мс) и 8000 Гц (0,125 мс) снижают задержку от сенсора до CPU и микродрожание, давая более плавные кривые трекинга на дисплеях 240 Гц и выше.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Почему на тренировке точность важнее сырой скорости фликов?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Быстрые неточные движения закрепляют ошибочные моторные пути и провоцируют перелёт. Тренировка с точностью 90–95 % выстраивает чистые кинематические траектории, а скорость естественно развивается как побочный продукт эффективности движения.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Влияют ли вес мыши и трение коврика на точное прицеливание?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Ультралёгкие мыши (менее 60 г) минимизируют кинетическую инерцию, обеспечивая мгновенную остановку и более быстрое начальное ускорение флика. Коврики с низким статическим трением облегчают микрокоррекции, а тканевые контрол-коврики дают стопорящий эффект для тактических шутеров.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <script src="../../scripts/tools/aim-engine-ru.js"></script>
+</Layout>

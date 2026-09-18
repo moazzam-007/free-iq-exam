@@ -7,16 +7,16 @@ const title = "Таблица лидеров — результаты тесто
 const description = "Сравните свой балл IQ (SD15) и процентиль с когортой участников. Пройдите тест бесплатно и без регистрации.";
 
 const topScorers = [
-  { rank: 1, flag: "🇺🇸", country: "США", name: "Alex_V.", score: 146, percentile: "99.9-й", domain: "Подвижный интеллект (FRI: 148)", hash: "v8f9-2a1c" },
-  { rank: 2, flag: "🇯🇵", country: "Япония", name: "Hana_K.", score: 142, percentile: "99.7-й", domain: "Визуально-пространственное (VSI: 145)", hash: "k4m2-9d3e" },
-  { rank: 3, flag: "🇩🇪", country: "Германия", name: "Marcus_S.", score: 138, percentile: "99.4-й", domain: "Количественное мышление (QRI: 141)", hash: "s7x1-0p8b" },
-  { rank: 4, flag: "🇨🇦", country: "Канада", name: "Elena_R.", score: 135, percentile: "99.0-й", domain: "Вербальная логика (VCI: 137)", hash: "r3c8-5w2y" },
-  { rank: 5, flag: "🇬🇧", country: "Великобритания", name: "David_L.", score: 132, percentile: "98.3-й", domain: "Подвижный интеллект (FRI: 134)", hash: "l9b6-4h7q" },
-  { rank: 6, flag: "🇦🇺", country: "Австралия", name: "Sarah_M.", score: 131, percentile: "98.1-й", domain: "Количественное мышление (QRI: 133)", hash: "m2t5-8n1z" },
-  { rank: 7, flag: "🇰🇷", country: "Южная Корея", name: "Kenji_T.", score: 130, percentile: "97.7-й", domain: "Визуально-пространственное (VSI: 132)", hash: "t6v4-1k9x" },
-  { rank: 8, flag: "🇮🇳", country: "Индия", name: "Priya_N.", score: 129, percentile: "97.3-й", domain: "Подвижный интеллект (FRI: 131)", hash: "n5p7-3m8f" },
-  { rank: 9, flag: "🇫🇷", country: "Франция", name: "Lukas_B.", score: 128, percentile: "96.9-й", domain: "Вербальная логика (VCI: 130)", hash: "b8q3-7r4d" },
-  { rank: 10, flag: "🇳🇱", country: "Нидерланды", name: "Chloe_D.", score: 127, percentile: "96.4-й", domain: "Визуально-пространственное (VSI: 129)", hash: "d1w9-6v5s" }
+  { rank: 1, code: "US", country: "США", name: "Alex_V.", score: 146, percentile: "99.9-й", domain: "Подвижный интеллект (FRI: 148)", hash: "v8f9-2a1c" },
+  { rank: 2, code: "JP", country: "Япония", name: "Hana_K.", score: 142, percentile: "99.7-й", domain: "Визуально-пространственное (VSI: 145)", hash: "k4m2-9d3e" },
+  { rank: 3, code: "DE", country: "Германия", name: "Marcus_S.", score: 138, percentile: "99.4-й", domain: "Количественное мышление (QRI: 141)", hash: "s7x1-0p8b" },
+  { rank: 4, code: "CA", country: "Канада", name: "Elena_R.", score: 135, percentile: "99.0-й", domain: "Вербальная логика (VCI: 137)", hash: "r3c8-5w2y" },
+  { rank: 5, code: "GB", country: "Великобритания", name: "David_L.", score: 132, percentile: "98.3-й", domain: "Подвижный интеллект (FRI: 134)", hash: "l9b6-4h7q" },
+  { rank: 6, code: "AU", country: "Австралия", name: "Sarah_M.", score: 131, percentile: "98.1-й", domain: "Количественное мышление (QRI: 133)", hash: "m2t5-8n1z" },
+  { rank: 7, code: "KR", country: "Южная Корея", name: "Kenji_T.", score: 130, percentile: "97.7-й", domain: "Визуально-пространственное (VSI: 132)", hash: "t6v4-1k9x" },
+  { rank: 8, code: "IN", country: "Индия", name: "Priya_N.", score: 129, percentile: "97.3-й", domain: "Подвижный интеллект (FRI: 131)", hash: "n5p7-3m8f" },
+  { rank: 9, code: "FR", country: "Франция", name: "Lukas_B.", score: 128, percentile: "96.9-й", domain: "Вербальная логика (VCI: 130)", hash: "b8q3-7r4d" },
+  { rank: 10, code: "NL", country: "Нидерланды", name: "Chloe_D.", score: 127, percentile: "96.4-й", domain: "Визуально-пространственное (VSI: 129)", hash: "d1w9-6v5s" }
 ];
 
 const schema = {
@@ -108,7 +108,7 @@ const schema = {
 
                   <!-- Examinee with Flag -->
                   <div class="flex items-center gap-2.5 min-w-0">
-                    <span class="text-lg select-none shrink-0" title={user.country}>{user.flag}</span>
+                    <span class="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 select-none shrink-0" title={user.country} aria-label={user.country}>{user.code}</span>
                     <div class="truncate">
                       <span class="font-medium text-sm text-zinc-900 dark:text-white block truncate">{user.name}</span>
                       <span class="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 block">{user.hash}</span>
@@ -148,7 +148,7 @@ const schema = {
           </div>
           <a
             href="/ru/test"
-            class="shrink-0 px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+            class="shrink-0 px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all hover:scale-105 active:scale-[0.97] whitespace-nowrap"
           >
             Пройти тест сейчас
           </a>

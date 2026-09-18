@@ -1,0 +1,413 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = "Бесплатные инструменты и калькуляторы: сон, калории, IQ | FreeIQExam";
+const description = "Все бесплатные инструменты FreeIQExam: калькулятор сна, калорий и TDEE, таблица баллов IQ и калькулятор процентилей, проверка микрофона и генератор шума. Без регистрации.";
+
+const toolGroups = [
+  {
+    id: 'bio-rhythm',
+    heading: 'Биоритмы и калькуляторы',
+    blurb: 'Инструменты для сна, питания и самопроверки: превращайте ежедневные показатели в понятные числа.',
+    tools: [
+      {
+        name: 'Калькулятор сна',
+        route: '/ru/sleep-calculator',
+        icon: 'moon',
+        pastelTag: 'pastel-tag-lav',
+        pastelIcon: 'pastel-icon-lav',
+        description: 'Рассчитайте оптимальное время отхода ко сну и пробуждения на основе естественных 90-минутных циклов сна. Включает мюнхенскую оценку хронотипа и трекер периода полувыведения кофеина. 100% бесплатно.',
+        kind: 'Калькулятор',
+        badge: ''
+      },
+      {
+        name: 'Калькулятор калорий',
+        route: '/ru/calorie-calculator',
+        icon: 'flame',
+        pastelTag: 'pastel-tag-coral',
+        pastelIcon: 'pastel-icon-coral',
+        description: 'Рассчитайте суточный расход энергии (TDEE), базовый метаболизм (BMR), целевой дефицит/профицит калорий и граммы белков, жиров и углеводов клинически точно.',
+        kind: 'Калькулятор',
+        badge: ''
+      },
+      {
+        name: 'Генератор коричневого шума',
+        route: '/ru/brown-noise',
+        icon: 'headphones',
+        pastelTag: 'pastel-tag-cyan',
+        pastelIcon: 'pastel-icon-cyan',
+        description: 'Генератор коричневого, розового и зелёного шума с бинауральными ритмами и звуками дождя для сна и концентрации. 100% бесплатно, процедурный синтез без зацикливания.',
+        kind: 'Генератор',
+        badge: ''
+      },
+      {
+        name: 'Проверка микрофона',
+        route: '/ru/mic-test',
+        icon: 'mic',
+        pastelTag: 'pastel-tag-sky',
+        pastelIcon: 'pastel-icon-sky',
+        description: 'Проверьте микрофон онлайн с визуализацией частотного спектра в реальном времени, индикатором громкости dBFS, анализом фонового шума и мгновенной записью-прослушиванием.',
+        kind: 'Проверка',
+        badge: ''
+      },
+      {
+        name: 'Memento Mori',
+        route: '/ru/memento-mori',
+        icon: 'hourglass',
+        pastelTag: 'pastel-tag-peach',
+        pastelIcon: 'pastel-icon-peach',
+        description: 'Наглядный стоический календарь жизни в 4 000 недель и актуарный калькулятор ожидаемой продолжительности жизни. 100% приватно, скачайте постер бесплатно.',
+        kind: 'Календарь',
+        badge: ''
+      },
+      {
+        name: 'Круг контроля',
+        route: '/ru/circle-of-control',
+        icon: 'compass',
+        pastelTag: 'pastel-tag-mint',
+        pastelIcon: 'pastel-icon-mint',
+        description: 'Разделите то, что вы можете контролировать, на что влиять и что вне вашего контроля с помощью интерактивного стоического круга. Практика Эпиктета и Кови.',
+        kind: 'Тренажёр',
+        badge: ''
+      }
+    ]
+  },
+  {
+    id: 'psychometrics',
+    heading: 'Психометрика и справочники',
+    blurb: 'Справочные материалы для интерпретации любого балла IQ — независимо от того, каким тестом он получен.',
+    tools: [
+      {
+        name: 'Таблица баллов IQ',
+        route: '/ru/iq-score-chart',
+        icon: 'chart',
+        pastelTag: 'pastel-tag-sky',
+        pastelIcon: 'pastel-icon-sky',
+        description: 'Колоколообразная кривая IQ: медиана 100, ±1 SD (85–115, 68,2%), ±2 SD, ±3 SD. Стандартное отклонение SD15 наглядно.',
+        kind: 'Таблица',
+        badge: ''
+      },
+      {
+        name: 'Калькулятор процентилей',
+        route: '/ru/iq-percentile-calculator',
+        icon: 'target',
+        pastelTag: 'pastel-tag-lav',
+        pastelIcon: 'pastel-icon-lav',
+        description: 'Переведите балл IQ в процентиль, z-оценку и редкость в популяции. Формула z=(IQ−100)/15, бесплатно.',
+        kind: 'Калькулятор',
+        badge: ''
+      },
+      {
+        name: 'Шкала классификации IQ',
+        route: '/ru/iq-classification-scale',
+        icon: 'ruler',
+        pastelTag: 'pastel-tag-peach',
+        pastelIcon: 'pastel-icon-peach',
+        description: 'Диапазоны IQ по WAIS-IV и Stanford-Binet: средний уровень, выше среднего, одарённость. Процентили и встречаемость 1 из N.',
+        kind: 'Шкала',
+        badge: ''
+      },
+      {
+        name: 'Средний IQ по возрастам',
+        route: '/ru/average-iq-by-age',
+        icon: 'trend',
+        pastelTag: 'pastel-tag-mint',
+        pastelIcon: 'pastel-icon-mint',
+        description: 'Почему средний IQ всегда 100? Траектории подвижного и кристаллизованного интеллекта на протяжении жизни, эффект Флинна.',
+        kind: 'Данные',
+        badge: ''
+      }
+    ]
+  }
+];
+
+const totalTools = toolGroups.reduce((sum, group) => sum + group.tools.length, 0);
+
+// Sovereign 16x16/18x18 inline vector micro-icons (zero cartoon emojis).
+const svgOpen = '<svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">';
+const toolIcons: Record<string, string> = {
+  moon: svgOpen + '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  flame: svgOpen + '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  headphones: svgOpen + '<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>',
+  mic: svgOpen + '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>',
+  hourglass: svgOpen + '<path d="M6 2h12M6 22h12"/><path d="M8 2v5l4 4 4-4V2"/><path d="M8 22v-5l4-4 4 4v5"/></svg>',
+  compass: svgOpen + '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+  chart: svgOpen + '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  target: svgOpen + '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  ruler: svgOpen + '<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>',
+  trend: svgOpen + '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+  microscope: svgOpen + '<path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0-7-7h1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg>',
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Бесплатные инструменты и калькуляторы FreeIQExam",
+    "url": "https://freeiqexam.com/ru/tools",
+    "description": `Все ${totalTools} бесплатных инструментов: калькулятор сна, калорий и TDEE, таблица баллов IQ, проверка микрофона и генератор шума. Без регистрации.`,
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FreeIQExam",
+      "url": "https://freeiqexam.com"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Инструменты",
+        "item": "https://freeiqexam.com/ru/tools/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Все ли эти инструменты бесплатны?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Да. Все ${totalTools} инструментов FreeIQExam полностью бесплатны: без оплаты, подписок и регистрации. Все расчёты выполняются локально в вашем браузере.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Эти инструменты сохраняют или передают мои данные?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Нет. Оценка выполняется локально в вашем браузере: мы не собираем ответы и персональные данные. Сохранённые результаты живут только в локальном хранилище вашего браузера и удаляются вместе с данными сайта."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Это медицинские приборы?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Нет. Это учебные инструменты для самопроверки, основанные на опубликованных формулах и нормативных психометрических таблицах. Они не ставят диагноз и не заменяют консультацию квалифицированного специалиста."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Какую шкалу IQ выбрать в калькуляторе процентилей?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ориентируйтесь на стандартное отклонение, указанное рядом с баллом. Большинство современных тестов, включая WAIS-IV, используют SD 15. Ввод балла не на той шкале заметно сдвинет процентиль, поэтому сверяйтесь с исходным протоколом."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} enPath="/tools" canonicalUrl="https://freeiqexam.com/ru/tools">
+  <Header enPath="/tools" />
+
+  <div class="flex-1 games-pastel-wrap">
+  <main class="games-pastel py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/ru/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Главная</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Инструменты</span>
+    </nav>
+
+    <!-- Hero -->
+    <header class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+      <div class="pastel-eyebrow pastel-eyebrow-sky mb-4">
+        Лаборатория инструментов
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Бесплатные инструменты и калькуляторы
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+        Все калькуляторы, генераторы и справочные таблицы FreeIQExam в одном месте. Бесплатно — без регистрации, все расчёты выполняются локально в вашем браузере.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-medium">
+        <span class="pastel-tag pastel-tag-sky !px-3.5 !py-1.5 !text-xs sm:!text-sm">
+          <span class="w-2 h-2 rounded-full bg-[var(--pastel-sky-ink)] animate-pulse"></span>
+          {totalTools} инструментов доступно
+        </span>
+        <span class="pastel-tag pastel-tag-mint !px-3.5 !py-1.5 !text-xs sm:!text-sm">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+          Работает локально — ничего не загружается
+        </span>
+      </div>
+    </header>
+
+    {toolGroups.map((group) => (
+      <section class="mb-14" aria-labelledby={`group-${group.id}`}>
+        <div class="mb-6 max-w-3xl">
+          <h2 id={`group-${group.id}`} class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-2">
+            {group.heading}
+          </h2>
+          <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            {group.blurb}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-7">
+          {group.tools.map((tool) => (
+            <article class="games-pastel-card group relative rounded-2xl p-6 sm:p-7 flex flex-col justify-between">
+              <div>
+                <div class="flex items-start justify-between gap-4 mb-4">
+                  <div class="flex items-center gap-3.5">
+                    <div class={`pastel-icon ${tool.pastelIcon} w-12 h-12 rounded-xl shadow-sm`} aria-hidden="true">
+                      <Fragment set:html={toolIcons[tool.icon] ?? ''} />
+                    </div>
+                    <div>
+                      <h3 class="text-lg sm:text-xl font-heading font-bold text-zinc-950 dark:text-white">
+                        {tool.name}
+                      </h3>
+                      <p class="mt-1 text-xs sm:text-[13px] font-medium text-zinc-500 dark:text-zinc-400 leading-snug">
+                        {tool.kind}
+                      </p>
+                    </div>
+                  </div>
+
+                  {tool.badge && (
+                    <span class="pastel-tag pastel-tag-sky !text-[11px] shrink-0">
+                      {tool.badge}
+                    </span>
+                  )}
+                </div>
+
+                <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+                  {tool.description}
+                </p>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+                <span class={`pastel-tag ${tool.pastelTag} !text-[11px]`}>
+                  {tool.kind}
+                </span>
+                <a
+                  href={tool.route}
+                  class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-105 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                >
+                  <span>Открыть</span>
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <!-- Cross-links -->
+    <aside class="mb-14 p-5 sm:p-6 rounded-3xl bg-white/90 dark:bg-zinc-900 border border-[var(--pastel-line)] dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[var(--pastel-card-shadow)] dark:shadow-none" aria-label="Related sections">
+      <div class="flex items-center gap-3.5">
+        <div class="pastel-icon pastel-icon-mint w-10 h-10 rounded-2xl shrink-0" aria-hidden="true">
+          <Fragment set:html={toolIcons['microscope']} />
+        </div>
+        <div>
+          <div class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+            Измерение и практика
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 mt-0.5">
+            Читайте раздел <a href="/ru/methodology" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">Психометрическая методология</a> об основе наших тестов или загляните в <a href="/ru/games" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">когнитивные игры</a>.
+          </p>
+        </div>
+      </div>
+      <a
+        href="/ru/test"
+        class="inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-blue-600 hover:bg-blue-500 shadow-xs transition-all hover:scale-102 shrink-0"
+      >
+        <span>Пройти полный тест</span>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </aside>
+
+    <!-- Educational section -->
+    <section class="border-t border-[var(--pastel-line)] dark:border-zinc-800 pt-12 pb-6 max-w-4xl mx-auto">
+      <div class="bg-white/90 dark:bg-zinc-900/60 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-4">
+          Как эти инструменты работают с данными
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+          Оценка выполняется локально в вашем браузере: мы не собираем ответы и персональные данные. Показатели тела никуда не отправляются, пробы микрофона остаются внутри браузера, а сохранённые результаты живут только в локальном хранилище вашего браузера.
+        </p>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          Справочные страницы устроены ещё проще — это статические таблицы опубликованных нормативных данных, для их просмотра вообще ничего сохранять не нужно. Очистка данных сайта в браузере удаляет сохранённое безвозвратно.
+        </p>
+        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-medium">
+          Примечание: это учебные инструменты для самопроверки. Они не ставят диагноз и не заменяют обследование у квалифицированного специалиста.
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="mt-12 bg-white/90 dark:bg-zinc-900 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none">
+      <div class="max-w-3xl">
+        <h2 class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-6">
+          Частые вопросы об инструментах
+        </h2>
+        <div class="space-y-4">
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Все ли эти инструменты бесплатны?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Да. Все {totalTools} инструментов FreeIQExam полностью бесплатны: без оплаты, подписок и регистрации. Все расчёты выполняются локально в вашем браузере.
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Эти инструменты сохраняют или передают мои данные?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              No. The calculators, generators, and diagnostics all execute client-side in your browser using standard web APIs. Sleep timings, body metrics, microphone samples, and worry lists are never transmitted to a server. Сохранённые результаты живут только в локальном хранилище вашего браузера и удаляются вместе с данными сайта. Подробности — в <a href="/ru/privacy" class="text-blue-600 dark:text-blue-400 hover:underline">политике конфиденциальности</a>.
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Это медицинские приборы?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Нет. Это учебные инструменты для самопроверки, основанные на опубликованных формулах и нормативных психометрических таблицах. Они не ставят диагноз и не заменяют консультацию квалифицированного специалиста.
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Какую шкалу IQ выбрать в калькуляторе процентилей?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Ориентируйтесь на стандартное отклонение, указанное рядом с баллом. Большинство современных тестов, включая WAIS-IV, используют SD 15. Ввод балла не на той шкале заметно сдвинет процентиль, поэтому сверяйтесь с исходным протоколом. Наша <a href="/ru/iq-classification-scale" class="text-blue-600 dark:text-blue-400 hover:underline">шкала классификации IQ</a> сравнивает основные тесты.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <Footer />
+</Layout>

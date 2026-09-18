@@ -1,0 +1,413 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = "Free Cognitive Tools & Bio-Calculators - Sleep, IQ Charts & Audio Diagnostics | FreeIQExam";
+const description = "Browse every free tool on FreeIQExam: circadian sleep and TDEE calculators, IQ score charts and percentile converters, microphone and noise generators, and Stoic reference utilities. No sign-up required.";
+
+const toolGroups = [
+  {
+    id: 'bio-rhythm',
+    heading: 'Bio-Rhythm & Calculators',
+    blurb: 'Physiological and lifestyle instruments that translate your daily inputs into actionable numbers.',
+    tools: [
+      {
+        name: 'Circadian Sleep Calculator',
+        route: '/sleep-calculator',
+        icon: 'moon',
+        pastelTag: 'pastel-tag-lav',
+        pastelIcon: 'pastel-icon-lav',
+        description: 'Calculate your optimal bedtime and wake-up times from natural 90-minute sleep cycles, with a Munich chronotype assessment and caffeine half-life tracker.',
+        kind: 'Calculator',
+        badge: 'New'
+      },
+      {
+        name: 'Calorie & TDEE Engine',
+        route: '/calorie-calculator',
+        icon: 'flame',
+        pastelTag: 'pastel-tag-coral',
+        pastelIcon: 'pastel-icon-coral',
+        description: 'Derive your exact TDEE, BMR, daily calorie deficit, and macronutrient grams using the clinical Mifflin-St Jeor and Katch-McArdle formulas.',
+        kind: 'Calculator',
+        badge: 'New'
+      },
+      {
+        name: 'Brown, Pink & White Noise',
+        route: '/brown-noise',
+        icon: 'headphones',
+        pastelTag: 'pastel-tag-cyan',
+        pastelIcon: 'pastel-icon-cyan',
+        description: 'Generate customizable brown, pink, and green noise with binaural beats and ambient rain soundscapes. Synthesized in your browser, with a sleep timer.',
+        kind: 'Generator',
+        badge: 'New'
+      },
+      {
+        name: 'Microphone Audio Diagnostics',
+        route: '/mic-test',
+        icon: 'mic',
+        pastelTag: 'pastel-tag-sky',
+        pastelIcon: 'pastel-icon-sky',
+        description: 'Check your microphone with a live frequency spectrum, volume dB meter, noise-floor analysis, and instant voice playback. Nothing is uploaded.',
+        kind: 'Diagnostic',
+        badge: ''
+      },
+      {
+        name: 'Memento Mori Life Calendar',
+        route: '/memento-mori',
+        icon: 'hourglass',
+        pastelTag: 'pastel-tag-peach',
+        pastelIcon: 'pastel-icon-peach',
+        description: 'Visualize your entire life in weeks with an interactive 4,000-week Stoic calendar and actuarial life-expectancy calculator. Fully private and printable.',
+        kind: 'Reference',
+        badge: ''
+      },
+      {
+        name: 'Stoic Circle of Control',
+        route: '/circle-of-control',
+        icon: 'compass',
+        pastelTag: 'pastel-tag-mint',
+        pastelIcon: 'pastel-icon-mint',
+        description: 'Sort worries into Control, Influence and Concern with an interactive Epictetus dichotomy triage, agency index, and printable clarity plan.',
+        kind: 'Worksheet',
+        badge: ''
+      }
+    ]
+  },
+  {
+    id: 'psychometrics',
+    heading: 'Psychometrics & Reference',
+    blurb: 'Normative reference material for interpreting any IQ score, whatever instrument produced it.',
+    tools: [
+      {
+        name: 'IQ Score Distribution Chart',
+        route: '/iq-score-chart',
+        icon: 'chart',
+        pastelTag: 'pastel-tag-sky',
+        pastelIcon: 'pastel-icon-sky',
+        description: 'Explore the IQ normal-distribution bell curve with standard-deviation brackets, percentile equivalents, and classifications from 70 to 145+.',
+        kind: 'Chart',
+        badge: ''
+      },
+      {
+        name: 'IQ Percentile Calculator',
+        route: '/iq-percentile-calculator',
+        icon: 'target',
+        pastelTag: 'pastel-tag-lav',
+        pastelIcon: 'pastel-icon-lav',
+        description: 'Convert any IQ score to its exact population percentile rank, rarity ratio, and bell-curve position across SD 15, SD 16, and SD 24 scales.',
+        kind: 'Calculator',
+        badge: ''
+      },
+      {
+        name: 'IQ Classification Scale',
+        route: '/iq-classification-scale',
+        icon: 'ruler',
+        pastelTag: 'pastel-tag-peach',
+        pastelIcon: 'pastel-icon-peach',
+        description: 'Compare IQ classifications across WAIS-IV, Stanford-Binet 5, and Woodcock-Johnson IV, including genius ranges, average bands, and the Flynn effect.',
+        kind: 'Reference',
+        badge: ''
+      },
+      {
+        name: 'Average IQ by Age',
+        route: '/average-iq-by-age',
+        icon: 'trend',
+        pastelTag: 'pastel-tag-mint',
+        pastelIcon: 'pastel-icon-mint',
+        description: 'How fluid and crystallized intelligence shift across lifespan stages, why raw scores are age-normed, and what the Flynn effect means for old norms.',
+        kind: 'Reference',
+        badge: ''
+      }
+    ]
+  }
+];
+
+const totalTools = toolGroups.reduce((sum, group) => sum + group.tools.length, 0);
+
+// Sovereign 16x16/18x18 inline vector micro-icons (zero cartoon emojis).
+const svgOpen = '<svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">';
+const toolIcons: Record<string, string> = {
+  moon: svgOpen + '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  flame: svgOpen + '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  headphones: svgOpen + '<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>',
+  mic: svgOpen + '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>',
+  hourglass: svgOpen + '<path d="M6 2h12M6 22h12"/><path d="M8 2v5l4 4 4-4V2"/><path d="M8 22v-5l4-4 4 4v5"/></svg>',
+  compass: svgOpen + '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+  chart: svgOpen + '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  target: svgOpen + '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  ruler: svgOpen + '<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>',
+  trend: svgOpen + '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+  microscope: svgOpen + '<path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0-7-7h1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg>',
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Free Cognitive Tools & Bio-Calculators",
+    "url": "https://freeiqexam.com/tools",
+    "description": `${totalTools} free browser-based tools for sleep timing, metabolic calculation, audio diagnostics, IQ score interpretation, and Stoic reference work.`,
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FreeIQExam",
+      "url": "https://freeiqexam.com"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://freeiqexam.com/tools/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Are all of these tools free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Yes. All ${totalTools} tools on FreeIQExam are completely free, with no paywalls, subscriptions, or account requirements. Every calculation runs locally in your browser.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do these tools store or upload my data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The calculators, generators, and diagnostics all execute client-side in your browser using standard web APIs. Sleep timings, body metrics, microphone samples, and worry lists are never transmitted to a server. Any saved results live only in your own browser's local storage and can be cleared at any time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are these tools medical or diagnostic devices?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. They are educational and self-tracking utilities built on published formulas and normative psychometric tables. The Calorie & TDEE Engine uses the Mifflin-St Jeor and Katch-McArdle equations, and the Microphone Audio Diagnostics tool reports raw signal characteristics, not hearing health. None of them diagnose, treat, or replace advice from a qualified clinician."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which IQ scale should I use in the percentile calculator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use the standard deviation reported alongside the score. Most modern instruments, including the WAIS-IV and Stanford-Binet 5, use SD 15. Some older or ability-specific tests report SD 16, and a few historical instruments used SD 24. Entering the score on the wrong scale will shift the percentile substantially, so check the source report first."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema}>
+  <Header />
+
+  <div class="flex-1 games-pastel-wrap">
+  <main class="games-pastel py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Tools</span>
+    </nav>
+
+    <!-- Hero -->
+    <header class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+      <div class="pastel-eyebrow pastel-eyebrow-sky mb-4">
+        Utility Lab
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Free Cognitive Tools &amp; Calculators
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+        Every calculator, generator and reference table on FreeIQExam in one place. Built on published formulas and normative psychometric data, and evaluated entirely in your browser.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-medium">
+        <span class="pastel-tag pastel-tag-sky !px-3.5 !py-1.5 !text-xs sm:!text-sm">
+          <span class="w-2 h-2 rounded-full bg-[var(--pastel-sky-ink)] animate-pulse"></span>
+          {totalTools} Tools Available
+        </span>
+        <span class="pastel-tag pastel-tag-mint !px-3.5 !py-1.5 !text-xs sm:!text-sm">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+          Runs Locally - Nothing Uploaded
+        </span>
+      </div>
+    </header>
+
+    {toolGroups.map((group) => (
+      <section class="mb-14" aria-labelledby={`group-${group.id}`}>
+        <div class="mb-6 max-w-3xl">
+          <h2 id={`group-${group.id}`} class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white mb-2">
+            {group.heading}
+          </h2>
+          <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            {group.blurb}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-7">
+          {group.tools.map((tool) => (
+            <article class="games-pastel-card group relative rounded-2xl p-6 sm:p-7 flex flex-col justify-between">
+              <div>
+                <div class="flex items-start justify-between gap-4 mb-4">
+                  <div class="flex items-center gap-3.5">
+                    <div class={`pastel-icon ${tool.pastelIcon} w-12 h-12 rounded-xl shadow-sm`} aria-hidden="true">
+                      <Fragment set:html={toolIcons[tool.icon] ?? ''} />
+                    </div>
+                    <div>
+                      <h3 class="text-lg sm:text-xl font-heading font-bold text-zinc-950 dark:text-white">
+                        {tool.name}
+                      </h3>
+                      <p class="mt-1 text-xs sm:text-[13px] font-medium text-zinc-500 dark:text-zinc-400 leading-snug">
+                        {tool.kind}
+                      </p>
+                    </div>
+                  </div>
+
+                  {tool.badge && (
+                    <span class="pastel-tag pastel-tag-sky !text-[11px] shrink-0">
+                      {tool.badge}
+                    </span>
+                  )}
+                </div>
+
+                <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+                  {tool.description}
+                </p>
+              </div>
+
+              <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+                <span class={`pastel-tag ${tool.pastelTag} !text-[11px]`}>
+                  {tool.kind}
+                </span>
+                <a
+                  href={tool.route}
+                  class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-all duration-150 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                >
+                  <span>Open Tool</span>
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <!-- Cross-links -->
+    <aside class="mb-14 p-5 sm:p-6 rounded-3xl bg-white/90 dark:bg-zinc-900 border border-[var(--pastel-line)] dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[var(--pastel-card-shadow)] dark:shadow-none" aria-label="Related sections">
+      <div class="flex items-center gap-3.5">
+        <div class="pastel-icon pastel-icon-mint w-10 h-10 rounded-2xl shrink-0" aria-hidden="true">
+          <Fragment set:html={toolIcons['microscope']} />
+        </div>
+        <div>
+          <div class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+            Measurement &amp; Practice
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 mt-0.5">
+            Read the <a href="/methodology" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">psychometric methodology</a> behind our assessments, or browse the <a href="/games" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">cognitive training games</a>.
+          </p>
+        </div>
+      </div>
+      <a
+        href="/test"
+        class="inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-blue-600 hover:bg-blue-500 shadow-xs transition-all hover:scale-102 shrink-0"
+      >
+        <span>Take the Full Test</span>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </aside>
+
+    <!-- Educational section -->
+    <section class="border-t border-[var(--pastel-line)] dark:border-zinc-800 pt-12 pb-6 max-w-4xl mx-auto">
+      <div class="bg-white/90 dark:bg-zinc-900/60 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-4">
+          How These Tools Handle Your Data
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
+          Every utility in this section runs as client-side JavaScript. That means the arithmetic happens on your own device: your body metrics are never posted to a server, your microphone samples stay inside the browser's audio graph, and your worry list is never serialized anywhere except your own local storage.
+        </p>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
+          The reference pages go a step further and have nothing to store at all &mdash; they are static tables of published normative data, so you can use them without creating any state whatsoever. Where a tool does offer to remember something, clearing your browser's site data removes it permanently.
+        </p>
+        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-medium">
+          Note: These are educational and self-tracking utilities. They do not diagnose or treat any medical condition and are not a substitute for assessment by a qualified professional.
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="mt-12 bg-white/90 dark:bg-zinc-900 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none">
+      <div class="max-w-3xl">
+        <h2 class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-6">
+          Frequently Asked Questions
+        </h2>
+        <div class="space-y-4">
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Are all of these tools free to use?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Yes. All {totalTools} tools on FreeIQExam are completely free, with no paywalls, subscriptions, or account requirements. Every calculation runs locally in your browser.
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Do these tools store or upload my data?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              No. The calculators, generators, and diagnostics all execute client-side in your browser using standard web APIs. Sleep timings, body metrics, microphone samples, and worry lists are never transmitted to a server. Any saved results live only in your own browser's local storage and can be cleared at any time. See our <a href="/privacy" class="text-blue-600 dark:text-blue-400 hover:underline">privacy policy</a> for detail.
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Are these tools medical or diagnostic devices?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              No. They are educational and self-tracking utilities built on published formulas and normative psychometric tables. The Calorie &amp; TDEE Engine uses the Mifflin-St Jeor and Katch-McArdle equations, and the Microphone Audio Diagnostics tool reports raw signal characteristics, not hearing health. None of them diagnose, treat, or replace advice from a qualified clinician.
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-800/40">
+            <summary class="flex justify-between items-center font-heading font-semibold text-zinc-900 dark:text-white cursor-pointer list-none select-none text-sm sm:text-base">
+              <span>Which IQ scale should I use in the percentile calculator?</span>
+              <span class="ml-4 transition-transform group-open:rotate-180 text-zinc-400">&darr;</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Use the standard deviation reported alongside the score. Most modern instruments, including the WAIS-IV and Stanford-Binet 5, use SD 15. Some older or ability-specific tests report SD 16, and a few historical instruments used SD 24. Entering the score on the wrong scale will shift the percentile substantially, so check the source report first. Our <a href="/iq-classification-scale" class="text-blue-600 dark:text-blue-400 hover:underline">IQ classification scale</a> compares the major instruments side by side.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <Footer />
+</Layout>

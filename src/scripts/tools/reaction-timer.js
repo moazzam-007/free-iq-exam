@@ -139,9 +139,10 @@
       soundEnabled ? 'Mute sound effects' : 'Turn on sound effects'
     );
 
-    if (refs.soundIcon) {
-      refs.soundIcon.textContent = soundEnabled ? '🔊' : '🔇';
-    }
+    var soundIconOn = document.getElementById('sound-icon-on');
+    var soundIconOff = document.getElementById('sound-icon-off');
+    if (soundIconOn) soundIconOn.classList.toggle('hidden', !soundEnabled);
+    if (soundIconOff) soundIconOff.classList.toggle('hidden', soundEnabled);
 
     if (refs.soundLabel) {
       refs.soundLabel.textContent = soundEnabled ? 'Audio' : 'Muted';

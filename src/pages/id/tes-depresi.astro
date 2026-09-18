@@ -594,8 +594,21 @@ const schemas = [
       ['Where your score falls', 'Posisi skor Anda'], ['Clinical sub-domain profile', 'Profil subdomain klinis'], ['Recommended next steps', 'Langkah berikutnya yang disarankan'], ['Read the result in context', 'Baca hasil dalam konteks'],
       ['Below threshold', 'Di bawah ambang'], ['Below the validated cut-off of 10', 'Di bawah ambang tervalidasi 10'], ['Not met', 'Belum terpenuhi'], ['Not answered', 'Belum dijawab'], ['Screening summary copied.', 'Ringkasan skrining disalin.']
     ]);
-    const translatePhq = () => { const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); const n = []; while (w.nextNode()) n.push(w.currentNode); n.forEach((x) => { let v = x.nodeValue; phqIdText.forEach((b, a) => { v = v.replaceAll(a, b); }); x.nodeValue = v; }); };
-    new MutationObserver(translatePhq).observe(document.body, { childList: true, subtree: true, characterData: true });
+    let phqObserver = null;
+    const translatePhq = () => {
+      if (phqObserver) phqObserver.disconnect();
+      const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      const n = [];
+      while (w.nextNode()) n.push(w.currentNode);
+      n.forEach((x) => {
+        let v = x.nodeValue;
+        phqIdText.forEach((b, a) => { v = v.replaceAll(a, b); });
+        if (x.nodeValue !== v) x.nodeValue = v;
+      });
+      if (phqObserver) phqObserver.observe(document.body, { childList: true, subtree: true });
+    };
+    phqObserver = new MutationObserver(translatePhq);
+    phqObserver.observe(document.body, { childList: true, subtree: true });
     translatePhq();
   </script>
 </Layout>

@@ -647,8 +647,21 @@ const schemas = [
       ['Question ', 'Pertanyaan '], [' of ', ' dari '], ['% answered', '% terjawab'], ['Minimal Anxiety', 'Kecemasan minimal'], ['Minimal or no anxiety symptoms', 'Gejala kecemasan minimal atau tidak ada'], ['Mild Anxiety', 'Kecemasan ringan'], ['Moderate Anxiety', 'Kecemasan sedang'], ['Severe Anxiety', 'Kecemasan berat'],
       ['Your GAD-7 Result', 'Hasil GAD-7 Anda'], ['Total GAD-7 Score', 'Skor total GAD-7'], ['Clinical Stratification', 'Stratifikasi klinis'], ['Diagnostic Cut-off', 'Ambang diagnostik'], ['Below clinical cut-off', 'Di bawah ambang klinis'], ['Not answered', 'Belum dijawab'], ['Evidence-Based Next Steps', 'Langkah berbasis bukti'], ['Clinical Context & Medical Considerations', 'Konteks klinis dan pertimbangan medis'], ['Lower endorsement', 'Dukungan gejala lebih rendah'], ['Screening summary copied to clipboard.', 'Ringkasan skrining disalin ke papan klip.']
     ]);
-    const translateGad = () => { const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); const n = []; while (w.nextNode()) n.push(w.currentNode); n.forEach((x) => { let v = x.nodeValue; gadIdText.forEach((b, a) => { v = v.replaceAll(a, b); }); x.nodeValue = v; }); };
-    new MutationObserver(translateGad).observe(document.body, { childList: true, subtree: true, characterData: true });
+    let gadObserver = null;
+    const translateGad = () => {
+      if (gadObserver) gadObserver.disconnect();
+      const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      const n = [];
+      while (w.nextNode()) n.push(w.currentNode);
+      n.forEach((x) => {
+        let v = x.nodeValue;
+        gadIdText.forEach((b, a) => { v = v.replaceAll(a, b); });
+        if (x.nodeValue !== v) x.nodeValue = v;
+      });
+      if (gadObserver) gadObserver.observe(document.body, { childList: true, subtree: true });
+    };
+    gadObserver = new MutationObserver(translateGad);
+    gadObserver.observe(document.body, { childList: true, subtree: true });
     translateGad();
   </script>
 

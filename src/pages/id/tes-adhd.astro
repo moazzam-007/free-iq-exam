@@ -493,7 +493,9 @@ const schemas = [
       ['Your responses include several elevated endorsements but do not meet the Part A screening threshold. Symptoms may still be meaningful when they are persistent or impairing.', 'Respons Anda menunjukkan beberapa gejala yang meningkat tetapi belum mencapai ambang skrining Bagian A. Gejala tetap penting bila menetap atau mengganggu fungsi.'],
       ['Your responses fall below the Part A screening threshold. A lower screen does not rule out every cause of attention, organization, or executive-function difficulty.', 'Respons Anda berada di bawah ambang skrining Bagian A. Hasil rendah tidak menyingkirkan semua penyebab kesulitan perhatian, organisasi, atau fungsi eksekutif.']
     ]);
+    let observer = null;
     const translateAdhdText = () => {
+      if (observer) observer.disconnect();
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
       const nodes = [];
       while (walker.nextNode()) nodes.push(walker.currentNode);
@@ -502,8 +504,10 @@ const schemas = [
         idText.forEach((translated, source) => { value = value.replaceAll(source, translated); });
         if (value !== node.nodeValue) node.nodeValue = value;
       });
+      if (observer) observer.observe(document.body, { childList: true, subtree: true });
     };
-    new MutationObserver(translateAdhdText).observe(document.body, { childList: true, subtree: true, characterData: true });
+    observer = new MutationObserver(translateAdhdText);
+    observer.observe(document.body, { childList: true, subtree: true });
     translateAdhdText();
   </script>
 </Layout>

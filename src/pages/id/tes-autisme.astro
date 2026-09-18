@@ -501,8 +501,21 @@ const schemas = [
       ['Social Communication', 'Komunikasi sosial'], ['Sensory & Detail Focus', 'Fokus sensorik dan detail'], ['Attention Switching', 'Peralihan perhatian'], ['Systematizing Interests', 'Minat sistematis'],
       ['Question ', 'Pertanyaan '], [' of ', ' dari '], ['% answered', '% terjawab'], ['Below clinical referral threshold', 'Di bawah ambang rujukan klinis'], ['Your screening profile', 'Profil hasil skrining'], ['Lower trait pattern', 'Pola ciri lebih rendah'], ['Below the referral threshold of 6', 'Di bawah ambang rujukan 6'], ['Not a diagnosis', 'Bukan diagnosis'], ['Minimal endorsement', 'Dukungan gejala minimal'], ['Your subscale profile', 'Profil subskala Anda'], ['Where your score sits', 'Posisi skor Anda'], ['Recommended next steps', 'Langkah berikutnya yang disarankan'], ['Print Trait Summary', 'Cetak ringkasan ciri'], ['Share screening summary', 'Bagikan ringkasan skrining'], ['Retake assessment', 'Ulangi asesmen'], ['Read the result in context', 'Baca hasil dalam konteks'], ['Screening summary copied.', 'Ringkasan skrining disalin.']
     ]);
-    const translateAq = () => { const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); const n = []; while (w.nextNode()) n.push(w.currentNode); n.forEach((x) => { let v = x.nodeValue; aqIdText.forEach((b, a) => { v = v.replaceAll(a, b); }); x.nodeValue = v; }); };
-    new MutationObserver(translateAq).observe(document.body, { childList: true, subtree: true, characterData: true });
+    let aqObserver = null;
+    const translateAq = () => {
+      if (aqObserver) aqObserver.disconnect();
+      const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      const n = [];
+      while (w.nextNode()) n.push(w.currentNode);
+      n.forEach((x) => {
+        let v = x.nodeValue;
+        aqIdText.forEach((b, a) => { v = v.replaceAll(a, b); });
+        if (x.nodeValue !== v) x.nodeValue = v;
+      });
+      if (aqObserver) aqObserver.observe(document.body, { childList: true, subtree: true });
+    };
+    aqObserver = new MutationObserver(translateAq);
+    aqObserver.observe(document.body, { childList: true, subtree: true });
     translateAq();
   </script>
 </Layout>

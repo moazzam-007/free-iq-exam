@@ -1,0 +1,862 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const alternates = {
+  en: "https://freeiqexam.com/hearing-test",
+  ru: "https://freeiqexam.com/ru/hearing-test",
+  id: "https://freeiqexam.com/id/tes-pendengaran",
+  fi: "https://freeiqexam.com/fi/kuulotesti",
+  de: "https://freeiqexam.com/de/hoertest"
+};
+
+const title = "Online-Hörtest: Audio-Frequenzprüfung & Gehör-Check online | FreeIQExam";
+const description = "Testen Sie Ihre wahrnehmbare Frequenzspanne mit unserem interaktiven Web-Audio-Test (20 Hz bis 20.000 Hz) direkt im Browser.";
+const canonicalUrl = "https://freeiqexam.com/de/hoertest";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "name": "Online-Hörtest & biologisches Gehör-Alter (Frequenzprüfung)",
+    "description": "Orientierender Online-Hörtest: Reintontest (250 Hz – 8.000 Hz) und Hochfrequenz-Gehör-Altersprüfung (8.000 Hz – 20.000 Hz) im Browser. Ersetzt keine professionelle HNO-ärztliche Untersuchung.",
+    "url": "https://freeiqexam.com/de/hoertest",
+    "inLanguage": "de",
+    "medicalAudience": "Patient",
+    "aspect": "Diagnostic"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Online-Hörtest und Gehör-Altersrechner",
+    "url": "https://freeiqexam.com/de/hoertest",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires Web Audio API support and stereo headphones",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "featureList": [
+      "Reinton-Schwellenprüfung (250 Hz – 8.000 Hz) nach modifiziertem Hughson-Westlake-Verfahren",
+      "Biologisches Gehör-Alter durch Hochfrequenz-Sweep (8.000 Hz – 20.000 Hz)",
+      "Unabhängige Stereoprüfung für linkes und rechtes Ohr",
+      "Interaktive Audiogramm-Erstellung mit Schweregrad-Einstufung",
+      "Herunterladbare Gehör-Zertifikate und Audiogramm-Diagramme",
+      "Kostenlos, ohne Registrierung, direkte Client-Berechnung via Web Audio API"
+    ],
+    "inLanguage": "de"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Startseite",
+        "item": "https://freeiqexam.com/de"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Werkzeuge",
+        "item": "https://freeiqexam.com/de/hoertest"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Online-Hörtest",
+        "item": "https://freeiqexam.com/de/hoertest"
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="de"
+>
+  <Header currentPath="/de/hoertest" />
+
+  <style>
+    /* Custom acoustic waveform bar animations */
+    .earage-waveform {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 64px;
+      margin: 24px 0;
+    }
+
+    .earage-waveform .bar {
+      width: 4px;
+      background: #0066cc;
+      border-radius: 9999px;
+      height: 8px;
+      transition: height 0.1s ease;
+    }
+
+    :global(.dark) .earage-waveform .bar {
+      background: #2997ff;
+    }
+
+    .earage-waveform.active .bar {
+      animation: waveBar 0.8s infinite ease-in-out;
+    }
+
+    .earage-waveform.active .bar:nth-child(2) { animation-delay: 0.05s; }
+    .earage-waveform.active .bar:nth-child(3) { animation-delay: 0.10s; }
+    .earage-waveform.active .bar:nth-child(4) { animation-delay: 0.15s; }
+    .earage-waveform.active .bar:nth-child(5) { animation-delay: 0.20s; }
+    .earage-waveform.active .bar:nth-child(6) { animation-delay: 0.25s; }
+    .earage-waveform.active .bar:nth-child(7) { animation-delay: 0.30s; }
+    .earage-waveform.active .bar:nth-child(8) { animation-delay: 0.35s; }
+    .earage-waveform.active .bar:nth-child(9) { animation-delay: 0.40s; }
+    .earage-waveform.active .bar:nth-child(10) { animation-delay: 0.45s; }
+    .earage-waveform.active .bar:nth-child(11) { animation-delay: 0.50s; }
+    .earage-waveform.active .bar:nth-child(12) { animation-delay: 0.55s; }
+    .earage-waveform.active .bar:nth-child(13) { animation-delay: 0.60s; }
+    .earage-waveform.active .bar:nth-child(14) { animation-delay: 0.65s; }
+    .earage-waveform.active .bar:nth-child(15) { animation-delay: 0.70s; }
+    .earage-waveform.active .bar:nth-child(16) { animation-delay: 0.75s; }
+    .earage-waveform.active .bar:nth-child(17) { animation-delay: 0.80s; }
+    .earage-waveform.active .bar:nth-child(18) { animation-delay: 0.85s; }
+    .earage-waveform.active .bar:nth-child(19) { animation-delay: 0.90s; }
+    .earage-waveform.active .bar:nth-child(20) { animation-delay: 0.95s; }
+
+    @keyframes waveBar {
+      0%, 100% { height: 10px; }
+      50% { height: 58px; }
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    @media print {
+      header, footer, #calibrationPanel, .no-print {
+        display: none !important;
+      }
+      #resultsWrap {
+        display: block !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/de" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Startseite</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Werkzeuge</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Online-Hörtest</span>
+    </nav>
+
+    <!-- Header & Hero Section -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs sm:text-sm font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>AUDIO-FREQUENZPRÜFUNG &amp; GEHÖR-CHECK</span>
+      </div>
+      <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+        Online-Hörtest: Frequenzbereich &amp; Gehör-Check
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+        Testen Sie Ihr Hörvermögen im Frequenzbereich von 20 Hz bis 20.000 Hz mit hochpräzisen Web-Audio-Sinustönen und bestimmen Sie Ihr biologisches Gehör-Alter direkt im Browser.
+      </p>
+
+      <!-- MANDATORY SENSORY SAFETY DISCLAIMER -->
+      <p class="text-xs sm:text-sm text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 rounded-xl px-4 py-3 mt-4 max-w-2xl mx-auto leading-relaxed">
+        <strong>Medizinischer Hinweis:</strong> Dieser Online-Sehtest / Hörtest dient rein als orientierende Selbsteinschätzung für den Heimgebrauch und ersetzt keine professionelle augenärztliche oder HNO-ärztliche Untersuchung.
+      </p>
+    </header>
+
+    <!-- ACOUSTIC SAFETY & CALIBRATION ADVISORY -->
+    <div class="max-w-3xl mx-auto mb-10 p-5 rounded-3xl bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-amber-900 dark:text-amber-200 text-sm shadow-xs transition-all">
+      <div class="flex items-start gap-3">
+        <svg class="w-6 h-6 shrink-0 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 18v-6a9 9 0 0 1 18 0v6" /><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" /></svg>
+        <div class="space-y-1">
+          <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Akustische Sicherheit &amp; Kopfhörer-Empfehlung</h4>
+          <p class="text-amber-800 dark:text-amber-300/90 text-xs sm:text-sm leading-relaxed">
+            <strong>1)</strong> Verwenden Sie hochwertige Stereo-Kopfhörer (In-Ear oder Over-Ear). <strong>2)</strong> Stellen Sie die Lautstärke Ihres Geräts zu Beginn auf mittlere Stufe (~50 %) und kalibrieren Sie mit dem 1.000-Hz-Testton auf eine angenehme Lautstärke. <strong>3)</strong> Deaktivieren Sie Equalizer, Bass-Boost und 3D-Raumklang-Effekte.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TESTING ARENA -->
+    <section id="test-arena" class="relative w-full max-w-4xl mx-auto mb-16 scroll-mt-6">
+
+      <!-- MODE SELECTOR CARDS -->
+      <div id="modeSelector" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Card 1: Ear Age Test -->
+        <button
+          type="button"
+          data-mode="ear-age"
+          class="hearing-mode-card group relative p-8 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc]/50 dark:hover:border-[#2997ff]/50 shadow-xl hover:shadow-2xl transition-all duration-300 text-left flex flex-col justify-between cursor-pointer overflow-hidden active:scale-[0.98]"
+        >
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center mb-6 group-hover:scale-105 transition-transform" aria-hidden="true">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+            </div>
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] mb-1">
+              Hochfrequenz-Sweep (8–20 kHz)
+            </div>
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-[#0066cc] dark:group-hover:text-[#2997ff] transition-colors">
+              Biologischer Gehör-Alterstest
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Finden Sie die höchste Frequenz, die Ihre Haarsinneszellen noch wahrnehmen. Das Ergebnis wird mit audiologischen Referenzdaten zur Presbyakusis abgeglichen.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Dauer: ~60 Sekunden</span>
+            <span class="text-sm font-semibold text-[#0066cc] dark:text-[#2997ff] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              Gehör-Alter prüfen &rarr;
+            </span>
+          </div>
+        </button>
+
+        <!-- Card 2: Pure-Tone Audiometry -->
+        <button
+          type="button"
+          data-mode="audiometry"
+          class="hearing-mode-card group relative p-8 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc]/50 dark:hover:border-[#2997ff]/50 shadow-xl hover:shadow-2xl transition-all duration-300 text-left flex flex-col justify-between cursor-pointer overflow-hidden active:scale-[0.98]"
+        >
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center mb-6 group-hover:scale-105 transition-transform" aria-hidden="true">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
+            </div>
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] mb-1">
+              Hughson-Westlake-Verfahren
+            </div>
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-[#0066cc] dark:group-hover:text-[#2997ff] transition-colors">
+              Reinton-Schwellentest
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Orientierende Hörschwellenprüfung von 250 Hz bis 8.000 Hz getrennt für linkes und rechtes Ohr. Zeichnet Ihr persönliches Audiogramm.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Dauer: ~3 Minuten</span>
+            <span class="text-sm font-semibold text-[#0066cc] dark:text-[#2997ff] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              Reintontest starten &rarr;
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <!-- ACTIVE WORKSPACE WRAPPER -->
+      <div id="workspace" class="hidden rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+        <!-- Workspace Header Status -->
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-8">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+            <h2 id="workspaceTitle" class="font-heading font-bold text-lg sm:text-xl text-zinc-900 dark:text-white">
+              Hörtestung aktiv
+            </h2>
+          </div>
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+            Schritt <span id="stepNum" class="font-bold text-[#0066cc] dark:text-[#2997ff]">1</span> / 3
+          </div>
+        </div>
+
+        <!-- STEP 1: CALIBRATION PANEL -->
+        <div id="calibrationPanel" class="max-w-xl mx-auto text-center space-y-6">
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-blue-500/10 border border-blue-500/20 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center" aria-hidden="true">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>
+          </div>
+          <div class="space-y-2">
+            <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white">
+              Referenzton-Kalibrierung
+            </h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Wir spielen einen sicheren 1.000-Hz-Referenzton ab. Passen Sie die Systemlautstärke so an, dass der Ton klar verständlich, aber nicht unangenehm laut ist.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 space-y-4">
+            <div class="flex items-center justify-between text-xs font-mono font-semibold text-zinc-500 dark:text-zinc-400">
+              <span>Kalibrierungspegel</span>
+              <span id="calibDbDisplay" class="text-[#0066cc] dark:text-[#2997ff] font-bold">40 dB HL</span>
+            </div>
+            <input
+              id="calibSlider"
+              type="range"
+              min="20"
+              max="80"
+              step="5"
+              value="40"
+              class="w-full h-2 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-[#0066cc]"
+            />
+            <div class="flex gap-3 justify-center pt-2">
+              <button
+                id="calibPlayBtn"
+                type="button"
+                class="px-5 py-2.5 rounded-full bg-blue-500/10 hover:bg-blue-500/20 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/30 text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 active:scale-[0.97]"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" fill="currentColor" /></svg> Testton abspielen (1 kHz)
+              </button>
+              <button
+                id="calibStopBtn"
+                type="button"
+                class="px-5 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 active:scale-[0.97]"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" /></svg> Stopp
+              </button>
+            </div>
+          </div>
+
+          <button
+            id="startTestBtn"
+            type="button"
+            class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white font-heading font-bold text-base shadow-lg transition-all cursor-pointer inline-flex items-center justify-center gap-2 active:scale-[0.97]"
+          >
+            <span>Lautstärke kalibriert &middot; Test starten</span>
+            <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- STEP 2A: BIOLOGICAL EAR AGE PANEL -->
+        <div id="earAgePanel" class="hidden max-w-xl mx-auto text-center space-y-6">
+          <div class="space-y-1">
+            <div class="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Aktuelle Audiofrequenz</div>
+            <div class="flex items-baseline justify-center gap-2 font-mono font-extrabold text-5xl sm:text-6xl text-[#0066cc] dark:text-[#2997ff] tracking-tight">
+              <span id="earAgeFreq">20.000</span>
+              <span class="text-2xl text-zinc-400 font-bold">Hz</span>
+            </div>
+            <p id="earAgeStatus" class="text-sm text-zinc-600 dark:text-zinc-400 pt-1">
+              Hören Sie genau hin. Können Sie diesen hohen Pfeifton hören?
+            </p>
+          </div>
+
+          <!-- Animated Sound Waveform -->
+          <div class="earage-waveform active" id="earAgeWave">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-zinc-100 dark:bg-zinc-800/80 rounded-full h-2 overflow-hidden">
+            <div id="earAgeProgress" class="bg-[#0066cc] dark:bg-[#2997ff] h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+
+          <!-- Tactile Responses -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+            <button
+              id="earAgeHearBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-3 shadow-xs active:scale-[0.97]"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12" /></svg>
+              <span>Ich höre den Ton</span>
+            </button>
+            <button
+              id="earAgeNoHearBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-3 shadow-xs active:scale-[0.97]"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" /></svg>
+              <span>Ich höre nichts</span>
+            </button>
+          </div>
+
+          <div class="pt-2">
+            <button
+              id="earAgeReplayBtn"
+              type="button"
+              class="text-xs font-mono text-zinc-500 hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors inline-flex items-center gap-1.5 cursor-pointer py-1"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg> Aktuelle Frequenz wiederholen
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2B: AUDIOMETRY PANEL -->
+        <div id="audiometryPanel" class="hidden max-w-xl mx-auto text-center space-y-6">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-4 text-left">
+              <div id="audEarIndicator" class="w-12 h-12 rounded-full flex items-center justify-center border-2 border-blue-500 bg-blue-500/10 text-blue-500 font-bold font-mono text-lg">
+                L
+              </div>
+              <div>
+                <div id="audEarLabel" class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  Linkes Ohr (Blau)
+                </div>
+                <div id="audFreqValue" class="font-heading font-extrabold text-2xl text-zinc-900 dark:text-white">
+                  1.000 Hz
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                Prüflautstärke
+              </div>
+              <div class="font-mono font-extrabold text-2xl text-[#0066cc] dark:text-[#2997ff]">
+                <span id="audDbValue">40</span> <span class="text-sm font-normal text-zinc-400">dB HL</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step Progression Dots -->
+          <div id="audProgress" class="flex items-center gap-1.5 w-full"></div>
+
+          <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Der Ton erklingt für 1,5 Sekunden. Bestätigen Sie, ob Sie den Ton wahrgenommen haben.
+          </p>
+
+          <!-- Response Buttons -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              id="audYesBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-[0.97]"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12" /></svg>
+              <span>Ja, gehört</span>
+            </button>
+            <button
+              id="audNoBtn"
+              type="button"
+              class="py-4 px-6 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-[0.97]"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" /></svg>
+              <span>Nicht gehört</span>
+            </button>
+          </div>
+
+          <div class="pt-2">
+            <button
+              id="audReplayBtn"
+              type="button"
+              class="text-xs font-mono text-zinc-500 hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors inline-flex items-center gap-1.5 cursor-pointer py-1"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg> Ton wiederholen
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RESULTS SECTION WRAPPER -->
+      <div id="resultsWrap" class="hidden mt-12 space-y-8">
+
+        <!-- EAR AGE RESULTS CARD -->
+        <div id="panel-earage" class="hidden p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl text-center space-y-8">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Orientierende Gehör-Auswertung
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Geschätztes biologisches Gehör-Alter</div>
+            <div class="font-heading font-black text-6xl sm:text-7xl md:text-8xl text-zinc-950 dark:text-white tracking-tight">
+              <span id="resultEarAge">--</span>
+            </div>
+            <p id="resultEarAgeDesc" class="text-base text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed pt-2">
+              --
+            </p>
+          </div>
+
+          <!-- Metrics Breakdown -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Höchste wahrgenommene Frequenz</div>
+              <div class="font-mono font-bold text-2xl text-[#0066cc] dark:text-[#2997ff]">
+                <span id="resultMaxFreq">--</span> Hz
+              </div>
+            </div>
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Gehör-Index</div>
+              <div class="font-mono font-bold text-2xl text-emerald-600 dark:text-emerald-400">
+                <span id="resultScore">--</span>/100
+              </div>
+            </div>
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Einstufung</div>
+              <div id="resultRating" class="font-heading font-bold text-xl text-zinc-900 dark:text-white">
+                --
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <button
+              id="downloadEarAgeBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white font-heading font-bold text-sm shadow-lg transition-all cursor-pointer flex items-center gap-2 active:scale-[0.97]"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Gehör-Alter Zertifikat herunterladen
+            </button>
+            <button
+              id="retakeEarAgeBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer active:scale-[0.97]"
+            >
+              Test wiederholen
+            </button>
+            <button
+              id="tryOtherBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer active:scale-[0.97]"
+            >
+              Reinton-Schwellentest machen &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- AUDIOMETRY RESULTS CARD -->
+        <div id="panel-audiogram" class="hidden p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-8">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-zinc-100 dark:border-zinc-800/80 pb-6">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider mb-2">
+                Reinton-Audiogramm
+              </div>
+              <h3 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                Hörschwellen-Diagramm
+              </h3>
+            </div>
+            <div class="flex items-center gap-6 font-mono text-xs font-semibold">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                <span class="text-zinc-700 dark:text-zinc-300">Linkes Ohr (✕)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                <span class="text-zinc-700 dark:text-zinc-300">Rechtes Ohr (○)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas Audiogram -->
+          <div class="w-full overflow-x-auto rounded-2xl bg-zinc-50 dark:bg-[#09090b] p-4 border border-zinc-200 dark:border-zinc-800">
+            <canvas id="audiogramCanvas" width="820" height="500" class="w-full max-w-[820px] mx-auto block"></canvas>
+          </div>
+
+          <!-- Summary & PTA Cards -->
+          <div id="audiogramSummary" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+          <!-- Audiogram Actions -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
+            <button
+              id="downloadAudiogramBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white font-heading font-bold text-sm shadow-lg transition-all cursor-pointer flex items-center gap-2 active:scale-[0.97]"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Audiogramm herunterladen (PNG)
+            </button>
+            <button
+              id="retakeAudBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer active:scale-[0.97]"
+            >
+              Test wiederholen
+            </button>
+            <button
+              id="tryEarAgeBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer active:scale-[0.97]"
+            >
+              Biologisches Gehör-Alter testen &rarr;
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- EDUCATIONAL GUIDE (German SEO Depth) -->
+    <article class="max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+
+      <!-- Section 1 -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+          Teil 1 &middot; Physiologie des Gehörs
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Anatomie des menschlichen Ohrs und die Frequenzkarte der Cochlea
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Das Gehör ist ein hochsensibles biomechanisches Wandlersystem, das Druckschwankungen der Luft in bioelektrische Nervenimpulse überführt. Es gliedert sich in drei anatomische Abschnitte: das <strong>Außenohr</strong> (Ohrmuschel und Gehörgang zur Schallbündelung), das <strong>Mittelohr</strong> (Trommelfell und die Gehörknöchelchenkette Hammer, Amboss und Steigbügel zur Impedanzanpassung) und das <strong>Innenohr</strong> mit der flüssigkeitsgefüllten Hörschnecke (Cochlea).
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          In der Cochlea befindet sich das <strong>Corti-Organ</strong> auf der Basilarmembran. Jeder Mensch wird mit etwa 15.000 bis 16.000 inneren und äußeren Haarzellen pro Ohr geboren. Die Basilarmembran ist an ihrer Basis schmal und straff, am Apex (Spitze) hingegen breit und flexibel. Dies begründet das Prinzip der <strong>Tonotopie</strong> (Ortsfrequenztransformation): Hohe Frequenzen (bis 20.000 Hz) regen die Basis an, tiefe Frequenzen (20–500 Hz) wandern bis zur Schneckenspitze.
+        </p>
+
+        <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+          <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-[#0066cc] dark:text-[#2997ff] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 18h8" /><path d="M3 22h18" /><path d="M14 22a7 7 0 1 0-7-7h1" /><path d="M9 14h2" /><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" /><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" /></svg> Tonotopie: Wie Frequenzen im Gehirn ankommen
+          </h4>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Weil Schallwellen stets über das ovale Fenster an der Schneckenbasis eintreffen, werden die Haarzellen für hohe Frequenzen bei jedem akustischen Ereignis mitbewegt. Sie unterliegen daher der höchsten mechanischen und metabolischen Belastung im Lebensverlauf.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+          Teil 2 &middot; Presbyakusis
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Warum das Gehör zuerst bei hohen Frequenzen nachlässt
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Die altersbedingte Schwerhörigkeit (<strong>Presbyakusis</strong>) ist der häufigste sensorische Abbauprozess des Menschen. Nahezu jeder dritte Mensch über 65 Jahren weist eine klinisch messbare Hörminderung auf. Typischerweise setzt dieser Prozess symmetrisch bei den höchsten hörbaren Frequenzen (&gt; 12.000 Hz) ein und schreitet langsam in den Bereich der Sprachfrequenzen fort:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">1. Höchste Belastung</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Basale Haarsinneszellen schwingen bis zu 20.000 Mal pro Sekunde. Der daraus resultierende oxidative Zellstress über Jahrzehnte führt zum vorzeitigen Zelltod.
+            </p>
+          </div>
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">2. Keine Zellregeneration</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Säugetiere besitzen im Innenohr keine Regenerationsfähigkeit für abgestorbene Haarzellen. Ein Verlust der Stereozilien ist dauerhaft.
+            </p>
+          </div>
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">3. Der Mückenton-Effekt</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Jugendliche nehmen Töne um 17,4 kHz ("Mosquito-Ton") problemlos wahr. Ab etwa dem 25. Lebensjahr sinkt die Hörgrenze meist unter 15 kHz ab.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+          Teil 3 &middot; Audiogramm-Auswertung
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Das Audiogramm verstehen: dB HL und die Sprachbanane
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Das Tonaudiogramm misst den <strong>Hörverlust in Dezibel Hearing Level (dB HL)</strong>. Dabei entspricht 0 dB HL der gemittelten Hörschwelle junger, normalhörender Ohren und nicht absoluter Stille. Positive Werte stellen eine Abschwächung dar:
+        </p>
+
+        <div class="overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-2">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-mono text-xs uppercase">
+                <th class="p-4">Grad des Hörverlusts</th>
+                <th class="p-4">dB HL Bereich</th>
+                <th class="p-4">Praktische Auswirkung im Alltag</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr>
+                <td class="p-4 font-bold text-emerald-600 dark:text-emerald-400">Normales Gehör</td>
+                <td class="p-4 font-mono font-bold">-10 bis 20 dB HL</td>
+                <td class="p-4">Flüstern, leises Blätterrauschen und feine Nuancen in Sprache werden mühelos erfasst.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-[#0066cc] dark:text-[#2997ff]">Geringgradige Schwerhörigkeit</td>
+                <td class="p-4 font-mono font-bold">21 bis 40 dB HL</td>
+                <td class="p-4">Verstehen bei Gruppengesprächen und Hintergrundlärm erschwert; helle Konsonanten (s, f) verblassen.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-amber-600 dark:text-amber-400">Mittelgradige Schwerhörigkeit</td>
+                <td class="p-4 font-mono font-bold">41 bis 70 dB HL</td>
+                <td class="p-4">Normale Gesprächslautstärke wird nicht mehr zuverlässig verstanden. Hörgeräte schaffen Abhilfe.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-rose-600 dark:text-rose-400">Hochgradige Schwerhörigkeit</td>
+                <td class="p-4 font-mono font-bold">71 bis 90 dB HL</td>
+                <td class="p-4">Verständigung nur bei lautem Rufen möglich; laute Verkehrs- oder Alltagsgeräusche werden kaum wahrgenommen.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-purple-600 dark:text-purple-400">An Taubheit grenzend</td>
+                <td class="p-4 font-mono font-bold">91+ dB HL</td>
+                <td class="p-4">Töne sind fast ausschließlich als Vibration fühlbar. Indikation für Cochlea-Implantate.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="space-y-4 pt-2">
+          <h3 class="font-heading font-bold text-xl text-zinc-900 dark:text-white">
+            Die Sprachbanane: Warum man hört, aber nicht versteht
+          </h3>
+          <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Als <strong>Sprachbanane</strong> bezeichnet man den bananenförmigen Bereich im Audiogramm zwischen 250 Hz und 6.000 Hz sowie 20 und 55 dB HL, in dem alle Sprachlaute liegen. Vokale (a, e, o) sind tieffrequent und tragen rund 90 % der Schallenergie, aber Konsonanten (s, t, f, k, sch) liegen oberhalb von 2.000 Hz und tragen 90 % des Informationsgehalts.
+          </p>
+          <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Bei einer beginnenden Hochtonschwerhörigkeit hört der Betroffene die Stimme laut genug, versteht jedoch die Worte nicht klar ("Ich höre dich sprechen, aber verstehe den Inhalt nicht").
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+          Teil 4 &middot; Gehörschutz &amp; Prävention
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Prävention: Die 60/60-Regel der WHO
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Nach Angaben der Weltgesundheitsorganisation (WHO) riskieren weltweit mehr als eine Milliarde junger Menschen irreversible Hörschäden durch unsachgemäßen Kopfhörergebrauch:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+              Die WHO 60/60-Regel
+            </h4>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Hören Sie über Kopfhörer bei maximal <strong>60 % der Maximallautstärke</strong> und beschränken Sie die Dauer auf höchstens <strong>60 Minuten am Stück</strong>. Legen Sie danach mindestens 10–15 Minuten Hörpause ein.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+              Alarmsignal Tinnitus &amp; Hörsturz
+            </h4>
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Ein dauerhaftes Klingeln oder Pfeifen im Ohr (Tinnitus) ist ein Notsignal geschädigter Sinneszellen. Bei einem plötzlichen Hörverlust auf einem Ohr (Hörsturz) handelt es sich um einen <strong>medizinischen Notfall</strong>: Suchen Sie innerhalb von 24–72 Stunden sofort einen HNO-Arzt auf.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs sm:text-sm leading-relaxed">
+          <p class="font-bold text-amber-600 dark:text-amber-400 mb-2">Gesundheitlicher Hinweis</p>
+          <p>
+            Dieser Online-Sehtest / Hörtest dient rein als orientierende Selbsteinschätzung für den Heimgebrauch und ersetzt keine professionelle augenärztliche oder HNO-ärztliche Untersuchung.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 5: FAQ (NO FAQPage Schema) -->
+      <section class="space-y-6 pt-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+          Teil 5 &middot; Häufig gestellte Fragen (FAQ)
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Häufig gestellte Fragen zum Online-Hörtest
+        </h2>
+
+        <div class="space-y-4 pt-4">
+          <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+            <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+              <span>Wie zuverlässig ist ein Online-Hörtest im Browser?</span>
+              <svg class="faq-chevron ml-4 w-5 h-5 text-[#0066cc] dark:text-[#2997ff] transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Der Test liefert eine solide orientierende Selbsteinschätzung für Hochtonverluste und Asymmetrien zwischen linkem und rechtem Ohr. Er ersetzt jedoch keine klinische Audiometrie in einer schallisolierten Messkabine beim HNO-Arzt oder Hörakustiker.
+            </div>
+          </details>
+
+          <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+            <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+              <span>Warum sind Kopfhörer für den Hörtest zwingend erforderlich?</span>
+              <svg class="faq-chevron ml-4 w-5 h-5 text-[#0066cc] dark:text-[#2997ff] transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Lautsprecher vermischen die Stereokanäle im Raum (akustisches Übersprechen). Eine getrennte Überprüfung von linkem und rechtem Ohr ist nur über Kopfhörer möglich, da der Ton sonst vom besser hörenden Ohr mitgehört wird.
+            </div>
+          </details>
+
+          <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+            <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+              <span>Wie wird das biologische Gehör-Alter berechnet?</span>
+              <svg class="faq-chevron ml-4 w-5 h-5 text-[#0066cc] dark:text-[#2997ff] transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Das Gehör-Alter basiert auf der maximal noch wahrgenommenen Grenzfrequenz. Während gesunde Ohren junger Menschen Töne bis 19.000–20.000 Hz erfassen, sinkt dieser Schwellenwert mit den Lebensjahrzehnten: 15 kHz entspricht etwa 35 Jahren, 12 kHz etwa 50 Jahren und 8 kHz mehr als 65 Jahren.
+            </div>
+          </details>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+
+  <!-- Pure Web Audio Client Engine Script -->
+  <script src="../../scripts/tools/hearing-engine.js"></script>
+
+  <script>
+    // Patch German safety and UI labels after engine initializes
+    (function() {
+      const workspaceTitle = document.getElementById('workspaceTitle');
+      const audEarLabel = document.getElementById('audEarLabel');
+      const stepNum = document.getElementById('stepNum');
+      const resultRating = document.getElementById('resultRating');
+      const resultEarAgeDesc = document.getElementById('resultEarAgeDesc');
+
+      if (workspaceTitle) {
+        const mo = new MutationObserver(() => {
+          const t = workspaceTitle.textContent || '';
+          if (t === 'Ear Age Frequency Test') workspaceTitle.textContent = 'Biologischer Gehör-Alterstest';
+          if (t === 'Pure-Tone Audiometry') workspaceTitle.textContent = 'Reinton-Audiometrie';
+        });
+        mo.observe(workspaceTitle, { childList: true, characterData: true, subtree: true });
+      }
+
+      if (audEarLabel) {
+        const moEar = new MutationObserver(() => {
+          const t = audEarLabel.textContent || '';
+          if (t.includes('Left Ear')) audEarLabel.textContent = 'Linkes Ohr (Blau)';
+          if (t.includes('Right Ear')) audEarLabel.textContent = 'Rechtes Ohr (Rot)';
+        });
+        moEar.observe(audEarLabel, { childList: true, characterData: true, subtree: true });
+      }
+
+      if (resultRating) {
+        const moRating = new MutationObserver(() => {
+          const t = resultRating.textContent || '';
+          if (t === 'Exceptional') resultRating.textContent = 'Hervorragend';
+          else if (t === 'Excellent') resultRating.textContent = 'Sehr gut';
+          else if (t === 'Normal') resultRating.textContent = 'Altersentsprechend';
+          else if (t === 'Mild Loss') resultRating.textContent = 'Leicht reduziert';
+          else if (t === 'Moderate Loss') resultRating.textContent = 'Mäßig reduziert';
+        });
+        moRating.observe(resultRating, { childList: true, characterData: true, subtree: true });
+      }
+
+      if (resultEarAgeDesc) {
+        const moDesc = new MutationObserver(() => {
+          const t = resultEarAgeDesc.textContent || '';
+          if (t.includes('exceptional high-frequency')) {
+            resultEarAgeDesc.textContent = 'Hervorragendes Gehör im Hochtonbereich. Ihre Haarsinneszellen erfassen Frequenzen, die für junge gesunde Ohren typisch sind.';
+          } else if (t.includes('typical of young')) {
+            resultEarAgeDesc.textContent = 'Sehr gute Wahrnehmung hoher Frequenzen, typisch für junge Erwachsene. Schützen Sie Ihr Gehör weiterhin vor Lärm.';
+          } else if (t.includes('mild high-frequency')) {
+            resultEarAgeDesc.textContent = 'Leichte altersentsprechende Einschränkung im obersten Hochtonbereich. Normale Sprachfrequenzen sind davon in der Regel unberührt.';
+          } else if (t.includes('moderate high-frequency')) {
+            resultEarAgeDesc.textContent = 'Deutlichere Hochton-Einschränkung. Achten Sie auf Sprachverständlichkeit in lauter Umgebung und erwägen Sie einen Check beim HNO-Arzt.';
+          }
+        });
+        moDesc.observe(resultEarAgeDesc, { childList: true, characterData: true, subtree: true });
+      }
+    })();
+  </script>
+</Layout>

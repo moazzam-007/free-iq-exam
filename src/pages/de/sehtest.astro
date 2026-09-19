@@ -1,0 +1,747 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Online-Sehtest: Sehschärfe mit Snellen-Sehtafel prüfen | FreeIQExam";
+const description = "Testen Sie Ihre Sehschärfe (Visus) orientierend online mit unserer digitalen Snellen-Sehtafel und Bildschirmkalibrierung. Schnell und ohne Anmeldung.";
+const canonicalUrl = "https://freeiqexam.com/de/sehtest";
+
+const alternates = {
+  en: "https://freeiqexam.com/eye-test",
+  ru: "https://freeiqexam.com/ru/eye-test",
+  id: "https://freeiqexam.com/id/tes-mata",
+  fi: "https://freeiqexam.com/fi/nakotesti",
+  de: "https://freeiqexam.com/de/sehtest"
+};
+
+const faqItems = [
+  [
+    'Wie zuverlässig ist ein Online-Sehtest im Vergleich zum Augenarzt oder Optiker?',
+    'Ein Online-Sehtest liefert eine wertvolle Orientierung darüber, wie gut Sie auf eine bestimmte Distanz sehen. Er kann jedoch weder Refraktionswerte präzise bestimmen noch Augeninnendruck, Hornhautbeschaffenheit oder Netzhautgesundheit prüfen. Bildschirmauflösung, Sehabstand und Raumbeleuchtung beeinflussen das Ergebnis. Betrachten Sie das Resultat als Anlass für einen professionellen Sehtest, nicht als Ersatz dafür.'
+  ],
+  [
+    'Warum muss zu Beginn eine Plastikkarte an den Bildschirm gehalten werden?',
+    'Sehschärfe (Visus) ist optisch als Sehwinkel definiert, den ein Buchstabe am Auge einnimmt – nicht in Bildschirmpixeln. Auf 1 Meter Abstand muss ein 20/20-Zeichen (Visus 1,0) exakt 1,45 mm hoch sein. Da Webbrowser die physische Pixeldichte Ihres Bildschirms nicht verlässlich kennen, ermittelt der Abgleich mit einer genormten Karte (ISO-Kreditkartenformat: 85,6 mm) den realen Millimeter-pro-Pixel-Faktor.'
+  ],
+  [
+    'Warum bricht der Test bei manchen Bildschirmen vor 20/20 ab?',
+    'Bei geringem Sehabstand (z. B. 40 cm oder 1 m) ist ein Visus-1,0-Zeichen auf normalen PC-Monitoren nur etwa 5 Pixel hoch. Um eine saubere 5-Strich-Snellen-Geometrie darzustellen, sind jedoch mindestens 12 Pixel nötig. Anstatt fiktive Schätzwerte anzuzeigen, stoppt die Software ehrlich an der physikalischen Auflösungsgrenze Ihres Monitors. Bei größerem Testabstand (z. B. 2 oder 3 Meter) können feinere Stufen physisch größer dargestellt werden.'
+  ],
+  [
+    'Was ist die Tumbling-E-Sehtafel und warum werden keine Buchstaben abgefragt?',
+    'Das Snellen-E (Tumbling-E) ist ein E-Haken, dessen Öffnung nach oben, unten, links oder rechts zeigt. Da lediglich die Richtung angegeben wird, ist der Test unabhängig von Sprache, Alphabetkenntnis oder Lesekompetenz. Es handelt sich um den internationalen Goldstandard für standardisierte Sehtests.'
+  ],
+  [
+    'Was zeigt das Astigmatismus-Sonnenrad (Strahlenkranz)?',
+    'Das Sonnenrad besteht aus radialen Linien in alle Richtungen. Liegt eine Hornhautverkrümmung (Stabsichtigkeit / Astigmatismus) vor, bricht das Auge das Licht in verschiedenen Achsen ungleichmäßig. Dadurch erscheinen einzelne Linienpaare deutlich dunkler oder schärfer als andere. Ist dieser Effekt ausgeprägt, empfiehlt sich eine optometrische Überprüfung.'
+  ],
+  [
+    'Was bedeutet der Rot-Grün-Duochrom-Test?',
+    'Der Duochrom-Test nutzt die chromatische Aberration des Auges: Grünes Licht (~535 nm) wird im Auge stärker gebrochen als rotes Licht (~650 nm). Erscheinen die Zeichen auf dem roten Feld schärfer, liegt tendenziell eine Kurzsichtigkeit (Myopie) vor; wirken sie auf Grün schärfer, deutet dies auf Weitsichtigkeit (Hyperopie) hin. Bei ausgeglichener Sehschärfe wirken beide Felder gleich scharf.'
+  ],
+  [
+    'Ersetzt dieser Test den Sehtest für den Führerschein?',
+    'Nein. Der amtliche Führerschein-Sehtest in Deutschland, Österreich und der Schweiz (nach FeV bzw. Führerscheingesetz) darf ausschließlich von amtlich anerkannten Sehteststellen, Augenoptikern oder Augenärzten unter standardisierten Licht- und Messbedingungen abgenommen und bescheinigt werden.'
+  ],
+  [
+    'Wann sollte sofort ein Augenarzt aufgesucht werden?',
+    'Bei plötzlichem Sehverlust, dem Auftreten von Lichtblitzen, rußartigem Flockenregen, einem dunklen Vorhang im Gesichtsfeld, Doppelbildern oder akuten Augenschmerzen handelt es sich um augenärztliche Notfälle. In diesen Fällen darf keinesfalls abgewartet oder online getestet werden – suchen Sie sofort eine Augenklinik auf.'
+  ]
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Online-Sehtest: Sehschärfe, Astigmatismus & Rot-Grün-Abgleich',
+    url: canonicalUrl,
+    inLanguage: 'de',
+    medicalAudience: 'Patient',
+    aspect: 'Screening',
+    isAccessibleForFree: true,
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Refraktionsfehler',
+      alternateName: ['Myopie', 'Hyperopie', 'Astigmatismus', 'Presbyopie']
+    }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Online-Sehtest mit Snellen-E-Sehtafel & Bildschirmkalibrierung',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'All',
+    inLanguage: 'de',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    accessibilitySummary: 'Pfeiltastatur-Steuerung für E-Haken, physische Bildschirmkalibrierung mit Standardkarte, Screenreader-Unterstützung und druckbarer Ergebnisbericht.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Startseite', item: 'https://freeiqexam.com/de/' },
+      { '@type': 'ListItem', position: 2, name: 'Selbsttests', item: 'https://freeiqexam.com/de/#tests' },
+      { '@type': 'ListItem', position: 3, name: 'Online-Sehtest', item: canonicalUrl }
+    ]
+  }
+];
+
+const stages = [
+  ['intro-section', '1 · Übersicht'],
+  ['calibration-section', '2 · Kalibrierung'],
+  ['acuity-section', '3 · Sehschärfe'],
+  ['astigmatism-section', '4 · Astigmatismus'],
+  ['duochrome-section', '5 · Rot-Grün'],
+  ['results-section', '6 · Auswertung']
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="de"
+>
+  <Header currentPath="/de/sehtest" />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-[#000000] dark:text-white transition-colors duration-200">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumb" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/de/" class="hover:text-zinc-950 dark:hover:text-white transition-colors">Startseite</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-zinc-600 dark:text-zinc-300">Selbsttests</span>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white font-semibold">Online-Sehtest</span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="mx-auto max-w-4xl text-center">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-[#2997ff] sm:text-sm">
+          <svg class="w-4 h-4 text-[#0066cc] dark:text-[#2997ff]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Bildschirmkalibrierte Sehschärfeprüfung
+        </div>
+
+        <h1 class="mt-6 font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em]">
+          Online-Sehtest: Sehschärfe mit Snellen-Sehtafel prüfen
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Prüfen Sie Ihre Sehschärfe (Visus) mit physisch kalibrierten Snellen Tumbling-E-Haken, testen Sie Hornhautverkrümmung mit dem Astigmatismus-Sonnenrad und vergleichen Sie Rot-Grün-Farbkontraste direkt im Browser.
+        </p>
+
+        <!-- MANDATORY SENSORY SAFETY DISCLAIMER -->
+        <p class="text-xs sm:text-sm text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 rounded-xl px-4 py-3 mt-4 max-w-2xl mx-auto leading-relaxed">
+          <strong>Medizinischer Hinweis:</strong> Dieser Online-Sehtest / Hörtest dient rein als orientierende Selbsteinschätzung für den Heimgebrauch und ersetzt keine professionelle augenärztliche oder HNO-ärztliche Untersuchung.
+        </p>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['Physische Kartenkalibrierung', 'Tumbling-E Snellen-Haken', 'Astigmatismus-Sonnenrad', 'Rot-Grün-Duochrom-Abgleich', 'Ohne Anmeldung'].map((item) => (
+            <span class="rounded-full border border-zinc-200 bg-zinc-50/80 px-4 py-2 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/80 dark:text-zinc-300 shadow-sm">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <!-- Main Vision App Container -->
+      <section id="eye-app" class="mx-auto mt-12 max-w-4xl">
+        <ol class="stage-strip" aria-label="Testfortschritt">
+          {stages.map(([id, label]) => (
+            <li data-stage={id} class="stage-chip">{label}</li>
+          ))}
+        </ol>
+
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/90 p-5 dark:border-zinc-800 dark:bg-zinc-950 p-6 sm:p-9 shadow-sm">
+
+          <!-- Stage 1: Intro Section -->
+          <section id="intro-section" class="rounded-[1.5rem] border border-blue-200 bg-blue-50/70 p-6 dark:border-blue-900/50 dark:bg-blue-950/20 sm:p-8">
+            <p class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Hinweis vor Beginn</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Orientierender Selbsttest — keine augenärztliche Untersuchung</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Dieser Test schätzt Ihre Sehschärfe auf eine gewählte Distanz ab. Er kann weder den Augeninnendruck noch den Sehnerv oder die Netzhaut beurteilen und ersetzt kein augenärztliches Rezept.
+            </p>
+            <ul class="mt-5 space-y-3 text-sm sm:text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+              <li class="flex items-start gap-2">
+                <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">•</span>
+                Halten Sie eine handelsübliche Plastikkarte (z. B. Bankkarte oder Personalausweis) bereit, um den Bildschirm exakt zu kalibrieren.
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">•</span>
+                Sie decken während des Tests jeweils ein Auge mit der flachen Hand ab, ohne Druck auf das Auge auszuüben.
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">•</span>
+                Tragen Sie Ihre gewohnte Sehhilfe (Brille oder Kontaktlinsen), falls Sie Ihre korrigierte Sehschärfe überprüfen möchten.
+              </li>
+            </ul>
+            <div class="mt-7 flex flex-wrap items-center gap-4">
+              <button
+                id="begin-eye-test"
+                type="button"
+                class="rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white px-8 py-4 text-base font-semibold shadow-sm transition-all duration-150 hover:scale-[1.02] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              >
+                Sehtest jetzt starten
+              </button>
+              <span class="text-sm text-zinc-500 dark:text-zinc-400">Tastatur: Pfeiltasten ↑ ↓ ← → während der Sehschärfeprüfung</span>
+            </div>
+            <p class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-xs sm:text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
+              <strong>Plötzlicher Sehverlust, Rußregen, Lichtblitze oder akute Augenschmerzen sind medizinische Notfälle.</strong> Testen Sie nicht online, sondern suchen Sie sofort einen Augenarzt oder eine Notaufnahme auf.
+            </p>
+          </section>
+
+          <!-- Stage 2: Calibration Section -->
+          <section id="calibration-section" class="hidden" aria-labelledby="calibration-title">
+            <div class="rounded-[1.5rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-8 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Schritt 1 · Physische Bildschirmkalibrierung</p>
+              <h2 id="calibration-title" class="mt-3 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Passen Sie die Karte an Ihren Bildschirm an</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Halten Sie eine echte Bank- oder Ausweiskarte flach an den Bildschirm und verschieben Sie den Regler, bis der weiße Umriss exakt so breit ist wie die Karte. Dies ermittelt das reale Millimeter-Pixel-Verhältnis Ihres Displays.
+              </p>
+
+              <div class="calibration-stage mt-6">
+                <div id="card-preview" class="card-preview" aria-hidden="true"></div>
+              </div>
+
+              <label for="card-slider" class="mt-8 block text-base font-semibold text-zinc-900 dark:text-white">Kartenbreite auf dem Display</label>
+              <input id="card-slider" type="range" min="100" max="600" step="1" value="260" class="calibration-slider" />
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+                <span>Kartenbreite: <strong id="card-width-label" class="font-mono text-zinc-900 dark:text-white">260 px</strong></span>
+                <span>Bildschirm-Maßstab: <strong id="ppm-readout" class="font-mono text-zinc-900 dark:text-white">—</strong></span>
+              </div>
+
+              <div class="mt-8">
+                <p class="text-base font-semibold text-zinc-900 dark:text-white">Testabstand zum Bildschirm</p>
+                <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Wählen Sie die Distanz zwischen Ihren Augen und dem Bildschirm:</p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  {[
+                    ['near', '40 cm', 'Smartphone / Tablet'],
+                    ['desk', '1 m', '3,3 ft · Schreibtischabstand'],
+                    ['room', '2 m', '6,6 ft · Zimmerabstand'],
+                    ['hall', '3 m', '10 ft · Wohnzimmer'],
+                    ['snellen', '6 m', '20 ft · Snellen-Standard']
+                  ].map(([id, label, hint]) => (
+                    <button type="button" data-distance={id} class="distance-button">
+                      <span class="distance-label">{label}</span>
+                      <span class="distance-hint">{hint}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <p id="resolution-warning" class="mt-7 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200"></p>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button
+                  id="confirm-calibration"
+                  type="button"
+                  class="rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white px-7 py-4 text-base font-semibold transition active:scale-[0.97]"
+                >
+                  Kalibriert — Sehschärfetest starten
+                </button>
+                <button
+                  id="skip-calibration"
+                  type="button"
+                  class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 transition active:scale-[0.97]"
+                >
+                  Weiter zu Astigmatismus &amp; Duochrom
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Stage 3: Acuity Section -->
+          <section id="acuity-section" class="hidden" aria-labelledby="acuity-title">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Schritt 2 · Sehschärfenprüfung (Visus)</p>
+                <h2 id="acuity-title" class="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl"><span id="acuity-eye-label">Rechtes Auge</span></h2>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="acuity-eye-progress" class="text-base font-semibold text-zinc-900 dark:text-white sm:text-lg">Auge 1 von 3</div>
+                <div id="acuity-trial-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">—</div>
+              </div>
+            </div>
+
+            <div class="mt-5 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+              <div id="acuity-progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-300" style="width:0%"></div>
+            </div>
+
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div id="acuity-tier-dots" class="tier-dots" aria-hidden="true"></div>
+              <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">3 richtige Antworten schalten die nächste Stufe frei</p>
+            </div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <p id="acuity-instruction" class="rounded-2xl border border-blue-200 bg-blue-50/70 px-5 py-4 text-base font-semibold text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-200 sm:text-lg">
+                Decken Sie Ihr LINKES Auge ab.
+              </p>
+
+              <p class="mt-6 text-base text-zinc-500 dark:text-zinc-400 sm:text-lg">
+                In welche Richtung zeigt die Öffnung des E? Aktuelle Stufe: <strong id="acuity-tier-label" class="font-mono text-zinc-900 dark:text-white">—</strong>
+              </p>
+
+              <div id="optotype-mount" class="mt-6"></div>
+
+              <div class="direction-pad mt-8">
+                <div></div>
+                <button type="button" data-direction="up" class="direction-button" aria-label="E zeigt nach oben">↑</button>
+                <div></div>
+                <button type="button" data-direction="left" class="direction-button" aria-label="E zeigt nach links">←</button>
+                <div class="direction-center" aria-hidden="true">E</div>
+                <button type="button" data-direction="right" class="direction-button" aria-label="E zeigt nach rechts">→</button>
+                <div></div>
+                <button type="button" data-direction="down" class="direction-button" aria-label="E zeigt nach unten">↓</button>
+                <div></div>
+              </div>
+
+              <p class="mt-6 text-center text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                Nutzen Sie die Bildschirmtasten oder die Pfeiltasten auf Ihrer Tastatur.
+              </p>
+            </article>
+          </section>
+
+          <!-- Stage 4: Astigmatism Section -->
+          <section id="astigmatism-section" class="hidden" aria-labelledby="astig-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Schritt 3 · Astigmatismus-Sonnenrad</p>
+              <h2 id="astig-title" class="mt-3 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Erscheinen bestimmte Linien dunkler oder schärfer?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Blicken Sie aus dem gewählten Sehabstand abwechselnd mit jedem Auge auf das Zentrum des Sonnenrads. Vergleichen Sie die 12 Strahlen: Bei einer Hornhautverkrümmung heben sich oft einzelne Achsen spürbar schwärzer oder klarer ab als die übrigen.
+              </p>
+              <div id="dial-mount" class="dial-stage mt-8"></div>
+              <p id="dial-selection-label" class="mt-6 text-base font-semibold text-[#0066cc] dark:text-[#2997ff]">Noch keine Linien ausgewählt.</p>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="submit-astigmatism" type="button" class="rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white px-7 py-4 text-base font-semibold transition active:scale-[0.97]">Weiter zum Rot-Grün-Test</button>
+                <button id="dial-none" type="button" aria-pressed="false" class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 transition active:scale-[0.97]">Alle Linien erscheinen gleichmäßig</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Stage 5: Duochrome Section -->
+          <section id="duochrome-section" class="hidden" aria-labelledby="duo-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Schritt 4 · Rot-Grün-Duochrom-Abgleich</p>
+              <h2 id="duo-title" class="mt-3 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Auf welchem Farbfeld wirkt der Ring schärfer?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Vergleichen Sie den schwarzen Ring auf rotem Hintergrund mit dem Ring auf grünem Hintergrund. Beurteilen Sie die <strong>Randschärfe und Klarheit</strong>, nicht die Helligkeit der Farben.
+              </p>
+              <div class="duochrome-grid mt-8">
+                <div class="duochrome-panel duo-red">
+                  <div id="duochrome-red" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Rot · ~650 nm</span>
+                </div>
+                <div class="duochrome-panel duo-green">
+                  <div id="duochrome-green" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Grün · ~535 nm</span>
+                </div>
+              </div>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button type="button" data-duo="red" class="duo-choice rounded-full border-2 border-red-300 bg-red-50 px-6 py-4 text-base font-semibold text-red-900 transition active:scale-[0.97] dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">Rot wirkt schärfer</button>
+                <button type="button" data-duo="green" class="duo-choice rounded-full border-2 border-emerald-300 bg-emerald-50 px-6 py-4 text-base font-semibold text-emerald-900 transition active:scale-[0.97] dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200">Grün wirkt schärfer</button>
+                <button type="button" data-duo="equal" class="duo-choice rounded-full border-2 border-zinc-300 bg-zinc-100 px-6 py-4 text-base font-semibold text-zinc-800 transition active:scale-[0.97] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">Beide wirken gleich scharf</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Stage 6: Results Section -->
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge neutral">Sehschärfe erfasst</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">Ihr Sehtest-Ergebnis</h2>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-xs sm:text-sm font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-300">
+                  Keine ärztliche Diagnose
+                </div>
+              </div>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card"><div class="score-label">Rechtes Auge</div><div id="acuity-right" class="acuity-fraction text-zinc-900 dark:text-white">—</div><div id="acuity-right-note" class="score-status">Erreichte Stufe</div></article>
+                <article class="score-card"><div class="score-label">Linkes Auge</div><div id="acuity-left" class="acuity-fraction text-zinc-900 dark:text-white">—</div><div id="acuity-left-note" class="score-status">Erreichte Stufe</div></article>
+                <article class="score-card"><div class="score-label">Beide Augen</div><div id="acuity-both" class="acuity-fraction text-zinc-900 dark:text-white">—</div><div id="acuity-both-note" class="score-status">Erreichte Stufe</div></article>
+              </div>
+
+              <p id="acuity-summary-note" class="mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <article class="stat-card"><span>Astigmatismus-Sonnenrad</span><strong id="astig-result" class="text-zinc-900 dark:text-white">Nicht erfasst</strong><p id="astig-note" class="stat-note"></p></article>
+                <article class="stat-card"><span>Duochrom-Gleichgewicht</span><strong id="duo-result" class="text-zinc-900 dark:text-white">Nicht erfasst</strong><p id="duo-note" class="stat-note"></p></article>
+              </div>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Kalibrierungsdaten</p>
+                <h3 class="mt-2 text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Messbedingungen</h3>
+                <p id="calibration-summary" class="mt-4 font-mono text-base sm:text-lg text-zinc-800 dark:text-zinc-200">—</p>
+                <p class="mt-3 text-sm sm:text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  Die Sehschärfenangaben basieren auf dem eingegebenen Kartenmaßstab und Sehabstand. Bei abweichender Sitzposition oder ungenauer Kalibrierung weicht der reale Visus ab.
+                </p>
+              </article>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="rounded-full bg-zinc-950 px-7 py-4 text-base font-semibold text-white dark:bg-white dark:text-zinc-950 hover:opacity-90 transition active:scale-[0.97]">Ergebnis drucken</button>
+                <button id="share-result" type="button" class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 transition active:scale-[0.97]">Ergebnis kopieren</button>
+                <button id="retake-result" type="button" class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 transition active:scale-[0.97]">Test wiederholen</button>
+              </div>
+
+              <div class="mt-8 rounded-3xl border border-blue-200 bg-blue-50/70 p-6 dark:border-blue-900/50 dark:bg-blue-950/20">
+                <h3 class="text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Ergebnis richtig einordnen</h3>
+                <p class="mt-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+                  Ein orientierender Sehtest im Webbrowser kann eine professionelle Refraktionsbestimmung bei einer Augenärztin oder einem Optikermeisterbetrieb nicht ersetzen. Sollten Sie Doppelbilder, Kopfschmerzen beim Lesen oder verschwommenes Sehen bemerken, vereinbaren Sie eine fachärztliche Untersuchung.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <p id="eye-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- Toast -->
+      <div id="share-toast" class="fixed bottom-6 right-6 z-50 rounded-2xl bg-zinc-950 px-5 py-3 text-sm font-semibold text-white shadow-xl opacity-0 translate-y-3 transition-all duration-300 dark:bg-white dark:text-zinc-950">
+        Ergebnis kopiert.
+      </div>
+
+      <!-- Educational Content Section -->
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+
+        <section>
+          <p class="eyebrow">Optometrischer Leitfaden</p>
+          <h2 class="mt-3 section-title">Funktionsweise und Optik der Sehschärfenprüfung</h2>
+          <p class="mt-6">
+            Das menschliche Auge verarbeitet Licht über ein hochentwickeltes dioptrisches System aus Hornhaut (Cornea), vorderer Augenkammer, Augenlinse und Glaskörper, um auf der Fovea centralis der Netzhaut ein scharfes Bild zu erzeugen. Die Sehschärfe (der <em>Visus</em>) beschreibt das optische Auflösungsvermögen: die Fähigkeit des visuellen Systems, zwei eng benachbarte Punkte getrennt wahrzunehmen (Minimum separabile).
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">1. Der Visus: Winkelminuten und Snellen-Verhältnis</h2>
+          <p class="mt-5">
+            Der Standardvisus 1,0 (entsprechend dem angloamerikanischen 20/20 bzw. 6/6) ist erreicht, wenn das Auge zwei Punkte mit einem Winkelabstand von <strong>einer Bogenminute (1′ = 1/60 Grad)</strong> getrennt auflösen kann. Der von Hermann Snellen 1862 entwickelte Optotyp ist so konstruiert, dass das gesamte Zeichen auf die Prüfdistanz einen Sehwinkel von 5 Bogenminuten einnimmt, während jeder einzelne Strich und Zwischenraum exakt 1 Bogenminute misst.
+          </p>
+          <p class="mt-5">
+            Auf eine Entfernung von 6 Metern ist ein 20/20-Optotyp exakt 8,73 mm hoch. Bei unserem Testabstand von 1 Meter schrumpft dieselbe 1-Bogenminuten-Geometrie auf 1,45 mm zusammen. Daher berechnet die Kalibrierungs-Engine über die physikalische Kartenmessung den exakten Millimeter-pro-Pixel-Faktor Ihres Monitors.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">2. Die häufigsten Refraktionsfehler im Überblick</h2>
+          <ul class="mt-4 list-disc pl-6 space-y-2">
+            <li><strong>Kurzsichtigkeit (Myopie):</strong> Der Augapfel ist im Verhältnis zur Brechkraft zu lang (Achsenmyopie). Parallel einfallende Lichtstrahlen bündeln sich vor der Netzhaut. Entfernte Objekte wirken unscharf; Nahsehen ist meist mühelos möglich.</li>
+            <li><strong>Weitsichtigkeit (Hyperopie):</strong> Der Augapfel ist zu kurz. Das Bild entsteht theoretisch hinter der Netzhaut. Junge Menschen können dies durch Akkommodation (Muskelanspannung der Linse) ausgleichen, was jedoch zu Augenbrennen und Stirnkopfschmerzen führen kann.</li>
+            <li><strong>Hornhautverkrümmung (Astigmatismus / Stabsichtigkeit):</strong> Die Hornhaut ist nicht gleichmäßig sphärisch gewölbt, sondern ähnelt der Form eines Rugbyballs. Licht wird in senkrechten und waagerechten Meridianen unterschiedlich stark gebrochen, wodurch Punktquellen als Striche abgebildet werden.</li>
+            <li><strong>Alterssichtigkeit (Presbyopie):</strong> Ab dem 40. bis 45. Lebensjahr verliert die Augenlinse an Elastizität. Das Einstellen auf nahe Distanzen (Lesen) fällt zunehmend schwer und erfordert eine Lese- oder Gleitsichtbrille.</li>
+          </ul>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">3. Der Rot-Grün-Duochromtest: Chromatische Aberration im Auge</h2>
+          <p class="mt-5">
+            Das optische Medium des Auges bricht Licht unterschiedlicher Wellenlängen verschieden stark (Dispersion). Kurzwelliges grünes Licht (~535 nm) wird stärker gebrochen und bündelt sich vor langwelligem rotem Licht (~650 nm).
+          </p>
+          <p class="mt-5">
+            Bei idealer sphärischer Korrektur liegt die Netzhaut exakt in der Mitte zwischen dem roten und grünen Fokus – beide Farbfelder erscheinen dem Betrachter gleich kontrastreich und scharf. Wird das rote Feld als schwärzer und schärfer empfunden, ist das Auge relativ kurzsichtig; hebt sich das grüne Feld ab, liegt eine relative Weitsichtigkeit vor.
+          </p>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="guide-section">
+          <p class="eyebrow">Häufige Fragen</p>
+          <h2 class="section-title mt-3">FAQ zum Online-Sehtest</h2>
+          <div class="mt-7 space-y-4">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 transition-colors shadow-sm">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-zinc-900 dark:text-white sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition-transform duration-200 group-open:rotate-45 text-[#0066cc] dark:text-[#2997ff]">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-100 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+                  {answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Verbatim Medical Disclaimer Section -->
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9 shadow-sm">
+          <h2 class="text-2xl font-bold text-zinc-900 dark:text-white sm:text-3xl">Medizinischer Haftungsausschluss</h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 font-medium">
+            Dieser Online-Sehtest dient rein als orientierende Selbsteinschätzung für den Heimgebrauch und ersetzt keine professionelle augenärztliche Untersuchung oder Sehstärkenbestimmung.
+          </p>
+          <p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+            Wenden Sie sich bei Sehstörungen oder zur Bestimmung einer Sehhilfe stets an eine Augenarztpraxis oder einen staatlich geprüften Augenoptikermeisterbetrieb.
+          </p>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+
+  <style>
+    .stage-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      list-style: none;
+      padding: 0;
+    }
+    .stage-chip {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgb(228 228 231);
+      background: rgb(244 244 245);
+      color: rgb(113 113 122);
+      transition: all 0.2s ease;
+    }
+    :global(.dark) .stage-chip {
+      border-color: rgb(39 39 42);
+      background: rgb(18 18 21);
+      color: rgb(161 161 170);
+    }
+    .stage-chip.active {
+      border-color: #0066cc;
+      background: #0066cc;
+      color: #ffffff;
+    }
+    :global(.dark) .stage-chip.active {
+      border-color: #2997ff;
+      background: #0066cc;
+      color: #ffffff;
+    }
+
+    .calibration-stage {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      background: rgb(244 244 245);
+      border-radius: 1.25rem;
+      border: 1px dashed rgb(212 212 216);
+      min-height: 14rem;
+    }
+    :global(.dark) .calibration-stage {
+      background: rgb(18 18 21);
+      border-color: rgb(63 63 70);
+    }
+    .card-preview {
+      border: 2px solid #0066cc;
+      background: rgba(0, 102, 204, 0.08);
+      border-radius: 0.75rem;
+      height: 130px;
+      transition: width 0.05s linear;
+    }
+    :global(.dark) .card-preview {
+      border-color: #2997ff;
+      background: rgba(41, 151, 255, 0.12);
+    }
+    .calibration-slider {
+      width: 100%;
+      height: 0.5rem;
+      border-radius: 999px;
+      accent-color: #0066cc;
+      cursor: pointer;
+    }
+
+    .distance-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.65rem 1.15rem;
+      border-radius: 1rem;
+      border: 1.5px solid rgb(228 228 231);
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    :global(.dark) .distance-button {
+      border-color: rgb(39 39 42);
+      background: rgb(18 18 21);
+      color: rgb(244 244 245);
+    }
+    .distance-button:hover {
+      border-color: #0066cc;
+      background: rgb(248 250 252);
+    }
+    :global(.dark) .distance-button:hover {
+      border-color: #2997ff;
+      background: rgb(24 24 27);
+    }
+    .distance-button.selected {
+      border-color: #0066cc;
+      background: #0066cc;
+      color: #fff;
+    }
+    :global(.dark) .distance-button.selected {
+      border-color: #2997ff;
+      background: #0066cc;
+      color: #fff;
+    }
+    .distance-label { font-weight: 700; font-size: 0.95rem; }
+    .distance-hint { font-size: 0.75rem; opacity: 0.8; }
+
+    .direction-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 4rem);
+      gap: 0.5rem;
+      justify-content: center;
+      margin-inline: auto;
+    }
+    .direction-button {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 1rem;
+      border: 2px solid rgb(228 228 231);
+      background: #fff;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: rgb(24 24 27);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    :global(.dark) .direction-button {
+      border-color: rgb(63 63 70);
+      background: rgb(24 24 27);
+      color: #fff;
+    }
+    .direction-button:hover {
+      border-color: #0066cc;
+      background: #0066cc;
+      color: #fff;
+      transform: scale(1.05);
+    }
+    .direction-button:active {
+      transform: scale(0.95);
+    }
+    .direction-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: ui-monospace, monospace;
+      color: rgb(161 161 170);
+    }
+
+    .duochrome-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      min-height: 14rem;
+    }
+    .duochrome-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      border-radius: 1.25rem;
+      position: relative;
+    }
+    .duo-red { background: rgb(220 38 38); }
+    .duo-green { background: rgb(22 163 74); }
+    .duochrome-target {
+      width: 60px;
+      height: 60px;
+      border-radius: 999px;
+      border: 8px solid #000000;
+      margin-bottom: 1rem;
+    }
+    .duochrome-caption {
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .dial-stage {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #0066cc; }
+    :global(.dark) .eyebrow { color: #2997ff; }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.025em; color: rgb(24 24 27); }
+    :global(.dark) .section-title { color: rgb(250 250 250); }
+    .guide-section { margin-top: 3.5rem; }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.25rem; }
+    :global(.dark) .score-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .score-label { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .score-status { margin-top: .4rem; color: #0066cc; font-size: .85rem; font-weight: 600; }
+    :global(.dark) .score-status { color: #2997ff; }
+    .acuity-fraction { font-size: 2rem; font-weight: 800; font-family: ui-monospace, monospace; margin-top: 0.25rem; }
+
+    .stat-card { display: flex; flex-direction: column; gap: .35rem; padding: 1rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    :global(.dark) .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .stat-card span { font-size: .85rem; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.15rem; }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .45rem 1rem; font-size: .9rem; font-weight: 700; }
+    .result-badge.neutral { color: #0066cc; background: rgb(239 246 255); border-color: rgb(191 219 254); }
+    :global(.dark) .result-badge.neutral { color: #2997ff; background: rgba(41, 151, 255, 0.15); border-color: rgba(41, 151, 255, 0.35); }
+
+    .print-only { display: none; }
+    @media print {
+      header, footer, nav, #eye-app, article, #share-toast { display: none !important; }
+      #printable-report { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../../scripts/tools/eye-tester.js"></script>
+  <script>
+    // German UI Localization Patch for dynamic eye-tester texts
+    (function() {
+      const eyeLabel = document.getElementById('acuity-eye-label');
+      const eyeInstruction = document.getElementById('acuity-instruction');
+      const eyeProgress = document.getElementById('acuity-eye-progress');
+
+      function patchTexts() {
+        if (eyeLabel) {
+          const t = eyeLabel.textContent || '';
+          if (t.includes('Right eye')) eyeLabel.textContent = 'Rechtes Auge';
+          else if (t.includes('Left eye')) eyeLabel.textContent = 'Linkes Auge';
+          else if (t.includes('Both eyes')) eyeLabel.textContent = 'Beide Augen';
+        }
+        if (eyeInstruction) {
+          const inst = eyeInstruction.textContent || '';
+          if (inst.includes('Cover your LEFT eye')) eyeInstruction.textContent = 'Decken Sie Ihr LINKES Auge ab.';
+          else if (inst.includes('Cover your RIGHT eye')) eyeInstruction.textContent = 'Decken Sie Ihr RECHTES Auge ab.';
+          else if (inst.includes('Keep BOTH eyes open')) eyeInstruction.textContent = 'Lassen Sie BEIDE Augen geöffnet.';
+        }
+        if (eyeProgress) {
+          const ep = eyeProgress.textContent || '';
+          if (ep.includes('Eye 1 of 3')) eyeProgress.textContent = 'Auge 1 von 3';
+          else if (ep.includes('Eye 2 of 3')) eyeProgress.textContent = 'Auge 2 von 3';
+          else if (ep.includes('Eye 3 of 3')) eyeProgress.textContent = 'Auge 3 von 3';
+        }
+      }
+
+      const observer = new MutationObserver(patchTexts);
+      if (eyeLabel) observer.observe(eyeLabel, { childList: true, characterData: true, subtree: true });
+      if (eyeInstruction) observer.observe(eyeInstruction, { childList: true, characterData: true, subtree: true });
+    })();
+  </script>
+</Layout>

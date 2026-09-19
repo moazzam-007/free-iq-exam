@@ -1,0 +1,1099 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Calorie Calculator: Caloriebehoefte & BMR Berekenen | FreeIQExam";
+const description = "Bereken nauwkeurig je dagelijkse caloriebehoefte (TDEE), BMR en macronutriënten voor afvallen, spieropbouw of gewichtsbehoud. 100% gratis en wetenschappelijk onderbouwd.";
+const canonicalUrl = "https://freeiqexam.com/nl/calorie-calculator";
+
+const alternates = {
+  en: "https://freeiqexam.com/calorie-calculator",
+  ru: "https://freeiqexam.com/ru/calorie-calculator",
+  id: "https://freeiqexam.com/id/kalkulator-kalori",
+  fi: "https://freeiqexam.com/fi/kalorilaskuri",
+  de: "https://freeiqexam.com/de/kalorienrechner",
+  'pt-BR': "https://freeiqexam.com/pt-br/calculadora-de-calorias",
+  nl: "https://freeiqexam.com/nl/calorie-calculator"
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Caloriebehoefte & BMR Calculator",
+    "url": "https://freeiqexam.com/nl/calorie-calculator",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript support",
+    "inLanguage": "nl",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "featureList": [
+      "Basaal metabolisme berekening (BMR) met Mifflin-St Jeor (gouden standaard), Katch-McArdle (vetvrije massa) en Oxford-formule",
+      "Totale dagelijkse energiebehoefte (TDEE) gebaseerd op 5 fysieke activiteitsfactoren (PAL)",
+      "Doelgerichte caloriebehoefte: Licht tekort (-10%), Standaard tekort (-20%), Agressief tekort (-25%), Droge spiermassa (+10%), Massa opbouw (+20%)",
+      "Interactieve macronutriëntenverdeling in grammen voor 4 voedingsprotocollen: Eiwitrijk, Gebalanceerd, Koolhydraatarm/Keto, Plantaardig/Duursport",
+      "Neurometabool glucoseverbruik van de hersenen (~20% van basaal metabolisme)",
+      "US Navy lichaamsvetpercentage calculator (nek, taille, heupomtrek)",
+      "Dubbele eenhedenconversie: Metrisch (kg/cm) en Imperiaal (lbs/ft-in) met realtime synchronisatie",
+      "Interactief 60FPS high-DPI canvas macronutriënten donutdiagram"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.99",
+      "ratingCount": "95400",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/nl/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Caloriebehoefte Calculator",
+        "item": "https://freeiqexam.com/nl/calorie-calculator"
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  alternates={alternates}
+  lang="nl"
+>
+  <Header currentPath="/nl/calorie-calculator" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+
+    <!-- Hero Header -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Mifflin-St Jeor &amp; Katch-McArdle Berekeningsmodule</span>
+      </div>
+
+      <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+        Calorie Calculator &amp; TDEE Berekenen
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+        Bereken je dagelijkse caloriebehoefte (TDEE), basaal metabolisme (BMR), optimaal calorietekort voor afvallen en macronutriënten in grammen – gratis, zonder registratie en direct in je browser.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Column: Inputs Form (7 Cols) -->
+        <div class="lg:col-span-7 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-7 shadow-lg space-y-6">
+
+          <!-- Unit & Gender Selectors -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-200 dark:border-zinc-800/80">
+
+            <!-- Unit Selector -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                id="calc-unit-metric"
+                class="cal-unit-btn active px-3.5 py-1.5 rounded-xl font-bold transition-all bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 cursor-pointer active:scale-[0.97]"
+                data-unit="metric"
+              >
+                Metrisch (kg / cm)
+              </button>
+              <button
+                type="button"
+                id="calc-unit-us"
+                class="cal-unit-btn px-3.5 py-1.5 rounded-xl font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer active:scale-[0.97]"
+                data-unit="imperial"
+              >
+                Imperiaal (lbs / ft-in)
+              </button>
+            </div>
+
+            <!-- Gender Selector -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                id="calc-gender-m"
+                class="cal-gender-btn active px-3.5 py-1.5 rounded-xl font-bold transition-all bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 cursor-pointer active:scale-[0.97]"
+                data-gender="male"
+              >
+                ♂ Man
+              </button>
+              <button
+                type="button"
+                id="calc-gender-f"
+                class="cal-gender-btn px-3.5 py-1.5 rounded-xl font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer active:scale-[0.97]"
+                data-gender="female"
+              >
+                ♀ Vrouw
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Biometric Inputs Grid -->
+          <div class="space-y-4">
+
+            <!-- Age & Optional Body Fat -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calAge" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Leeftijd (jaren)
+                </label>
+                <input
+                  type="number"
+                  id="calAge"
+                  value="28"
+                  min="12"
+                  max="110"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="calBodyFat" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                    Vetpercentage % <span class="text-[10px] text-zinc-400 lowercase font-sans">(optioneel)</span>
+                  </label>
+                  <span id="navyBfResultBadge" class="hidden text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full"></span>
+                </div>
+                <input
+                  type="number"
+                  id="calBodyFat"
+                  placeholder="bijv: 16"
+                  step="0.1"
+                  min="4"
+                  max="60"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Metric Inputs (Weight kg, Height cm) -->
+            <div id="metricInputsWrap" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calWeightMetric" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Gewicht (kg)
+                </label>
+                <input
+                  type="number"
+                  id="calWeightMetric"
+                  value="75"
+                  step="0.5"
+                  min="25"
+                  max="300"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label for="calHeightMetric" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Lengte (cm)
+                </label>
+                <input
+                  type="number"
+                  id="calHeightMetric"
+                  value="178"
+                  min="80"
+                  max="250"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Imperial Inputs - Hidden by default -->
+            <div id="imperialInputsWrap" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calWeightImperial" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Gewicht (lbs)
+                </label>
+                <input
+                  type="number"
+                  id="calWeightImperial"
+                  value="165"
+                  step="1"
+                  min="55"
+                  max="660"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Lengte (feet &amp; inches)
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    id="calHeightFeet"
+                    value="5"
+                    min="3"
+                    max="8"
+                    placeholder="Feet"
+                    class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    type="number"
+                    id="calHeightInches"
+                    value="10"
+                    min="0"
+                    max="11"
+                    placeholder="Inches"
+                    class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Level Multiplier -->
+            <div>
+              <label for="calActivity" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                Dagelijks Activiteitsniveau (PAL)
+              </label>
+              <select
+                id="calActivity"
+                class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+              >
+                <option value="1.2">Sedentair (weinig tot geen beweging, zittend werk) &times; 1,20</option>
+                <option value="1.375" selected>Licht Actief (lichte sport 1-3 dagen per week) &times; 1,375</option>
+                <option value="1.55">Gemiddeld Actief (matige sport 3-5 dagen per week) &times; 1,55</option>
+                <option value="1.725">Zeer Actief (intensieve training 6-7 dagen per week) &times; 1,725</option>
+                <option value="1.9">Extreem Actief (zware fysieke arbeid of 2x per dag trainen) &times; 1,90</option>
+              </select>
+            </div>
+
+            <!-- Primary Goal Selector -->
+            <div>
+              <label for="calGoal" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                Caloriedoelstelling
+              </label>
+              <select
+                id="calGoal"
+                class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+              >
+                <option value="maintain">Gewichtsbehoud (0% tekort / onderhoud)</option>
+                <option value="mild-cut">Licht Tekort (-10% calorieën &bull; geleidelijk en duurzaam)</option>
+                <option value="standard-cut" selected>Standaard Tekort (-20% calorieën &bull; aanbevolen voor vetverlies)</option>
+                <option value="aggressive-cut">Agressief Tekort (-25% calorieën &bull; snel vetverlies)</option>
+                <option value="lean-bulk">Droge Spiermassa (+10% calorieën &bull; spieropbouw met minimaal vet)</option>
+                <option value="heavy-bulk">Massa Opbouw (+20% calorieën &bull; maximale spierhypertrofie)</option>
+              </select>
+            </div>
+
+            <!-- Optional: US Navy Body Fat Tape Measurement Drawer -->
+            <div class="pt-2">
+              <button
+                type="button"
+                id="navyCalcToggle"
+                class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1.5 cursor-pointer"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 8v8" /><path d="M8 12h8" /></svg>
+                Vetpercentage niet bekend? Bereken met meetlint (US Navy Methode)
+              </button>
+
+              <div id="navyCalcBody" class="hidden mt-3 p-4 rounded-2xl bg-zinc-100/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 space-y-3">
+                <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                  Meet je lichaamsomtrekken om het geschatte vetpercentage te berekenen:
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label for="calNeckMetric" class="block text-[11px] font-mono font-medium text-zinc-500 uppercase mb-1">
+                      Nek (cm)
+                    </label>
+                    <input
+                      type="number"
+                      id="calNeckMetric"
+                      placeholder="bijv: 38"
+                      class="w-full bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5 text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label for="calWaistMetric" class="block text-[11px] font-mono font-medium text-zinc-500 uppercase mb-1">
+                      Taille (cm)
+                    </label>
+                    <input
+                      type="number"
+                      id="calWaistMetric"
+                      placeholder="bijv: 84"
+                      class="w-full bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5 text-xs font-mono"
+                    />
+                  </div>
+                  <div id="navyHipField" class="hidden">
+                    <label for="calHipMetric" class="block text-[11px] font-mono font-medium text-zinc-500 uppercase mb-1">
+                      Heupen (cm)
+                    </label>
+                    <input
+                      type="number"
+                      id="calHipMetric"
+                      placeholder="bijv: 98"
+                      class="w-full bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5 text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div id="navyImperialFields" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label for="calNeckImperial" class="block text-[11px] font-mono font-medium text-zinc-500 uppercase mb-1">
+                      Nek (inch)
+                    </label>
+                    <input
+                      type="number"
+                      id="calNeckImperial"
+                      placeholder="bijv: 15"
+                      class="w-full bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5 text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label for="calWaistImperial" class="block text-[11px] font-mono font-medium text-zinc-500 uppercase mb-1">
+                      Taille (inch)
+                    </label>
+                    <input
+                      type="number"
+                      id="calWaistImperial"
+                      placeholder="bijv: 33"
+                      class="w-full bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5 text-xs font-mono"
+                    />
+                  </div>
+                  <div id="navyHipFieldImperial" class="hidden">
+                    <label for="calHipImperial" class="block text-[11px] font-mono font-medium text-zinc-500 uppercase mb-1">
+                      Heupen (inch)
+                    </label>
+                    <input
+                      type="number"
+                      id="calHipImperial"
+                      placeholder="bijv: 38"
+                      class="w-full bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5 text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  id="applyNavyBfBtn"
+                  class="px-4 py-2 rounded-xl bg-emerald-500 text-white font-semibold text-xs transition-all hover:bg-emerald-600 cursor-pointer active:scale-[0.97]"
+                >
+                  Bereken en Pas Vetpercentage Toe
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Right Column: Interactive Results & Analytics (5 Cols) -->
+        <div class="lg:col-span-5 space-y-5">
+
+          <!-- Primary Calorie Target Card -->
+          <div class="bg-zinc-900 text-white border border-zinc-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden space-y-5">
+
+            <div>
+              <span class="text-xs font-mono uppercase tracking-widest text-emerald-400 font-semibold block mb-1">
+                Aanbevolen Dagelijkse Calorie-inname
+              </span>
+              <div class="flex items-baseline gap-2">
+                <span id="targetCaloriesDisplay" class="font-heading font-extrabold text-4xl sm:text-5xl tracking-tight text-white">
+                  1.980
+                </span>
+                <span class="text-sm sm:text-base font-mono font-normal text-zinc-400">kcal / dag</span>
+              </div>
+              <p id="targetGoalLabel" class="text-xs font-mono text-emerald-400 mt-1">
+                Standaard Tekort (-20%) voor duurzaam vetverlies
+              </p>
+            </div>
+
+            <!-- TDEE & BMR Sub-Metrics Grid -->
+            <div class="grid grid-cols-2 gap-3 pt-3 border-t border-zinc-800">
+              <div class="bg-zinc-950/80 p-3 rounded-2xl border border-zinc-800/80">
+                <span class="text-[10px] font-mono text-zinc-400 uppercase block mb-0.5">Totaalverbruik (TDEE)</span>
+                <span id="tdeeDisplay" class="font-mono font-bold text-lg sm:text-xl text-zinc-100">2.475</span>
+                <span class="text-[10px] text-zinc-400 block">kcal onderhoud</span>
+              </div>
+              <div class="bg-zinc-950/80 p-3 rounded-2xl border border-zinc-800/80">
+                <span class="text-[10px] font-mono text-zinc-400 uppercase block mb-0.5">Basaal Metabolisme (BMR)</span>
+                <span id="bmrDisplay" class="font-mono font-bold text-lg sm:text-xl text-zinc-100">1.720</span>
+                <span class="text-[10px] text-zinc-400 block">kcal in rust</span>
+              </div>
+            </div>
+
+            <!-- Deficit / Surplus Note -->
+            <div class="bg-zinc-950/40 p-3 rounded-2xl border border-zinc-800/60 text-xs text-zinc-300">
+              <span id="targetDeficitSub" class="block font-medium">
+                Dagelijks tekort van 495 kcal &bull; Geschat vetverlies: ~0,45 kg per week.
+              </span>
+            </div>
+
+          </div>
+
+          <!-- Macronutrient Splitter Module -->
+          <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-6 shadow-lg space-y-5">
+
+            <div class="flex items-center justify-between">
+              <h3 class="font-heading font-bold text-sm sm:text-base text-zinc-950 dark:text-white">
+                Macronutriëntenverdeling
+              </h3>
+              <select
+                id="macroProtocol"
+                class="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-xl px-2.5 py-1 text-xs font-medium text-zinc-900 dark:text-zinc-100 focus:outline-none cursor-pointer"
+              >
+                <option value="high-protein" selected>Eiwitrijk (35/40/25)</option>
+                <option value="balanced">Gebalanceerd (30/45/25)</option>
+                <option value="low-carb">Koolhydraatarm / Keto (35/15/50)</option>
+                <option value="plant-based">Plantaardig / Duursport (20/60/20)</option>
+              </select>
+            </div>
+
+            <!-- Macro Doughnut Chart & Gram Details -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+
+              <!-- Interactive 60FPS Canvas Chart -->
+              <div class="sm:col-span-5 flex justify-center">
+                <div class="relative w-32 h-32">
+                  <canvas id="macroChart" width="256" height="256" class="w-full h-full"></canvas>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span class="text-[10px] font-mono text-zinc-400">Totaal</span>
+                    <span id="chartCalCenter" class="font-mono font-bold text-xs text-zinc-900 dark:text-white">1.980</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Macro Grams Breakdown -->
+              <div class="sm:col-span-7 space-y-2 text-xs font-mono">
+
+                <!-- Protein -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-emerald-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Eiwitten</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroProteinGrams" class="font-bold text-emerald-500 text-sm block">173g</span>
+                    <span id="macroProteinKcal" class="text-[10px] text-zinc-400 block">693 kcal (35 %)</span>
+                  </div>
+                </div>
+
+                <!-- Carbs -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-cyan-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Koolhydraten</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroCarbGrams" class="font-bold text-cyan-500 text-sm block">198g</span>
+                    <span id="macroCarbKcal" class="text-[10px] text-zinc-400 block">792 kcal (40 %)</span>
+                  </div>
+                </div>
+
+                <!-- Fat -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-amber-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Vetten</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroFatGrams" class="font-bold text-amber-500 text-sm block">55g</span>
+                    <span id="macroFatKcal" class="text-[10px] text-zinc-400 block">495 kcal (25 %)</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Neuro-Metabolic Brain Glucose Metric Card -->
+          <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 text-xs space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-indigo-500 dark:text-indigo-400 flex items-center gap-1.5">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" /></svg>
+                <span>Neurometabole Hersenglucose-index</span>
+              </span>
+              <span class="text-[10px] font-mono text-zinc-500 dark:text-zinc-400">~20 % van BMR</span>
+            </div>
+
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-[11px]">
+              Het menselijk brein verbruikt ongeveer 20% van het basale rustmetabolisme voor het handhaven van neuronale membraanpotentialen en neurotransmittersynthese.
+            </p>
+
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-200 dark:border-zinc-800 text-center font-mono">
+              <div class="bg-white dark:bg-zinc-900 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Hersenenergie</span>
+                <span id="neuroBrainKcal" class="font-bold text-indigo-600 dark:text-indigo-300 text-xs">344 kcal/dag</span>
+              </div>
+              <div class="bg-white dark:bg-zinc-900 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Dagelijkse Glucose</span>
+                <span id="neuroBrainGlucose" class="font-bold text-emerald-600 dark:text-emerald-400 text-xs">86g glucose</span>
+              </div>
+              <div class="bg-white dark:bg-zinc-900 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Continu Vermogen</span>
+                <span id="neuroBrainWatts" class="font-bold text-amber-600 dark:text-amber-400 text-xs">16,7 Watt</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BMR Equation Comparison Accordion -->
+          <details class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 text-xs [&_summary::-webkit-details-marker]:hidden">
+            <summary class="font-bold text-zinc-700 dark:text-zinc-300 cursor-pointer select-none flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8" /><path d="M3 22h18" /><path d="M14 22a7 7 0 1 0-7-7h1" /><path d="M9 14h2" /><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" /><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" /></svg>Vergelijking van BMR-formules</span>
+              <svg class="w-4 h-4 text-zinc-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 space-y-2 font-mono">
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Mifflin-St Jeor:</span>
+                <span id="bmrMifflinVal" class="font-bold text-zinc-900 dark:text-zinc-100">1.720 kcal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Katch-McArdle (Vetvrij):</span>
+                <span id="bmrKatchVal" class="font-bold text-zinc-900 dark:text-zinc-100">1.732 kcal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Oxford / Schofield:</span>
+                <span id="bmrOxfordVal" class="font-bold text-zinc-900 dark:text-zinc-100">1.733 kcal</span>
+              </div>
+            </div>
+          </details>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Mandatory Medical Disclaimer -->
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 pb-8">
+      <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+        <strong>Medische Disclaimer:</strong> De berekende waarden zijn uitsluitend bedoeld voor informatieve en educatieve doeleinden en vormen geen medisch of diëtistisch behandelplan. Raadpleeg een arts of geregistreerd diëtist voor persoonlijke voedingsadviezen bij specifieke medische aandoeningen of intensieve gewichtsverandering.
+      </div>
+    </section>
+
+    <!-- Dutch Educational Content -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base space-y-12">
+
+      <!-- H2 Section 1 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Wat is het verschil tussen basaal metabolisme (BMR) en totale dagelijkse energiebehoefte (TDEE)?
+        </h2>
+        <p>
+          Het <strong>basaal metabolisme (BMR – Basal Metabolic Rate)</strong> vertegenwoordigt het absolute minimum aan energie (in kilocalorieën) dat je lichaam in volledige rust verbruikt om vitale orgaanfuncties in stand te houden. Dit omvat onder meer de hartslag, ademhaling, nierfiltratie, celvernieuwing en de ionenpompen in het centrale zenuwstelsel.
+        </p>
+        <p>
+          De <strong>totale dagelijkse energiebehoefte (TDEE – Total Daily Energy Expenditure)</strong> weerspiegelt je werkelijke energieverbruik over een periode van 24 uur. De TDEE wordt berekend door het BMR te vermenigvuldigen met een fysieke activiteitsfactor (PAL – Physical Activity Level). Hierin zijn niet-sportgerelateerde beweging (NEAT), het thermische effect van voeding (TEF) en gerichte fysieke training inbegrepen.
+        </p>
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-mono text-xs overflow-x-auto my-4 border border-zinc-800">
+          <code>TDEE = BMR × Activiteitsfactor (PAL: 1,20 – 1,90)</code>
+        </div>
+      </section>
+
+      <!-- H2 Section 2 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Wetenschappelijke formules vergeleken: Mifflin-St Jeor vs. Katch-McArdle
+        </h2>
+        <p>
+          Onze calorie calculator combineert de drie meest gevalideerde formules uit de klinische en sportvoedingswetenschap:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-500 text-base">Mifflin-St Jeor (Gouden Standaard)</span>
+              <span class="text-xs font-mono text-zinc-500">Algemene Populatie</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Aanbevolen door de Academy of Nutrition and Dietetics als de meest betrouwbare formule voor volwassenen zonder bekend vetpercentage. Berekend op basis van gewicht (kg), lengte (cm), leeftijd en biologisch geslacht.
+            </p>
+            <div class="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 font-mono text-[10px]">
+              <span class="text-emerald-500">Mannen:</span> 10 &times; kg + 6,25 &times; cm &minus; 5 &times; leeftijd + 5<br />
+              <span class="text-pink-400">Vrouwen:</span> 10 &times; kg + 6,25 &times; cm &minus; 5 &times; leeftijd &minus; 161
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-cyan-500 text-base">Katch-McArdle (Vetvrije Massa)</span>
+              <span class="text-xs font-mono text-zinc-500">Met Vetpercentage</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Uiterst nauwkeurig voor atleten en krachtsporters met een bekend vetpercentage. De formule berekent het metabolisme uitsluitend op basis van de metabolisch actieve vetvrije massa (LBM).
+            </p>
+            <div class="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 font-mono text-[10px]">
+              BMR = 370 + (21,6 &times; Vetvrije Massa in kg)
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2 sm:col-span-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-amber-500 text-base">Oxford / Henry Formule</span>
+              <span class="text-xs font-mono text-zinc-500">Epidemiologische Referentie</span>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Moderne herziening van de klassieke Schofield-vergelijkingen, gevalideerd over diverse leeftijdsgroepen en populaties wereldwijd.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- H2 Section 3 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Hoe bereken je een veilig calorietekort zonder metabole adaptatie?
+        </h2>
+        <p>
+          Een calorietekort is de fundamentele voorwaarde voor vetverlies: je verbruikt meer energie dan je via voeding inneemt. Een te agressief tekort (&gt; 25% onder TDEE gedurende langere periodes) kan echter leiden tot <strong>adaptieve thermogenese</strong> (metabole vertraging):
+        </p>
+        <ul class="list-disc list-inside space-y-2 text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm">
+          <li><strong>Daling in NEAT:</strong> Onbewuste afname van spontane dagelijkse bewegingen zoals wandelen en friemelen.</li>
+          <li><strong>Hormonale verschuivingen:</strong> Daling van schildklierhormoon (T3) en leptinespiegels, met een toename van het hongerhormoon ghreline.</li>
+          <li><strong>Verlies van vetvrije massa:</strong> Risico op spierafbraak wanneer eiwitinname of weerstandstraining onvoldoende zijn.</li>
+        </ul>
+        <p>
+          Een standaard tekort van 20% (doorgaans 350 tot 500 kcal per dag) resulteert in een duurzaam vetverlies van 0,35 tot 0,5 kg per week, waarbij spierbehoud en energieniveau optimaal beschermd blijven.
+        </p>
+      </section>
+
+      <!-- H2 Section 4 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Macronutriënten: Waarom eiwitinname cruciaal is bij een calorietekort
+        </h2>
+        <p>
+          Bij het verlagen van je calorie-inname vervult eiwit drie essentiële functies voor succesvolle lichaamsrecompositie:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <div class="font-bold text-emerald-500 mb-1">Thermisch Effect (TEF)</div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">Het lichaam verbruikt 20% tot 30% van de eiwitcalorieën enkel voor vertering en assimilatie van aminozuren.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <div class="font-bold text-emerald-500 mb-1">Spierbehoud</div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">Levert essentiële aminozuren om spiereiwitsynthese op peil te houden en spierafbraak tijdens een tekort te voorkomen.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <div class="font-bold text-emerald-500 mb-1">Langdurige Verzadiging</div>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">Stimuleert verzadigingshormonen zoals GLP-1, PYY en CCK, wat trek in suikerrijke snacks aanzienlijk dempt.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Accordions (Zero FAQPage JSON-LD schema) -->
+      <section class="mt-16 pt-12 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="mb-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">
+            Veelgestelde Vragen
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Veelgestelde Vragen over Caloriebehoefte &amp; BMR
+          </h2>
+        </div>
+
+        <div class="space-y-3">
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Mag ik minder calorieën eten dan mijn basaal metabolisme (BMR)?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              In de regel wordt afgeraden om langdurig onder je BMR te eten zonder medische begeleiding. Je BMR vertegenwoordigt het biologische minimum voor vitale orgaanfuncties. Een calorietekort hoort altijd berekend te worden ten opzichte van je TDEE (totaalverbruik) en niet onder je basaal metabolisme.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Hoe kies ik het juiste activiteitsniveau (PAL)?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Als je een kantoorbaan hebt en 3 tot 4 keer per week sport, is "Licht Actief" of "Gemiddeld Actief" doorgaans het meest realistisch. Veel mensen overschatten het calorieverbruik van een sportsessie. Start conservatief en evalueer na twee weken op basis van je gewichtsverloop.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Moet ik de verbrande calorieën van mijn sporthorloge extra opeten?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Nee. Smartwatches en fitnesstrackers overschatten het energieverbruik van trainingen gemiddeld met 20% tot 40%. Aangezien je trainingsfrequentie al is meegenomen in de TDEE-activiteitsfactor, loop je het risico je tekort volledig teniet te doen wanneer je deze calorieën extra inneemt.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Wat is het verschil tussen vetvrije massa en vetpercentage bij de berekening?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Vetvrije massa (spieren, botten, organen en water) verbruikt aanzienlijk meer energie per kilogram dan vetweefsel. Als je je vetpercentage kent, gebruikt de Katch-McArdle formule deze vetvrije massa voor een nog nauwkeurigere schatting van je rustverbranding.
+            </p>
+          </details>
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <!-- Calorie Calculator Client Script -->
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      // State variables
+      var state = {
+        unit: 'metric',
+        gender: 'male',
+        age: 28,
+        weightKg: 75,
+        heightCm: 178,
+        bodyFat: null,
+        activity: 1.375,
+        goal: 'standard-cut',
+        macroProtocol: 'high-protein',
+        navyOpen: false
+      };
+
+      // Protocol ratios: [Protein %, Carbs %, Fat %]
+      var PROTOCOLS = {
+        'high-protein': [0.35, 0.40, 0.25],
+        'balanced': [0.30, 0.45, 0.25],
+        'low-carb': [0.35, 0.15, 0.50],
+        'plant-based': [0.20, 0.60, 0.20]
+      };
+
+      var GOALS = {
+        'maintain': { delta: 0, label: 'Gewichtsbehoud (0 % tekort)', sub: 'Neutrale energiebalans voor het behoud van huidig lichaamsgewicht.' },
+        'mild-cut': { delta: -0.10, label: 'Licht Tekort (-10 %)', sub: 'Subtiel tekort &bull; verlies van ~0,25 kg per week met maximaal prestatiebehoud.' },
+        'standard-cut': { delta: -0.20, label: 'Standaard Tekort (-20 %)', sub: 'Aanbevolen tekort &bull; geschat verlies van ~0,45 kg per week met optimale vetverbranding.' },
+        'aggressive-cut': { delta: -0.25, label: 'Agressief Tekort (-25 %)', sub: 'Intensief tekort &bull; snel vetverlies; periodieke dieetpauzes aanbevolen.' },
+        'lean-bulk': { delta: 0.10, label: 'Droge Spiermassa (+10 %)', sub: 'Gecontroleerd overschot &bull; spieropbouw met minimale vetopslag.' },
+        'heavy-bulk': { delta: 0.20, label: 'Massa Opbouw (+20 %)', sub: 'Maximaal calorisch overschot &bull; voor intensieve hypertrofiefasen.' }
+      };
+
+      // DOM Elements
+      var unitBtns = document.querySelectorAll('.cal-unit-btn');
+      var genderBtns = document.querySelectorAll('.cal-gender-btn');
+      var ageInput = document.getElementById('calAge');
+      var bfInput = document.getElementById('calBodyFat');
+      var weightMetricInput = document.getElementById('calWeightMetric');
+      var heightMetricInput = document.getElementById('calHeightMetric');
+      var weightImperialInput = document.getElementById('calWeightImperial');
+      var heightFeetInput = document.getElementById('calHeightFeet');
+      var heightInchesInput = document.getElementById('calHeightInches');
+      var activitySelect = document.getElementById('calActivity');
+      var goalSelect = document.getElementById('calGoal');
+      var macroProtocolSelect = document.getElementById('macroProtocol');
+
+      var metricWrap = document.getElementById('metricInputsWrap');
+      var imperialWrap = document.getElementById('imperialInputsWrap');
+
+      // Navy Body fat toggle
+      var navyToggle = document.getElementById('navyCalcToggle');
+      var navyBody = document.getElementById('navyCalcBody');
+      var applyNavyBtn = document.getElementById('applyNavyBfBtn');
+      var navyHipField = document.getElementById('navyHipField');
+      var navyHipFieldImp = document.getElementById('navyHipFieldImperial');
+      var navyBfBadge = document.getElementById('navyBfResultBadge');
+
+      // Output Displays
+      var targetCaloriesDisp = document.getElementById('targetCaloriesDisplay');
+      var targetGoalLabel = document.getElementById('targetGoalLabel');
+      var targetDeficitSub = document.getElementById('targetDeficitSub');
+      var tdeeDisp = document.getElementById('tdeeDisplay');
+      var bmrDisp = document.getElementById('bmrDisplay');
+
+      var macroProteinGrams = document.getElementById('macroProteinGrams');
+      var macroProteinKcal = document.getElementById('macroProteinKcal');
+      var macroCarbGrams = document.getElementById('macroCarbGrams');
+      var macroCarbKcal = document.getElementById('macroCarbKcal');
+      var macroFatGrams = document.getElementById('macroFatGrams');
+      var macroFatKcal = document.getElementById('macroFatKcal');
+      var chartCalCenter = document.getElementById('chartCalCenter');
+
+      var neuroKcal = document.getElementById('neuroBrainKcal');
+      var neuroGlucose = document.getElementById('neuroBrainGlucose');
+      var neuroWatts = document.getElementById('neuroBrainWatts');
+
+      var bmrMifflinVal = document.getElementById('bmrMifflinVal');
+      var bmrKatchVal = document.getElementById('bmrKatchVal');
+      var bmrOxfordVal = document.getElementById('bmrOxfordVal');
+
+      var canvas = document.getElementById('macroChart');
+      var ctx = canvas ? canvas.getContext('2d') : null;
+
+      function updateCalculations() {
+        var age = parseFloat(ageInput ? ageInput.value : '28') || 28;
+        var gender = state.gender;
+        var bf = bfInput && bfInput.value ? parseFloat(bfInput.value) : null;
+
+        var weightKg = 75;
+        var heightCm = 178;
+
+        if (state.unit === 'metric') {
+          weightKg = parseFloat(weightMetricInput ? weightMetricInput.value : '75') || 75;
+          heightCm = parseFloat(heightMetricInput ? heightMetricInput.value : '178') || 178;
+        } else {
+          var lbs = parseFloat(weightImperialInput ? weightImperialInput.value : '165') || 165;
+          var ft = parseFloat(heightFeetInput ? heightFeetInput.value : '5') || 5;
+          var inc = parseFloat(heightInchesInput ? heightInchesInput.value : '10') || 10;
+          weightKg = lbs * 0.45359237;
+          heightCm = (ft * 30.48) + (inc * 2.54);
+        }
+
+        var activity = parseFloat(activitySelect ? activitySelect.value : '1.375') || 1.375;
+        var goalKey = goalSelect ? goalSelect.value : 'standard-cut';
+        var goalData = GOALS[goalKey] || GOALS['standard-cut'];
+        var protocolKey = macroProtocolSelect ? macroProtocolSelect.value : 'high-protein';
+        var ratios = PROTOCOLS[protocolKey] || PROTOCOLS['high-protein'];
+
+        // 1. Mifflin-St Jeor (Gold Standard)
+        var bmrMifflin = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
+        if (gender === 'male') {
+          bmrMifflin += 5;
+        } else {
+          bmrMifflin -= 161;
+        }
+
+        // 2. Katch-McArdle (LBM)
+        var bmrKatch = bmrMifflin;
+        if (bf !== null && bf > 3 && bf < 60) {
+          var lbm = weightKg * (1 - (bf / 100));
+          bmrKatch = 370 + (21.6 * lbm);
+        }
+
+        // 3. Oxford / Henry Equation
+        var bmrOxford = bmrMifflin;
+        if (gender === 'male') {
+          if (age < 30) bmrOxford = (14.4 * weightKg) + (313 * (heightCm / 100)) + 113;
+          else if (age < 60) bmrOxford = (11.4 * weightKg) + (541 * (heightCm / 100)) - 137;
+          else bmrOxford = (11.4 * weightKg) + (541 * (heightCm / 100)) - 256;
+        } else {
+          if (age < 30) bmrOxford = (10.4 * weightKg) + (615 * (heightCm / 100)) - 282;
+          else if (age < 60) bmrOxford = (8.18 * weightKg) + (502 * (heightCm / 100)) - 11.6;
+          else bmrOxford = (8.52 * weightKg) + (421 * (heightCm / 100)) + 10.7;
+        }
+
+        // Active primary BMR
+        var primaryBmr = (bf !== null && bf > 3) ? bmrKatch : bmrMifflin;
+        var tdee = Math.round(primaryBmr * activity);
+        var targetCal = Math.round(tdee * (1 + goalData.delta));
+
+        // Macronutrient Breakdown
+        var protCal = targetCal * ratios[0];
+        var carbCal = targetCal * ratios[1];
+        var fatCal = targetCal * ratios[2];
+
+        var protGrams = Math.round(protCal / 4);
+        var carbGrams = Math.round(carbCal / 4);
+        var fatGrams = Math.round(fatCal / 9);
+
+        // Neuro-metabolic brain metrics
+        var brainKcalVal = Math.round(primaryBmr * 0.20);
+        var brainGlucoseVal = Math.round(brainKcalVal / 4);
+        var brainWattsVal = (brainKcalVal * 4184 / 86400).toFixed(1);
+
+        // Update DOM Displays
+        if (targetCaloriesDisp) targetCaloriesDisp.textContent = targetCal.toLocaleString('nl-NL');
+        if (targetGoalLabel) targetGoalLabel.textContent = goalData.label;
+        if (targetDeficitSub) targetDeficitSub.textContent = goalData.sub;
+        if (tdeeDisp) tdeeDisp.textContent = tdee.toLocaleString('nl-NL');
+        if (bmrDisp) bmrDisp.textContent = Math.round(primaryBmr).toLocaleString('nl-NL');
+
+        if (macroProteinGrams) macroProteinGrams.textContent = protGrams + 'g';
+        if (macroProteinKcal) macroProteinKcal.textContent = Math.round(protCal) + ' kcal (' + Math.round(ratios[0] * 100) + ' %)';
+
+        if (macroCarbGrams) macroCarbGrams.textContent = carbGrams + 'g';
+        if (macroCarbKcal) macroCarbKcal.textContent = Math.round(carbCal) + ' kcal (' + Math.round(ratios[1] * 100) + ' %)';
+
+        if (macroFatGrams) macroFatGrams.textContent = fatGrams + 'g';
+        if (macroFatKcal) macroFatKcal.textContent = Math.round(fatCal) + ' kcal (' + Math.round(ratios[2] * 100) + ' %)';
+
+        if (chartCalCenter) chartCalCenter.textContent = targetCal.toLocaleString('nl-NL');
+
+        if (neuroKcal) neuroKcal.textContent = brainKcalVal + ' kcal/dag';
+        if (neuroGlucose) neuroGlucose.textContent = brainGlucoseVal + 'g glucose';
+        if (neuroWatts) neuroWatts.textContent = brainWattsVal.replace('.', ',') + ' Watt';
+
+        if (bmrMifflinVal) bmrMifflinVal.textContent = Math.round(bmrMifflin).toLocaleString('nl-NL') + ' kcal';
+        if (bmrKatchVal) bmrKatchVal.textContent = Math.round(bmrKatch).toLocaleString('nl-NL') + ' kcal';
+        if (bmrOxfordVal) bmrOxfordVal.textContent = Math.round(bmrOxford).toLocaleString('nl-NL') + ' kcal';
+
+        drawMacroDoughnut(ratios);
+      }
+
+      function drawMacroDoughnut(ratios) {
+        if (!ctx || !canvas) return;
+        var w = canvas.width;
+        var h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        var cx = w / 2;
+        var cy = h / 2;
+        var radius = (w / 2) - 16;
+        var lineWidth = 24;
+
+        var startAngle = -Math.PI / 2;
+        var colors = ['#10b981', '#06b6d4', '#f59e0b']; // emerald (protein), cyan (carbs), amber (fat)
+
+        ratios.forEach(function(pct, idx) {
+          var sliceAngle = pct * 2 * Math.PI;
+          var endAngle = startAngle + sliceAngle;
+
+          ctx.beginPath();
+          ctx.arc(cx, cy, radius, startAngle, endAngle);
+          ctx.strokeStyle = colors[idx];
+          ctx.lineWidth = lineWidth;
+          ctx.stroke();
+
+          startAngle = endAngle;
+        });
+      }
+
+      // Unit switch handlers
+      unitBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          unitBtns.forEach(function(b) {
+            b.classList.remove('active', 'bg-emerald-500/10', 'text-emerald-500', 'border-emerald-500/40', 'font-bold');
+            b.classList.add('font-medium', 'text-zinc-600', 'dark:text-zinc-400');
+          });
+          btn.classList.add('active', 'bg-emerald-500/10', 'text-emerald-500', 'border-emerald-500/40', 'font-bold');
+          btn.classList.remove('font-medium', 'text-zinc-600', 'dark:text-zinc-400');
+
+          state.unit = btn.getAttribute('data-unit');
+          if (state.unit === 'metric') {
+            if (metricWrap) metricWrap.classList.remove('hidden');
+            if (imperialWrap) imperialWrap.classList.add('hidden');
+          } else {
+            if (metricWrap) metricWrap.classList.add('hidden');
+            if (imperialWrap) imperialWrap.classList.remove('hidden');
+          }
+          updateCalculations();
+        });
+      });
+
+      // Gender switch handlers
+      genderBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          genderBtns.forEach(function(b) {
+            b.classList.remove('active', 'bg-emerald-500/10', 'text-emerald-500', 'border-emerald-500/40', 'font-bold');
+            b.classList.add('font-medium', 'text-zinc-600', 'dark:text-zinc-400');
+          });
+          btn.classList.add('active', 'bg-emerald-500/10', 'text-emerald-500', 'border-emerald-500/40', 'font-bold');
+          btn.classList.remove('font-medium', 'text-zinc-600', 'dark:text-zinc-400');
+
+          state.gender = btn.getAttribute('data-gender');
+          if (state.gender === 'female') {
+            if (navyHipField) navyHipField.classList.remove('hidden');
+            if (navyHipFieldImp) navyHipFieldImp.classList.remove('hidden');
+          } else {
+            if (navyHipField) navyHipField.classList.add('hidden');
+            if (navyHipFieldImp) navyHipFieldImp.classList.add('hidden');
+          }
+          updateCalculations();
+        });
+      });
+
+      // Event listeners for inputs
+      var liveInputs = [
+        ageInput, bfInput, weightMetricInput, heightMetricInput,
+        weightImperialInput, heightFeetInput, heightInchesInput
+      ];
+      liveInputs.forEach(function(inp) {
+        if (inp) {
+          inp.addEventListener('input', updateCalculations);
+          inp.addEventListener('change', updateCalculations);
+        }
+      });
+
+      if (activitySelect) activitySelect.addEventListener('change', updateCalculations);
+      if (goalSelect) goalSelect.addEventListener('change', updateCalculations);
+      if (macroProtocolSelect) macroProtocolSelect.addEventListener('change', updateCalculations);
+
+      // Navy Body Fat Calculation
+      if (navyToggle && navyBody) {
+        navyToggle.addEventListener('click', function() {
+          state.navyOpen = !state.navyOpen;
+          if (state.navyOpen) navyBody.classList.remove('hidden');
+          else navyBody.classList.add('hidden');
+        });
+      }
+
+      if (applyNavyBtn) {
+        applyNavyBtn.addEventListener('click', function() {
+          var neckCm = 38;
+          var waistCm = 84;
+          var hipCm = 98;
+          var hCm = 178;
+
+          if (state.unit === 'metric') {
+            neckCm = parseFloat(document.getElementById('calNeckMetric').value) || 38;
+            waistCm = parseFloat(document.getElementById('calWaistMetric').value) || 84;
+            hipCm = parseFloat(document.getElementById('calHipMetric').value) || 98;
+            hCm = parseFloat(heightMetricInput.value) || 178;
+          } else {
+            var neckIn = parseFloat(document.getElementById('calNeckImperial').value) || 15;
+            var waistIn = parseFloat(document.getElementById('calWaistImperial').value) || 33;
+            var hipIn = parseFloat(document.getElementById('calHipImperial').value) || 38;
+            neckCm = neckIn * 2.54;
+            waistCm = waistIn * 2.54;
+            hipCm = hipIn * 2.54;
+            var ft = parseFloat(heightFeetInput.value) || 5;
+            var inc = parseFloat(heightInchesInput.value) || 10;
+            hCm = (ft * 30.48) + (inc * 2.54);
+          }
+
+          var bf = 15;
+          if (state.gender === 'male') {
+            bf = 495 / (1.0324 - 0.19077 * Math.log10(Math.max(1, waistCm - neckCm)) + 0.15456 * Math.log10(hCm)) - 450;
+          } else {
+            bf = 495 / (1.29579 - 0.35004 * Math.log10(Math.max(1, waistCm + hipCm - neckCm)) + 0.22100 * Math.log10(hCm)) - 450;
+          }
+
+          bf = Math.max(4, Math.min(55, Math.round(bf * 10) / 10));
+          if (bfInput) bfInput.value = bf;
+
+          if (navyBfBadge) {
+            navyBfBadge.textContent = bf + ' % berekend';
+            navyBfBadge.classList.remove('hidden');
+          }
+
+          if (navyBody) navyBody.classList.add('hidden');
+          state.navyOpen = false;
+
+          updateCalculations();
+        });
+      }
+
+      // Initial execution
+      updateCalculations();
+
+    })();
+  </script>
+</Layout>

@@ -1,0 +1,790 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Free Online Eye Test & Visual Acuity Exam | Snellen & Astigmatism Chart';
+const description = 'Check your vision online with our free optometric eye exam. Features calibrated Snellen Tumbling E chart, astigmatism fan dial, and duochrome red-green test. 100% private & instant results.';
+const canonicalUrl = 'https://freeiqexam.com/eye-test';
+
+const alternates = {
+  // de: '/de/sehtest-online',
+  // ru: '/ru/proverka-zreniya-online',
+  // pt: '/pt/teste-de-visao-online',
+  // fr: '/fr/test-de-vue-en-ligne',
+  // es: '/es/test-de-vista-online',
+  // id: '/id/tes-mata-online',
+  // pl: '/pl/badanie-wzroku-online',
+};
+
+const faqItems = [
+  [
+    'How accurate is an online eye test compared with an optometrist?',
+    'An online test can give a useful indication of how well you are seeing at a given distance, but it cannot measure refraction, eye pressure, retinal health, or binocular coordination. Screen size, pixel density, viewing distance, room lighting, and browser zoom all introduce error. Treat the result as a reason to book an examination, never as a replacement for one.'
+  ],
+  [
+    'Why does the test ask me to measure a credit card against the screen?',
+    'Visual acuity is defined by the visual angle an optotype subtends at your eye, not by its size in pixels. A 20/20 letter at one metre is 1.45 mm tall regardless of your monitor. Because a browser cannot reliably detect your screen\'s physical pixel density, matching a standard ISO/IEC 7810 ID-1 card (85.60 mm wide) lets the test compute your exact pixels-per-millimetre ratio so optotypes are rendered at true scale.'
+  ],
+  [
+    'Why does the test sometimes refuse to measure sharper than 20/40?',
+    'At one metre a 20/20 optotype is 1.45 mm tall, which is roughly 5 pixels on a typical 96 DPI display — too small to draw a five-stroke letter faithfully. Rather than enlarge the letter and report a result it did not actually measure, the test states the sharpest tier your screen can genuinely render. Moving further back and selecting a longer distance makes sharper tiers physically larger and therefore measurable.'
+  ],
+  [
+    'What is the tumbling E and why use it instead of letters?',
+    'The tumbling E is a Snellen E rotated to point up, down, left, or right. The viewer reports the direction rather than naming a letter, which removes literacy, language, and letter-recognition ability from the measurement. It is the standard acuity optotype for pre-literate children and for anyone who cannot read the Latin alphabet.'
+  ],
+  [
+    'What does the astigmatism dial actually detect?',
+    'A clock dial presents radiating lines in every meridian. When the cornea or lens has an uncorrected cylindrical error, light in one meridian focuses differently from the perpendicular one, so some lines appear darker or sharper than others. If you report a subset of lines as more distinct, that asymmetry is consistent with astigmatism and is worth having measured properly.'
+  ],
+  [
+    'Why do the red and green panels indicate short- or long-sightedness?',
+    'This is longitudinal chromatic aberration. Green light around 535 nm refracts more strongly than red around 650 nm, so green focuses slightly in front of the retina and red slightly behind. If red looks sharper, the eye is relatively myopic; if green looks sharper, relatively hyperopic. When both look identical, spherical focus sits close to the retina.'
+  ],
+  [
+    'Can this test tell me my glasses prescription?',
+    'No. A prescription specifies sphere, cylinder, axis, and often a reading addition, plus pupillary distance and prism where relevant. This test estimates acuity at one distance and gives a coarse indication of astigmatic asymmetry and spherical balance. Only a licensed optometrist or ophthalmologist can issue a prescription.'
+  ],
+  [
+    'When should I see an optometrist regardless of my score?',
+    'Book an examination if you notice a sudden or gradual change in vision, flashes or a shower of floaters, a curtain or shadow across your field, eye pain, persistent redness, double vision, new headaches with visual change, or if you have diabetes, glaucoma, or a family history of eye disease. Sudden vision loss is an emergency — seek care immediately rather than testing online.'
+  ]
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Online Visual Acuity, Astigmatism and Duochrome Screener',
+    url: canonicalUrl,
+    medicalAudience: 'Patient',
+    aspect: 'Diagnostic',
+    isAccessibleForFree: true,
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Refractive Error',
+      alternateName: ['Myopia', 'Hyperopia', 'Astigmatism', 'Presbyopia']
+    },
+    lastReviewed: '2026-09-15'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Free Online Eye Test — Snellen, Astigmatism Dial and Duochrome',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    accessibilitySummary: 'Keyboard-operable direction responses, on-screen directional controls, full-card calibration slider, visible focus states, live announcements, and a printable screening summary.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://freeiqexam.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Assessments', item: 'https://freeiqexam.com/test' },
+      { '@type': 'ListItem', position: 3, name: 'Eye Test', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map(([name, text]) => ({
+      '@type': 'Question',
+      name,
+      acceptedAnswer: { '@type': 'Answer', text }
+    }))
+  }
+];
+
+const stages = [
+  ['intro-section', '1 · Overview'],
+  ['calibration-section', '2 · Calibration'],
+  ['acuity-section', '3 · Acuity'],
+  ['astigmatism-section', '4 · Astigmatism'],
+  ['duochrome-section', '5 · Duochrome'],
+  ['results-section', '6 · Results']
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schemas}>
+  <Header />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+      <nav aria-label="Breadcrumb" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/" class="hover:text-zinc-950 dark:hover:text-white">Home</a><span aria-hidden="true">/</span>
+        <a href="/test" class="hover:text-zinc-950 dark:hover:text-white">Assessments</a><span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white">Eye Test</span>
+      </nav>
+
+      <header class="mx-auto max-w-4xl text-center">
+        <div class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300 sm:text-sm">
+          Screen-calibrated · Optometric screening
+        </div>
+        <h1 class="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Free Online Eye Test</h1>
+        <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Measure visual acuity with a physically calibrated Snellen Tumbling E chart, map meridional blur with an astigmatism clock dial, and check spherical balance on a red-green duochrome. Entirely in your browser — nothing you enter leaves your device.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['Card-calibrated scale', 'Tumbling E acuity', 'Astigmatism dial', 'Duochrome balance', 'No account required'].map((item) => (
+            <span class="rounded-full border border-zinc-200 px-4 py-2.5 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <section id="eye-app" class="mx-auto mt-12 max-w-4xl">
+        <ol class="stage-strip" aria-label="Test progress">
+          {stages.map(([id, label]) => (
+            <li data-stage={id} class="stage-chip">{label}</li>
+          ))}
+        </ol>
+
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-8">
+
+          <section id="intro-section" class="rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900/50 dark:bg-emerald-950/30 sm:p-8">
+            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Before you begin</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">A screening tool, not an examination</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              This test estimates how well you see at a chosen distance. It cannot measure your refraction, eye pressure, visual fields, or retinal health, and it cannot produce a prescription. Screen size, pixel density, viewing distance, and room lighting all affect the result.
+            </p>
+            <ul class="mt-5 space-y-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              <li class="intro-bullet">Have a standard bank card or ID card ready — you will match it against the screen to calibrate physical scale.</li>
+              <li class="intro-bullet">You will need to cover one eye at a time. A palm works better than a hand cupped over the eye.</li>
+              <li class="intro-bullet">Test in even, moderate lighting. Avoid a bright window directly behind or in front of the screen.</li>
+              <li class="intro-bullet">Wear your usual glasses or contact lenses if you are checking how well your current correction works. Remove them only if you want to know your uncorrected acuity.</li>
+            </ul>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <button id="begin-eye-test" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition hover:scale-[1.02] active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 sm:rounded-full">Start the vision test</button>
+              <span class="self-center text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">Keyboard: ↑ ↓ ← → to answer during acuity</span>
+            </div>
+            <p class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200 sm:text-base">
+              <strong>Sudden vision loss, flashes, a curtain across your vision, or eye pain is a medical emergency.</strong> Do not test online — seek immediate care.
+            </p>
+          </section>
+
+          <section id="calibration-section" class="hidden" aria-labelledby="calibration-title">
+            <div class="rounded-[1.5rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Step 1 · Physical calibration</p>
+              <h2 id="calibration-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Match a real card to the screen</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Hold a standard bank, ID, or library card flat against the screen and drag the slider until the white outline below is exactly the same width as the card. This gives the test your screen's true pixels-per-millimetre ratio, which is what makes the optotypes physically accurate.
+              </p>
+
+              <div class="calibration-stage">
+                <div id="card-preview" class="card-preview" aria-hidden="true"></div>
+              </div>
+
+              <label for="card-slider" class="mt-8 block text-base font-semibold">Card width on screen</label>
+              <input id="card-slider" type="range" min="100" max="600" step="1" value="260" class="calibration-slider" />
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                <span>Card width: <strong id="card-width-label" class="font-mono">260 px</strong></span>
+                <span>Screen scale: <strong id="ppm-readout" class="font-mono">—</strong></span>
+              </div>
+
+              <div class="mt-8">
+                <p class="text-base font-semibold">Test distance</p>
+                <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Sit or stand so your eye is exactly this far from the screen. Further back makes sharper optotypes physically larger — and therefore measurable.</p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  {[['near', '40 cm', '16 in · phone'], ['desk', '1 m', '3.3 ft · desktop'], ['room', '2 m', '6.6 ft'], ['hall', '3 m', '10 ft'], ['snellen', '6 m', '20 ft · Snellen standard']].map(([id, label, hint]) => (
+                    <button type="button" data-distance={id} class="distance-button">
+                      <span class="distance-label">{label}</span>
+                      <span class="distance-hint">{hint}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <p id="resolution-warning" class="mt-7 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200 sm:text-base"></p>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="confirm-calibration" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] sm:rounded-full">Calibrated — begin acuity test</button>
+                <button id="skip-calibration" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Skip to astigmatism &amp; duochrome</button>
+              </div>
+              <p class="mt-4 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Calibration is only needed for the acuity chart. The dial and duochrome modules work without it.</p>
+            </div>
+          </section>
+
+          <section id="acuity-section" class="hidden" aria-labelledby="acuity-title">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Step 2 · Visual acuity</p>
+                <h2 id="acuity-title" class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl"><span id="acuity-eye-label">Right eye</span></h2>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="acuity-eye-progress" class="text-base font-semibold sm:text-lg">Eye 1 of 3</div>
+                <div id="acuity-trial-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">—</div>
+              </div>
+            </div>
+            <div class="mt-5 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"><div id="acuity-progress-fill" class="h-full rounded-full bg-emerald-600 transition-all duration-300" style="width:0%"></div></div>
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div id="acuity-tier-dots" class="tier-dots" aria-hidden="true"></div>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Three correct clears a level · two misses step down a level or end the eye</p>
+            </div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p id="acuity-instruction" class="rounded-2xl border border-emerald-200 bg-emerald-50/70 px-5 py-4 text-base font-semibold text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-200 sm:text-lg">Cover your LEFT eye.</p>
+              <p class="mt-6 text-base text-zinc-500 dark:text-zinc-400 sm:text-lg">
+                Which direction is the E pointing? Current level <strong id="acuity-tier-label" class="font-mono text-zinc-900 dark:text-white">—</strong>
+              </p>
+
+              <div id="optotype-mount" class="mt-6"></div>
+
+              <div class="direction-pad mt-8">
+                <div></div>
+                <button type="button" data-direction="up" class="direction-button" aria-label="E points up">↑</button>
+                <div></div>
+                <button type="button" data-direction="left" class="direction-button" aria-label="E points left">←</button>
+                <div class="direction-center" aria-hidden="true">E</div>
+                <button type="button" data-direction="right" class="direction-button" aria-label="E points right">→</button>
+                <div></div>
+                <button type="button" data-direction="down" class="direction-button" aria-label="E points down">↓</button>
+                <div></div>
+              </div>
+
+              <p id="acuity-feedback" class="acuity-feedback" role="status" aria-live="polite"></p>
+              <p class="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                Three correct at a level clears it. Two wrong ends that eye.
+              </p>
+            </article>
+          </section>
+
+          <section id="astigmatism-section" class="hidden" aria-labelledby="astig-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Step 3 · Astigmatism dial</p>
+              <h2 id="astig-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Do any lines look darker or sharper?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Stand or sit at your chosen distance. With one eye at a time, look at the centre of the dial and compare the twelve lines. Some people with uncorrected astigmatism see one or two lines as noticeably darker, bolder, or sharper than the rest. Select every line that stands out.
+              </p>
+              <p class="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Each ray is selectable on its own, including the two opposite rays that lie on the same line through the centre — those two describe one and the same meridian, so if a line looks blurred at both ends, mark both.
+              </p>
+              <div id="dial-mount" class="dial-stage mt-8"></div>
+              <p id="dial-selection-label" class="mt-6 text-base font-semibold text-emerald-800 dark:text-emerald-300 sm:text-lg">No lines selected yet.</p>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="submit-astigmatism" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] sm:rounded-full">Continue to duochrome</button>
+                <button id="dial-none" type="button" aria-pressed="false" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">All lines look equal</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="duochrome-section" class="hidden" aria-labelledby="duo-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Step 4 · Red-green duochrome</p>
+              <h2 id="duo-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Which ring looks sharper?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Compare the black ring on the red panel with the black ring on the green panel. Judge <strong>sharpness and clarity</strong>, not brightness — the two colours are deliberately different in luminance. Look at both for a few seconds before deciding.
+              </p>
+              <div class="duochrome-grid mt-8">
+                <div class="duochrome-panel duo-red">
+                  <div id="duochrome-red" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Red · ~650 nm</span>
+                </div>
+                <div class="duochrome-panel duo-green">
+                  <div id="duochrome-green" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Green · ~535 nm</span>
+                </div>
+              </div>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button type="button" data-duo="red" class="duo-choice rounded-2xl border-2 border-red-300 bg-red-50 px-6 py-4 text-base font-semibold text-red-900 transition active:scale-[0.99] dark:border-red-900 dark:bg-red-950/40 dark:text-red-200 sm:rounded-full">Red looks sharper</button>
+                <button type="button" data-duo="green" class="duo-choice rounded-2xl border-2 border-emerald-300 bg-emerald-50 px-6 py-4 text-base font-semibold text-emerald-900 transition active:scale-[0.99] dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200 sm:rounded-full">Green looks sharper</button>
+                <button type="button" data-duo="equal" class="duo-choice rounded-2xl border-2 border-zinc-300 bg-zinc-100 px-6 py-4 text-base font-semibold text-zinc-800 transition active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 sm:rounded-full">Both look the same</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge neutral">Acuity result recorded</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">Your vision screening summary</h2>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 sm:text-base">Not a diagnosis</div>
+              </div>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card reveal"><div class="score-label">Right eye</div><div id="acuity-right" class="acuity-fraction">—</div><div id="acuity-right-note" class="score-status">Best level cleared</div></article>
+                <article class="score-card reveal"><div class="score-label">Left eye</div><div id="acuity-left" class="acuity-fraction">—</div><div id="acuity-left-note" class="score-status">Best level cleared</div></article>
+                <article class="score-card reveal"><div class="score-label">Both eyes</div><div id="acuity-both" class="acuity-fraction">—</div><div id="acuity-both-note" class="score-status">Best level cleared</div></article>
+              </div>
+
+              <p id="acuity-summary-note" class="reveal mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <article class="stat-card reveal"><span>Astigmatism dial</span><strong id="astig-result">Not recorded</strong><p id="astig-note" class="stat-note"></p></article>
+                <article class="stat-card reveal"><span>Duochrome balance</span><strong id="duo-result">Not recorded</strong><p id="duo-note" class="stat-note"></p></article>
+              </div>
+
+              <article class="reveal mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-base">Test conditions</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">What this measurement assumed</h3>
+                <p id="calibration-summary" class="mt-4 font-mono text-base sm:text-lg">—</p>
+                <p class="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                  Acuity figures are only as good as the calibration and distance they were measured at. If the card match was approximate, or you sat nearer or further than the selected distance, the true value will differ from the one reported here.
+                </p>
+              </article>
+
+              <div class="reveal mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="rounded-2xl bg-zinc-950 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] dark:bg-white dark:text-zinc-950 sm:rounded-full">Print clinician summary</button>
+                <button id="share-result" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Share summary</button>
+                <button id="retake-result" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Retake test</button>
+              </div>
+
+              <div class="reveal mt-8 rounded-3xl border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900/50 dark:bg-emerald-950/30">
+                <h3 class="text-xl font-bold sm:text-2xl">Read the result in context</h3>
+                <p class="mt-3 text-base leading-relaxed text-emerald-950 dark:text-emerald-100 sm:text-lg">
+                  A screening result is a reason to book an examination, not a substitute for one. An optometrist measures refraction, binocular coordination, eye pressure, and retinal health — none of which a browser can assess. If your result is reduced, if the two eyes differ, or if anything has changed recently, make an appointment.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <p id="eye-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+        <section>
+          <p class="eyebrow">Optometric guide</p>
+          <h2 class="mt-3 section-title">How vision testing actually works</h2>
+          <p class="mt-6">Vision feels like a single sense, but what an eye chart measures is only one narrow slice of it: the ability to resolve fine detail at high contrast, at a specific distance, under specific lighting. Understanding what the measurement does and does not capture is the difference between a useful screening result and a misleading number.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">1. The anatomy and optics of vision</h2>
+          <p class="mt-5">Light entering the eye is refracted twice before it reaches the retina. The <strong>cornea</strong> does most of the work — roughly two thirds of the eye's total refractive power, about 43 dioptres — because the air-to-tissue boundary produces the largest change in refractive index along the path. The <strong>crystalline lens</strong> contributes the remaining third, around 19 dioptres at rest, and its soft, layered structure allows its curvature to change.</p>
+          <p class="mt-5">That change is <strong>accommodation</strong>. The ciliary muscle contracts, relaxing the zonular fibres that hold the lens under tension, and the lens becomes rounder and optically more powerful. This lets a healthy young eye shift focus from infinity to roughly 10 centimetres. The amplitude of accommodation declines steadily with age as the lens nucleus stiffens and the cortex loses elasticity — from about 14 dioptres in childhood to under 2 dioptres by the mid-fifties. That decline is presbyopia, and it is a normal mechanical consequence of ageing rather than a disease.</p>
+          <p class="mt-5">For a sharp image, the optical power of cornea and lens together must place the focal point precisely on the retinal photoreceptor layer. The <strong>refractive index</strong> of the media matters here: the cornea sits near 1.376, the aqueous and vitreous humours near 1.336, and the lens varies from about 1.386 in the cortex to 1.406 in the nucleus. That gradient is deliberate — it lets the lens bend light progressively rather than abruptly, reducing spherical aberration. When the eye's axial length and its optical power fall out of step, the focal point lands in front of or behind the retina, and the result is a refractive error.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">2. How visual acuity is measured</h2>
+          <p class="mt-5">Visual acuity is not measured in millimetres. It is measured in <strong>visual angle</strong> — how much of your field of view a target occupies. The standard, set by Snellen in 1862 and still in use, is that a normal eye can just resolve an optotype that subtends <strong>5 minutes of arc</strong> at the viewing distance. Each stroke of that optotype, and each gap between strokes, subtends 1 minute of arc. That 1-arcminute stroke is the actual limit being probed.</p>
+          <p class="mt-5">This is why the Snellen fraction is written 20/20 rather than as a size. The numerator is the test distance in feet; the denominator is the distance at which a person with standard acuity could read the same letter. A 20/40 letter at 20 feet subtends the same angle as a 20/20 letter at 40 feet. At 6 metres, the 20/20 optotype is 8.73 mm tall — a convenient physical size, and the reason 6 metres (20 feet) became the standard testing distance. At 1 metre the same optotype would need to be just 1.45 mm, which is precisely why screen-based testing at short distances runs into hard physical limits.</p>
+          <p class="mt-5">Acuity better than 20/20 is common, especially in young people. Roughly a third of healthy young adults reach <strong>20/15</strong>, and a few reach 20/10. This reflects the cone spacing in the fovea, where photoreceptors are packed at their tightest and each cone has a near-private line to the visual cortex. Beyond about 20/10 the optics of the eye itself — not the retina — become the limiting factor, because corneal and lenticular aberrations blur the image before it reaches the photoreceptors.</p>
+          <p class="mt-5">The <strong>Tumbling E</strong> used in this test is a Snellen E rotated to point in one of four directions. Because the viewer reports a direction rather than naming a letter, the measurement is unaffected by literacy, language, or familiarity with the Latin alphabet. It is the standard optotype for young children and for anyone who cannot read the chart's script — and it makes a fair comparison possible across every language this site serves.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">3. Understanding refractive errors</h2>
+          <p class="mt-5"><strong>Myopia</strong> (short-sightedness) occurs when the eye's optical power is too strong for its axial length, so the focal point falls in front of the retina. Distant objects blur; near objects stay clear because they require less optical power to focus. It affects roughly 30% of the world's population and is rising fast in urban East Asia, where prevalence among young adults now exceeds 80% in some cities. Time spent outdoors in childhood appears protective, while prolonged near work is associated with progression. Myopia is corrected with minus (concave) lenses, which diverge light before the cornea so the focal point moves back onto the retina.</p>
+          <p class="mt-5"><strong>Hyperopia</strong> (long-sightedness) is the reverse: the focal point falls behind the retina. Young hyperopes often compensate by accommodating, which is why hyperopia can stay hidden for decades and then surface in the late thirties as eye strain, headaches, and reading difficulty when accommodative reserve finally runs down. It is corrected with plus (convex) lenses.</p>
+          <p class="mt-5"><strong>Astigmatism</strong> is a difference in optical power between two perpendicular meridians. A perfectly spherical cornea curves equally in every direction; an astigmatic one is shaped more like a rugby ball, so light in one meridian focuses at a different point from light in the meridian at right angles to it. The result is that no single spherical lens can sharpen the image — lines in one orientation stay blurred while perpendicular ones look crisp. Astigmatism is corrected with a cylindrical component, which adds power in one meridian only, and the <strong>axis</strong> specifies which meridian that is. The clock dial in this test probes exactly that asymmetry.</p>
+          <p class="mt-5"><strong>Presbyopia</strong> is not a refractive error in the same sense — the eye's optics are unchanged, but the lens can no longer change shape enough to focus on near objects. It becomes noticeable in the early to mid-forties and progresses until about sixty. It is corrected with reading additions, bifocals, progressives, or multifocal contact lenses.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">4. The physics behind the dial and the duochrome</h2>
+          <p class="mt-5"><strong>The astigmatism dial.</strong> A clock dial presents radiating lines in twelve meridians. If the eye has no cylindrical error, every meridian focuses at the same point and all twelve lines look equally sharp. If it does have cylindrical error, the meridian in which the eye is focused closest to the retina produces a sharply defined line on the retina, while the perpendicular meridian — where focus is furthest from the retina — produces a blurred one. The observer reports which lines stand out. The estimated axis is the meridian those lines occupy, measured in degrees from horizontal between 0 and 180. Note that the two perpendicular directions of a single line are optically the same meridian, which is why the axis is conventionally reported modulo 180 rather than as a full 360-degree bearing.</p>
+          <p class="mt-5"><strong>The duochrome test</strong> exploits <em>longitudinal chromatic aberration</em>. The refractive index of any medium varies with wavelength, and the eye is no exception: shorter wavelengths are refracted more strongly than longer ones. In practice, green light at about 535 nm focuses roughly 0.50 dioptres in front of where red light at about 650 nm focuses. This is a real, measurable property of the human eye, not an artifact of the display.</p>
+          <p class="mt-5">The clinical trick follows directly. If the eye is emmetropic, the red and green foci straddle the retina symmetrically and both panels look equally sharp. If the eye is myopic, the whole focal range shifts forward and the red focus — further back to begin with — lands closer to the retina, so <strong>red looks sharper</strong>. If the eye is hyperopic, the range shifts backward and the green focus lands closer to the retina, so <strong>green looks sharper</strong>. An optometrist uses this to fine-tune the spherical endpoint by about a quarter of a dioptre, which is finer than most people can reliably judge on an acuity chart alone.</p>
+          <p class="mt-5">One caveat specific to this medium: a clinical duochrome uses calibrated optical filters with controlled transmission spectra. An RGB screen emits broad, overlapping peaks, and the exact dominant wavelength varies between panels and displays. The screen version preserves the direction of the effect but cannot reproduce its precision, which is why the result here is described as a shift rather than a measurement.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">5. Digital eye strain and the 20-20-20 rule</h2>
+          <p class="mt-5">Sustained screen work produces a characteristic cluster of symptoms — burning, dryness, blurred distance vision after prolonged near focus, and frontal headache. The mechanism is not damage but fatigue. When you look at a screen, the ciliary muscle holds accommodation at a fixed near distance far longer than it evolved to, and the convergence system holds a matching posture. Both accumulate fatigue over hours.</p>
+          <p class="mt-5">The most measurable change is in <strong>blink rate</strong>. Normal blinking occurs roughly 15 to 20 times a minute. During concentrated screen reading it falls by more than half, and the blinks that remain are often incomplete — the upper lid does not fully meet the lower, so the lower tear film is never refreshed. The tear film then breaks up between blinks, exposing the corneal epithelium and producing the burning and paradoxical reflex watering that people report as "dry but watery" eyes.</p>
+          <p class="mt-5">The <strong>20-20-20 rule</strong> is the standard countermeasure: every 20 minutes, look at something about 20 feet (6 metres) away for at least 20 seconds. The distance matters because looking at infinity allows the ciliary muscle to relax completely, and the duration matters because the tear film needs several seconds of uninterrupted spreading to restabilise. The rule works best as a prompt to blink deliberately as well as to refocus.</p>
+          <p class="mt-5">Supporting measures that have reasonable evidence behind them include positioning the screen 50 to 70 centimetres away and slightly below eye level, so the palpebral aperture is narrower and the exposed corneal surface smaller; matching screen brightness to the ambient room rather than leaving the display far brighter than its surroundings; using a humidifier in dry or air-conditioned rooms; and treating underlying dry eye with preservative-free lubricants if symptoms persist. If you wear glasses for near work, ensure the prescription is current — a stale prescription is a common and easily missed cause of persistent strain.</p>
+          <p class="mt-5">Finally, note what this test cannot see. Acuity, refraction, and meridional blur are only part of visual function. Glaucoma can destroy a large fraction of peripheral vision before any central acuity change appears, and diabetic retinopathy and macular degeneration are invisible to an acuity chart in their early stages. That is the strongest argument for a regular dilated examination on the schedule your optometrist recommends, independent of how well you read the chart today.</p>
+        </section>
+
+        <section id="faq" class="guide-section">
+          <p class="eyebrow">FAQ</p>
+          <h2 class="section-title mt-3">Frequently asked questions about online eye tests</h2>
+          <div class="mt-7 space-y-3">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white px-5 py-5 dark:border-zinc-800 dark:bg-zinc-950">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition group-open:rotate-45">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-200 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300 sm:text-lg">{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9">
+          <h2 class="text-2xl font-bold sm:text-3xl">Clinical disclaimer</h2>
+          <p class="mt-4">This digital vision assessment is designed for informational and preliminary self-screening purposes. It does not replace a comprehensive, dilated eye examination by a licensed optometrist or ophthalmologist, and it cannot produce a prescription. Screen calibration, viewing distance, lighting, and display characteristics all introduce measurement error.</p>
+          <p class="mt-4">Seek immediate care for sudden vision loss, flashes of light, a sudden increase in floaters, a curtain or shadow across your field of view, double vision, or eye pain. If you have diabetes, glaucoma, or a family history of eye disease, follow the examination schedule your clinician recommends regardless of any result shown here.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h1 class="text-3xl font-extrabold">VISION SCREENING SUMMARY</h1>
+      <p class="mt-2 text-sm uppercase tracking-wider">Screen-calibrated Snellen Tumbling E · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm">
+        <p><strong>Date:</strong> <span id="report-date">—</span></p>
+        <p><strong>Session:</strong> <span id="report-session">—</span></p>
+        <p><strong>Test conditions:</strong> <span id="print-calibration">—</span></p>
+        <p><strong>Right eye acuity:</strong> <span id="print-right">—</span></p>
+        <p><strong>Left eye acuity:</strong> <span id="print-left">—</span></p>
+        <p><strong>Both eyes acuity:</strong> <span id="print-both">—</span></p>
+        <p><strong>Astigmatism dial:</strong> <span id="print-astig">—</span></p>
+        <p><strong>Duochrome balance:</strong> <span id="print-duo">—</span></p>
+      </div>
+      <h2 class="mt-8 text-xl font-bold">Measurement limitations</h2>
+      <p class="mt-3 text-sm leading-relaxed"><span id="print-notes">—</span></p>
+      <p class="mt-6 text-sm leading-relaxed">This is a self-administered screening summary. It is not a refraction, not a diagnosis, and not a prescription. Visual acuity measured on a display is affected by screen calibration accuracy, actual viewing distance, ambient lighting, and display characteristics. A comprehensive eye examination is required to assess refractive error, binocular coordination, intraocular pressure, and retinal health.</p>
+    </div>
+  </div>
+
+  <div id="share-toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-full border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm font-semibold text-white opacity-0 transition-all dark:border-zinc-200 dark:bg-white dark:text-zinc-950">Screening summary copied.</div>
+
+  <style is:global>
+    .stage-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0;
+      list-style: none;
+    }
+    .stage-chip {
+      border: 1px solid rgb(228 228 231);
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: rgb(113 113 122);
+      background: #ffffff;
+    }
+    .stage-chip.active { border-color: rgb(5 150 105); background: rgb(236 253 245); color: rgb(4 120 87); }
+    .stage-chip.done { color: rgb(4 120 87); border-color: rgb(167 243 208); }
+
+    .intro-bullet { position: relative; padding-left: 1.75rem; }
+    .intro-bullet::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.6rem;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: rgb(5 150 105);
+    }
+
+    /* Calibration: the card preview must be a physically accurate outline. */
+    .calibration-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border: 1px dashed rgb(212 212 216);
+      border-radius: 1.5rem;
+      background: #ffffff;
+      overflow-x: auto;
+    }
+    .card-preview {
+      width: 260px;
+      height: 164px;
+      border: 2px solid rgb(5 150 105);
+      border-radius: 0.75rem;
+      background: rgb(236 253 245);
+      flex: 0 0 auto;
+    }
+    .calibration-slider { width: 100%; margin-top: 0.75rem; accent-color: rgb(5 150 105); }
+
+    .distance-button {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.85rem 1.25rem;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .distance-button:hover { border-color: rgb(110 231 183); transform: translateY(-1px); }
+    .distance-button:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; }
+    .distance-button.selected { border-color: rgb(5 150 105); background: rgb(236 253 245); }
+    .distance-label { font-size: 1rem; font-weight: 800; font-family: ui-monospace, monospace; }
+    .distance-hint { font-size: 0.75rem; color: rgb(113 113 122); }
+
+    /* Optotype stage is always white-on-black regardless of theme: a
+       dark-mode chart would change contrast and invalidate the measure. */
+    .optotype-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      border-radius: 1.25rem;
+      background: #ffffff;
+    }
+    .optotype-placeholder {
+      padding: 3rem 1rem;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgb(82 82 91);
+    }
+
+    .direction-pad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      max-width: 20rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .direction-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .direction-button:hover { border-color: rgb(5 150 105); background: rgb(236 253 245); transform: translateY(-2px); }
+    .direction-button:active { transform: scale(0.96); }
+    .direction-button:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; }
+    .direction-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      border-radius: 1.25rem;
+      background: rgb(244 244 245);
+      color: rgb(161 161 170);
+      font-weight: 800;
+      font-family: ui-monospace, monospace;
+    }
+
+    /* ---------- Motion ---------- */
+    @keyframes stageEnter {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    /* Kept short: the optotype scales up as it fades, so the response gate in
+       the engine stays closed until this settles and the strokes are only
+       ever judged at their true size. */
+    @keyframes optotypeEnter {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes keyPulse {
+      0% { transform: scale(1); }
+      45% { transform: scale(0.93); }
+      100% { transform: scale(1); }
+    }
+    @keyframes dotPop {
+      from { transform: scale(0.55); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .stage-enter { animation: stageEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    /* Animate the optotype itself, not its stage — scaling the wrapper would
+       scale the white panel behind it and read as the whole chart pulsing. */
+    .optotype-stage.optotype-enter > svg { animation: optotypeEnter 0.19s ease-out both; }
+
+    .direction-button.is-pressed {
+      animation: keyPulse 0.22s ease;
+      border-color: rgb(5 150 105);
+      background: rgb(236 253 245);
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.22);
+    }
+    .dark .direction-button.is-pressed {
+      border-color: rgb(5 150 105);
+      background: rgba(6, 78, 59, 0.4);
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.28);
+    }
+
+    #results-section .reveal.is-revealed { animation: revealUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+    .acuity-feedback { margin-top: 1.5rem; min-height: 1.6rem; text-align: center; font-size: 1rem; font-weight: 700; }
+    .acuity-feedback.good { color: rgb(4 120 87); }
+    .acuity-feedback.bad { color: rgb(185 28 28); }
+
+    /* Dial and duochrome are also fixed light-ground optical targets. */
+    .dial-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 1.5rem;
+      background: #ffffff;
+    }
+    .dial-svg { width: 100%; max-width: 26rem; height: auto; }
+    .dial-ray { cursor: pointer; }
+    .dial-ray:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; border-radius: 0.5rem; }
+    .dial-ray-line {
+      stroke: #000000;
+      transition: stroke-width 0.18s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.18s ease;
+    }
+    .dial-ray:hover .dial-ray-line { stroke: rgb(5 150 105); stroke-width: 6; }
+    .dial-ray.selected .dial-ray-line {
+      stroke: rgb(5 150 105);
+      stroke-width: 7;
+      filter: drop-shadow(0 0 5px rgba(5, 150, 105, 0.75));
+    }
+    .dial-label {
+      fill: rgb(82 82 91);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: ui-monospace, monospace;
+      transition: fill 0.18s ease;
+    }
+    .dial-ray:hover .dial-label { fill: rgb(4 120 87); }
+    .dial-ray.selected .dial-label { fill: rgb(4 120 87); }
+    /* Decorative only — must never swallow a ray's pointer target. */
+    .dial-hub { pointer-events: none; }
+
+    /* Per-tier trial dots */
+    .tier-dots { display: flex; align-items: center; gap: 0.5rem; min-height: 1.25rem; }
+    .trial-dot {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 999px;
+      border: 2px solid rgb(212 212 216);
+      background: transparent;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .trial-dot.hit { border-color: rgb(5 150 105); background: rgb(5 150 105); animation: dotPop 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
+    .trial-dot.miss { border-color: rgb(220 38 38); background: rgb(220 38 38); animation: dotPop 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
+    .dark .trial-dot { border-color: rgb(63 63 70); }
+    .dark .trial-dot.hit { border-color: rgb(16 185 129); background: rgb(16 185 129); }
+    .dark .trial-dot.miss { border-color: rgb(248 113 113); background: rgb(248 113 113); }
+
+    .duochrome-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .duochrome-grid { grid-template-columns: 1fr 1fr; } }
+    .duochrome-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 2rem 1rem;
+      border-radius: 1.5rem;
+    }
+    .duo-red { background: rgb(204 0 0); }
+    .duo-green { background: rgb(0 153 51); }
+    .duochrome-target { display: flex; align-items: center; justify-content: center; }
+    .duochrome-caption {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .duo-choice.selected { box-shadow: 0 0 0 3px rgb(5 150 105); }
+
+    /* Toggle state for "All lines look equal". An id selector is used so it
+       outranks the Tailwind border utilities on the same element. */
+    #dial-none.selected { border-color: rgb(5 150 105); background: rgb(236 253 245); color: rgb(4 120 87); }
+    .dark #dial-none.selected { border-color: rgb(5 150 105); background: rgba(6, 78, 59, 0.4); color: rgb(110 231 183); }
+
+    /* Calibration failure severe enough that no tier can be measured. The
+       engine toggles this class, so it must exist here or the worst case
+       renders identically to a mild one. */
+    #resolution-warning.is-blocking { border-color: rgb(252 165 165); background: rgb(254 242 242); color: rgb(153 27 27); font-weight: 600; }
+    .dark #resolution-warning.is-blocking { border-color: rgb(153 27 27); background: rgba(69, 10, 10, 0.45); color: rgb(252 165 165); }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .55rem 1.1rem; font-size: .95rem; font-weight: 700; }
+    .result-badge.neutral { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.good { color: rgb(22 101 52); background: rgb(240 253 244); border-color: rgb(187 247 208); }
+    .result-badge.moderate { color: rgb(146 64 14); background: rgb(255 247 237); border-color: rgb(254 215 170); }
+    .result-badge.bad { color: rgb(153 27 27); background: rgb(254 242 242); border-color: rgb(254 202 202); }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.35rem; }
+    .score-label { font-size: .9rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .acuity-fraction { margin-top: .75rem; font-size: 1.875rem; font-weight: 800; font-family: ui-monospace, monospace; letter-spacing: -.02em; }
+    .score-status { margin-top: .5rem; color: rgb(4 120 87); font-size: .95rem; font-weight: 600; }
+    .stat-card { display: flex; flex-direction: column; gap: .5rem; padding: 1.25rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    .stat-card span { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.1rem; line-height: 1.35; }
+    .stat-note { font-size: .95rem; line-height: 1.55; color: rgb(82 82 91); }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(4 120 87); }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.025em; color: rgb(24 24 27); }
+    .guide-section { margin-top: 3.5rem; }
+
+    .dark .stage-chip { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(161 161 170); }
+    .dark .stage-chip.active { background: rgba(6, 78, 59, 0.5); border-color: rgb(6 95 70); color: rgb(110 231 183); }
+    .dark .stage-chip.done { color: rgb(110 231 183); border-color: rgb(6 95 70); }
+    .dark .calibration-stage { border-color: rgb(39 39 42); }
+    .dark .distance-button { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .distance-button.selected { background: rgba(6, 78, 59, 0.4); border-color: rgb(5 150 105); }
+    .dark .distance-hint { color: rgb(161 161 170); }
+    .dark .direction-button { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .direction-button:hover { background: rgba(6, 78, 59, 0.4); border-color: rgb(5 150 105); }
+    .dark .direction-center { background: rgb(24 24 27); color: rgb(113 113 122); }
+    .dark .optotype-placeholder { color: rgb(161 161 170); }
+    .dark .acuity-feedback.good { color: rgb(110 231 183); }
+    .dark .acuity-feedback.bad { color: rgb(252 165 165); }
+    .dark .result-badge.neutral { color: rgb(212 212 216); background: rgb(24 24 27); border-color: rgb(63 63 70); }
+    .dark .result-badge.good { color: rgb(134 239 172); background: rgba(5, 46, 22, 0.55); border-color: rgb(22 101 52); }
+    .dark .result-badge.moderate { color: rgb(252 211 77); background: rgba(69, 26, 3, 0.5); border-color: rgb(146 64 14); }
+    .dark .result-badge.bad { color: rgb(252 165 165); background: rgba(69, 10, 10, 0.55); border-color: rgb(153 27 27); }
+    .dark .score-card, .dark .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .score-status { color: rgb(110 231 183); }
+    .dark .stat-note { color: rgb(161 161 170); }
+    .dark .eyebrow { color: rgb(110 231 183); }
+    .dark .section-title { color: rgb(250 250 250); }
+
+    .print-only { display: none; }
+    @media print {
+      body * { visibility: hidden; }
+      #printable-report, #printable-report * {
+        visibility: visible;
+      }
+      #printable-report {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+
+    /* Motion is decorative here. It must never gate comprehension, and it must
+       never obscure an optotype — so it is fully removable on request. */
+    @media (prefers-reduced-motion: reduce) {
+      .stage-enter,
+      .optotype-stage.optotype-enter > svg,
+      #results-section .reveal.is-revealed,
+      .direction-button.is-pressed,
+      .trial-dot.hit,
+      .trial-dot.miss { animation: none !important; }
+      .dial-ray-line,
+      .dial-label,
+      .trial-dot { transition: none !important; }
+      .dial-ray.selected .dial-ray-line { filter: none; }
+      .stage-enter { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 640px) {
+      .section-title { font-size: 1.75rem; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../scripts/tools/eye-tester.js"></script>
+</Layout>

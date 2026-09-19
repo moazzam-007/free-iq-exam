@@ -1,0 +1,109 @@
+# PHASE 0 EXECUTION PROMPT: FOUNDATION, DYNAMIC HREFLANG & GLOBAL NAVIGATION
+# Target Codebase: E:\Antigravity\freeiqexam.com
+# Stack: Astro 7.3+, Tailwind CSS v4, Cloudflare Pages
+# Mission: Execute Phase 0 Foundation Setup with Zero Regressions
+
+---
+
+### 🏛️ CONTEXT & OBJECTIVE
+You are the lead architect and engineer for `FreeIQExam.com`. 
+
+Following our architectural review, we are executing **Phase 0: Architecture & Foundation**. Your goal in this phase is to prepare the codebase for the upcoming integration of 16 high-yield standalone tools across Cognitive, Gaming, and Bio-Utility clusters, while eliminating the critical Hreflang 404 indexing risk.
+
+Do NOT integrate the tools themselves in this phase. Focus exclusively on the infrastructure, layout logic, directory scaffolding, and navigation menus.
+
+---
+
+### 🛠️ TASKS TO COMPLETE IN PHASE 0
+
+#### Task 1: Refactor `Layout.astro` Hreflang Architecture (Critical SEO Bug Fix)
+**Target File:** `src/layouts/Layout.astro` (around Lines 31–43, 90–93)
+
+1. **Update `Props` Interface:**
+   Add an optional `alternates` dictionary prop:
+   ```typescript
+   interface Props {
+     title: string;
+     description: string;
+     canonicalUrl?: string;
+     // Map of locale -> relative or absolute path
+     // e.g. { 'id': '/id/tes-buta-warna', 'fi': '/fi/varinakotesti', 'de': '/de/farbsehtest' }
+     alternates?: Record<string, string>;
+     // ... other existing props
+   }
+   ```
+2. **Eliminate Hardcoded 404 Fallback:**
+   Remove the logic that automatically fell back to `currentPath` for `effectiveIdPath` and `effectiveRuPath`.
+3. **Dynamic, Reciprocal Tag Generation:**
+   - Always emit self-referencing canonical, `x-default`, and `en` (or current page's lang).
+   - ONLY emit `<link rel="alternate" hreflang="[lang]" href="[url]" />` for locales explicitly defined in the `alternates` prop.
+   - For existing legacy pages that already have full Indonesian/Russian versions, maintain their hreflang mappings gracefully, but ensure that any new page (like `/color-blind-test` or `/typing-test`) with no alternates will ONLY output `en` and `x-default`, completely eliminating 404 ghost links.
+
+---
+
+#### Task 2: Scaffold Tool Directories
+Create the following directories if they do not exist:
+1. `src/pages/tools/` — for upcoming Bio-Calculators and Lifestyle utilities (`sleep-calculator`, `brown-noise`, `calorie-calculator`, `mic-test`, etc.).
+2. `src/scripts/tools/` — for pure client-side Vanilla JS execution engines (decoupled from `.astro` page shells).
+3. Confirm that `src/pages/games/` is ready to receive new gaming additions (`flag-quiz`, `typing-test`, `click-speed-test`, `aim-trainer`).
+
+---
+
+#### Task 3: Upgrade Global Navigation (`Header.astro` & `Footer.astro`)
+**Target Files:** `src/components/Header.astro` and `src/components/Footer.astro`
+
+1. **Desktop Header Navigation (3 Organized Dropdowns):**
+   Update the main desktop navigation bar with smooth, accessible hover/click dropdowns:
+   - **Tests ▾ (Clinical & Sensory Diagnostics):**
+     - Full IQ Exam & Quick Screener
+     - Color Blind Test (Ishihara 22-Plate) *(New)*
+     - Reaction Time Benchmark (Visual ms) *(New)*
+     - Adult ADHD Screener (WHO ASRS v1.1) *(New)*
+     - Depression Screener (PHQ-9) *(New)*
+     - Hearing & Ear Age Test (20 Hz–20 kHz) *(New)*
+     - Visual Acuity & Eye Test *(New)*
+   - **Games ▾ (Cognitive & Performance):**
+     - Typing Speed Test (1-Min WPM) *(New)*
+     - Flag Memory Quiz *(New)*
+     - CPS Click Speed Test *(New)*
+     - Aim Trainer *(New)*
+     - *Divider / Link:* "All 10 Cognitive Mini-Games →" (`/games`)
+   - **Tools ▾ (Bio-Rhythm & Calculators):**
+     - Circadian Sleep Calculator *(New)*
+     - Brown, Pink & White Noise Generator *(New)*
+     - Calorie & TDEE Metabolic Engine *(New)*
+     - Microphone Audio Diagnostics *(New)*
+     - Stoic Circle of Control & Memento Mori *(New)*
+
+2. **Mobile Navigation Drawer (Collapsible Accordion Pattern):**
+   - Replace the flat list in `allMobileLinks` with 3 collapsible accordion sections:
+     - 📁 **Assessments & Screeners**
+     - 🎮 **Brain Games & Dexterity**
+     - ⚙️ **Bio-Tools & Reference**
+   - Ensure accordions start collapsed or gracefully expand without causing Cumulative Layout Shift (CLS) or a 2,000px scroll trap.
+
+3. **Footer Upgrade (4 Structured Columns):**
+   Organize `Footer.astro` into 4 clean, semantic columns:
+   - **Column 1: Diagnostic & Clinical Tests** (Direct links to the 7 core assessments)
+   - **Column 2: Cognitive Games & Speed** (Top games + link to `/games`)
+   - **Column 3: Bio-Calculators & Utilities** (Sleep, Calorie, Brown Noise, Mic, IQ Scale Chart)
+   - **Column 4: Science, Rigor & Legal** (Methodology, 2PL IRT Science, About, Privacy, Terms, Contact)
+
+*(Ensure localized Header/Footer variants for `/id/` and `/ru/` remain functional and do not break).*
+
+---
+
+### 🧪 VERIFICATION & QUALITY GATES
+After applying these changes, run the following verification checks:
+1. `npm run build` or `npx astro check`: Verify that the project compiles with **0 build errors and 0 TypeScript errors**.
+2. Inspect the generated HTML of a root page to verify that `<link rel="alternate">` tags only render for valid languages and do not inject ghost 404 paths.
+3. Verify that the mobile drawer opens smoothly and renders accordion sections cleanly on small screens.
+
+---
+
+### 📦 DELIVERABLE
+Please report:
+1. Exact diffs / changes made to `src/layouts/Layout.astro`.
+2. Exact diffs / changes made to `src/components/Header.astro` and `src/components/Footer.astro`.
+3. Confirmation of created directories.
+4. Output of `npm run build` showing total pages built and 0 errors.

@@ -1,0 +1,120 @@
+# ==============================================================================
+# MASTER PROMPT: 7-REPORT CROSS-VERIFICATION & CODEBASE ADJUDICATION AUDIT
+# Primary Codebase Directory: E:\Antigravity\freeiqexam.com / active workspace
+# Task: Ingest all 7 Audit MD Reports from their exact file paths, code-verify
+#       every single claim in the live codebase, separate Real Defects from
+#       False Positives/Hallucinations, and produce the authoritative
+#       FINAL_VERIFIED_MASTER_AUDIT_REPORT.md.
+# ==============================================================================
+
+### TERMINAL BUDGET (MANDATORY):
+Treat terminal usage as expensive. Use the minimum number of terminal commands possible. Prefer 0 terminal commands for file inspection and code reading. Only execute `npm run build` at the very end for static compilation validation.
+
+---
+
+### EXACT FILE PATHS OF ALL 7 AUDIT REPORTS (READ EACH ONE DIRECTLY):
+
+You MUST read and cross-examine all 7 report files from these exact paths:
+
+1. **Report 1 (Qwen Coder Deep Audit)**:
+   `E:\Antigravity\Fashion Deals Website\qwencoderreport.md`
+2. **Report 2 (Claude 3.7 Audit Pass 1)**:
+   `E:\Antigravity\Fashion Deals Website\claude report.md`
+3. **Report 3 (Claude 3.7 Deep-Dive Build Audit Pass 2)**:
+   `E:\Antigravity\Fashion Deals Website\claue reprot2.md`
+4. **Report 4 (GPT Desktop Master Audit)**:
+   `E:\Antigravity\Fashion Deals Website\FreeIQExam_Master_Audit_Reportfrom gptdesk.md`
+5. **Report 5 (Psychometric & Sensory Deep Audit)**:
+   `E:\Antigravity\Fashion Deals Website\areia1reprot.md`
+6. **Report 6 (Master Audit Baseline v1)**:
+   `E:\Antigravity\freeiqexam.com\audit_review\MASTER_AUDIT_REPORT.md`
+   *(Local mirror copy: `E:\Antigravity\Fashion Deals Website\scratch\MASTER_AUDIT_REPORT_v1.md`)*
+7. **Report 7 (Master Codebase Audit Report v2)**:
+   `E:\Antigravity\freeiqexam.com\MASTER_AUDIT_REPORT_v2.md`
+   *(Local mirror copy: `E:\Antigravity\Fashion Deals Website\scratch\MASTER_AUDIT_REPORT_v2.md`)*
+
+---
+
+### MISSION & OBJECTIVE:
+Your mission is NOT to simply summarize or paraphrase these 7 documents.
+Your mission is to **personally open and inspect the actual codebase files** (`E:\Antigravity\freeiqexam.com\src\...`) for EVERY single technical claim made across the 7 reports, determine whether each claim is:
+- 🟢 **VERIFIED REAL DEFECT** (Confirmed by actual code inspection; requires code fix),
+- 🟡 **PARTIALLY TRUE / MITIGATED** (Real observation in source, but already mitigated at runtime by CSS or architecture), or
+- 🔴 **FALSE POSITIVE / FAKE / MISLEADING** (Hallucination, misdiagnosed spec, or environment error like missing node_modules).
+
+---
+
+### STEP-BY-STEP VERIFICATION PROTOCOL:
+
+#### STEP 1: INGEST ALL 7 AUDIT REPORTS
+Read all 7 report files completely and compile a master list of all distinct claims across:
+- **Domain A**: Localization & Tool Engine Translation (Shared engines, MutationObserver, static English leaks).
+- **Domain B**: Routing, Hreflang & Page Inventory (LayoutId alternates, page counts, preview draft routes).
+- **Domain C**: Design System, Typography & Dark Mode SVGs (13px floor, duplicate SVG classes, palette hygiene).
+- **Domain D**: Psychometrics, Clinical Screeners & Sensory Engines (3PL IRT, theta [-4,+4], cutoffs, Web Audio 125 Hz).
+- **Domain E**: Build Compilation, Vite/LightningCSS Warnings & Performance.
+
+---
+
+#### STEP 2: CODEBASE VERIFICATION (INSPECT ACTUAL FILES IN `src/`)
+
+For every claim extracted in Step 1, navigate to the specific file and verify the actual code:
+
+1. **Interactive Tool Engines (`src/scripts/tools/` & `src/pages/id/`, `src/pages/ru/`)**:
+   - Check if `src/pages/id/*.astro` load English engines (`adhd-screener.js`, `depression-screener.js`, etc.) or use `MutationObserver` DOM replacement layers.
+   - Check if 5 Russian pages (`aim-trainer.astro`, `color-blind-test.astro`, `eye-test.astro`, `hearing-test.astro`, `mic-test.astro`) load shared English engines without a translation layer.
+   - Check whether `*-id.js` engine files exist in `src/scripts/tools/` and whether any page actually references them.
+
+2. **Hreflang & Layout Metadata (`src/components/id/LayoutId.astro`, `LayoutRu.astro`, `Layout.astro`)**:
+   - Check `src/components/id/LayoutId.astro` lines 4–30: Does `Props` accept `alternates`? What happens when tool pages pass `alternates={alternates}`?
+   - Check tool page frontmatter in `src/pages/id/tes-adhd.astro`, `tes-depresi.astro`, `ru/eye-test.astro`, `ru/mic-test.astro`: Are hreflang `id:` / `ru:` lines commented out or missing?
+
+3. **Page Count & Route Hygiene (`src/pages/`)**:
+   - Count actual `.astro` files in `src/pages/`, `src/pages/ru/`, `src/pages/id/`.
+   - Check if 10 `preview-*.astro` files exist in `src/pages/` (`preview-candidate-1/2/3/v5`, `preview-fusion-v2/v3`, etc.).
+   - Check if `src/pages/id/kuis-bendera-dunia.astro` and `src/pages/id/pelatih-akurasi-aim.astro` are 4-line stub re-exports.
+
+4. **Dark Mode SVGs & Item Bank (`src/data/item-bank.json`, `item-bank-ru.json`, `item-bank-id.json`)**:
+   - Check if SVG strings contain duplicate `class` attributes on the same element (e.g. `fill="..." class="dark:fill-zinc-950" stroke="..." class="dark:stroke-zinc-800"`).
+   - Check item ID 29: Does it have `stroke="#0f172a"` with zero dark mode stroke override?
+
+5. **Typography & CSS Overrides (`src/styles/global.css`, `src/pages/**/*.astro`)**:
+   - Search for `text-[10px]`, `text-[11px]`, `text-[12px]` classes in `.astro` files.
+   - Check `src/styles/global.css`: Does it have `.text-xs, [class*="text-[10px]"] { font-size: 13px !important; }` overriding rendered sizes?
+
+6. **Psychometrics & Sensory Math (`src/utils/scoring.ts`, `src/scripts/tools/`)**:
+   - Check `src/utils/scoring.ts:44–75, 193–203`: What is the theta clamp range (`[-4, +4]` vs `[-3, +3]`)? Is EAP 81-point quadrature intact? Is $\text{IQ} = 100 + 15\theta$ exact?
+   - Check `src/scripts/tools/hearing-engine.js:336`: Does `AudiometryTest.frequencies` include `125` or does it start at `250` while the X-axis starts at `125`?
+   - Check clinical cutoffs in `depression-screener.js` (PHQ-9 0-4/5-9/10-14/15-19/20-27), `anxiety-screener.js` (GAD-7 5/10/15), `adhd-screener.js` (ASRS Part A 4-of-6), `autism-screener.js` (AQ-10 >= 6).
+
+7. **Dead/Invalid Classes**:
+   - Check `src/pages/id/permainan/simbol-cocok.astro:156` for `dark:purple-400`.
+
+---
+
+#### STEP 3: CLASSIFICATION & ADJUDICATION
+
+Classify every single claim into one of three strict tiers:
+1. 🟢 **VERIFIED REAL DEFECT**: Confirmed by code inspection. Must be fixed before production.
+2. 🟡 **PARTIALLY TRUE / MITIGATED**: A real technical observation in source, but already mitigated at runtime by CSS or architecture (e.g., typography floor CSS override, pastel variables neutralized).
+3. 🔴 **FALSE POSITIVE / FAKE / MISLEADING**: Incorrect diagnosis, environment glitch (e.g., missing node_modules exit 127), or standard intentional specification (e.g., Schema.org English keys, [-4,+4] theta range).
+
+---
+
+#### STEP 4: GENERATE FINAL MASTER REPORT (`FINAL_VERIFIED_MASTER_AUDIT_REPORT.md`)
+
+Write a comprehensive, professional, standalone Markdown report containing:
+1. **Executive Adjudication Summary**:
+   - Overview of all 7 reports audited.
+   - Total claims evaluated, verified real defects, mitigated issues, and debunked false alarms.
+2. **Master Claim Verification Matrix**:
+   - A detailed table: `[# | Claim | Reporting Agent(s) | Actual Code Inspection Finding | File:Line | Verdict (REAL/MITIGATED/FAKE)]`.
+3. **Consolidated Real Defects Log (Prioritized P1 / P2 / P3)**:
+   - 📍 Location / File Path
+   - ❌ Defect Category
+   - 🔍 Exact Code-Level Cause
+   - 💡 Precise Remediation Requirement
+4. **Psychometric & Clinical Certification**:
+   - Definitive statement verifying 2PL/3PL IRT math, EAP quadrature, theta bounds, and screener cutoffs.
+5. **Actionable Remediation Checklist**:
+   - Clear, step-by-step checklist for the engineering team to reach 100% zero-defect production release.

@@ -1,0 +1,544 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = "IQ Score Classification Scale: WAIS-IV, Stanford-Binet & Ranges | FreeIQExam";
+const description = "Comprehensive guide to IQ score classifications across WAIS-IV, Stanford-Binet 5, and Woodcock-Johnson IV. Compare genius ranges, average scores, normal bell curve percentiles, and the Flynn effect.";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "IQ Score Classification Scale: WAIS-IV, Stanford-Binet and Cognitive Ranges",
+    "description": "Comprehensive comparative analysis of standard psychological IQ classification systems, Gaussian distribution properties, and population percentages.",
+    "url": "https://freeiqexam.com/iq-classification-scale/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "FreeIQExam",
+      "url": "https://freeiqexam.com/"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "IQ Classification Scale",
+        "item": "https://freeiqexam.com/iq-classification-scale/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is an IQ of 110 or 120 considered a high IQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. On the standard Wechsler scale (SD 15), an IQ of 110 to 119 is classified as High Average (top 25% of the population). An IQ of 120 to 129 is formally classified as Superior (top 9% to 2.3%), reflecting advanced analytical deduction, rapid abstraction, and strong cognitive flexibility."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is an IQ score of 93, 97, or 105 considered 'dumb'?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Any score between 90 and 109 falls squarely within the Average classification, representing exactly 50% of the human population. Millions of highly successful professionals, executives, and specialists score in this range. IQ measures specific psychometric reasoning metrics under test conditions, not practical wisdom, social capability, or human value."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is a 72 IQ smart, and what does borderline intellectual functioning mean?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An IQ of 72 falls within the Borderline Intellectual Functioning range (scores 70 to 79, bottom 7%). It is distinct from intellectual disability (which requires scores below 70 alongside diagnosed adaptive functioning impairments). Scores in this bracket can often be depressed by test anxiety, language discordance, or educational disparities rather than fixed cognitive limits."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the genuine signs of high IQ in daily life?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Empirical psychometrics identifies core traits associated with high general intelligence (g): rapid inductive pattern recognition, superior working memory capacity, high cognitive curiosity, fast information processing speed, and the ability to deconstruct novel abstract problems without prior training."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What causes a low IQ score, and does ADHD indicate low intelligence?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ADHD does not indicate low intelligence. People with ADHD exhibit the full distribution of IQ scores from average to gifted. However, executive functioning constraints, working memory interference, and processing speed bottlenecks can artificially depress timed test scores. Low IQ scores can also reflect sleep deprivation, chronic stress, socioeconomic educational gaps, or neurological factors."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a 'god IQ' or the highest IQ score theoretically possible?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "'God IQ' is internet slang describing scores above 160 or 180. On standardized clinical instruments like the WAIS-IV, the maximum measurement ceiling is 160 (representing +4.00 standard deviations, or 1 in 31,560 rarity). Claims of adult IQs of 200+ are unnormed statistical extrapolations or obsolete childhood mental age ratios."
+        }
+      }
+    ]
+  }
+];
+
+const classificationRows = [
+  { range: "130 and above", wais: "Very Superior", sb5: "Gifted / Very Advanced", wj: "Very Superior", pct: "Top 2.2%", rarity: "1 in 44", desc: "Top intellectual tier. Advanced abstract problem solving and rapid pattern induction." },
+  { range: "120 - 129", wais: "Superior", sb5: "Superior", wj: "Superior", pct: "6.7%", rarity: "1 in 15", desc: "Well above average. High analytical deduction, verbal fluency, and spatial reasoning." },
+  { range: "110 - 119", wais: "High Average", sb5: "High Average", wj: "High Average", pct: "16.1%", rarity: "1 in 6.2", desc: "Above population median. Strong academic performance and cognitive flexibility." },
+  { range: "90 - 109", wais: "Average", sb5: "Average", wj: "Average", pct: "50.0%", rarity: "1 in 2", desc: "General population median. Standard capability across all major CHC cognitive domains." },
+  { range: "80 - 89", wais: "Low Average", sb5: "Low Average", wj: "Low Average", pct: "16.1%", rarity: "1 in 6.2", desc: "Slightly below population median. May benefit from structured or multi-sensory instruction." },
+  { range: "70 - 79", wais: "Borderline", sb5: "Borderline Impaired", wj: "Borderline", pct: "6.7%", rarity: "1 in 15", desc: "Significant difficulty with complex abstractions and high working-memory demands." },
+  { range: "Below 70", wais: "Extremely Low", sb5: "Extremely Impaired", wj: "Extremely Low", pct: "Bottom 2.2%", rarity: "1 in 44", desc: "Clinical cutoff for intellectual disability assessment alongside adaptive behavior testing." }
+];
+---
+
+<Layout title={title} description={description} schema={schema}>
+  <Header currentPath="/iq-classification-scale" />
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 -mb-6" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-white font-medium">IQ Classification Scale</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-medium uppercase tracking-wider mb-4">
+        <span>Standardized Diagnostic Reference &bull; SD 15 Norms</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        IQ Score Classification Scale &amp; Normal Distribution Ranges
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Understand how clinical psychologists classify cognitive ability scores. Compare the Wechsler Adult Intelligence Scale (WAIS-IV), Stanford-Binet 5, and Woodcock-Johnson systems with exact normal distribution percentiles.
+      </p>
+    </header>
+
+    <!-- Interactive Score Classifier Widget (Above the Fold) -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs max-w-2xl mx-auto w-full">
+      <div class="text-center mb-6">
+        <span class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 block mb-1">
+          Interactive Lookup Tool
+        </span>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white">
+          Classify Any IQ Score (SD 15)
+        </h2>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+          Adjust the slider or enter a score to view its clinical tier, percentile rank, and population rarity.
+        </p>
+      </div>
+
+      <div class="space-y-6">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="iq-calc-input" class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-white">
+              Selected IQ Score
+            </label>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Scale: 55 to 145+</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <input
+              id="iq-calc-range"
+              type="range"
+              min="70"
+              max="145"
+              value="118"
+              aria-label="IQ Score Slider"
+              class="flex-1 h-2 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-600 min-h-[44px]"
+            />
+            <input
+              id="iq-calc-input"
+              type="number"
+              min="50"
+              max="160"
+              value="118"
+              aria-label="IQ Score Input"
+              class="w-20 px-3 py-2 rounded-xl text-center font-heading font-bold text-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
+        </div>
+
+        <!-- Result Box -->
+        <div class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center" role="status" aria-live="polite">
+          <div>
+            <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">WAIS-IV Tier</span>
+            <p id="widget-tier" class="font-heading font-bold text-sm sm:text-base text-blue-600 dark:text-blue-400 mt-1">
+              High Average
+            </p>
+          </div>
+          <div>
+            <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Percentile Rank</span>
+            <p id="widget-pct" class="font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white mt-1">
+              88.5th
+            </p>
+          </div>
+          <div>
+            <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Population Rarity</span>
+            <p id="widget-rarity" class="font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white mt-1">
+              1 in 8.7
+            </p>
+          </div>
+          <div>
+            <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Z-Score (SD)</span>
+            <p id="widget-zscore" class="font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white mt-1">
+              +1.20 &sigma;
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs pt-2">
+          <a href="/iq-percentile-calculator" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-medium">
+            <span>Full 2-Way Percentile Calculator &rarr;</span>
+          </a>
+          <a href="/quick-test" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-medium">
+            <span>Take Quick Screening Test &rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Master Comparative Classification Table -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white mb-2">
+          Comparative Psychometric Classification Table
+        </h2>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          Standardized clinical tests map continuous scores into qualitative descriptive categories. Below is the direct comparison between the Wechsler Adult Intelligence Scale (WAIS-IV), Stanford-Binet Intelligence Scales (SB-5), and Woodcock-Johnson IV (WJ-IV).
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xs -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table class="w-full min-w-[600px] text-left text-xs sm:text-sm">
+          <thead class="sticky top-0 bg-zinc-100/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10 text-zinc-700 dark:text-zinc-300 font-heading font-bold uppercase tracking-wider text-[11px] border-b border-zinc-200 dark:border-zinc-800">
+            <tr>
+              <th class="py-4 px-4 sm:px-6">IQ Score Range (SD 15)</th>
+              <th class="py-4 px-4">WAIS-IV Classification</th>
+              <th class="py-4 px-4 hidden md:table-cell">Stanford-Binet 5</th>
+              <th class="py-4 px-4 hidden lg:table-cell">Woodcock-Johnson IV</th>
+              <th class="py-4 px-4">Percentile Tier</th>
+              <th class="py-4 px-4">Population Share</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
+            {classificationRows.map((row) => (
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                <td class="py-4 px-4 sm:px-6 font-mono font-bold text-zinc-950 dark:text-white whitespace-nowrap">
+                  {row.range}
+                </td>
+                <td class="py-4 px-4 font-semibold text-blue-600 dark:text-blue-400">
+                  {row.wais}
+                </td>
+                <td class="py-4 px-4 text-zinc-600 dark:text-zinc-400 hidden md:table-cell">
+                  {row.sb5}
+                </td>
+                <td class="py-4 px-4 text-zinc-600 dark:text-zinc-400 hidden lg:table-cell">
+                  {row.wj}
+                </td>
+                <td class="py-4 px-4 font-mono font-semibold text-zinc-900 dark:text-zinc-200">
+                  {row.pct}
+                </td>
+                <td class="py-4 px-4 font-mono text-zinc-500 dark:text-zinc-400">
+                  {row.rarity}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Normal Distribution & Bell Curve Mechanics -->
+    <section class="space-y-6">
+      <h2 class="font-heading text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white">
+        The Normal Distribution &amp; Bell Curve Mechanics
+      </h2>
+      <div class="prose dark:prose-invert max-w-none text-sm sm:text-base text-zinc-600 dark:text-zinc-300 space-y-4 leading-relaxed">
+        <p>
+          All modern IQ assessments are <strong>deviation IQ tests</strong>. Pioneered by David Wechsler in 1939 to replace William Stern's outdated ratio concept (Mental Age divided by Chronological Age multiplied by 100), deviation IQ anchors performance directly to a Gaussian normal distribution.
+        </p>
+        <p>
+          In a standardized deviation IQ model:
+        </p>
+        <ul class="space-y-2 list-disc pl-5">
+          <li><strong>The Mean (&mu;) is fixed at 100:</strong> The median score of any representative age-matched population cohort is defined as 100.</li>
+          <li><strong>The Standard Deviation (&sigma;) is set to 15:</strong> One standard deviation represents 15 IQ points on the Wechsler and Stanford-Binet 5 scales.</li>
+          <li><strong>The 68-95-99.7 Rule:</strong> Exactly 68.26% of human scores fall within &plusmn;1 standard deviation (IQ 85 to 115). Exactly 95.44% fall within &plusmn;2 standard deviations (IQ 70 to 130). Exactly 99.73% fall within &plusmn;3 standard deviations (IQ 55 to 145).</li>
+        </ul>
+      </div>
+
+      <!-- Key Percentile Breakdown Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium uppercase">Within &plusmn;1 SD</span>
+          <p class="font-heading font-extrabold text-2xl text-zinc-950 dark:text-white my-1">68.26% of People</p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">Scores between 85 and 115. Encompasses Low Average, Average, and High Average.</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium uppercase">Within &plusmn;2 SD</span>
+          <p class="font-heading font-extrabold text-2xl text-zinc-950 dark:text-white my-1">95.44% of People</p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">Scores between 70 and 130. Only 2.28% score higher, and only 2.28% score lower.</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium uppercase">Within &plusmn;3 SD</span>
+          <p class="font-heading font-extrabold text-2xl text-zinc-950 dark:text-white my-1">99.73% of People</p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">Scores between 55 and 145. Scores above 145 occur in roughly 1 out of 740 individuals.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Flynn Effect Section -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs space-y-4">
+      <span class="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">
+        Longitudinal Psychometrics
+      </span>
+      <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white">
+        The Flynn Effect &amp; Generational Norm Recalibration
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Discovered by political scientist James R. Flynn, the <strong>Flynn Effect</strong> observes that raw scores on intelligence tests increased at an average rate of approximately 3 IQ points per decade throughout the 20th century across industrialized nations.
+      </p>
+      <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Because of this generational upward shift in raw problem-solving speed and visual abstraction, an individual who scored 100 on an exam normed in 1950 would score noticeably lower on a test calibrated to 2026 norms. To prevent artificial inflation of cognitive classifications, psychometric publishers restandardize their normative test samples every 10 to 15 years.
+      </p>
+    </section>
+
+    <!-- Assessment Dual Callout CTA -->
+    <section class="p-8 sm:p-12 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-center shadow-lg relative overflow-hidden">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight">
+        Discover Your Cognitive Classification Tier
+      </h2>
+      <p class="text-blue-100 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+        Evaluate your fluid reasoning, spatial rotation, quantitative logic, and verbal comprehension with our scientifically calibrated assessments. Instant score, percentile rank, and credible interval.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+        <a 
+          href="/test" 
+          class="w-full sm:w-auto px-6 py-3.5 rounded-full text-sm font-bold text-zinc-950 bg-white hover:bg-zinc-100 transition-all shadow-md text-center"
+        >
+          Take Full 20-Min Assessment
+        </a>
+        <a 
+          href="/quick-test" 
+          class="w-full sm:w-auto px-6 py-3.5 rounded-full text-sm font-bold text-white bg-white/20 hover:bg-white/30 border border-white/30 transition-all text-center"
+        >
+          Quick 10-Min Screening
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-2">
+          Frequently Asked Questions: IQ Classification
+        </h2>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">
+          Clear answers to common questions about intelligence scales, scoring bands, and clinical interpretations.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Is an IQ of 110 or 120 considered a high IQ?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Yes. On the standard Wechsler scale (SD 15), an IQ of 110 to 119 is classified as High Average (top 25% of the population). An IQ of 120 to 129 is formally classified as Superior (top 9% to 2.3%), reflecting advanced analytical deduction, rapid abstraction, and strong cognitive flexibility. You can test your score on our <a href="/test" class="text-blue-600 dark:text-blue-400 hover:underline">Free 20-Minute Cognitive Assessment</a>.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Is an IQ score of 93, 97, or 105 considered "dumb"?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            No. Any score between 90 and 109 falls squarely within the Average classification, representing exactly 50% of the human population. Millions of highly successful professionals, executives, and specialists score in this range. IQ measures specific psychometric reasoning metrics under test conditions, not practical wisdom, social capability, or human value. See our <a href="/iq-score-chart" class="text-blue-600 dark:text-blue-400 hover:underline">IQ Score Chart</a> for bell curve visuals.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Is a 72 IQ smart, and what does borderline intellectual functioning mean?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            An IQ of 72 falls within the Borderline Intellectual Functioning range (scores 70 to 79, bottom 7%). It is distinct from intellectual disability (which requires scores below 70 alongside diagnosed adaptive functioning impairments). Scores in this bracket can often be depressed by test anxiety, language discordance, or educational disparities rather than fixed cognitive limits.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What are the genuine signs of high IQ in daily life?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Empirical psychometrics identifies core traits associated with high general intelligence (<em>g</em>): rapid inductive pattern recognition, superior working memory capacity, high cognitive curiosity, fast information processing speed, and the ability to deconstruct novel abstract problems without prior training.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What causes a low IQ score, and does ADHD indicate low intelligence?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            ADHD does not indicate low intelligence. People with ADHD exhibit the full distribution of IQ scores from average to gifted. However, executive functioning constraints, working memory interference, and processing speed bottlenecks can artificially depress timed test scores. Low IQ scores can also reflect sleep deprivation, chronic stress, socioeconomic educational gaps, or neurological factors.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What is a "god IQ" or the highest IQ score theoretically possible?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            "God IQ" is internet slang describing scores above 160 or 180. On standardized clinical instruments like the WAIS-IV, the maximum measurement ceiling is 160 (representing +4.00 standard deviations, or 1 in 31,560 rarity). Claims of adult IQs of 200+ are unnormed statistical extrapolations or obsolete childhood mental age ratios. Explore more on our <a href="/high-iq-societies" class="text-blue-600 dark:text-blue-400 hover:underline">High-IQ Societies Guide</a>.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Internal Linking Navigation Bar -->
+    <section class="pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <h3 class="font-heading font-semibold text-base text-zinc-900 dark:text-white mb-4">
+        Related Cognitive Psychometrics &amp; Tools
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <a
+          href="/iq-score-chart"
+          class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group"
+        >
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium uppercase mb-1">Visual Bell Curve</div>
+          <div class="font-heading font-bold text-sm text-zinc-900 dark:text-white flex items-center justify-between">
+            <span>Interactive IQ Score Chart</span>
+            <span class="text-blue-600 dark:text-blue-400 font-mono transition-transform group-hover:translate-x-0.5">&rarr;</span>
+          </div>
+        </a>
+        <a
+          href="/iq-percentile-calculator"
+          class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group"
+        >
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium uppercase mb-1">Mathematical Tool</div>
+          <div class="font-heading font-bold text-sm text-zinc-900 dark:text-white flex items-center justify-between">
+            <span>Percentile Calculator</span>
+            <span class="text-blue-600 dark:text-blue-400 font-mono transition-transform group-hover:translate-x-0.5">&rarr;</span>
+          </div>
+        </a>
+        <a
+          href="/high-iq-societies"
+          class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group"
+        >
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-medium uppercase mb-1">Eligibility Guide</div>
+          <div class="font-heading font-bold text-sm text-zinc-900 dark:text-white flex items-center justify-between">
+            <span>High IQ Societies Guide</span>
+            <span class="text-blue-600 dark:text-blue-400 font-mono transition-transform group-hover:translate-x-0.5">&rarr;</span>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  function erf(x: number): number {
+    const sign = x >= 0 ? 1 : -1;
+    const absX = Math.abs(x);
+    const a1 = 0.254829592;
+    const a2 = -0.284496736;
+    const a3 = 1.421413741;
+    const a4 = -1.453152027;
+    const a5 = 1.061405429;
+    const p = 0.3275911;
+    const t = 1.0 / (1.0 + p * absX);
+    const y = 1.0 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t) * Math.exp(-absX * absX);
+    return sign * y;
+  }
+
+  function normalCdf(z: number): number {
+    return 0.5 * (1.0 + erf(z / Math.SQRT2));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const rangeEl = document.getElementById('iq-calc-range') as HTMLInputElement;
+    const inputEl = document.getElementById('iq-calc-input') as HTMLInputElement;
+    const tierEl = document.getElementById('widget-tier');
+    const pctEl = document.getElementById('widget-pct');
+    const rarityEl = document.getElementById('widget-rarity');
+    const zscoreEl = document.getElementById('widget-zscore');
+
+    function updateWidget(iq: number) {
+      const z = (iq - 100) / 15;
+      const pct = Math.min(99.99, Math.max(0.01, normalCdf(z) * 100));
+
+      let tier = "Average";
+      if (iq >= 130) tier = "Very Superior";
+      else if (iq >= 120) tier = "Superior";
+      else if (iq >= 110) tier = "High Average";
+      else if (iq >= 90)  tier = "Average";
+      else if (iq >= 80)  tier = "Low Average";
+      else if (iq >= 70)  tier = "Borderline";
+      else tier = "Extremely Low";
+
+      if (tierEl) tierEl.textContent = tier;
+      if (pctEl) pctEl.textContent = `${pct.toFixed(1)}th`;
+      if (zscoreEl) zscoreEl.textContent = `${z >= 0 ? '+' : ''}${z.toFixed(2)} σ`;
+
+      if (rarityEl) {
+        if (pct >= 50) {
+          const rem = 100 - pct;
+          const ratio = rem > 0.05 ? Math.round(100 / rem) : 1000;
+          rarityEl.textContent = `1 in ${ratio >= 1000 ? '1,000+' : ratio}`;
+        } else {
+          const ratio = pct > 0.05 ? Math.round(100 / pct) : 1000;
+          rarityEl.textContent = `Bottom 1 in ${ratio >= 1000 ? '1,000+' : ratio}`;
+        }
+      }
+    }
+
+    if (rangeEl && inputEl) {
+      rangeEl.addEventListener('input', () => {
+        const val = parseInt(rangeEl.value, 10) || 100;
+        inputEl.value = String(val);
+        updateWidget(val);
+      });
+      inputEl.addEventListener('input', () => {
+        const val = parseInt(inputEl.value, 10) || 100;
+        rangeEl.value = String(val);
+        updateWidget(val);
+      });
+    }
+
+    updateWidget(118);
+  });
+</script>

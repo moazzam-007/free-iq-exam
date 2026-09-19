@@ -1,0 +1,1565 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Reaction Time Test Online - Test Your Reflexes (ms) | FreeIQExam';
+const description =
+  'Measure your visual reaction speed in milliseconds with a free five-trial reaction time test. Get an instant average, percentile estimate, personal best, and reflex tier with no signup.';
+const canonicalUrl = 'https://freeiqexam.com/reaction-time-test';
+
+const alternates: Record<string, string> = {};
+
+const faqItems = [
+  {
+    name: 'What is a good score on an online reaction time test?',
+    answer:
+      'For a simple visual reaction task, many healthy adults fall around the mid-200 millisecond range, although the exact value varies by protocol, device, and population. On FreeIQExam, scores below about 220 ms are presented as faster than the reference distribution used by the percentile model, while very low scores should be treated as an exceptional performance rather than a clinical measurement.'
+  },
+  {
+    name: 'Why is my reaction time significantly slower on a smartphone than on a PC?',
+    answer:
+      'A phone can add latency through the display refresh cycle, touchscreen digitizer, operating-system processing, browser scheduling, and touch-to-paint pipeline. A desktop with a high-refresh display and low-latency wired mouse usually has a shorter and more predictable input path. The size of the difference varies substantially by device and browser, so there is no universal 40–75 ms penalty.'
+  },
+  {
+    name: 'What is the absolute biological limit of human reaction speed?',
+    answer:
+      'There is no single universal biological limit because reaction time depends on the sensory modality, stimulus, response, and measurement method. Auditory simple reaction times can be near or below 150 ms in trained or laboratory settings, while simple visual reactions are commonly slower. Extremely short values can reflect anticipation, measurement artifacts, or a very different task definition.'
+  },
+  {
+    name: 'How does the reaction time of professional gamers compare to non-gamers?',
+    answer:
+      'Competitive gamers often show faster average responses on simple visual tasks than non-gamers, but the gap varies across studies and tasks. Training can improve attention, visual search, response selection, and motor preparation; it does not simply make every nerve conduct impulses faster.'
+  },
+  {
+    name: 'Why do humans react faster to sudden sound than to sudden light?',
+    answer:
+      'Auditory signals generally reach awareness and initiate a motor response faster than visual signals because the auditory transduction and early neural pathway can be faster for simple stimuli. Vision adds retinal phototransduction and additional cortical processing before the motor response is selected.'
+  },
+  {
+    name: 'How much can a 144Hz or 240Hz gaming monitor improve my test score?',
+    answer:
+      'Higher refresh rates reduce the time between available display frames: about 16.67 ms at 60 Hz, 6.94 ms at 144 Hz, and 4.17 ms at 240 Hz. That reduces one component of presentation uncertainty, but it does not subtract the full difference from every user score because the actual pipeline includes rendering, scan-out, input, and operating-system latency.'
+  },
+  {
+    name: 'What is considered a normal reaction time for a 50-year-old?',
+    answer:
+      'There is no single clinical cutoff for a normal 50-year-old reaction time. Reaction speed generally changes gradually with age, and a healthy individual result is influenced by vision, sleep, medication, device latency, practice, and the test protocol. Comparing your repeated scores under the same conditions is more useful than treating one internet benchmark as a diagnosis.'
+  },
+  {
+    name: 'Can visual reaction time be permanently trained and improved?',
+    answer:
+      'Yes, some components of performance can improve with practice, especially attention, stimulus detection, response preparation, and task familiarity. Gains are usually task-specific and are bounded by physiology. Consistent sleep, physical activity, good visual conditions, and repeated practice under the same protocol are more defensible strategies than chasing a single extreme score.'
+  }
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#app`,
+    name: 'Free Visual Reaction Time Test',
+    url: canonicalUrl,
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Any',
+    browserRequirements:
+      'Requires JavaScript, Performance API, Pointer Events, and HTML5 support',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    },
+    description:
+      'A five-trial browser-based visual reaction time benchmark that reports millisecond response speed and a model-based population percentile estimate.',
+    isAccessibleForFree: true,
+    creator: {
+      '@type': 'Organization',
+      name: 'FreeIQExam',
+      url: 'https://freeiqexam.com'
+    },
+    featureList: [
+      'Five calibrated visual reaction trials',
+      'Pointerdown and keyboard input',
+      'Client-side personal best storage',
+      'Model-based population percentile estimate',
+      'Synthesized optional sound cues',
+      'Score sharing via clipboard'
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://freeiqexam.com/'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Cognitive Games',
+        item: 'https://freeiqexam.com/games'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Reaction Time Test',
+        item: canonicalUrl
+      }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'Five-Trial Visual Reaction Time Benchmark',
+    url: canonicalUrl,
+    description:
+      'A simple reaction-time task in which the participant responds when the arena changes from red to green.',
+    numberOfQuestions: 5,
+    educationalAlignment: {
+      '@type': 'AlignmentObject',
+      alignmentType: 'educationalSubject',
+      targetName:
+        'Perceptual speed and sensorimotor response latency'
+    }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.name,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer
+      }
+    }))
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+>
+  <Header />
+
+  <style>
+    .reaction-page {
+      --reaction-border: #e4e4e7;
+      --reaction-muted: #52525b;
+      background: #ffffff;
+    }
+
+    .dark .reaction-page {
+      --reaction-border: #27272a;
+      --reaction-muted: #a1a1aa;
+      background: #000000;
+    }
+
+    .reaction-arena {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      transition:
+        transform 90ms ease-out,
+        background 120ms ease-out;
+    }
+
+    .reaction-arena:active {
+      transform: scale(0.997);
+    }
+
+    .state-start {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #2563eb 0%,
+          #1d4ed8 62%,
+          #1e40af 100%
+        );
+    }
+
+    .dark .state-start {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #1d4ed8 0%,
+          #0f172a 70%,
+          #09090b 100%
+        );
+    }
+
+    .state-waiting {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #e11d48 0%,
+          #be123c 62%,
+          #9f1239 100%
+        );
+    }
+
+    .dark .state-waiting {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #be123c 0%,
+          #881337 68%,
+          #4c0519 100%
+        );
+    }
+
+    .state-active {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #10b981 0%,
+          #059669 62%,
+          #047857 100%
+        );
+    }
+
+    .dark .state-active {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #10b981 0%,
+          #047857 68%,
+          #064e3b 100%
+        );
+    }
+
+    .state-toosoon {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #f97316 0%,
+          #ea580c 65%,
+          #c2410c 100%
+        );
+    }
+
+    .state-result {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #38bdf8 0%,
+          #0284c7 65%,
+          #0369a1 100%
+        );
+    }
+
+    .dark .state-result {
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          #0ea5e9 0%,
+          #0369a1 68%,
+          #082f49 100%
+        );
+    }
+
+    .state-summary {
+      background: #fafafa;
+    }
+
+    .dark .state-summary {
+      background: #09090b;
+    }
+
+    .summary-card {
+      background: rgba(255, 255, 255, 0.97);
+      border: 1px solid #e4e4e7;
+      backdrop-filter: blur(16px);
+    }
+
+    .dark .summary-card {
+      background: rgba(18, 18, 21, 0.97);
+      border-color: #27272a;
+    }
+
+    .reaction-copy p {
+      max-width: 75ch;
+    }
+
+    .reaction-copy table {
+      min-width: 760px;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    @keyframes reaction-shake {
+      10%,
+      90% {
+        transform: translateX(-2px);
+      }
+
+      20%,
+      80% {
+        transform: translateX(4px);
+      }
+
+      30%,
+      50%,
+      70% {
+        transform: translateX(-6px);
+      }
+
+      40%,
+      60% {
+        transform: translateX(6px);
+      }
+    }
+
+    .animate-reaction-shake {
+      animation:
+        reaction-shake
+        0.4s
+        cubic-bezier(.36, .07, .19, .97)
+        both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-reaction-shake {
+        animation: none;
+      }
+    }
+  </style>
+
+  <main
+    id="main-content"
+    class="reaction-page min-h-screen flex-1 w-full"
+  >
+    <div
+      class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16"
+    >
+      <nav
+        class="flex items-center gap-2 mb-8 text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400"
+        aria-label="Breadcrumb"
+      >
+        <a
+          href="/"
+          class="hover:text-zinc-950 dark:hover:text-white transition-colors"
+        >
+          Home
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <a
+          href="/games"
+          class="hover:text-zinc-950 dark:hover:text-white transition-colors"
+        >
+          Cognitive Games
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <span class="text-zinc-900 dark:text-zinc-100">
+          Reaction Time Test
+        </span>
+      </nav>
+
+      <header
+        class="text-center max-w-3xl mx-auto mb-10 sm:mb-12"
+      >
+        <div
+          class="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40 px-4 py-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300"
+        >
+          <span
+            class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse"
+            aria-hidden="true"
+          ></span>
+
+          <span>
+            Perceptual Speed · Gs Chronometrics
+          </span>
+        </div>
+
+        <h1
+          class="mt-5 text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight text-zinc-950 dark:text-white"
+        >
+          Reaction Time Test Online
+        </h1>
+
+        <p
+          class="mt-5 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+        >
+          Test your visual reflexes in milliseconds. Wait for the red arena to
+          turn green, then click, tap, press Space, or press Enter as quickly
+          as you can. Five valid trials produce an average reaction time, a
+          model-based percentile estimate, a reflex tier, and a personal-best
+          check.
+        </p>
+      </header>
+
+      <section
+        aria-labelledby="arena-heading"
+        class="max-w-3xl mx-auto"
+      >
+        <h2 id="arena-heading" class="sr-only">
+          Interactive reaction time test
+        </h2>
+
+        <div
+          class="flex items-center justify-between gap-4 px-1 mb-4 text-sm sm:text-base"
+        >
+          <div class="flex items-center gap-2">
+            <span
+              class="text-zinc-500 dark:text-zinc-400 font-medium"
+            >
+              TRIAL
+            </span>
+
+            <strong
+              id="hud-round-counter"
+              class="text-zinc-950 dark:text-white"
+            >
+              0 / 5
+            </strong>
+          </div>
+
+          <div
+            class="flex items-center gap-3 sm:gap-5"
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="text-zinc-500 dark:text-zinc-400 font-medium"
+              >
+                BEST
+              </span>
+
+              <strong
+                id="hud-personal-best"
+                class="text-emerald-600 dark:text-emerald-400"
+              >
+                —
+              </strong>
+            </div>
+
+            <button
+              id="btn-sound-toggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Mute sound effects"
+              class="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-2.5 font-semibold text-zinc-800 dark:text-zinc-200 transition-smooth hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <span id="sound-icon" aria-hidden="true">
+                🔊
+              </span>
+
+              <span id="sound-label">
+                Audio
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="mb-4 flex items-center gap-2"
+          aria-label="Trial progress"
+        >
+          <span
+            id="pill-trial-1"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-2"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-3"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-4"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+
+          <span
+            id="pill-trial-5"
+            class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"
+          ></span>
+        </div>
+
+        <div
+          id="reaction-box"
+          role="button"
+          tabindex="0"
+          aria-label="Reaction time test arena. Click or tap when the arena turns green."
+          aria-busy="false"
+          class="reaction-arena state-start relative min-h-[430px] sm:min-h-[500px] rounded-[2rem] overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/40 shadow-2xl"
+        >
+          <div
+            class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,.18),transparent_34%),radial-gradient(circle_at_50%_100%,rgba(0,0,0,.16),transparent_60%)]"
+          ></div>
+
+          <div
+            id="content-start"
+            class="relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg"
+            >
+              <svg
+                class="w-10 h-10 sm:w-12 sm:h-12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+
+            <div class="space-y-3 max-w-xl">
+              <h3
+                class="text-3xl sm:text-5xl font-extrabold tracking-tight"
+              >
+                Click or Tap to Begin
+              </h3>
+
+              <p
+                class="text-base sm:text-lg leading-relaxed text-white/90"
+              >
+                Wait for green. Then respond immediately. False starts do not
+                count toward your five valid trials.
+              </p>
+            </div>
+
+            <div
+              class="inline-flex flex-wrap items-center justify-center gap-2 rounded-full bg-white/15 border border-white/20 px-5 py-3 text-sm font-semibold"
+            >
+              <span>Keyboard:</span>
+
+              <kbd
+                class="rounded-lg bg-white/20 px-3 py-1 font-mono"
+              >
+                SPACE
+              </kbd>
+
+              <span>or</span>
+
+              <kbd
+                class="rounded-lg bg-white/20 px-3 py-1 font-mono"
+              >
+                ENTER
+              </kbd>
+            </div>
+          </div>
+
+          <div
+            id="content-waiting"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="flex items-center gap-3"
+              aria-hidden="true"
+            >
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping"
+              ></span>
+
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping [animation-delay:150ms]"
+              ></span>
+
+              <span
+                class="w-4 h-4 rounded-full bg-white animate-ping [animation-delay:300ms]"
+              ></span>
+            </div>
+
+            <div>
+              <h3
+                class="text-4xl sm:text-6xl font-extrabold tracking-tight uppercase"
+              >
+                Wait for green…
+              </h3>
+
+              <p
+                class="mt-3 text-base sm:text-lg text-white/85"
+              >
+                Do not anticipate. Keep the finger ready, but do not press.
+              </p>
+            </div>
+          </div>
+
+          <div
+            id="content-active"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white"
+          >
+            <div
+              class="w-20 h-20 rounded-full bg-white/25 border border-white/30 flex items-center justify-center shadow-2xl"
+            >
+              <svg
+                class="w-12 h-12"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <h3
+                class="text-5xl sm:text-7xl font-extrabold tracking-tight uppercase"
+              >
+                CLICK NOW!
+              </h3>
+
+              <p
+                class="mt-3 text-sm sm:text-base font-semibold uppercase tracking-widest text-white/90"
+              >
+                Tap, click, Space, or Enter
+              </p>
+            </div>
+          </div>
+
+          <div
+            id="content-toosoon"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-5 px-6 sm:px-10 text-center text-white animate-reaction-shake"
+          >
+            <div
+              class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center"
+            >
+              <svg
+                class="w-10 h-10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3.732 1.732 3z"
+                />
+              </svg>
+            </div>
+
+            <h3
+              class="text-4xl sm:text-5xl font-extrabold tracking-tight"
+            >
+              Too Soon!
+            </h3>
+
+            <p
+              class="text-base sm:text-lg text-white/90 max-w-xl"
+            >
+              You clicked while the arena was red. The attempt is discarded and
+              this same round will be retried.
+            </p>
+
+            <span
+              class="rounded-full bg-white px-6 py-3 font-bold text-orange-700 shadow-xl"
+            >
+              Tap to Retry
+            </span>
+          </div>
+
+          <div
+            id="content-result"
+            class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-5 px-6 sm:px-10 text-center text-white"
+          >
+            <span
+              id="result-round-indicator"
+              class="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold uppercase tracking-wider"
+            >
+              ROUND 1 OF 5
+            </span>
+
+            <div class="flex items-baseline gap-2">
+              <span
+                id="round-ms-display"
+                class="text-6xl sm:text-8xl font-extrabold tracking-tight"
+              >
+                250
+              </span>
+
+              <span
+                class="text-2xl sm:text-3xl font-mono font-bold text-white/80"
+              >
+                ms
+              </span>
+            </div>
+
+            <p
+              id="round-quick-feedback"
+              class="text-base sm:text-lg font-semibold text-white/90"
+            >
+              Strong visual reaction.
+            </p>
+
+            <span
+              class="rounded-full bg-white px-7 py-3.5 text-base font-bold text-sky-700 shadow-xl"
+            >
+              Click to Continue
+            </span>
+          </div>
+
+          <div
+            id="content-summary"
+            class="hidden relative z-10 w-full min-h-[430px] sm:min-h-[500px] flex items-center justify-center p-4 sm:p-8"
+          >
+            <div
+              class="summary-card w-full max-w-xl rounded-[2rem] p-6 sm:p-8 text-zinc-900 dark:text-white shadow-2xl"
+            >
+              <div
+                class="mx-auto w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center"
+              >
+                <svg
+                  class="w-8 h-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+
+              <h3
+                class="mt-4 text-2xl sm:text-3xl font-bold text-center tracking-tight"
+              >
+                Test Complete
+              </h3>
+
+              <p
+                class="mt-1 text-base text-zinc-500 dark:text-zinc-400 text-center"
+              >
+                Five valid trials · average visual reaction time
+              </p>
+
+              <div
+                class="mt-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-5 text-center"
+              >
+                <p
+                  class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+                >
+                  Average Response
+                </p>
+
+                <div
+                  class="mt-2 flex items-baseline justify-center gap-2"
+                >
+                  <span
+                    id="final-avg-ms"
+                    class="text-6xl sm:text-7xl font-extrabold tracking-tight text-sky-600 dark:text-sky-400"
+                  >
+                    250
+                  </span>
+
+                  <span
+                    class="text-2xl font-mono font-bold text-zinc-500"
+                  >
+                    ms
+                  </span>
+                </div>
+
+                <div
+                  class="mt-4 flex flex-wrap items-center justify-center gap-2"
+                >
+                  <span
+                    id="final-percentile-badge"
+                    class="rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 px-4 py-2 text-sm font-bold text-emerald-700 dark:text-emerald-300"
+                  >
+                    Top 50% Reflexes (50th Percentile)
+                  </span>
+
+                  <span
+                    id="final-tier-badge"
+                    class="rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                  >
+                    Normal Human Median
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-5">
+                <p
+                  class="mb-2 text-sm font-semibold uppercase tracking-wider text-center text-zinc-500 dark:text-zinc-400"
+                >
+                  Trial Speeds
+                </p>
+
+                <div
+                  id="summary-trials-grid"
+                  class="grid grid-cols-5 gap-2 text-center font-mono text-sm"
+                ></div>
+              </div>
+
+              <div
+                class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
+              >
+                <button
+                  id="btn-share-score"
+                  type="button"
+                  class="rounded-full border border-blue-600 bg-blue-600 px-6 py-3.5 text-base font-semibold text-white transition-smooth hover:scale-[1.02] active:scale-[0.98] hover:bg-blue-500"
+                >
+                  <span id="share-btn-text">
+                    Share Score / Copy
+                  </span>
+                </button>
+
+                <button
+                  id="btn-restart-game"
+                  type="button"
+                  class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 text-base font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth hover:scale-[1.02] active:scale-[0.98] hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                >
+                  Test Again
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p
+          class="mt-4 text-center text-sm sm:text-base text-zinc-500 dark:text-zinc-400"
+        >
+          Measured score = browser-visible stimulus-to-input latency. Display
+          refresh, browser scheduling, input hardware, and touch hardware can
+          all affect the result.
+        </p>
+      </section>
+
+      <section
+        class="reaction-copy mt-20 sm:mt-28 border-t border-zinc-200 dark:border-zinc-800 pt-16 sm:pt-20"
+        aria-labelledby="guide-title"
+      >
+        <div class="max-w-3xl mx-auto">
+          <p
+            class="text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400"
+          >
+            Neurobiology · Benchmarks · Hardware
+          </p>
+
+          <h2
+            id="guide-title"
+            class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white"
+          >
+            Visual Reaction Time: How Fast Can the Human Nervous System
+            Respond?
+          </h2>
+
+          <p
+            class="mt-6 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+          >
+            Reaction time is not one single biological number. It is the
+            combined latency of sensing a stimulus, recognizing what matters,
+            selecting a response, sending a command through the nervous system,
+            moving a muscle, and registering the physical input on a device. A
+            browser reaction-time test therefore measures the complete
+            sensorimotor loop rather than the speed of one isolated nerve.
+          </p>
+        </div>
+
+        <article
+          class="mt-12 grid gap-14 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+        >
+          <section aria-labelledby="neurobiology-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              01 · Physiology
+            </p>
+
+            <h3
+              id="neurobiology-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              The physiology of reaction speed
+            </h3>
+
+            <p class="mt-5">
+              A visual reaction begins when photons strike the retina. Rods and
+              cones convert incoming light into changes in membrane potential
+              through phototransduction. This is a biochemical process, so
+              vision has an early processing cost before an action potential
+              can travel down the optic nerve. Visual signals then pass through
+              several relay and processing stages, including the lateral
+              geniculate nucleus (LGN) of the thalamus and primary visual cortex
+              (V1) in the occipital lobe. From there, distributed attention and
+              action-selection networks help determine that the stimulus is the
+              one that should trigger a response.
+            </p>
+
+            <p class="mt-5">
+              The simplified pathway can be pictured as
+              <strong class="text-zinc-900 dark:text-white">
+                retina → optic nerve → LGN → V1 → attention and action
+                networks → motor cortex → corticospinal pathways → spinal motor
+                neurons → finger muscles → input device
+              </strong>.
+              Large myelinated axons can conduct impulses at roughly 100 m/s
+              under favorable conditions, but that impressive number is only
+              one part of the total delay. Synapses, sensory transduction,
+              network decisions, muscle activation, and the device pipeline all
+              add time.
+            </p>
+
+            <p class="mt-5">
+              Auditory reaction time is often faster than visual reaction time
+              in simple-response experiments. In the ear, sound-driven motion
+              in the cochlea mechanically deflects stereocilia and rapidly
+              changes hair-cell receptor currents. The visual system, by
+              comparison, must complete phototransduction before the signal
+              leaves the retina. Values around 140–170 ms for simple auditory
+              responses and around 200–300 ms for simple visual responses are
+              useful broad reference ranges, but individual experiments produce
+              different numbers.
+            </p>
+
+            <div
+              class="mt-7 rounded-3xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/25 p-6 sm:p-7"
+            >
+              <p
+                class="text-sm font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300"
+              >
+                Important measurement note
+              </p>
+
+              <p class="mt-3">
+                This test is a performance benchmark, not a clinical
+                neurological examination. A percentile here is a statistical
+                comparison to the model used by this page; it is not a
+                diagnosis, a fitness-to-drive decision, or proof of
+                professional-level reflexes.
+              </p>
+            </div>
+          </section>
+
+          <section aria-labelledby="benchmark-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              02 · Population context
+            </p>
+
+            <h3
+              id="benchmark-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Global benchmark and population percentiles
+            </h3>
+
+            <p class="mt-5">
+              Reaction-time literature uses different equipment, stimuli,
+              instructions, and inclusion criteria, so a single worldwide table
+              should be treated as illustrative rather than normative. The
+              rows below are deliberately framed as broad benchmark bands for
+              simple visual-response tasks, not as laboratory norms for every
+              population.
+            </p>
+
+            <div
+              class="mt-7 overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800"
+            >
+              <table
+                class="w-full text-left border-collapse text-sm sm:text-base"
+              >
+                <caption class="sr-only">
+                  Illustrative reaction time benchmark bands
+                </caption>
+
+                <thead>
+                  <tr
+                    class="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
+                  >
+                    <th
+                      scope="col"
+                      class="px-5 py-4 font-semibold text-zinc-950 dark:text-white"
+                    >
+                      Group / context
+                    </th>
+
+                    <th
+                      scope="col"
+                      class="px-5 py-4 font-semibold text-zinc-950 dark:text-white"
+                    >
+                      Illustrative visual RT
+                    </th>
+
+                    <th
+                      scope="col"
+                      class="px-5 py-4 font-semibold text-zinc-950 dark:text-white"
+                    >
+                      Interpretation
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody
+                  class="divide-y divide-zinc-200 dark:divide-zinc-800"
+                >
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Elite drivers / fighter pilots
+                    </td>
+
+                    <td class="px-5 py-4">
+                      ~140–160 ms*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      Exceptional trained performance; task definitions differ.
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Esports competitors
+                    </td>
+
+                    <td class="px-5 py-4">
+                      ~160–190 ms*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      Fast responses frequently reported on simple tasks.
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      College-age athletes
+                    </td>
+
+                    <td class="px-5 py-4">
+                      ~190–220 ms*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      Often faster than untrained adult baselines.
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Average healthy adults
+                    </td>
+
+                    <td class="px-5 py-4">
+                      ~250–270 ms*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      A useful broad reference band for simple visual tests.
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                      class="px-5 py-4 font-medium text-zinc-950 dark:text-white"
+                    >
+                      Fatigue / high-latency setup
+                    </td>
+
+                    <td class="px-5 py-4">
+                      &gt;320 ms*
+                    </td>
+
+                    <td class="px-5 py-4">
+                      May reflect sleepiness, inconsistent attention, or device
+                      delay.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p
+              class="mt-4 text-sm sm:text-base text-zinc-500 dark:text-zinc-400"
+            >
+              *Illustrative bands requested for this page's educational
+              benchmark. They should not be read as a universal clinical norm
+              or as proof that every member of a profession belongs inside the
+              stated range.
+            </p>
+          </section>
+
+          <section aria-labelledby="hardware-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              03 · Hardware latency
+            </p>
+
+            <h3
+              id="hardware-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Display, mouse, and touchscreen latency can move the score
+            </h3>
+
+            <p class="mt-5">
+              An online reaction time test does not measure biology in a vacuum.
+              The observed number includes the time between the browser
+              rendering a visible change and the device reporting the user's
+              input. Refresh rate is especially easy to understand: a 60 Hz
+              display presents a new refresh every 16.67 ms, a 144 Hz display
+              every 6.94 ms, a 240 Hz display every 4.17 ms, and a 360 Hz
+              display every 2.78 ms. Higher refresh rates therefore reduce the
+              maximum frame interval, although actual end-to-end latency also
+              depends on scan-out position, rendering, synchronization, and
+              the display itself.
+            </p>
+
+            <p class="mt-5">
+              Mouse polling is another component. A 125 Hz USB polling interval
+              corresponds to 8 ms between polls in the idealized worst-case
+              interval model; 1000 Hz corresponds to 1 ms. These are not the
+              same thing as total input latency, because device firmware, USB
+              scheduling, OS event delivery, browser event dispatch, and the
+              physical click all add additional timing variation.
+            </p>
+
+            <p class="mt-5">
+              Touchscreens can be more variable still. Digitizer sampling,
+              touch filtering, OS gesture recognition, browser processing,
+              compositing, and display refresh can all add delay. It is
+              reasonable to see tens of milliseconds of additional latency on
+              some mobile setups, but a universal 40–75 ms penalty is too
+              strong: devices differ, browser implementations differ, and some
+              modern phones are substantially faster than others.
+            </p>
+
+            <div class="mt-7 grid gap-4 sm:grid-cols-2">
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Refresh interval
+                </h4>
+
+                <p class="mt-2">
+                  60 Hz → 16.67 ms · 144 Hz → 6.94 ms · 240 Hz → 4.17 ms · 360
+                  Hz → 2.78 ms.
+                </p>
+              </div>
+
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Polling interval
+                </h4>
+
+                <p class="mt-2">
+                  125 Hz → 8 ms · 500 Hz → 2 ms · 1000 Hz → 1 ms, before the
+                  rest of the input pipeline is counted.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section aria-labelledby="aging-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              04 · Time of day and aging
+            </p>
+
+            <h3
+              id="aging-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Chronobiology, sleep, and age change reaction speed
+            </h3>
+
+            <p class="mt-5">
+              Reaction performance is sensitive to arousal and circadian timing.
+              In many laboratory settings, response speed improves from the
+              sleepy part of the morning into the afternoon, although the peak
+              depends on chronotype, sleep schedule, light exposure, caffeine
+              use, and the task. A late-afternoon testing window is therefore a
+              reasonable practical choice for some people, but it is not a
+              universal biological rule.
+            </p>
+
+            <p class="mt-5">
+              Age is another strong influence. Simple reaction time tends to be
+              fastest in young adulthood and then gradually increases with age.
+              The change is not explained by one mechanism. Slower sensory
+              processing, changes in attention, reduced motor speed, altered
+              neuromuscular recruitment, and age-related neural changes all
+              contribute. A claim such as “exactly +2–6 ms per decade” can be a
+              useful educational approximation, but individual trajectories are
+              wider than that single formula suggests.
+            </p>
+
+            <p class="mt-5">
+              Sleep loss can have a large effect on vigilance and response
+              stability. Severe sleep deprivation has produced impairment
+              levels that researchers have compared with alcohol-related
+              impairment, but the exact equivalence depends on the task,
+              duration of wakefulness, and study design. Rather than memorizing
+              a single “BAC equivalent,” the practical lesson is simpler: do
+              not judge your normal reflexes from a score taken when you are
+              acutely sleep deprived.
+            </p>
+          </section>
+
+          <section aria-labelledby="optimization-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              05 · Tactical optimization
+            </p>
+
+            <h3
+              id="optimization-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              How to improve a reaction time test score without chasing
+              artifacts
+            </h3>
+
+            <p class="mt-5">
+              The most useful goal is not to force an impossibly small number;
+              it is to reduce avoidable variability. Keep your gaze soft and
+              centered on the arena instead of staring rigidly at one pixel. A
+              relaxed focal strategy can help you notice the global luminance
+              change without adding unnecessary eye movements. Keep the
+              responding hand in a neutral position with the finger close to
+              the input target, but do not pre-click or press against the
+              switch.
+            </p>
+
+            <p class="mt-5">
+              Anticipatory motor priming can make simple responses quicker
+              because the motor system can prepare a likely movement before the
+              stimulus arrives. The trade-off is false starts: preparation
+              should stop short of guessing the exact trigger time. Consistent
+              posture, the same device, the same browser, and the same viewing
+              distance are often more valuable than changing hardware between
+              trials.
+            </p>
+
+            <div class="mt-7 grid gap-4 md:grid-cols-3">
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Soft focal gaze
+                </h4>
+
+                <p class="mt-2">
+                  Keep the whole arena in view and avoid unnecessary saccades.
+                </p>
+              </div>
+
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Motor priming
+                </h4>
+
+                <p class="mt-2">
+                  Rest the responding finger near the control without preloading
+                  a click.
+                </p>
+              </div>
+
+              <div
+                class="rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900"
+              >
+                <h4
+                  class="font-bold text-zinc-950 dark:text-white"
+                >
+                  Repeat consistently
+                </h4>
+
+                <p class="mt-2">
+                  Use the same device and conditions so changes reflect
+                  performance, not hardware.
+                </p>
+              </div>
+            </div>
+
+            <p class="mt-5">
+              Practice can help, but the improvement is often task-specific.
+              Repeating this exact test can reduce familiarity and strategy
+              costs, while broader games may improve attention or response
+              selection without producing the same gain on a different test.
+              Sleep, physical activity, and healthy visual conditions are
+              foundational; stimulants should not be used as a substitute for
+              adequate rest.
+            </p>
+
+            <p class="mt-5">
+              One of the most useful training principles is consistency. Run
+              several sessions at roughly the same time of day, use the same
+              browser, display, mouse or phone, and sit at the same distance.
+              Browser timers are not hard real-time instruments: the operating
+              system can briefly pause a tab, the browser can prioritize other
+              work, and a refresh cycle can shift when a visual change becomes
+              available. The five-trial average reduces some random noise, but
+              it cannot remove those sources of latency completely.
+            </p>
+
+            <p class="mt-5">
+              Eye movements also matter. A soft focal gaze keeps the target area
+              inside peripheral vision while minimizing unnecessary saccades. In
+              a simple color-change task, the goal is not to “hunt” for the
+              green signal but to maintain readiness across the whole arena.
+              Pre-motor preparation can shorten the final motor step, yet
+              excessive tension can make the click less reliable. The best
+              competitive posture is therefore alert but relaxed: eyes centered,
+              hand supported, finger near the control, and no deliberate
+              prediction of the trigger time.
+            </p>
+          </section>
+
+          <section aria-labelledby="measurement-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              06A · Measurement quality
+            </p>
+
+            <h3
+              id="measurement-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              How to make an online reaction test more repeatable
+            </h3>
+
+            <p class="mt-5">
+              A good benchmark is repeatable before it is impressive. Keep the
+              arena fully visible, close CPU-heavy background tabs, avoid
+              changing zoom between attempts, and use a stable pointer or touch
+              target. Browser timers are not hard real-time instruments: the
+              operating system can briefly pause a tab, the browser can
+              prioritize other work, and a refresh cycle can shift when a visual
+              change becomes available. The five-trial average reduces some
+              random noise, but it cannot remove those sources of latency
+              completely.
+            </p>
+
+            <p class="mt-5">
+              That is why your personal baseline is often the most useful
+              comparison. Test under one setup, record the average, then retest
+              later under the same setup. A change that survives several
+              sessions is more meaningful than a single unusually fast score.
+              This approach also makes it easier to separate genuine attention
+              changes from device effects.
+            </p>
+          </section>
+
+          <section aria-labelledby="interpretation-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              06 · Interpreting your result
+            </p>
+
+            <h3
+              id="interpretation-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              What do reaction time percentiles actually mean?
+            </h3>
+
+            <p class="mt-5">
+              FreeIQExam uses a Gaussian reference model centered at 265 ms
+              with a standard deviation of 42 ms to turn the five-trial average
+              into a percentile-style ranking. A lower measured time maps to a
+              higher percentile because faster response is treated as better
+              performance. This is a mathematical comparison, not a claim that
+              the world population truly follows a perfect normal distribution
+              with those exact parameters.
+            </p>
+
+            <p class="mt-5">
+              For the same reason, a 95th-percentile result on this page does
+              not mean “you are scientifically proven to be faster than 95% of
+              all humans.” It means your score falls around the upper 5% of the
+              reference distribution used by the calculator. Use the number as
+              a game-like benchmark, and compare it with your own previous
+              results under matched conditions.
+            </p>
+
+            <div
+              class="mt-7 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6 sm:p-7"
+            >
+              <h4
+                class="font-bold text-xl text-zinc-950 dark:text-white"
+              >
+                Why five trials?
+              </h4>
+
+              <p class="mt-3">
+                Single trials are noisy. Five valid observations provide a more
+                stable average while keeping the test short enough for casual
+                use. Because false starts are discarded, the five values in the
+                final summary always represent valid green-trigger responses
+                rather than penalty attempts.
+              </p>
+            </div>
+          </section>
+
+          <section id="faq" aria-labelledby="faq-title">
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              07 · FAQ
+            </p>
+
+            <h3
+              id="faq-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Frequently asked questions about reaction time tests
+            </h3>
+
+            <div class="mt-7 space-y-3">
+              {
+                faqItems.map((item) => (
+                  <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-5 py-5">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base sm:text-lg font-semibold text-zinc-950 dark:text-white">
+                      <span>{item.name}</span>
+
+                      <svg
+                        class="faq-chevron w-5 h-5 shrink-0 text-zinc-500 transition-transform duration-200"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="m19 9-7 7-7-7"
+                        />
+                      </svg>
+                    </summary>
+
+                    <div
+                      class="mt-4 border-t border-zinc-200 dark:border-zinc-800 pt-4 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300"
+                    >
+                      {item.answer}
+                    </div>
+                  </details>
+                ))
+              }
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="related-title"
+            class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-7 sm:p-9"
+          >
+            <p
+              class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            >
+              Continue the benchmark
+            </p>
+
+            <h3
+              id="related-title"
+              class="mt-3 text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white"
+            >
+              Train other parts of cognitive performance
+            </h3>
+
+            <p class="mt-4">
+              Reaction speed is only one slice of cognition. Continue with
+              working-memory, inhibition, visual-spatial, and reasoning tasks
+              across the FreeIQExam cognitive games library.
+            </p>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a
+                href="/games"
+                class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Explore Cognitive Games
+              </a>
+
+              <a
+                href="/games/stroop-clash"
+                class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Try Stroop Color Clash
+              </a>
+
+              <a
+                href="/games/digit-span"
+                class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Try Digit Span
+              </a>
+            </div>
+          </section>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <!-- Floating Toast Notification for Score Sharing -->
+  <div
+    id="share-toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-16 pointer-events-none opacity-0 rounded-full bg-zinc-950 dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-zinc-950 shadow-2xl transition-all duration-300 border border-zinc-800 dark:border-zinc-200"
+  >
+    Score copied to clipboard!
+  </div>
+
+  <Footer />
+
+  <script src="../scripts/tools/reaction-timer.js"></script>
+</Layout>

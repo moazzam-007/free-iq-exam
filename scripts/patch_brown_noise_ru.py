@@ -1,0 +1,714 @@
+# -*- coding: utf-8 -*-
+import os
+
+code = """---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const alternates = {
+  en: '/brown-noise',
+  id: '/id/generator-white-noise-cokelat'
+};
+
+const title = "Генератор коричневого шума онлайн: белый шум и звуки для сна | FreeIQExam";
+const description = "Бесплатный процедурный генератор коричневого, белого и розового шума со звуками дождя и бинауральными ритмами для глубокого сна, снятия шума в ушах и концентрации при СДВГ.";
+const canonicalUrl = "https://freeiqexam.com/ru/brown-noise";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Генератор коричневого шума и звуков для сна FreeIQExam",
+    "url": "https://freeiqexam.com/ru/brown-noise",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Требуется поддержка JavaScript и Web Audio API",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "100% процедурный синтез Web Audio API без файлов записи и без зацикливания",
+      "4 калиброванных цвета шума: Brown (1/f² броуновский), Pink (1/f спектр Восса-Маккартни), White (f⁰), Green (500 Гц природный)",
+      "Стереогенератор бинауральных ритмов: Delta (глубокий сон), Theta (медитация), Alpha (фокус) и Beta (обучение)",
+      "Многодорожечный микшер звуков окружения: процедурный дождь, отдаленный гром, океанские волны и механический вентилятор",
+      "Умный таймер сна с 30-секундным экспоненциальным плавным затуханием",
+      "Реактивный визуализатор звуковых волн и частиц 60 FPS",
+      "Готовые пресеты для гиперфокуса при СДВГ, глубокого сна, облегчения тиннитуса и медитации",
+      "Без регистрации, без аудиорекламы, 100% конфиденциальная генерация на стороне клиента"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Инструменты",
+        "item": "https://freeiqexam.com/ru/tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Генератор коричневого шума",
+        "item": "https://freeiqexam.com/ru/brown-noise"
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  alternates={alternates}
+  enPath="/brown-noise"
+  idPath="/generator-white-noise-cokelat"
+>
+  <Header currentPath="/ru/brown-noise" enPath="/brown-noise" idPath="/generator-white-noise-cokelat" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200 relative overflow-hidden">
+    <!-- Breadcrumbs -->
+    <div class="pt-6 px-4 sm:px-6 max-w-5xl mx-auto">
+      <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400" aria-label="Хлебные крошки">
+        <a href="/ru" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Главная</a>
+        <span class="mx-2">/</span>
+        <a href="/ru/tools" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Инструменты</a>
+        <span class="mx-2">/</span>
+        <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Генератор коричневого шума</span>
+      </nav>
+    </div>
+
+    <!-- Hero Header -->
+    <section class="pt-8 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider mb-4 shadow-2xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff]"></span>
+        <span>ПРОЦЕДУРНЫЙ АКУСТИЧЕСКИЙ СИНТЕЗ · БЕЗ ЗАЦИКЛИВАНИЯ И ПЕТЕЛЬ</span>
+      </div>
+
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-[-0.025em] text-zinc-950 dark:text-white mb-4">
+        Генератор коричневого шума онлайн
+      </h1>
+
+      <p class="text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
+        Процедурный звуковой ландшафт Web Audio для гиперфокуса при СДВГ, глубокого восстанавливающего сна, облегчения звона в ушах (тиннитуса) и медитации. Настраивайте коричневый, белый, розовый и зеленый шум со звуками природы и бинауральными ритмами.
+      </p>
+    </section>
+
+    <!-- Main Sound Control Deck -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16 relative z-10">
+      
+      <!-- Sound Control Box -->
+      <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-8 shadow-xl">
+        
+        <!-- Hero Play & Visualizer Surface -->
+        <div class="relative mb-8 rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800/80 shadow-2xl">
+          
+          <!-- Canvas Waveform / Particle Visualizer -->
+          <canvas id="visualizerCanvas" class="w-full h-[200px] sm:h-[220px] block"></canvas>
+
+          <!-- Centered Play/Pause Button Overlay -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <button
+              type="button"
+              id="masterPlayBtn"
+              class="pointer-events-auto flex items-center gap-3 px-8 py-4 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white dark:text-zinc-950 font-bold text-base sm:text-lg shadow-xl shadow-blue-500/20 transition-transform duration-150 active:scale-[0.97] cursor-pointer"
+            >
+              <svg id="masterPlayIcon" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+              </svg>
+              <span id="masterPlayText">Включить звук</span>
+            </button>
+          </div>
+
+          <!-- Master Volume Slider Top-Right -->
+          <div class="absolute top-3 right-3 flex items-center gap-2 bg-zinc-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-zinc-800 text-[13px] text-zinc-300">
+            <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg></span>
+            <input
+              type="range"
+              id="masterVolumeSlider"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.8"
+              class="w-20 accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+              aria-label="Общая громкость"
+            />
+          </div>
+
+          <!-- Sleep Timer Countdown Badge Top-Left -->
+          <div id="timerCountdownDisplay" class="hidden absolute top-3 left-3 bg-[#0066cc]/10 border border-[#0066cc]/30 text-[#0066cc] dark:bg-[#2997ff]/10 dark:border-[#2997ff]/30 dark:text-[#2997ff] font-mono text-[13px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+            <span>00:00</span>
+          </div>
+
+        </div>
+
+        <!-- Quick Sound Presets Bar -->
+        <div class="mb-8">
+          <label class="block text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+            <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z" /></svg>Быстрые пресеты звукового окружения</span>
+          </label>
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              class="preset-btn active min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-700 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="deep-sleep"
+            >
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>Глубокий сон (Delta + Вентилятор)</span>
+            </button>
+            <button
+              type="button"
+              class="preset-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-100 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="adhd-focus"
+            >
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>Фокус при СДВГ (Alpha + Дождь)</span>
+            </button>
+            <button
+              type="button"
+              class="preset-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-100 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="tinnitus-relief"
+            >
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /></svg>Снятие тиннитуса (Pink + Волны)</span>
+            </button>
+            <button
+              type="button"
+              class="preset-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-100 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="cozy-storm"
+            >
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2" /><path d="M16 14v6" /><path d="M8 14v6" /><path d="M12 16v6" /></svg>Уютная гроза</span>
+            </button>
+            <button
+              type="button"
+              class="preset-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold bg-zinc-100 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer"
+              data-preset="meditation"
+            >
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3" /><path d="M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5" /><path d="M12 7.5V9" /><path d="M7.5 12H9" /><path d="M16.5 12H15" /><path d="M12 16.5V15" /></svg>Дзен-медитация (Зеленый + Theta)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Noise Color Selector -->
+        <div class="mb-8 pb-8 border-b border-zinc-200 dark:border-zinc-800/80">
+          <label class="block text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+            <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" /><circle cx="17.5" cy="10.5" r=".5" fill="currentColor" /><circle cx="8.5" cy="7.5" r=".5" fill="currentColor" /><circle cx="6.5" cy="12.5" r=".5" fill="currentColor" /><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h2.36c2.583 0 4.65-2.066 4.65-4.65 0-5.5-4.5-10-10-10z" /></svg>Базовый спектр шума</span>
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            
+            <button
+              type="button"
+              class="noise-color-btn active min-h-[44px] p-4 rounded-2xl border border-blue-600 bg-blue-600/10 text-blue-600 dark:border-blue-400 dark:text-blue-400 text-left transition-all duration-150 active:scale-[0.97] cursor-pointer flex flex-col justify-between"
+              data-color="brown"
+            >
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-[15px]">Коричневый шум</span>
+                <span class="text-[13px] font-mono opacity-80">1/f²</span>
+              </div>
+              <span class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug">Глубокий низкочастотный гул для сна и концентрации при СДВГ.</span>
+            </button>
+
+            <button
+              type="button"
+              class="noise-color-btn min-h-[44px] p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-zinc-800 dark:text-zinc-200 text-left transition-all duration-150 active:scale-[0.97] cursor-pointer flex flex-col justify-between hover:border-[#0066cc] dark:hover:border-[#2997ff]"
+              data-color="pink"
+            >
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-[15px]">Розовый шум</span>
+                <span class="text-[13px] font-mono opacity-80">1/f</span>
+              </div>
+              <span class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug">Мягкий спектр дождя для облегчения звона в ушах.</span>
+            </button>
+
+            <button
+              type="button"
+              class="noise-color-btn min-h-[44px] p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-zinc-800 dark:text-zinc-200 text-left transition-all duration-150 active:scale-[0.97] cursor-pointer flex flex-col justify-between hover:border-[#0066cc] dark:hover:border-[#2997ff]"
+              data-color="white"
+            >
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-[15px]">Белый шум</span>
+                <span class="text-[13px] font-mono opacity-80">f⁰</span>
+              </div>
+              <span class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug">Равномерный спектр для надежной звукоизоляции.</span>
+            </button>
+
+            <button
+              type="button"
+              class="noise-color-btn min-h-[44px] p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-zinc-800 dark:text-zinc-200 text-left transition-all duration-150 active:scale-[0.97] cursor-pointer flex flex-col justify-between hover:border-[#0066cc] dark:hover:border-[#2997ff]"
+              data-color="green"
+            >
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-[15px]">Зеленый шум</span>
+                <span class="text-[13px] font-mono opacity-80">500Hz</span>
+              </div>
+              <span class="text-[13px] text-zinc-600 dark:text-zinc-400 leading-snug">Природный диапазон для снижения стресса и тревожности.</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Multi-Track Mixer Section -->
+        <div class="mb-8 pb-8 border-b border-zinc-200 dark:border-zinc-800/80">
+          <label class="block text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-4">
+            <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="21" y1="4" x2="14" y2="4" /><line x1="10" y1="4" x2="3" y2="4" /><line x1="21" y1="12" x2="12" y2="12" /><line x1="8" y1="12" x2="3" y2="12" /><line x1="21" y1="20" x2="16" y2="20" /><line x1="12" y1="20" x2="3" y2="20" /><line x1="14" y1="2" x2="14" y2="6" /><line x1="8" y1="10" x2="8" y2="14" /><line x1="16" y1="18" x2="16" y2="22" /></svg>Многодорожечный микшер звуков окружения</span>
+          </label>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            
+            <!-- Track 1: Base Noise -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="2" /><path d="M4.93 19.07a10 10 0 0 1 0-14.14" /><path d="M7.76 16.24a6 6 0 0 1 0-8.49" /><path d="M16.24 7.76a6 6 0 0 1 0 8.49" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg></span>
+                  <span>Громкость базового шума</span>
+                </span>
+                <span class="text-[13px] font-mono text-[#0066cc] dark:text-[#2997ff] font-semibold">Основной</span>
+              </div>
+              <input
+                type="range"
+                id="noiseVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.75"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Громкость базового шума"
+              />
+            </div>
+
+            <!-- Track 2: Binaural Carrier -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" /><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" /></svg></span>
+                  <span>Бинауральные ритмы</span>
+                </span>
+                <div class="flex gap-1 text-[13px] font-mono">
+                  <button type="button" class="binaural-wave-btn active px-2.5 py-1 rounded-lg bg-blue-600/10 text-blue-600 border border-blue-600/40 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40 font-semibold transition-all active:scale-[0.97]" data-wave="delta">Дельта</button>
+                  <button type="button" class="binaural-wave-btn px-2.5 py-1 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all active:scale-[0.97]" data-wave="theta">Тета</button>
+                  <button type="button" class="binaural-wave-btn px-2.5 py-1 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all active:scale-[0.97]" data-wave="alpha">Альфа</button>
+                  <button type="button" class="binaural-wave-btn px-2.5 py-1 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all active:scale-[0.97]" data-wave="beta">Бета</button>
+                </div>
+              </div>
+              <input
+                type="range"
+                id="binauralVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.35"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Громкость бинауральных ритмов"
+              />
+            </div>
+
+            <!-- Track 3: Procedural Rain -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2" /><path d="M16 14v6" /><path d="M8 14v6" /><path d="M12 16v6" /></svg></span>
+                  <span>Шум мягкого дождя</span>
+                </span>
+                <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">Фильтр ВЧ</span>
+              </div>
+              <input
+                type="range"
+                id="rainVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.0"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Громкость дождя"
+              />
+            </div>
+
+            <!-- Track 4: Distant Thunder -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg></span>
+                  <span>Отдаленный гром</span>
+                </span>
+                <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">Саб-бас раскаты</span>
+              </div>
+              <input
+                type="range"
+                id="thunderVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.0"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Громкость грома"
+              />
+            </div>
+
+            <!-- Track 5: Ocean Waves -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" /></svg></span>
+                  <span>Океанский прибой</span>
+                </span>
+                <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">0.12Hz LFO</span>
+              </div>
+              <input
+                type="range"
+                id="oceanVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.0"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Громкость волн"
+              />
+            </div>
+
+            <!-- Track 6: Mechanical Sleep Fan -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold flex items-center gap-2">
+                  <span><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" /><path d="M9.6 4.6A2 2 0 1 1 11 8H2" /><path d="M12.6 19.4A2 2 0 1 0 14 16H2" /></svg></span>
+                  <span>Ночной вентилятор</span>
+                </span>
+                <span class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400">120Hz гул</span>
+              </div>
+              <input
+                type="range"
+                id="fanVolSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.0"
+                class="w-full accent-[#0066cc] dark:accent-[#2997ff] cursor-pointer"
+                aria-label="Громкость вентилятора"
+              />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Sleep Timer Section -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <label class="text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2.5 2.5" /><path d="M9 2h6" /></svg>Таймер сна (плавное затухание 30 секунд)</span>
+            </label>
+            <span class="text-[13px] text-zinc-500 dark:text-zinc-400">Предотвращает резкое пробуждение</span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" class="timer-btn active min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-bold bg-blue-600/10 text-blue-600 border border-blue-600/40 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40 transition-all active:scale-[0.97] cursor-pointer" data-mins="0">Выкл (Бесконечно)</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="15">15 минут</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="30">30 минут</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="45">45 минут</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="60">60 минут</button>
+            <button type="button" class="timer-btn min-h-[44px] px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-all active:scale-[0.97] cursor-pointer" data-mins="90">90 минут (1 цикл)</button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Floating Master Playbar (Появляется при воспроизведении) -->
+    <div id="floatingBar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+      <div class="pointer-events-auto flex items-center gap-4 bg-zinc-950/90 text-white px-5 py-3 rounded-full border border-zinc-700 shadow-2xl backdrop-blur-md">
+        <button
+          type="button"
+          id="floatingPlayBtn"
+          class="w-10 h-10 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white dark:text-zinc-950 flex items-center justify-center transition-transform active:scale-[0.97] cursor-pointer"
+          aria-label="Переключить воспроизведение"
+        >
+          <svg id="floatingPlayIcon" class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+          </svg>
+        </button>
+        <div class="text-[13px] font-medium">
+          <span class="text-zinc-400 block text-[11px] uppercase font-mono tracking-wider">Звуковой ландшафт активен</span>
+          <span class="text-[#0066cc] dark:text-[#2997ff] font-bold">Процедурный Web Audio Live</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Научная документация и психоакустическое руководство -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 text-[17px] leading-[1.62] space-y-12">
+      
+      <!-- Секция 1: Физика и спектральная математика -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-[-0.02em]">
+          1. Физика и математика спектра цветного шума
+        </h2>
+        <p>
+          В акустике и цифровой обработке сигналов цвет шума определяется <strong>спектральной плотностью мощности (PSD)</strong> — тем, как энергия распределена по диапазону слышимых человеческим ухом частот (от 20 Гц до 20 000 Гц). Несмотря на то что шум часто воспринимается просто как фоновый звук, разные цвета спектра оказывают принципиально различное воздействие на когнитивную концентрацию, структуру сна и нервную систему.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+          
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-bold text-amber-500 dark:text-amber-400 text-base flex items-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="#8B5A2B" /></svg>
+              <span>Коричневый шум (Броуновский / Красный шум)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Мощность снижается на <strong>6 дБ на октаву ($1/f^2$)</strong>. Высокие частоты практически полностью отфильтрованы, а глубокие басы усилены. Напоминает мощный отдаленный водопад или гул самолета в крейсерском полете.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-bold text-pink-500 dark:text-pink-400 text-base flex items-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="#EC4899" /></svg>
+              <span>Розовый шум (Спектральный наклон 1/f)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Мощность снижается на <strong>3 дБ на октаву ($1/f$)</strong>, сохраняя одинаковую акустическую энергию в каждой октаве. Идеально соответствует логарифмическому восприятию слуха и клинически применяется для маскировки тиннитуса.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-bold text-sky-500 dark:text-sky-400 text-base flex items-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="#ffffff" stroke="#a1a1aa" stroke-width="1.5" /></svg>
+              <span>Белый шум (Плоский спектр $f^0$)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Одинаковая плотность мощности на каждом герце ($f^0$). Содержит равную энергию во всем слышимом диапазоне, создавая шипящий монотонный звук, максимально эффективный для маскировки резких внешних звуковых раздражителей.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-bold text-emerald-500 dark:text-emerald-400 text-base flex items-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="#10B981" /></svg>
+              <span>Зеленый шум (Среднечастотный природный диапазон)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-normal">
+              Частотная характеристика с центром около 500 Гц ($Q \\approx 0.9$). Воспроизводит природные биоакустические звуки ветра и листвы, снижая тонус симпатической нервной системы.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Секция 2: Стохастический резонанс и СДВГ -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          2. Стохастический резонанс: почему коричневый шум успокаивает мозг при СДВГ
+        </h2>
+        <p>
+          Синдром дефицита внимания и гиперактивности (СДВГ) нейрохимически связан с особенностями дофаминергической передачи в префронтальной коре. Согласно <strong>модели умеренного возбуждения мозга (Moderate Brain Arousal, MBA)</strong>, сформулированной нейробиологами Сикстрёмом и Сёдерлундом (2007), люди с пониженным базовым уровнем дофамина испытывают дефицит внутреннего соотношения «сигнал-шум», что приводит к двигательному беспокойству и снижению исполнительных функций.
+        </p>
+        <p>
+          При воздействии непрерывного низкочастотного акустического шума (в особенности коричневого) возникает феномен <strong>стохастического резонанса</strong>. Это нелинейный биофизический процесс, при котором оптимальный уровень внешнего фонового шума усиливает подпороговые нейронные сигналы, поднимая их выше порога генерации потенциала действия без внесения когнитивных искажений.
+        </p>
+        <p>
+          В клинических исследованиях участники с симптомами СДВГ при прослушивании калиброванного коричневого и розового шума демонстрировали статистически достоверное улучшение рабочей памяти, скорости чтения и продолжительности непрерывной концентрации внимания по сравнению с условиями абсолютной тишины.
+        </p>
+      </section>
+
+      <!-- Секция 3: Облегчение тиннитуса -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          3. Борьба с тиннитусом: акустическая маскировка и остаточное торможение
+        </h2>
+        <p>
+          Субъективный шум в ушах (тиннитус) чаще всего возникает из-за повреждения волосковых клеток улитки или слуховой деафферентации. Когда ствол мозга перестает получать нормальный поток нервных импульсов, первичная слуховая кора повышает центральное усиление (central gain), порождая иллюзорный высокочастотный звон.
+        </p>
+        <p>
+          Процедурные звуковые ландшафты обеспечивают два доказанных клинических эффекта:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Полная акустическая маскировка:</strong> Широкополосный шум розового и коричневого спектра мягко перекрывает субъективный звон, давая мгновенное психологическое облегчение.
+          </li>
+          <li>
+            <strong>Остаточное торможение и габитуация:</strong> Регулярное прослушивание незацикленных природных шумов снижает гиперактивность слуховой коры, позволяя нервной системе переобучиться и игнорировать фантомный звук как нерелевантный фон.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Секция 4: Бинауральные ритмы -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          4. Нейронаука бинауральных ритмов и синхронизация частоты (FFR)
+        </h2>
+        <p>
+          Впервые описанные физиком Генрихом Вильгельмом Дове в 1839 году, <strong>бинауральные ритмы</strong> представляют собой слуховую иллюзию, формирующуюся в <em>верхнем оливарном комплексе</em> ствола головного мозга. Когда в левое и правое ухо через стереонаушники подаются две чистые синусоиды с небольшой разницей частот ($\\Delta f$), мозг вычисляет разность фаз и синхронизирует электрическую активность нейронов с этой частотой.
+        </p>
+
+        <!-- Binaural Table -->
+        <div class="overflow-x-auto my-4">
+          <table class="w-full text-left text-xs border-collapse border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+            <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-200 font-mono uppercase">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Диапазон мозговых волн</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Разность частот ($\\Delta f$)</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Состояние сознания</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-800">Клиническое применение</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-semibold text-indigo-400">Дельта-волны</td>
+                <td class="p-3">0,5 Гц – 4,0 Гц</td>
+                <td class="p-3">Медленноволновой сон NREM (Фаза 3)</td>
+                <td class="p-3">Клеточное восстановление, выработка гормона роста, глубокий сон</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-cyan-400">Тета-волны</td>
+                <td class="p-3">4,0 Гц – 8,0 Гц</td>
+                <td class="p-3">Фаза быстрого сна (REM), гипнагогия</td>
+                <td class="p-3">Глубокая медитация, интуиция, консолидация долговременной памяти</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-emerald-400">Альфа-волны</td>
+                <td class="p-3">8,0 Гц – 13,0 Гц</td>
+                <td class="p-3">Спокойная бодрость, состояние потока</td>
+                <td class="p-3">Снижение тревожности, сосредоточенное обучение, продуктивное чтение</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-amber-400">Бета-волны</td>
+                <td class="p-3">13,0 Гц – 30,0 Гц</td>
+                <td class="p-3">Активное аналитическое мышление</td>
+                <td class="p-3">Решение сложных задач, умственная мобилизация, скорость реакции</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Секция 5: Безопасный уровень звука -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          5. Клинические рекомендации по громкости и гигиена сна
+        </h2>
+        <p>
+          Звуковые фоны помогают быстрее заснуть и защищают от резких ночных звуков (уличного транспорта, лая собак), однако уровень громкости должен строго соответствовать медицинским нормам:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-300">
+          <li>
+            <strong>Оптимальная громкость для взрослых (45–55 дБА):</strong> Всемирная организация здравоохранения (ВОЗ) рекомендует удерживать уровень ночного фонового звука в пределах 50 дБА. Громкость выше 65 дБА способна вызывать микропробуждения симпатической нервной системы.
+          </li>
+          <li>
+            <strong>Безопасность для детей и младенцев (&lt;50 дБА на расстоянии от 2 метров):</strong> Американская академия педиатрии (AAP) рекомендует размещать источник звука на расстоянии не ближе 2 метров от детской кроватки с громкостью строго ниже 50 дБА.
+          </li>
+          <li>
+            <strong>Плавное экспоненциальное затухание (30 секунд):</strong> Внезапная остановка звука во время сна может вызвать стрессовую реакцию пробуждения. Наш генератор автоматически активирует 30-секундное плавное снижение громкости перед выключением по таймеру.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Секция 6: Часто задаваемые вопросы -->
+      <section class="space-y-6 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          6. Часто задаваемые вопросы
+        </h2>
+
+        <div class="space-y-3">
+          
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>В чем разница между коричневым, розовым и белым шумом?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Белый шум обладает равной мощностью на всех частотах, создавая яркое шипение. Розовый шум снижает мощность на 3 дБ на октаву (1/f), формируя сбалансированное звучание мягкого дождя. Коричневый шум снижает мощность на 6 дБ на октаву (1/f²), генерируя глубокий, низкий и бархатистый гул, похожий на водопад или кабину авиалайнера.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Почему коричневый шум особенно эффективен при СДВГ?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Люди с СДВГ обычно имеют пониженный базовый уровень дофамина. Коричневый шум запускает механизм стохастического резонанса: низкочастотный фоновый шум приподнимает слабые нейронные сигналы в префронтальной коре выше порога срабатывания, успокаивая хаотичные мысли и расширяя объем рабочей памяти.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Как звуковая маскировка помогает при шуме в ушах (тиннитусе)?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Тиннитус вызывается компенсаторной гиперактивностью слуховой коры. Широкополосный розовый и коричневый шум мягко маскирует звон и со временем тренирует мозг фильтровать фантомный сигнал как несущественный фон.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Обязательно ли использовать наушники для бинауральных ритмов?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Да, стереонаушники строго обязательны. Бинауральный эффект возникает только тогда, когда в каждое ухо изолированно поступают разные частоты. При воспроизведении через внешние колонки звуковые волны смешиваются в воздухе, и бинауральный эффект полностью исчезает.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Безопасно ли оставлять коричневый шум включенным на всю ночь?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Да, при комфортной громкости ниже 60 дБА это абсолютно безопасно. Для максимальной гигиены сна вы также можете настроить встроенный таймер, который отключит звук через заданное время с плавным затуханием.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Что такое зеленый шум и когда его лучше использовать?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Зеленый шум фокусирует энергию вокруг частоты 500 Гц и имитирует звуки живой природы: ветер в кронах деревьев, шум леса и текущей воды. Он оптимален для снятия телесного напряжения, снятия тревожности и медитативных практик.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Помогает ли коричневый шум младенцам крепче спать?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Да, низкочастотные спектры напоминают акустическую среду в утробе матери, успокаивая новорожденных. Однако педиатры рекомендуют ставить источник звука на расстоянии не менее 2 метров от кроватки и соблюдать тихий уровень громкости (&lt;50 дБА).
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Почему процедурный синтез Web Audio лучше обычных MP3-записей?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              MP3-файлы повторяются каждые несколько минут, создавая предсказуемые стыки циклов, которые мозг подсознательно улавливает во сне. Процедурный синтез Web Audio математически вычисляет каждый миллисекундный звуковой импульс в реальном времени, обеспечивая бесконечный, по-настоящему случайный и органичный поток без швов и пауз.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <script src="../../scripts/tools/brown-noise-engine-ru.js"></script>
+</Layout>
+"""
+
+with open('src/pages/ru/brown-noise.astro', 'w', encoding='utf-8') as f:
+    f.write(code)
+
+print("Successfully replaced src/pages/ru/brown-noise.astro with Russian translation!")

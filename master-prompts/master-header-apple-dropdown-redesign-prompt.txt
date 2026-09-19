@@ -1,0 +1,74 @@
+# ==============================================================================
+# MASTER PROMPT: HEADER MEGA-MENU & DROPDOWN APPLE-DESIGN REDESIGN
+# Target Files:
+#   - src/components/Header.astro (English Header)
+#   - src/components/ru/HeaderRu.astro (Russian Header)
+#   - src/components/id/HeaderId.astro (Indonesian Header)
+# ==============================================================================
+
+### TERMINAL BUDGET (MANDATORY):
+Treat terminal usage as expensive. Prefer 0 terminal commands for straightforward file editing. Only run `npm run build` at the very end to verify static compilation.
+
+---
+
+### MISSION OBJECTIVE:
+Redesign the header navigation dropdowns (`Tests`, `Games`, `Tools` flyouts) across all 3 locale headers (`Header.astro`, `HeaderRu.astro`, `HeaderId.astro`). 
+
+**The Problem**: The current dropdowns look like cartoonish, cluttered SaaS widgets due to:
+1. Low-fidelity colorful emojis (🎯, ⚡, 👁️, ⏱️, 🧠, 📋, 🛡️, 🌙, 🎧, 🔥, 🎙️) trapped inside heavy rounded square background boxes.
+2. Loud, saturated rainbow pill badges (`bg-blue-100`, `bg-amber-100`, `bg-emerald-100`).
+3. Heavy, opaque dropdown container styling that clashes with the refined header.
+
+**The Solution**: Re-engineer the flyout menus into an **Apple-grade, frosted-glass, typography-first minimalist interface** matching our language switcher and Master Fusion V3 design language.
+
+---
+
+### DESIGN SPECIFICATION & AESTHETIC DIRECTIVES:
+
+#### 1. Translucent Frosted Glass Dropdown Shell
+- **Backdrop & Surface**:
+  `bg-white/90 dark:bg-[#0c0d12]/90 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/60 rounded-2xl p-2`
+- **Section Headers**:
+  `px-3 pt-2 pb-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-white/5 mb-1.5`
+
+#### 2. Replace Cartoon Emojis with Sleek SVG Micro-Icons
+- **Eliminate all raw emojis** (🎯, ⚡, 👁️, ⏱️, 🧠, 📋, etc.) and remove the bulky colored square backgrounds (`bg-blue-50`, `bg-amber-50`, etc.).
+- **Use Minimalist 1.5px Hairline SVG Icons**:
+  - Crisp geometric SVGs (`w-4 h-4` or `w-4.5 h-4.5`) in neutral zinc (`text-zinc-400 dark:text-zinc-500 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors`).
+  - Either inline hairline icons or subtle monochromatic micro-circles (`w-7 h-7 rounded-lg bg-zinc-100 dark:bg-white/[0.05] border border-zinc-200/60 dark:border-white/10 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-400`).
+
+#### 3. Refined Typography & Tactile Hover States
+- **Item Row Container**:
+  `flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100/70 dark:hover:bg-white/[0.06] transition-colors duration-150 group/item cursor-pointer`
+- **Item Title**:
+  `text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors`
+- **Item Description / Subtitle**:
+  `text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug font-normal mt-0.5 line-clamp-1`
+
+#### 4. Minimalist Monochromatic Badges (No Rainbow Clutter)
+- Replace all bright saturated badges (`bg-blue-100`, `bg-amber-100`, `bg-emerald-100`) with subtle, high-end hairline tokens:
+  - **Standard Badge**: `px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 font-mono text-[10.5px] font-medium text-zinc-500 dark:text-zinc-400 tracking-wide uppercase`
+  - **Active / Official Badge**: `px-1.5 py-0.5 rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono text-[10.5px] font-medium tracking-wide uppercase`
+
+#### 5. Footer Utility Link Dock
+- Keep the bottom dock clean and subtle:
+  `px-3 py-2.5 mt-1 pt-2 border-t border-zinc-100 dark:border-white/5 flex items-center justify-between text-[12px] font-mono text-zinc-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors`
+
+---
+
+### STEP-BY-STEP IMPLEMENTATION INSTRUCTIONS:
+
+1. **Update `src/components/Header.astro`**:
+   - Refactor the flyout menus for `Tests`, `Games`, and `Tools`.
+   - Replace emojis with clean SVG icons for all assessment, game, and tool items.
+   - Apply the frosted glass container classes and minimalist hairline badges.
+   - Ensure mobile drawer accordion menus also use clean SVG icons instead of raw emojis.
+
+2. **Synchronize `src/components/ru/HeaderRu.astro`**:
+   - Apply identical frosted-glass and SVG micro-icon structure while preserving all Russian titles, descriptions, and URLs (`/ru/...`).
+
+3. **Synchronize `src/components/id/HeaderId.astro`**:
+   - Apply identical frosted-glass and SVG micro-icon structure while preserving all Indonesian titles, descriptions, and URLs (`/id/...`).
+
+4. **Verify Compilation**:
+   - Run `npm run build` once to confirm 0 errors across all pages.

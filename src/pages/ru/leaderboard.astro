@@ -3,8 +3,8 @@ import Layout from '../../components/ru/LayoutRu.astro';
 import Header from '../../components/ru/HeaderRu.astro';
 import Footer from '../../components/ru/FooterRu.astro';
 
-const title = "Таблица лидеров — результаты тестов на IQ | FreeIQExam";
-const description = "Сравните свой балл IQ (SD15) и процентиль с когортой участников. Пройдите тест бесплатно и без регистрации.";
+const title = "Рейтинг IQ и таблица рекордов: глобальные результаты когорт | FreeIQExam";
+const description = "Глобальный рейтинг IQ и таблица рекордов: когортные бенчмарки по стандартизированной шкале SD 15, процентили и античит-валидация результатов онлайн.";
 
 const topScorers = [
   { rank: 1, code: "US", country: "США", name: "Alex_V.", score: 146, percentile: "99.9-й", domain: "Подвижный интеллект (FRI: 148)", hash: "v8f9-2a1c" },
@@ -19,13 +19,33 @@ const topScorers = [
   { rank: 10, code: "NL", country: "Нидерланды", name: "Chloe_D.", score: 127, percentile: "96.4-й", domain: "Визуально-пространственное (VSI: 129)", hash: "d1w9-6v5s" }
 ];
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Глобальные когнитивные бенчмарки — Иллюстративные когорты",
-  "description": description,
-  "url": "https://freeiqexam.com/ru/leaderboard"
-};
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Рейтинг IQ и глобальная таблица рекордов | FreeIQExam",
+    "description": description,
+    "url": "https://freeiqexam.com/ru/leaderboard"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Рейтинг IQ",
+        "item": "https://freeiqexam.com/ru/leaderboard"
+      }
+    ]
+  }
+];
 ---
 
 <Layout title={title} description={description} schema={schema} enPath="/leaderboard" idPath="/papan-peringkat" canonicalUrl="https://freeiqexam.com/ru/leaderboard">
@@ -46,7 +66,7 @@ const schema = {
         <span>ГЛОБАЛЬНЫЕ КОГНИТИВНЫЕ БЕНЧМАРКИ &bull; ИЛЛЮСТРАТИВНЫЕ КОГОРТЫ</span>
       </div>
       <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
-        Иллюстративные мировые результаты
+        Рейтинг IQ и глобальная таблица рекордов
       </h1>
       <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
         Примеры когортных показателей перцентилей, откалиброванные по стандартизированным нормативным распределениям двухпараметрической теории IRT 2PL на основе международных референтных популяций. Эти демонстрационные результаты отражают распределение баллов по когнитивным уровням.
@@ -210,22 +230,64 @@ const schema = {
     </section>
 
     <!-- FAQ Section -->
-    <section class="max-w-4xl mx-auto">
-      <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80">
-        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-4">
-          Методология бенчмарков и референтные когорты
+    <section class="max-w-4xl mx-auto space-y-6">
+      <div>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white">
+          Часто задаваемые вопросы о рейтинге IQ и когортных рекордах
         </h2>
-        <div class="space-y-4 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          <p>
-            <strong>Являются ли эти результаты клиническим диагнозом?</strong> Нет. Эти демонстрационные показатели представляют собой стандартизированные референтные когорты, откалиброванные с помощью нашей модели 2PL IRT для самостоятельного тестирования. Это образовательный инструмент когнитивной оценки, а не клиническая психологическая диагностика и не замена очных тестов под наблюдением специалиста (таких как WAIS-IV).
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+          Методология бенчмарков, стандартизация по модели 2PL IRT и валидация результатов.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Как рассчитываются баллы в таблице рекордов?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Показатели референтных когорт калибруются с помощью двухпараметрической теории моделирования заданий (2PL IRT) на основе параметров стандартного нормального распределения (среднее 100, стандартное отклонение SD 15). Они отражают латентную способность (тета) и веса правильных ответов по четырём субдоменам CHC.
           </p>
-          <p>
-            <strong>Как определяются баллы референтной когорты?</strong> Демонстрационные показатели основаны на параметрах стандартного нормального распределения (&mu; = 100, &sigma; = 15), сопоставленных с уровнями латентной способности (&theta;) и векторами точности субдоменов.
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Являются ли результаты теста официальным клиническим диагнозом?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Нет. Наша онлайн-оценка — образовательный инструмент для самопознания и тренировки когнитивных способностей. Она не является клиническим диагнозом и не заменяет очное психологическое обследование под руководством сертифицированного специалиста (например, батареи WAIS-IV или Stanford-Binet V).
           </p>
-          <p>
-            <strong>Когда появится живой рейтинг участников?</strong> Отправка пользовательских результатов в общий рейтинг и сезонные таблицы лидеров находятся в активной разработке и станут доступны в следующем обновлении.
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Как работает защита от читерства и скриптов?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Платформа отслеживает латентность ответов на каждый вопрос, паттерны кликов и целостность токенов сессии. Попытки автоматического перебора, сверхбыстрых неправдоподобных кликов (&lt;500 мс на сложные матрицы) или модификации клиентского хранилища дисквалифицируются при валидации скоринга.
           </p>
-        </div>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>Когда появится возможность опубликовать свой результат в живом рейтинге?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Функционал отправки верифицированных результатов и сезонных таблиц лидеров сообщества находится в активной разработке. Сейчас вы можете сохранить свой результат локально в <a href="/ru/profile" class="text-blue-600 dark:text-blue-400 hover:underline">личном профиле</a> или сгенерировать официальный сертификат.
+          </p>
+        </details>
       </div>
     </section>
   </main>

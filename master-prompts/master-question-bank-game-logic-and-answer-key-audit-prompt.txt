@@ -1,0 +1,136 @@
+# ==============================================================================
+# MASTER PROMPT: QUESTION BANK, COGNITIVE GAME LOGIC & ANSWER KEY AUDIT
+# Target Files:
+#   - src/data/item-bank.json, item-bank-ru.json, item-bank-id.json (100 IRT Items)
+#   - src/pages/games/*.astro, src/pages/ru/games/*.astro, src/pages/id/permainan/*.astro (10 Games x 3 Locales)
+#   - src/scripts/tools/*.js (Diagnostic Engines: color-blind, eye, flag-quiz, aim, etc.)
+# ==============================================================================
+
+### TERMINAL BUDGET (MANDATORY):
+Treat terminal usage as expensive. Prefer 0 terminal commands for file inspection and code reading. Only run `npm run build` at the very end to verify static compilation.
+
+---
+
+### MISSION OBJECTIVE:
+Conduct an exhaustive, end-to-end audit and code verification of every **Question, Stimulus Graphic (SVG/Color), Option Set, and Answer-Evaluation Logic** across the entire FreeIQExam platform.
+
+You must rigorously verify that:
+1. **Questions & Stimuli**: Every question prompt and SVG/color diagram is clearly framed, fully visible in both light and dark mode, and free of visual ambiguities.
+2. **Options Integrity**: Every question has its full set of options rendering correctly, and the indisputably correct answer is present among the choices.
+3. **Logic & Answer Keys**: The backend/JavaScript logic that evaluates user selection (`isCorrect`, `userSame === isSame`, `selected === correctOption`, `target === answer`, etc.) has **zero logic inversions, zero index mismatches, and zero false-negative scoring bugs**.
+4. **Instant Result Feedback**: Choosing the correct answer reliably registers as "Correct" and increments score; choosing an incorrect answer registers as "Incorrect" without false penalties.
+
+---
+
+### AUDIT DOMAINS & STEP-BY-STEP PROTOCOL:
+
+---
+
+#### DOMAIN 1: 100-ITEM MASTER PSYCHOMETRIC ITEM BANKS
+**Files to Inspect**: `src/data/item-bank.json`, `src/data/item-bank-ru.json`, `src/data/item-bank-id.json`
+
+Audit all 100 standardized questions across the 4 CHC domains:
+- **Fluid Reasoning (Gf — Items 1–27)**: Matrix reasoning, Raven-style 3x3 grids, progressive geometric transformations.
+- **Visual-Spatial Processing (Gv — Items 28–52)**: 3D cube rotations, surface folding nets, topological spatial relations.
+- **Quantitative Reasoning (Gq — Items 53–76)**: Higher-order difference series, interleaved numerical sequences, proportional matrices.
+- **Verbal Comprehension (Gc — Items 77–100)**: Verbal analogies, semantic classifications, categorical deduction.
+
+**Verification Checklist for Every Item**:
+- [ ] **Prompt Integrity**: Is the SVG diagram or text question complete, mathematically sound, and clear?
+- [ ] **Options Structure**: Does the `options` array contain distinct, well-rendered candidate choices matching `optionsCount`?
+- [ ] **Correct Answer Key**: Is exactly ONE option flagged with `"correct": true` (or corresponding index)?
+- [ ] **Psychometric Correctness**: Does the option marked `"correct": true` represent the true, unarguable logical solution to the puzzle?
+- [ ] **Cross-Locale Alignment**: Are the correct answer keys and option positions identical across `item-bank.json`, `item-bank-ru.json`, and `item-bank-id.json`?
+
+---
+
+#### DOMAIN 2: 10 COGNITIVE MINI-GAMES LOGIC & SCORING AUDIT
+**Directories to Inspect**:
+- English: `src/pages/games/*.astro`
+- Russian: `src/pages/ru/games/*.astro`
+- Indonesian: `src/pages/id/permainan/*.astro`
+
+Audit the core generation and answer-evaluation logic for all 10 games:
+
+1. **3D Mental Rotation (`rotation.astro` / `rotasi-mental.astro`)**:
+   - **Cube Generation**: Inspect `createTrial()` — verify `VALID_ROTATIONS` permutation arrays.
+   - **Same vs. Different Logic**: Verify how `isSame` is set and how `alteredColor` / `modifiedFace` is applied.
+   - **Evaluation Match**: Check `handleAnswer(userSame)`. Verify `var isCorrect = userSame === currentTrialData.isSame`. Ensure selecting "Same" when cubes are identical is NEVER scored as false.
+   - **Contrast & Color Palette**: Verify all cube face colors (`PALETTES`) are distinct and visible in dark mode.
+
+2. **Stroop Clash (`stroop-clash.astro`)**:
+   - **Word vs. Ink Match**: Inspect congruent vs. incongruent trial generation (`wordColor` vs `inkColor`).
+   - **Evaluation**: Verify button match checks (`userChoice === (wordColor === inkColor)` or `userChoice === inkColor`). Ensure no inverted boolean conditions.
+
+3. **Symbol Match (`symbol-match.astro` / `simbol-cocok.astro`)**:
+   - **Symbol Grid & Target**: Verify target symbol against candidate symbol matrix.
+   - **Evaluation**: Verify `handleClick()` accurately checks if selected coordinate matches `targetSymbolIndex`.
+
+4. **Mental Math Sprint (`math-sprint.astro`)**:
+   - **Equation Generator**: Verify arithmetic equation generation ($+, -, \times, \div$).
+   - **Answer Calculation**: Verify computed `currentProblem.ans` matches mathematical ground truth.
+   - **Options & Feedback**: Verify correct answer is present in options and clicking it awards points.
+
+5. **Categorical Syllogism (`syllogism.astro` / `silogisme.astro`)**:
+   - **Premise 1 + Premise 2 $\to$ Conclusion**: Verify all 15 formal syllogistic problem sets.
+   - **Truth Value**: Check ground-truth logic keys (Valid vs. Invalid / True vs. False deduction).
+
+6. **Eriksen Flanker Task (`flanker-test.astro` / `tes-flanker.astro`)**:
+   - **Direction Target**: Central arrow ($\leftarrow / \rightarrow$) surrounded by congruent (`<<<<<`) or incongruent (`<<><<`) flankers.
+   - **Evaluation**: Verify arrow keypress / button click matches the CENTRAL arrow direction, ignoring flankers.
+
+7. **Dual N-Back (`n-back.astro`)**:
+   - **Position & Audio History**: Verify N-step circular buffer history (`history[current - N]`).
+   - **Match Evaluation**: Verify spatial match (`posMatch`) and letter/audio match (`soundMatch`) logic.
+
+8. **Memory Matrix (`memory-matrix.astro`)**:
+   - **Grid Pattern**: Verify randomized active tile coordinates array.
+   - **User Selection**: Verify clicked tiles array matches the flashed active tiles without off-by-one errors.
+
+9. **Digit Span (`digit-span.astro`)**:
+   - **Sequence Matching**: Forward span (exact sequence order) and Backward span (exact reverse order `sequence.slice().reverse()`).
+
+10. **Sequence Rush (`sequence-rush.astro`)**:
+    - **Ascending Order**: Verify click order validation array (`1, 2, 3...` or `A, B, C...`).
+
+---
+
+#### DOMAIN 3: SPECIALIZED VISUAL & DIAGNOSTIC TOOLS AUDIT
+**Files to Inspect**: `src/scripts/tools/*.js` & corresponding `.astro` pages in `src/pages/`, `src/pages/ru/`, `src/pages/id/`
+
+1. **Color Blindness Test (`color-blind-test.astro`, `tes-buta-warna.astro`, `color-blind-engine*.js`)**:
+   - **22 Ishihara Plates**: Inspect the plate metadata array (`plates`).
+   - **Plate Options**: Verify each plate has:
+     - Normal color vision option (e.g. "12", "8", "6", "Line").
+     - Red-green deficiency option (e.g. "Nothing", "3", "70").
+     - Total color blindness option.
+   - **Answer Scoring**: Verify `plate.correct` maps to the exact true numerical/path answer of that plate.
+
+2. **Visual Acuity & Eye Test (`eye-test.astro`, `tes-mata.astro`, `eye-tester*.js`)**:
+   - **Snellen & Landolt C Rings**: Verify optotype gap orientation (`'top'`, `'bottom'`, `'left'`, `'right'`) matches user input buttons.
+   - **Duochrome Test**: Red panel vs. Green panel ring sharpness selection logic.
+
+3. **World Flag Quiz (`flag-quiz.astro`, `kuis-bendera.astro`, `flag-quiz-engine*.js`)**:
+   - **Flag Stimulus**: Verify Flag SVG/ISO code matches the target country name.
+   - **Multiple Choice**: Verify 4 options are generated with exactly 1 correct country name matching the flag, and 3 random distinct distractors.
+
+4. **Precision Aim Trainer (`aim-trainer.astro`, `pelatih-akurasi-aim.astro`, `aim-engine*.js`)**:
+   - **Target Hitbox**: Verify target coordinate calculation, DPR scaling, and click radius distance check:
+     `Math.hypot(clickX - targetX, clickY - targetY) <= targetRadius`.
+
+---
+
+#### DOMAIN 4: REPORT DELIVERABLE
+
+Produce a comprehensive audit report file: `QUESTION_BANK_AND_GAME_LOGIC_AUDIT_REPORT.md` containing:
+1. **Executive Verification Summary**:
+   - Total test questions audited (100 items).
+   - Total games audited (10 games $\times$ 3 locales = 30 game pages).
+   - Total diagnostic tools audited.
+2. **Detailed Issue Log (if any mismatch is found)**:
+   - 📍 File Path & Line Number
+   - ❌ Defect Description (e.g., Logic Inversion, Missing Option, Wrong Answer Key, Visual Contrast Defect)
+   - 🔍 Exact Code Behavior vs Expected Behavior
+   - 💡 Applied Code Remediation
+3. **Certification of Answer Key & Scoring Integrity**:
+   - Final statement certifying that all questions, puzzles, and game trials evaluate user input with 100% logical and mathematical accuracy.

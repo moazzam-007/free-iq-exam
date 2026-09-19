@@ -1,0 +1,783 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = "IQ to Percentile Calculator - Convert IQ Score to Percentile Rank | FreeIQExam";
+const description = "Free interactive IQ percentile calculator. Instantly convert any IQ score (SD 15, 16, 24) to exact population percentile rank, rarity ratio, and bell curve position.";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "IQ to Percentile Calculator",
+    "url": "https://freeiqexam.com/iq-percentile-calculator/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "description": "Instant 2-way conversion utility between standard IQ scores (SD 15) and normal distribution percentile rankings.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "IQ to Percentile Calculator",
+        "item": "https://freeiqexam.com/iq-percentile-calculator/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is an IQ percentile?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An IQ percentile indicates the percentage of the general population that scores at or below a given IQ score on a standardized normal distribution (Mean 100, SD 15)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What percentile is an IQ of 100?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An IQ of 100 is the exact median of the population, corresponding to the 50th percentile."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What IQ score is needed to qualify for Mensa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mensa requires a score at or above the 98th percentile, which corresponds to an IQ of 130 or higher on the Wechsler scale (SD 15) or 132 on the Stanford-Binet scale (SD 16)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is the IQ percentile calculated mathematically?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "IQ percentiles are derived using the standard normal cumulative distribution function (CDF). First, the Z-score is calculated as z = (IQ - 100) / 15, then integrated through the Gaussian error function."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema}>
+  <Header currentPath="/iq-percentile-calculator" />
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-12">
+    
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-medium uppercase tracking-wider mb-4">
+        <span>Interactive Utility &bull; Wechsler SD 15 Model</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        IQ to Percentile Calculator
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Convert any IQ score into its theoretical normal distribution percentile rank, or calculate the estimated IQ score required to reach a specific percentile tier.
+      </p>
+    </header>
+
+    <!-- Interactive 2-Way Calculator Component Card -->
+    <section class="p-6 sm:p-10 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs max-w-2xl mx-auto w-full">
+      
+      <!-- Mode Toggle Buttons -->
+      <div class="flex items-center p-1 rounded-2xl bg-zinc-200/70 dark:bg-zinc-800/70 mb-8 max-w-md mx-auto">
+        <button
+          id="tab-iq-to-pct"
+          type="button"
+          class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs"
+        >
+          Score to Percentile
+        </button>
+        <button
+          id="tab-pct-to-iq"
+          type="button"
+          class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+        >
+          Percentile to Score
+        </button>
+      </div>
+
+      <!-- Mode 1: IQ -> Percentile Panel -->
+      <div id="panel-iq-to-pct" class="space-y-6">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="iq-input" class="text-sm font-semibold text-zinc-900 dark:text-white">
+              Enter IQ Score (SD 15)
+            </label>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Range: 55 to 160</span>
+          </div>
+          <div class="relative">
+            <input
+              id="iq-input"
+              type="number"
+              min="55"
+              max="160"
+              value="120"
+              class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-2xl font-bold font-mono text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-500 dark:text-zinc-400 font-semibold">IQ</span>
+          </div>
+          <!-- Range Slider -->
+          <input
+            id="iq-slider"
+            type="range"
+            min="55"
+            max="160"
+            value="120"
+            aria-label="IQ Score Range Slider"
+            class="w-full mt-4 accent-blue-600 cursor-pointer min-h-[44px]"
+          />
+        </div>
+
+        <!-- Calculated Metrics Output Card -->
+        <div class="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4" role="status" aria-live="polite">
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Percentile Rank</span>
+            <span id="output-percentile" class="text-2xl font-heading font-extrabold text-blue-600 dark:text-blue-400">
+              90.9%
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Population Rarity</span>
+            <span id="output-rarity" class="text-base font-mono font-bold text-zinc-900 dark:text-white">
+              Top 9.1% (1 in 11 people)
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Z-Score Deviation</span>
+            <span id="output-zscore" class="text-base font-mono font-semibold text-zinc-900 dark:text-white">
+              +1.33 &sigma;
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Classification</span>
+            <span id="output-classification" class="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
+              Superior Cognitive Ability
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode 2: Percentile -> IQ Panel -->
+      <div id="panel-pct-to-iq" class="hidden space-y-6">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="pct-input" class="text-sm font-semibold text-zinc-900 dark:text-white">
+              Enter Desired Percentile Rank
+            </label>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Range: 0.1% to 99.9%</span>
+          </div>
+          <div class="relative">
+            <input
+              id="pct-input"
+              type="number"
+              min="0.1"
+              max="99.9"
+              step="0.1"
+              value="98.0"
+              class="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-2xl font-bold font-mono text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono text-zinc-500 dark:text-zinc-400 font-semibold">%</span>
+          </div>
+          <input
+            id="pct-slider"
+            type="range"
+            min="0.1"
+            max="99.9"
+            step="0.1"
+            value="98.0"
+            aria-label="Percentile Rank Range Slider"
+            class="w-full mt-4 accent-blue-600 cursor-pointer min-h-[44px]"
+          />
+        </div>
+
+        <div class="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4" role="status" aria-live="polite">
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Equivalent IQ Score</span>
+            <span id="output-iq-from-pct" class="text-2xl font-heading font-extrabold text-blue-600 dark:text-blue-400">
+              131 IQ
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Standard Deviation Tier</span>
+            <span id="output-sd-from-pct" class="text-base font-mono font-semibold text-zinc-900 dark:text-white">
+              +2.05 &sigma; (Wechsler SD 15)
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400">Mensa Status</span>
+            <span id="output-mensa-status" class="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
+              Qualifies for Mensa (Top 2%)
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Quick Reference Benchmark Table -->
+    <section>
+      <div class="mb-4 text-center sm:text-left">
+        <h2 class="font-heading text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">
+          Benchmark Score &amp; Percentile Lookup Table
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Standard deviation 15 reference values and cumulative normal distribution percentiles.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table class="w-full min-w-[560px] text-left text-xs sm:text-sm font-mono">
+          <thead class="sticky top-0 bg-zinc-100/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10 border-b border-zinc-200 dark:border-zinc-800 uppercase text-[11px] text-zinc-600 dark:text-zinc-400">
+            <tr>
+              <th class="py-3 px-4">IQ Score (SD 15)</th>
+              <th class="py-3 px-4">Percentile Rank</th>
+              <th class="py-3 px-4">Z-Score (&sigma;)</th>
+              <th class="py-3 px-4">Population Frequency</th>
+              <th class="py-3 px-4">Psychometric Tier</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200/80 dark:divide-zinc-800 bg-white dark:bg-black">
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">145</td>
+              <td class="py-3 px-4">99.87%</td>
+              <td class="py-3 px-4">+3.00 &sigma;</td>
+              <td class="py-3 px-4">1 in 740</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Profoundly Superior</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">130</td>
+              <td class="py-3 px-4">97.72%</td>
+              <td class="py-3 px-4">+2.00 &sigma;</td>
+              <td class="py-3 px-4">1 in 44</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Very Superior (Mensa)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">120</td>
+              <td class="py-3 px-4">90.88%</td>
+              <td class="py-3 px-4">+1.33 &sigma;</td>
+              <td class="py-3 px-4">1 in 11</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Superior</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">115</td>
+              <td class="py-3 px-4">84.13%</td>
+              <td class="py-3 px-4">+1.00 &sigma;</td>
+              <td class="py-3 px-4">1 in 6</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">High Average (+1 SD)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">100</td>
+              <td class="py-3 px-4">50.00%</td>
+              <td class="py-3 px-4">0.00 &sigma;</td>
+              <td class="py-3 px-4">1 in 2</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Population Mean</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">85</td>
+              <td class="py-3 px-4">15.87%</td>
+              <td class="py-3 px-4">-1.00 &sigma;</td>
+              <td class="py-3 px-4">1 in 6</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Low Average (-1 SD)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-bold text-zinc-950 dark:text-white">70</td>
+              <td class="py-3 px-4">2.28%</td>
+              <td class="py-3 px-4">-2.00 &sigma;</td>
+              <td class="py-3 px-4">1 in 44</td>
+              <td class="py-3 px-4 font-sans font-semibold text-zinc-900 dark:text-white">Borderline (-2 SD)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Mathematical Formula Breakdown -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+      <h3 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-3">
+        Mathematical Formulation: Z-Scores and CDF Integration
+      </h3>
+      <p class="mb-3">
+        The conversion from standard score to percentile operates through standard normal standardization:
+      </p>
+      <div class="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 font-mono text-xs mb-3">
+        z = (IQ - 100) / 15<br />
+        Percentile = &Phi;(z) &times; 100 = 0.5 &times; [1 + erf(z / &radic;2)] &times; 100
+      </div>
+      <p>
+        Where &Phi; is the cumulative distribution function of the standard normal distribution, and erf is the Gauss error function.
+      </p>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- LAYMAN PERCENTILE EXPLAINER: THE 100-PERSON LINE & NORMAL CURVE   -->
+    <!-- ================================================================= -->
+    <section class="space-y-8 border-t border-zinc-200 dark:border-zinc-800 pt-10" aria-labelledby="heading-layman-guide">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-medium uppercase tracking-wider mb-2">
+          Plain-English Guide
+        </div>
+        <h2 id="heading-layman-guide" class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+          How to Understand IQ Percentiles: The Layman Guide
+        </h2>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1 max-w-3xl">
+          Everything you need to know about what percentiles mean, how they differ from test scores, and why bell-curve distributions matter.
+        </p>
+      </div>
+
+      <!-- 1. The 100-Person Line Analogy -->
+      <div class="rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 p-6 sm:p-8 shadow-xs">
+        <div class="flex items-center gap-3.5 mb-4">
+          <div class="w-11 h-11 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+              The "100-Person Line" Intuitive Analogy
+            </h3>
+            <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              Visualizing Relative Population Standing
+            </p>
+          </div>
+        </div>
+
+        <blockquote class="text-sm sm:text-base text-zinc-800 dark:text-zinc-200 font-medium leading-relaxed mb-6 pl-4 border-l-4 border-blue-500 dark:border-blue-400 italic">
+          "Imagine 100 people chosen at random from the population, lined up from lowest score to highest score. If your IQ is at the 98th percentile, you are standing ahead of 98 out of those 100 people, with only 2 people ahead of you."
+        </blockquote>
+
+        <!-- 10x10 Cohort Visualization Grid -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+          <div class="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-3">
+            <span>Lowest 1% (Behind)</span>
+            <span class="font-bold text-blue-600 dark:text-blue-400">98th Percentile (Mensa Threshold)</span>
+            <span>Top 100%</span>
+          </div>
+          <!-- Visual Dot Cohort Row -->
+          <div class="grid grid-cols-10 gap-1.5 sm:gap-2">
+            <!-- 98 People Ahead / Cohort Blocks -->
+            <div class="col-span-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300">
+              98 People Behind You (98%)
+            </div>
+            <!-- Top 2 Elite -->
+            <div class="col-span-2 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-mono font-bold shadow-xs">
+              Top 2 (IQ 130+)
+            </div>
+          </div>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-2.5">
+            On a standardized test scale, a 50th percentile rank places you exactly at the median (50 behind, 50 ahead), while a 99.9th percentile rank means standing ahead of 999 out of 1,000 people.
+          </p>
+        </div>
+      </div>
+
+      <!-- 2. Percentage vs. Percentile Comparison -->
+      <div>
+        <h3 class="font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white mb-4">
+          Percentage vs. Percentile: The Critical Distinction
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Percentage Card -->
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
+            <div>
+              <div class="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-200/70 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-mono font-bold mb-3">
+                Percentage (%) - Raw Test Accuracy
+              </div>
+              <h4 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+                What Fraction of Items You Answered Correctly
+              </h4>
+              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+                An 80% on a test means you answered 80 out of 100 questions correctly. It reflects absolute performance on that specific set of questions, regardless of how anyone else performed or how difficult the questions were.
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs font-mono text-zinc-600 dark:text-zinc-400">
+              Formula: (Correct Answers / Total Questions) &times; 100
+            </div>
+          </div>
+
+          <!-- Percentile Card -->
+          <div class="p-6 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
+            <div>
+              <div class="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-200/70 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-mono font-bold mb-3">
+                Percentile (th) - Relative Population Standing
+              </div>
+              <h4 class="font-heading font-bold text-base text-zinc-950 dark:text-white mb-2">
+                What Percentage of the Human Population Scored Below You
+              </h4>
+              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+                An 80th percentile rank means you scored higher than 80% of the entire standardized norm group, regardless of whether you answered 15, 20, or 24 questions correctly. It measures relative cognitive rarity.
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs font-mono text-zinc-700 dark:text-zinc-300">
+              Metric: Cumulative Normal Integral &Phi;(z) &times; 100
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. How the Two Conversion Tools Work -->
+      <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+        <h3 class="font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white mb-4">
+          How the 2-Way Conversion Tools Work
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+              <h4 class="font-heading font-bold text-sm sm:text-base text-zinc-950 dark:text-white">
+                Score to Percentile Rank
+              </h4>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Takes your standardized IQ score and applies the Gaussian normal distribution curve (calibrated with a population Mean of 100 and Standard Deviation of 15) to calculate your exact population percentile rank via the cumulative error function.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+              <h4 class="font-heading font-bold text-sm sm:text-base text-zinc-950 dark:text-white">
+                Percentile Rank to Required IQ
+              </h4>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Inverts the Gaussian cumulative bell curve to calculate the exact threshold score required to qualify for specific high-IQ societies and cognitive brackets (for example, the 98th percentile needed for Mensa membership corresponds to IQ 130+).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Why IQ Scores Cluster: The Bell Curve Distribution -->
+      <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
+        <h3 class="font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white mb-2">
+          Why IQ Scores Cluster (The Standard Normal Curve)
+        </h3>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+          Human cognitive capabilities follow a symmetrical bell-shaped Gaussian distribution. Most individuals cluster closely around the population mean of 100:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- 1 SD -->
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <div class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white">
+              68.2%
+            </div>
+            <div class="text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200 mt-1">
+              Within &plusmn;1 SD (IQ 85 - 115)
+            </div>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+              Over two-thirds of the population fall within this average ability band.
+            </p>
+          </div>
+
+          <!-- 2 SD -->
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <div class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white">
+              95.4%
+            </div>
+            <div class="text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200 mt-1">
+              Within &plusmn;2 SD (IQ 70 - 130)
+            </div>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+              The vast majority of adults fall between borderline and superior ranges.
+            </p>
+          </div>
+
+          <!-- Top 2.3% -->
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <div class="text-2xl sm:text-3xl font-heading font-extrabold text-blue-600 dark:text-blue-400">
+              Only 2.3%
+            </div>
+            <div class="text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200 mt-1">
+              Above +2 SD (IQ 130+)
+            </div>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+              Reaches the 98th percentile or higher required for High-IQ societies.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Connection to Cognitive Mini-Games Notice -->
+      <div class="p-5 sm:p-6 rounded-3xl bg-zinc-50/80 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 flex items-start gap-3.5">
+        <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0 mt-0.5">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div class="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+          <span class="font-heading font-bold text-zinc-950 dark:text-white">Cognitive Mini-Games vs. Formal Psychometrics:</span>
+          Our training mini-game drills produce <strong>0 - 100 Task Performance Scores</strong> reflecting speed, working memory span, and operational reflex accuracy. While these exercises provide targeted cognitive agility training, true population IQ percentiles require psychometrically calibrated Item Response Theory assessments (such as the <a href="/test" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">Official Full IQ Test</a>).
+        </div>
+      </div>
+    </section>
+
+    <!-- Frequently Asked Questions Section -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-2">
+          Frequently Asked Questions: Percentiles &amp; Normal Distribution
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Essential concepts on Gaussian distributions, z-scores, and percentile interpretation.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What is an IQ percentile?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            An IQ percentile indicates the percentage of the general population that scores at or below a given IQ score on a standardized normal distribution (Mean 100, SD 15).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What percentile is an IQ of 100?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            An IQ of 100 is the exact median of the population, corresponding to the 50th percentile.
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>What IQ score is needed to qualify for Mensa?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            Mensa requires a score at or above the 98th percentile, which corresponds to an IQ of 130 or higher on the Wechsler scale (SD 15) or 132 on the Stanford-Binet scale (SD 16).
+          </p>
+        </details>
+
+        <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-sm sm:text-base text-zinc-900 dark:text-white list-none">
+            <span>How is the IQ percentile calculated mathematically?</span>
+            <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
+            IQ percentiles are derived using the standard normal cumulative distribution function (CDF). First, the Z-score is calculated as z = (IQ - 100) / 15, then integrated through the Gaussian error function.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- High-Conversion Assessment CTA Banner -->
+    <section class="p-8 sm:p-12 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-center shadow-lg relative overflow-hidden">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-4xl mb-3 tracking-tight">
+        Calculate Your Percentile Now
+      </h2>
+      <p class="text-blue-100 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+        Take our 24-item non-verbal fluid intelligence assessment and receive your estimated standard score and percentile rank in 20 minutes.
+      </p>
+      <a 
+        href="/test" 
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold text-zinc-950 bg-white hover:bg-zinc-100 transition-all shadow-md hover:scale-102 active:scale-98"
+      >
+        <span>Take Free Assessment</span>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // Mathematical functions
+  function erf(x: number): number {
+    const sign = x >= 0 ? 1 : -1;
+    const absX = Math.abs(x);
+    const a1 = 0.254829592;
+    const a2 = -0.284496736;
+    const a3 = 1.421413741;
+    const a4 = -1.453152027;
+    const a5 = 1.061405429;
+    const p = 0.3275911;
+    const t = 1.0 / (1.0 + p * absX);
+    const y = 1.0 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t) * Math.exp(-absX * absX);
+    return sign * y;
+  }
+
+  function normalCdf(z: number): number {
+    return 0.5 * (1.0 + erf(z / Math.SQRT2));
+  }
+
+  // Inverse normal approximation (Beasley-Springer-Moro)
+  function rationalApproximation(t: number): number {
+    const c = [2.515517, 0.802853, 0.010328];
+    const d = [1.432788, 0.189269, 0.001308];
+    return t - ((c[2] * t + c[1]) * t + c[0]) / (((d[2] * t + d[1]) * t + d[0]) * t + 1.0);
+  }
+
+  function invNormalCdf(p: number): number {
+    if (p <= 0) return -4.0;
+    if (p >= 1) return 4.0;
+    if (p < 0.5) {
+      return -rationalApproximation(Math.sqrt(-2.0 * Math.log(p)));
+    } else {
+      return rationalApproximation(Math.sqrt(-2.0 * Math.log(1.0 - p)));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Mode Switching
+    const tabIqToPct = document.getElementById('tab-iq-to-pct');
+    const tabPctToIq = document.getElementById('tab-pct-to-iq');
+    const panelIqToPct = document.getElementById('panel-iq-to-pct');
+    const panelPctToIq = document.getElementById('panel-pct-to-iq');
+
+    if (tabIqToPct && tabPctToIq && panelIqToPct && panelPctToIq) {
+      tabIqToPct.addEventListener('click', () => {
+        panelIqToPct.classList.remove('hidden');
+        panelPctToIq.classList.add('hidden');
+        tabIqToPct.className = 'flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs';
+        tabPctToIq.className = 'flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white';
+      });
+
+      tabPctToIq.addEventListener('click', () => {
+        panelPctToIq.classList.remove('hidden');
+        panelIqToPct.classList.add('hidden');
+        tabPctToIq.className = 'flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs';
+        tabIqToPct.className = 'flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white';
+      });
+    }
+
+    // Panel 1: IQ -> Percentile
+    const iqInput = document.getElementById('iq-input') as HTMLInputElement;
+    const iqSlider = document.getElementById('iq-slider') as HTMLInputElement;
+    const outputPercentile = document.getElementById('output-percentile');
+    const outputRarity = document.getElementById('output-rarity');
+    const outputZscore = document.getElementById('output-zscore');
+    const outputClassification = document.getElementById('output-classification');
+
+    function updateFromIq(iq: number) {
+      const z = (iq - 100) / 15;
+      const pct = Math.min(99.99, Math.max(0.01, normalCdf(z) * 100));
+
+      if (outputPercentile) outputPercentile.textContent = `${pct.toFixed(1)}%`;
+      if (outputZscore) outputZscore.textContent = `${z >= 0 ? '+' : ''}${z.toFixed(2)} σ`;
+
+      // Rarity
+      if (outputRarity) {
+        if (pct >= 50) {
+          const rem = 100 - pct;
+          const ratio = rem > 0.05 ? Math.round(100 / rem) : 1000;
+          outputRarity.textContent = `Top ${(rem).toFixed(1)}% (1 in ${ratio >= 1000 ? '1,000+' : ratio} people)`;
+        } else {
+          const ratio = pct > 0.05 ? Math.round(100 / pct) : 1000;
+          outputRarity.textContent = `Bottom ${pct.toFixed(1)}% (1 in ${ratio} people)`;
+        }
+      }
+
+      // Classification
+      if (outputClassification) {
+        if (iq >= 145) outputClassification.textContent = 'Profoundly Superior Ability';
+        else if (iq >= 130) outputClassification.textContent = 'Very Superior (Mensa Cutoff)';
+        else if (iq >= 120) outputClassification.textContent = 'Superior Cognitive Ability';
+        else if (iq >= 110) outputClassification.textContent = 'High Average Ability';
+        else if (iq >= 90) outputClassification.textContent = 'Average Cognitive Ability';
+        else if (iq >= 80) outputClassification.textContent = 'Low Average Ability';
+        else outputClassification.textContent = 'Borderline Range';
+      }
+    }
+
+    if (iqInput && iqSlider) {
+      iqInput.addEventListener('input', () => {
+        const val = parseInt(iqInput.value, 10) || 100;
+        iqSlider.value = String(val);
+        updateFromIq(val);
+      });
+      iqSlider.addEventListener('input', () => {
+        const val = parseInt(iqSlider.value, 10);
+        iqInput.value = String(val);
+        updateFromIq(val);
+      });
+    }
+
+    // Panel 2: Percentile -> IQ
+    const pctInput = document.getElementById('pct-input') as HTMLInputElement;
+    const pctSlider = document.getElementById('pct-slider') as HTMLInputElement;
+    const outputIqFromPct = document.getElementById('output-iq-from-pct');
+    const outputSdFromPct = document.getElementById('output-sd-from-pct');
+    const outputMensaStatus = document.getElementById('output-mensa-status');
+
+    function updateFromPct(pct: number) {
+      const p = pct / 100;
+      const z = invNormalCdf(p);
+      const iq = Math.round(100 + 15 * z);
+
+      if (outputIqFromPct) outputIqFromPct.textContent = `${iq} IQ`;
+      if (outputSdFromPct) outputSdFromPct.textContent = `${z >= 0 ? '+' : ''}${z.toFixed(2)} σ (Wechsler SD 15)`;
+
+      if (outputMensaStatus) {
+        if (pct >= 98.0) {
+          outputMensaStatus.textContent = 'Qualifies for Mensa (Top 2%)';
+          outputMensaStatus.className = 'text-xs font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700';
+        } else {
+          const ptsNeeded = Math.max(1, 130 - iq);
+          outputMensaStatus.textContent = `Below 98th Percentile (Need +${ptsNeeded} IQ pts)`;
+          outputMensaStatus.className = 'text-xs font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800/60 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700';
+        }
+      }
+    }
+
+    if (pctInput && pctSlider) {
+      pctInput.addEventListener('input', () => {
+        const val = parseFloat(pctInput.value) || 50;
+        pctSlider.value = String(val);
+        updateFromPct(val);
+      });
+      pctSlider.addEventListener('input', () => {
+        const val = parseFloat(pctSlider.value);
+        pctInput.value = String(val);
+        updateFromPct(val);
+      });
+    }
+
+    // Initial run
+    updateFromIq(120);
+    updateFromPct(98.0);
+  });
+</script>

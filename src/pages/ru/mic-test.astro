@@ -3,8 +3,8 @@ import Layout from '../../components/ru/LayoutRu.astro';
 import Header from '../../components/ru/HeaderRu.astro';
 import Footer from '../../components/ru/FooterRu.astro';
 
-const title = 'Бесплатный онлайн-тест микрофона и проверка качества звука | Спектрограмма частот';
-const description = 'Проверьте микрофон онлайн с визуализацией частотного спектра в реальном времени, индикатором громкости dBFS, анализом фонового шума и мгновенной записью-прослушиванием.';
+const title = 'Проверка микрофона онлайн: бесплатный тест микрофона и звука | FreeIQExam';
+const description = 'Проверьте микрофон онлайн бесплатно: тест записи звука, спектрограмма частот в реальном времени и устранение неполадок микрофона без сторонних программ.';
 
 const canonicalUrl = 'https://freeiqexam.com/ru/mic-test';
 
@@ -21,36 +21,36 @@ const alternates = {
 
 const faqItems = [
   [
-    'Why does my microphone show no signal in this test?',
-    'The three common causes are, in order: the browser has not been granted permission (look for a crossed-out camera or padlock icon in the address bar), the wrong input device is selected in the dropdown, or another application is holding the microphone exclusively. Zoom, Teams, Discord, OBS and most voice recorders open the input in exclusive mode on Windows, so the browser receives a silent stream or an outright error until you close them.'
+    'Почему индикатор микрофона не показывает сигнал при тестировании?',
+    'Три наиболее частые причины: 1) Браузеру не выдано разрешение на доступ к микрофону (проверьте иконку замка или перечёркнутого микрофона в адресной строке), 2) В выпадающем списке выбрано не то устройство ввода, или 3) Другая программа использует микрофон в монопольном режиме (Zoom, Teams, Discord, OBS). Закройте фоновые приложения и перезагрузите страницу.'
   ],
   [
-    'What is a good dBFS level for a microphone?',
-    'For speech, aim for peaks between -12 dBFS and -6 dBFS with average levels around -18 dBFS. This leaves headroom for a sudden laugh or a plosive without touching 0 dBFS, which is the point at which the analogue-to-digital converter runs out of numbers and clips. If your peaks sit below -30 dBFS you are too quiet and will sound hissy after the other end applies makeup gain; if peaks touch -1 dBFS you are risking distortion on every loud syllable.'
+    'Какой уровень громкости в dBFS считается оптимальным для речи?',
+    'Для речи целевой пиковый уровень (Peak) должен находиться в диапазоне от -12 dBFS до -6 dBFS, со средним значением RMS около -18 dBFS. Этот запас (headroom) предотвращает клиппинг (цифровой перегруз при 0 dBFS) при внезапном смехе или резких согласных звуках.'
   ],
   [
-    'What does SNR mean and what is a good value?',
-    'Signal-to-noise ratio is the distance in decibels between your voice and the background noise floor. This test rates anything above 35 dB as Excellent, 25 to 35 dB as Good, 15 to 25 dB as Fair, and below 15 dB as Poor. The practical meaning is simple: each 6 dB of extra SNR is roughly a doubling of the voltage margin between speech and hiss, so a room with a 40 dB ratio sounds dramatically cleaner than one at 20 dB even when the microphone is identical.'
+    'Что такое отношение сигнал/шум (SNR) и какое значение считается хорошим?',
+    'SNR — это разница в децибелах между уровнем вашего голоса и фоновым шумом помещения. Значение выше 35 дБ оценивается как «Отлично», 25–35 дБ — «Хорошо», 15–25 дБ — «Удовлетворительно», а ниже 15 дБ — «Шумно». Каждые 6 дБ увеличения SNR фактически вдвое повышают разборчивость речи над шумом.'
   ],
   [
-    'Why does the test recommend turning off noise suppression?',
-    'Because noise suppression, echo cancellation and automatic gain control are destructive processors, and this test exists to reveal what they hide. Noise suppression works by subtracting an estimate of the noise floor, which removes room tone along with breath and room reverb, and can leave a watery or robotic artefact on sustained vowels. Auto gain control constantly rides the level, which makes a dBFS reading meaningless because the number you see is the processor\'s decision rather than your microphone\'s output. Measure raw first, then enable the filters for your actual calls if you prefer how they sound.'
+    'Почему тест рекомендует отключать шумоподавление при первоначальной проверке?',
+    'Встроенные фильтры браузера (шумоподавление, эхоподавление и авторегулировка усиления) искажают исходный аналоговый сигнал. Авторегулировка постоянно меняет уровень, делая шкалу dBFS неинформативной. Сначала измерьте чистые физические характеристики микрофона, а фильтры включайте для рабочих звонков.'
   ],
   [
-    'How do I know if my microphone is clipping?',
-    'Clipping is flat-topping: the waveform hits the maximum representable value and stays there for more than a sample or two, so the shape of the wave is destroyed and the result is a harsh crackle on plosives and loud notes. This test flags it when three or more consecutive samples sit at or above 99% of full scale. The fix is always to reduce analogue gain - in your operating system sound settings, your audio interface, or a physical gain knob. Software cannot undo clipping that has already happened, because the information above the ceiling was never recorded.'
+    'Как понять, что звук микрофона перегружен (клиппинг)?',
+    'Клиппинг возникает, когда аналого-цифровой преобразователь (АЦП) достигает потолка 0 dBFS и срезает верхушки звуковой волны. Это проявляется резким неприятным треском на громких звуках. Индикатор фиксирует клиппинг при достижении 99% шкалы. Решение — уменьшить чувствительность микрофона в настройках системы или ручкой Gain на звуковой карте.'
   ],
   [
-    'Why do I hear a hum or a high-pitched whine?',
-    'A steady low hum at 50 Hz or 60 Hz, usually with harmonics, is mains electrical interference - almost always a ground loop or an unbalanced cable running alongside a power supply. Move the microphone cable away from power bricks and monitors, plug the computer and any speakers into the same outlet, and prefer USB or a balanced XLR connection. A high-pitched whine that changes with computer activity is usually USB bus noise or a nearby display backlight inverter; moving the microphone to a different USB port, ideally on a powered hub, frequently resolves it.'
+    'Откуда берётся постоянный низкий гул (50/60 Гц) или высокочастотный писк?',
+    'Низкий гул на частоте 50 или 60 Гц — это электромагнитная наводка от электросети или земляная петля. Отодвиньте провод микрофона от блоков питания и сетевых проводов. Высокочастотный свист чаще всего вызван помехами по шине USB: переключите микрофон в другой USB-порт на задней панели материнской платы.'
   ],
   [
-    'Why does my recording sound different from what I hear in my head?',
-    'Because you never hear your own voice the way a microphone does. When you speak, you hear a mix of airborne sound and bone-conducted vibration through your skull, which reinforces the low frequencies and makes your voice sound fuller and deeper to you than it does to anyone else. The playback feature in this test lets you hear the airborne signal only, which is exactly what a call participant or stream viewer receives. Almost everyone finds this uncomfortable the first time; it is not a fault in your microphone.'
+    'Почему мой голос в записи звучит непривычно?',
+    'При разговоре вы слышите свой голос не только через воздух, но и через костную проводимость черепа, усиливающую низкие частоты. Микрофон записывает только воздушные колебания — именно так ваш голос звучит для всех остальных собеседников. Это абсолютно естественно.'
   ],
   [
-    'Can a web page record my microphone without asking?',
-    'No. Every modern browser requires an explicit per-site permission grant before getUserMedia will return an audio stream, and the browser shows a persistent indicator while the microphone is open. This test holds the stream only while the page is open and releases the hardware the moment you press Stop or close the tab, and the captured audio exists only in volatile memory. Nothing is uploaded, because the diagnostics all run locally in JavaScript.'
+    'Может ли сайт записывать микрофон втайне от пользователя?',
+    'Нет. Современные браузеры блокируют любой доступ к Web Audio API без явного подтверждения пользователя во всплывающем окне, а во время работы микрофона отображается постоянный индикатор записи. Захваченное аудио обрабатывается исключительно локально в оперативной памяти браузера и никуда не передаётся.'
   ]
 ];
 
@@ -59,25 +59,25 @@ const schemas = [
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     '@id': `${canonicalUrl}#webapp`,
-    name: 'FreeIQExam Online Microphone Test & Audio Quality Diagnostic',
+    name: 'Бесплатная онлайн-проверка микрофона и диагностика звука FreeIQExam',
     url: canonicalUrl,
     applicationCategory: 'MultimediaApplication',
     operatingSystem: 'All',
-    browserRequirements: 'Requires Web Audio API support, a secure HTTPS connection, and microphone permission',
-    description: 'Browser-based microphone diagnostic with real-time FFT frequency spectrum, peak and RMS dBFS metering, noise floor and SNR analysis, clipping detection, and five-second loopback playback.',
+    browserRequirements: 'Требуется поддержка Web Audio API, защищённое соединение HTTPS и разрешение на микрофон',
+    description: 'Браузерная диагностика микрофона с визуализацией частотного спектра FFT в реальном времени, измерением уровней Peak и RMS dBFS, анализом шума помещения и мгновенным воспроизведением записи.',
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'USD'
     },
     featureList: [
-      'Real-time 60 FPS FFT frequency spectrum analyser',
-      'Peak and RMS volume meter calibrated from -60 dBFS to 0 dBFS',
-      'Ambient noise floor measurement and SNR rating',
-      'Clipping and saturation distortion detection',
-      'Five-second loopback playback of captured audio',
-      'Input hardware detection: sample rate, channel count and latency',
-      'Optional echo cancellation, noise suppression and auto gain control toggles'
+      'Спектроанализатор частот FFT 60 FPS в реальном времени',
+      'Индикатор пикового и среднеквадратичного уровня от -60 dBFS до 0 dBFS',
+      'Замер фонового шума помещения и оценка соотношения сигнал/шум (SNR)',
+      'Индикатор цифрового клиппинга и искажений перегрузки',
+      '5-секундный буфер мгновенного прослушивания собственного голоса',
+      'Определение аппаратных характеристик: частота дискретизации, каналы, задержка',
+      'Переключатели эхоподавления, шумоподавления и авторегулировки уровня'
     ]
   },
   {
@@ -85,33 +85,23 @@ const schemas = [
     '@type': 'BreadcrumbList',
     '@id': `${canonicalUrl}#breadcrumb`,
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://freeiqexam.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Assessments', item: 'https://freeiqexam.com/test' },
-      { '@type': 'ListItem', position: 3, name: 'Microphone Test', item: canonicalUrl }
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://freeiqexam.com/ru/' },
+      { '@type': 'ListItem', position: 2, name: 'Инструменты', item: 'https://freeiqexam.com/ru/tools' },
+      { '@type': 'ListItem', position: 3, name: 'Проверка микрофона', item: canonicalUrl }
     ]
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    '@id': `${canonicalUrl}#faq`,
-    mainEntity: faqItems.map(([question, answer]) => ({
-      '@type': 'Question',
-      name: question,
-      acceptedAnswer: { '@type': 'Answer', text: answer }
-    }))
   }
 ];
 ---
 
 <Layout title={title} description={description} canonicalUrl={canonicalUrl} enPath="/mic-test" idPath="/tes-mikrofon" schema={schemas}>
-  <Header />
+  <Header currentPath="/mic-test" enPath="/mic-test" idPath="/id/tes-mikrofon" />
 
   <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
     <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
       <nav aria-label="Хлебные крошки" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
         <a href="/ru/" class="hover:text-[#0066cc] dark:hover:text-[#2997ff]">Главная</a><span aria-hidden="true">/</span>
-        <a href="/ru/test" class="hover:text-[#0066cc] dark:hover:text-[#2997ff]">Тесты</a><span aria-hidden="true">/</span>
-        <span aria-current="page" class="text-zinc-950 dark:text-white">Тест микрофона</span>
+        <a href="/ru/tools" class="hover:text-[#0066cc] dark:hover:text-[#2997ff]">Инструменты</a><span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white">Проверка микрофона</span>
       </nav>
 
       <header class="mb-12 max-w-3xl">
@@ -324,8 +314,7 @@ const schemas = [
             </div>
 
             <p class="panel-help">
-              Stay silent for three seconds and lock in your room's floor, then speak normally. The
-              ratio between the two is what determines whether you sound clean or hissy on a call.
+              Побудьте в тишине 3 секунды для фиксации фонового шума комнаты, затем говорите в обычном темпе. Соотношение между речью и шумом определяет чистоту звука при звонках.
             </p>
 
             <dl class="analysis-grid">
@@ -353,8 +342,7 @@ const schemas = [
             </div>
 
             <p id="snr-note" class="panel-help">
-              Speak for a few seconds and the ratio will resolve once there is both speech and silence
-              in the window.
+              Говорите несколько секунд: индикатор рассчитает соотношение сигнал/шум, как только в окне анализа появятся и речь, и пауза.
             </p>
           </section>
 
@@ -367,9 +355,7 @@ const schemas = [
               </div>
             </div>
             <p class="panel-help">
-              The engine keeps a rolling five-second buffer of raw PCM in memory. Playback rebuilds it
-              into an audio buffer and plays it instantly &mdash; there is no encoder, no re-encode,
-              and no upload.
+              Движок сохраняет последние 5 секунд исходного аудио в оперативной памяти. Воспроизведение проигрывает звук моментально без сжатия и без отправки на сервер.
             </p>
             <div class="transport-row">
               <button id="mic-playback" type="button" class="btn btn-primary" disabled>Воспроизвести последние 5 секунд</button>
@@ -380,281 +366,91 @@ const schemas = [
         </div>
       </div>
 
-      <!-- ============================ GUIDE ============================ -->
+            <!-- ============================ GUIDE ============================ -->
       <article class="guide">
         <header class="guide-head">
-          <p class="eyebrow text-[13px] font-semibold uppercase tracking-[0.18em] text-[#0066cc] dark:text-[#2997ff]">Справочник</p>
-          <h2 class="guide-title">Как работают микрофоны и как интерпретировать эти показатели</h2>
+          <p class="eyebrow text-[13px] font-semibold uppercase tracking-[0.18em] text-[#0066cc] dark:text-[#2997ff]">Руководство по звукорежиссуре</p>
+          <h2 class="guide-title">Физика микрофонов, диаграммы направленности и гейн-стейджинг</h2>
           <p class="guide-standfirst">
-            A practical guide to transducer physics, polar patterns, gain staging, interference,
-            and the settings that decide whether you sound professional or amateur on a call.
+            Практическое руководство по физике преобразователей, диаграммам направленности, согласованию уровней громкости (gain staging), устранению помех и настройке параметров для кристально чистого звука при звонках и стриминге.
           </p>
         </header>
 
-        <section>
-          <h3>Transducer physics: dynamic and condenser capsules</h3>
+        <section class="space-y-4">
+          <h3>1. Физика преобразователей: динамические и конденсаторные капсюли</h3>
           <p>
-            Every microphone is a transducer: a device that converts one form of energy into another.
-            In audio, that means converting variations in air pressure into variations in voltage. Two
-            designs dominate, and the difference between them explains most of why microphones sound
-            the way they do.
+            Любой микрофон является <strong>преобразователем</strong> — устройством, трансформирующим акустические колебания давления воздуха в электрический сигнал. В звукозаписи и коммуникациях доминируют две принципиальные конструкции:
           </p>
           <p>
-            A <strong>dynamic</strong> microphone suspends a light diaphragm attached to a coil of wire
-            inside a magnetic field. Sound waves move the diaphragm, the coil moves with it, and
-            electromagnetic induction generates a small voltage. The moving mass is relatively large,
-            which makes the diaphragm slow to respond &mdash; and that slowness is a virtue. A dynamic
-            capsule physically cannot react fast enough to capture a loud transient accurately, so a
-            snare drum or a shouted plosive is naturally compressed rather than clipped. Dynamics are
-            also passive, needing no power, and tolerate humidity, heat and physical abuse. This is why
-            the Shure SM7B and its relatives remain standard for broadcast and stage work.
+            <strong>Динамические микрофоны:</strong> Используют тонкую мембрану, соединённую с катушкой индуктивности внутри постоянного магнитного поля. Звуковые волны колеблют мембрану, порождая электрический ток. Относительно большая подвижная масса делает мембрану инертной, что является естественным преимуществом: капсюль сглаживает резкие пики и взрывные согласные без клиппинга. Динамические микрофоны пассивны, долговечны и идеально подходят для шумных необработанных комнат.
           </p>
           <p>
-            A <strong>condenser</strong> microphone instead places a thin, metallised diaphragm
-            parallel to a fixed backplate, forming a capacitor. A polarising voltage &mdash; supplied
-            by phantom power over an XLR cable, or by an internal battery in a USB model &mdash; sits
-            across the gap. When sound moves the diaphragm, the capacitance changes, and the circuit
-            converts that into a voltage. Because the diaphragm carries almost no mass, it tracks the
-            waveform far more accurately and extends much further into the high frequencies. The
-            trade-off is that condensers need power, are more sensitive to humidity and handling noise,
-            and will faithfully reproduce your room's every flaw, including the reflection off a bare
-            wall three metres behind you.
-          </p>
-          <p>
-            The practical consequences for a call or a stream are straightforward. If your room is
-            untreated and your environment is noisy, a dynamic microphone's lower sensitivity and
-            tighter pickup will flatter you. If you have a quiet, soft-furnished room and want presence
-            and detail, a condenser will reward you. The frequency spectrum in this test makes the
-            difference visible: a condenser typically shows more energy above 6&nbsp;kHz, which is
-            perceived as air and detail, while a dynamic rolls off earlier and often shows a broad
-            presence lift somewhere around 4 to 6&nbsp;kHz.
-          </p>
-          <p>
-            One more distinction matters in practice. USB microphones contain a capsule, a preamplifier
-            and an analogue-to-digital converter in one housing, which is convenient but means the
-            converter quality is fixed and often modest. An XLR microphone feeding a separate audio
-            interface lets the converter be upgraded independently of the capsule. The hardware card in
-            this test reports the sample rate your browser actually negotiated, which is a useful sanity
-            check: if a 48&nbsp;kHz interface is reporting 44.1&nbsp;kHz, something in the chain is
-            resampling.
+            <strong>Конденсаторные микрофоны:</strong> Состоят из ультратонкой позолоченной мембраны, натянутой параллельно неподвижному электроду (backplate) и образующей конденсатор. Ничтожная масса позволяет мембране мгновенно реагировать на микродинамику и высокочастотные детали до 20 кГц. Однако высокая чувствительность означает, что микрофон зафиксирует любые акустические недостатки комнаты, включая эхо от голых стен.
           </p>
         </section>
 
-        <section>
-          <h3>Polar patterns and the proximity effect</h3>
+        <section class="space-y-4">
+          <h3>2. Диаграммы направленности и эффект близости (Proximity Effect)</h3>
           <p>
-            A microphone's polar pattern describes how sensitive it is to sound arriving from different
-            directions. An <strong>omnidirectional</strong> capsule responds almost equally from every
-            angle, which makes it sound natural and forgiving of head movement but means it captures the
-            room as loudly as it captures you. A <strong>cardioid</strong> pattern is most sensitive at
-            the front and rejects sound from behind, which is why it is the default choice for
-            single-speaker use. A <strong>figure-of-eight</strong> or bidirectional pattern is sensitive
-            at the front and back and rejects the sides entirely, and is used for mid-side stereo
-            recording and for isolating two speakers facing each other.
+            Диаграмма направленности определяет чувствительность микрофона к звукам под разными углами:
           </p>
+          <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Кардиоидная (Cardioid):</strong> Максимальная чувствительность спереди и подавление звука сзади. Золотой стандарт для рабочих созвонов, подкастов и стриминга.</li>
+            <li><strong>Круговая (Omnidirectional):</strong> Равномерный захват звука со всех 360 градусов.</li>
+            <li><strong>Восьмёрка (Figure-8):</strong> Одинаково чувствительна спереди и сзади, полностью отсекая боковые звуки.</li>
+          </ul>
           <p>
-            The rejection is not uniform across frequency. Most single-diaphragm capsules become
-            progressively more omnidirectional at low frequencies, so a cardioid microphone that rejects
-            a noisy air conditioner at 1&nbsp;kHz will pick up its low-frequency rumble almost as
-            strongly as an omni would. This is exactly why the rumble band in the spectrum display runs
-            from 20 to 150&nbsp;Hz: energy accumulating there is usually room and building noise rather
-            than voice, and a high-pass filter at 80 to 100&nbsp;Hz will remove it with almost no
-            audible effect on speech.
-          </p>
-          <p>
-            The <strong>proximity effect</strong> is the rise in low-frequency response that occurs as a
-            directional microphone is moved closer to the sound source. It is a consequence of the
-            pressure-gradient design that creates directivity in the first place: at close range, the
-            difference in arrival time between the front and rear of the diaphragm becomes a meaningful
-            fraction of a wavelength at low frequencies, and the output rises. Move from 30&nbsp;cm to
-            5&nbsp;cm and you can gain six to ten decibels below 200&nbsp;Hz.
-          </p>
-          <p>
-            Broadcasters exploit this deliberately for the warm, authoritative voice associated with
-            radio. The same effect ruins podcasts when it is uncontrolled, producing a boomy,
-            indistinct muddiness that no amount of EQ fully removes. If your spectrum shows the
-            fundamentals band dominating everything above it and your meter is peaking normally, you are
-            probably too close. Back off to a hand-span's distance, or engage a high-pass filter, or
-            both. The inverse problem &mdash; a thin, distant sound &mdash; usually means you are more
-            than 40&nbsp;cm away and the room is contributing more than the microphone.
+            <strong>Эффект близости (Proximity Effect):</strong> Свойство направленных микрофонов увеличивать низкие частоты (бас) по мере приближения источника звука к капсюлю. На расстоянии 5 см голос приобретает бархатный «радийный» тембр, однако при чрезмерном приближении звук становится гулким. Оптимальное расстояние до рта составляет 10–15 см.
           </p>
         </section>
 
-        <section>
-          <h3>Gain staging and the hard ceiling at 0 dBFS</h3>
+        <section class="space-y-4">
+          <h3>3. Согласование уровней (Gain Staging) и предел 0 dBFS</h3>
           <p>
-            Digital audio has an absolute maximum. In a 24-bit fixed-point or 32-bit floating-point
-            pipeline, the loudest representable sample is defined as 0&nbsp;dBFS &mdash; decibels
-            relative to full scale. Unlike analogue tape, which compresses gracefully as it saturates,
-            a digital converter that runs out of numbers simply stops tracking the waveform. The peaks
-            are sliced off flat, and the harmonic content that flattening introduces is what you hear as
-            a harsh, buzzing crackle.
+            В цифровом аудио абсолютным потолком амплитуды является <strong>0 dBFS (Decibels relative to Full Scale)</strong>. В отличие от аналоговой техники, создающей мягкий овердрайв, цифровой аналого-цифровой преобразователь (АЦП) при превышении 0 dBFS просто обрезает верхушки волны (Hard Clipping), вызывая неприятный резкий скрежет.
           </p>
           <p>
-            This is why the target for speech is peaks between &minus;12 and &minus;6&nbsp;dBFS rather
-            than as close to zero as possible. That window leaves 6 to 12&nbsp;dB of headroom, which is
-            enough to absorb a sudden laugh, a plosive, or a shift in how close you are leaning without
-            touching the ceiling. Average levels around &minus;18&nbsp;dBFS with peaks at &minus;6 sit
-            comfortably in the sweet spot of almost every converter and give the receiving end room to
-            apply their own processing.
-          </p>
-          <p>
-            The temptation to record quietly and fix it later is a trap for a different reason. If your
-            peaks sit at &minus;40&nbsp;dBFS, you are using only a small fraction of the converter's
-            available dynamic range, and when you amplify the signal to a usable level you amplify the
-            noise floor with it. The result is audible hiss under every word. The correct fix is always
-            at the analogue stage &mdash; more gain from the preamp, or closer microphone placement
-            &mdash; never a software gain multiplier applied after conversion.
-          </p>
-          <p>
-            Clipping detection in this test works by looking for three or more consecutive samples at or
-            above 99% of full scale. A single sample brushing the ceiling is usually an inaudible
-            transient, but sustained flat-topping across consecutive samples is true saturation and is
-            always audible. If the indicator lights, reduce analogue gain. No software process can
-            recover the information that was lost, because above the ceiling it was never recorded.
-          </p>
-          <p>
-            The third element of gain staging is the microphone itself. Automatic gain control, common
-            on USB microphones and headsets, continuously adjusts the input level to keep the output
-            roughly constant. It is convenient on a call and actively harmful as a measurement, because
-            the dBFS figure you observe is the processor's decision rather than your microphone's
-            output, and it cannot be distinguished from a genuine change in how loudly you spoke. This
-            test disables it by default for that reason.
+            Оптимальный диапазон громкости для речи: пиковые значения (Peak) в районе <strong>от -12 до -6 dBFS</strong>, а средняя плотность (RMS) около <strong>-18 dBFS</strong>. Это обеспечивает запас в 6–12 дБ (headroom) для эмоциональных всплесков и смеха без риска искажений.
           </p>
         </section>
 
-        <section>
-          <h3>Diagnosing hum, hiss, and pops</h3>
+        <section class="space-y-4">
+          <h3>4. Устранение сетевого гула (Hum), шипения (Hiss) и взрывных звуков (Pops)</h3>
           <p>
-            Audio faults are far easier to fix once you can classify them, and the spectrum display
-            makes the classification visible.
+            <strong>Сетевой гул (50/60 Гц):</strong> Вызывается электромагнитными наводками от сетевых кабелей или земляной петлей. Отодвиньте аудиокабель от блоков питания и сетевых фильтров.
           </p>
           <p>
-            <strong>Hum</strong> appears as a narrow spike at 50&nbsp;Hz in Europe, Africa and much of
-            Asia, or 60&nbsp;Hz in North America, together with harmonics at double and triple that
-            frequency. It is almost always electrical rather than acoustic: a ground loop, an
-            unbalanced cable running parallel to a mains lead, or a cheap power supply. The remedies
-            are to move signal cables away from power cables, to plug all equipment in the chain into
-            the same outlet so there is no potential difference to drive the loop, and where possible
-            to switch from an unbalanced 3.5&nbsp;mm connection to USB or balanced XLR.
+            <strong>Шипение (Hiss):</strong> Высокочастотный шум предусилителя или помехи по питанию USB. Используйте качественные экранированные провода и подключайте микрофон напрямую к разъемам на материнской плате, избегая дешевых USB-хабов.
           </p>
           <p>
-            <strong>Hiss</strong> is broadband high-frequency energy with no discrete peaks, visible as
-            a general lift across the clarity and air bands. It comes from the microphone's own
-            self-noise, from a preamp running at excessive gain, or from a computer's USB bus. If the
-            level of hiss falls when you move the microphone to a different USB port or disconnect a
-            nearby display, the source was electrical interference rather than the capsule. Note that no
-            microphone has zero self-noise; the question is only whether it sits far enough below your
-            voice, which is precisely what the SNR figure quantifies.
-          </p>
-          <p>
-            <strong>Pops</strong> are short low-frequency bursts caused by plosive consonants &mdash; the
-            p, b and t sounds &mdash; directing a jet of air at the diaphragm. They appear in the
-            spectrum as momentary surges in the rumble band and register on the meter as isolated peaks
-            far above the surrounding speech. A pop filter or a foam windscreen placed a few centimetres
-            in front of the capsule disperses the air blast. Angling the microphone slightly off-axis,
-            so you speak across it rather than directly into it, also helps and costs nothing.
-          </p>
-          <p>
-            <strong>Room reverb</strong> is the last common problem and the one most often misdiagnosed.
-            It does not show as a spike or a lift but as a smeared, indistinct quality that no meter
-            directly measures. Hard parallel surfaces &mdash; bare walls, a glass desk, a tiled floor
-            &mdash; reflect sound back into the microphone a few milliseconds after the direct signal,
-            and the comb filtering this creates notches the frequency response irregularly. Soft
-            furnishings, a rug, bookshelves, curtains and a duvet behind you when recording will all
-            reduce it. In small untreated rooms, simply moving closer to the microphone and turning the
-            gain down improves the ratio of direct sound to reflected sound more than any equipment
-            purchase.
+            <strong>Взрывные звуки (Pops):</strong> Удары воздуха от согласных «П», «Б», «Т». Используйте поп-фильтр или ветрозащиту и располагайте микрофон чуть сбоку от линии дыхания.
           </p>
         </section>
 
-        <section>
-          <h3>Configuring Discord, Zoom, and streaming software</h3>
+        <section class="space-y-4">
+          <h3>5. Настройка параметров в Discord, Zoom и OBS Studio</h3>
           <p>
-            The settings that matter are similar everywhere, but each application hides them
-            differently and each has quirks worth knowing.
-          </p>
-          <p>
-            In <strong>Discord</strong>, open User Settings, then Voice and Video. Set the input device
-            explicitly rather than leaving it on Default, because the default follows the operating
-            system and changes silently when you plug in a headset. Set input mode to Voice Activity
-            rather than Push to Talk unless you are in a noisy environment. The input sensitivity
-            slider sets the threshold at which Discord decides you are speaking: set it too low and
-            every keystroke transits, too high and your first syllable is clipped. Below that you will
-            find Noise Suppression, Echo Cancellation and Automatic Gain Control. Discord's noise
-            suppression, powered by Krisp, is genuinely effective against keyboard and fan noise but
-            operates by subtracting an estimate of the noise, which can leave a watery artefact on
-            sustained sounds. Test with it both on and off using the loopback playback here and decide
-            which you prefer.
-          </p>
-          <p>
-            In <strong>Zoom</strong>, open Settings, then Audio. Select your microphone explicitly and
-            use the input level test to confirm the meter moves. Zoom exposes Original Sound, which
-            disables its own processing chain &mdash; echo cancellation, auto gain and background noise
-            suppression &mdash; and is essential if you are sharing music or a musical instrument, since
-            the processing will otherwise mangle sustained tones. For speech, leaving the default
-            processing on is usually right, but note that Zoom's auto gain will defeat any careful gain
-            staging you did beforehand.
-          </p>
-          <p>
-            For <strong>OBS and other streaming software</strong>, add your microphone as an Audio Input
-            Capture source, then open its filters. Three filters do most of the work: a Noise Gate,
-            which mutes the channel entirely below a threshold and is what stops room tone being
-            broadcast during silence; a Noise Suppression filter, which reduces steady broadband noise;
-            and a Compressor, which narrows the dynamic range so quiet speech is audible and loud
-            speech does not clip. Order matters &mdash; gate first, then suppression, then compression
-            &mdash; because each stage should receive a cleaner signal than the last. Add a Gain filter
-            to set your level so that peaks land around &minus;6&nbsp;dBFS on the OBS meter.
-          </p>
-          <p>
-            Across all three, the same principle applies: measure first with processing disabled, fix
-            any physical or electrical problem you find, and only then decide which software
-            processing genuinely improves the result. Each processor you enable is a decision you are
-            delegating to an algorithm, and the ones worth keeping are the ones you have heard and
-            chosen.
+            В <strong>Discord</strong> выберите микрофон явно в меню «Голос и видео» вместо «По умолчанию». Отключите автоматическую регулировку усиления, если громкость уже настроена в системе. В <strong>Zoom</strong> активируйте функцию «Исходный звук для музыкантов», чтобы отключить агрессивное сжатие речи. В <strong>OBS Studio</strong> настройте цепочку фильтров: подавление шума (RNNoise), трёхполосный эквалайзер и лимитер на -2 dBFS.
           </p>
         </section>
 
-        <section>
-          <h3>Reading the numbers this test reports</h3>
+        <section class="space-y-4">
+          <h3>6. Показатели Peak, RMS и соотношение сигнал/шум (SNR)</h3>
           <p>
-            <strong>dBFS</strong> is decibels relative to full scale, a negative-only scale where
-            0&nbsp;dBFS is the loudest value the converter can represent and every other value is
-            expressed as how far below that ceiling it sits. The scale is logarithmic, so a change of
-            6&nbsp;dB is roughly a doubling or halving of amplitude, and 20&nbsp;dB is a factor of ten.
+            <strong>Peak vs RMS:</strong> Пиковый уровень отражает мгновенный максимум волны, а RMS — среднюю воспринимаемую громкость. Разница между ними показывает динамический диапазон вашего голоса.
           </p>
           <p>
-            <strong>RMS</strong> is the root mean square of the waveform over the analysis window, and
-            it corresponds closely to perceived loudness. <strong>Peak</strong> is the single largest
-            absolute sample, which tells you how much headroom remains before clipping but says little
-            about perceived level. A signal with a high peak and a low RMS is heavily transient; the
-            gap between the two figures is a rough measure of how dynamic your speech is.
+            <strong>Шумовая полка (Noise Floor):</strong> Уровень звука в комнате при молчании. В тихой жилой комнате он составляет от -60 до -50 dBFS.
           </p>
           <p>
-            The <strong>noise floor</strong> is the level of everything present when you are not
-            speaking, and it is what determines the hiss a listener hears between your sentences. A
-            quiet, treated room typically measures between &minus;65 and &minus;55&nbsp;dBFS; a typical
-            home office between &minus;55 and &minus;45; a room with a fan, a fridge or a busy street
-            outside, above &minus;45. This test estimates the floor from the quietest fifth of the
-            recent analysis window, which means it adapts continuously, and optionally from an explicit
-            three-second silent measurement that locks in a value robust against a stray cough.
-          </p>
-          <p>
-            The <strong>signal-to-noise ratio</strong> is the difference between that floor and your
-            speech peak, and it is the single most useful number here, because it predicts how you will
-            sound to someone else better than any absolute level does. Above 35&nbsp;dB the result is
-            excellent and your voice will sit cleanly above the room. Between 25 and 35&nbsp;dB it is
-            good and perfectly adequate for calls. Between 15 and 25&nbsp;dB there is audible hiss or
-            hum underneath speech, and either a quieter room or a closer microphone will help. Below
-            15&nbsp;dB the background is genuinely competing with your voice, and no amount of software
-            processing will fully repair it &mdash; the room is the problem, not the microphone.
+            <strong>Соотношение сигнал/шум (SNR):</strong> Разница между громкостью речи и шумом покоя. Значение выше 35 дБ обеспечивает безупречную чистоту голоса при любых онлайн-конференциях.
           </p>
         </section>
       </article>
 
       <!-- ============================ FAQ ============================ -->
       <section class="faq" aria-labelledby="faq-title">
-        <h2 id="faq-title" class="faq-title">Frequently asked questions</h2>
+        <h2 id="faq-title" class="faq-title">Часто задаваемые вопросы</h2>
         <div class="faq-list">
           {faqItems.map(([question, answer]) => (
             <details class="faq-item">

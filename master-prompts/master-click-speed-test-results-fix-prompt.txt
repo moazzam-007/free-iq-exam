@@ -1,0 +1,87 @@
+# ==============================================================================
+# MASTER PROMPT: FIX CLICK SPEED TEST (CPS) RESULTS DISPLAY BUG
+# Target File: src/pages/games/click-speed-test.astro
+# ==============================================================================
+
+### TERMINAL BUDGET (MANDATORY):
+Treat terminal usage as expensive. Prefer 0 terminal commands for straightforward file editing. Only run `npm run build` at the very end to verify static compilation.
+
+---
+
+### ROOT CAUSE INVESTIGATION & DIAGNOSIS:
+In `src/pages/games/click-speed-test.astro`, after the trial timer finishes, the results scorecard fails to appear on screen due to a CSS specificity and class-toggle bug:
+
+1. **HTML Structure**: The results section is declared with Tailwind's `hidden` class:
+   ```html
+   <section id="results-panel" class="hidden mb-12" aria-live="polite" aria-label="Test results">
+   ```
+
+2. **The `show()` Function Bug**: In the client `<script>`, visibility is toggled using:
+   ```javascript
+   function show(node: HTMLElement | null, visible: boolean) {
+     if (node) node.style.display = visible ? '' : 'none';
+   }
+   ```
+   When `finishTrial()` calls `show(resultsPanel, true)`, setting `node.style.display = ''` removes the inline style, but does **NOT** remove the `.hidden` class (`display: none;`) from the HTML class attribute. Tailwind's `.hidden` CSS rule continues to hide the results card.
+
+3. **Lifecycle Initialization**: In Astro module scripts, relying solely on `document.addEventListener('DOMContentLoaded', ...)` can cause initialization to be skipped if `DOMContentLoaded` already fired before the module script executed.
+
+---
+
+### ACTIONABLE FIX INSTRUCTIONS:
+
+1. **Fix the `show()` Function & Class Toggling in `src/pages/games/click-speed-test.astro`**:
+   Update `function show` to explicitly remove or toggle the `.hidden` class:
+   ```javascript
+   function show(node: HTMLElement | null, visible: boolean) {
+     if (!node) return;
+     if (visible) {
+       node.classList.remove('hidden');
+       node.style.display = '';
+     } else {
+       node.classList.add('hidden');
+     }
+   }
+   ```
+
+2. **Ensure Robust Lifecycle Initialization**:
+   Update the DOM initialization block to execute immediately if the document has already loaded:
+   ```javascript
+   function init() {
+     resetReadouts();
+     setPhase('ready');
+     show(resultsPanel, false);
+     renderPersonalBest();
+
+     initDurationChips();
+     initModal();
+     initArena();
+
+     btnStart?.addEventListener('click', () => {
+       if (phase === 'running') return;
+       armTrial();
+       arena?.focus();
+     });
+
+     btnReset?.addEventListener('click', () => {
+       armTrial();
+     });
+
+     btnRetake?.addEventListener('click', () => {
+       armTrial();
+       arena?.focus();
+     });
+   }
+
+   if (document.readyState === 'loading') {
+     document.addEventListener('DOMContentLoaded', init);
+   } else {
+     init();
+   }
+   ```
+
+3. **Verify Result Calculation & Display**:
+   Ensure `finishTrial()` sets all metrics (`res-cps`, `res-total`, `res-peak`, `res-median`, `res-rhythm`, `res-tier`, `res-description`), calls `show(resultsPanel, true)`, and smoothly scrolls `resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' })`.
+
+4. **Verify Compilation**:
+   Run `npm run build` once to confirm 0 errors.

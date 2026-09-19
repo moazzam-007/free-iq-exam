@@ -1,0 +1,712 @@
+---
+import Layout from '../../components/ru/LayoutRu.astro';
+import Header from '../../components/ru/HeaderRu.astro';
+import Footer from '../../components/ru/FooterRu.astro';
+
+const title = "Тест скорости печати (WPM) - Бесплатная проверка набора текста | FreeIQExam";
+const description = "Проверьте скорость и точность печати с помощью бесплатного онлайн-теста WPM. Плавная каретка в стиле Monkeytype, звук механических переключателей, живой график WPM и тепловая карта ошибок по пальцам. Без регистрации.";
+const canonicalUrl = "https://freeiqexam.com/ru/typing-test";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Онлайн-тест скорости печати и бенчмарк WPM | FreeIQExam",
+    "url": "https://freeiqexam.com/ru/typing-test",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Требуется поддержка JavaScript и Web Audio API",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Расчёт Gross и Net WPM в реальном времени",
+      "Плавная физика каретки уровня Monkeytype и подсветка символов",
+      "Синтез звука механических переключателей через Web Audio API (Cherry MX Blue, Brown, Red)",
+      "Живой график WPM и ошибок на высокоточном canvas",
+      "Интерактивная тепловая карта ошибок клавиатуры ЙЦУКЕН и анализ ловкости пальцев",
+      "Режимы: спринт (15 с), стандарт (60 с) и выносливость (120 с)",
+      "Сертификат о скорости печати в высоком разрешении (PNG 1200x675)",
+      "Без оплаты, без email, всё вычисляется в браузере"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://freeiqexam.com/ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Тесты",
+        "item": "https://freeiqexam.com/ru/test"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Тест скорости печати (WPM)",
+        "item": "https://freeiqexam.com/ru/typing-test"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Какая скорость печати считается хорошей (WPM)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Средняя мировая скорость печати составляет примерно 40–45 слов в минуту (WPM). Скорость 60–70 WPM считается выше средней и высокопродуктивной для офисной и профессиональной работы. Показатели 80–95 WPM соответствуют топ-10% печатающих, а 100+ WPM выводит вас в элитные топ-2% слепых печатников мира."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "В чём разница между Gross WPM и Net WPM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Gross WPM измеряет вашу чистую скорость печати, деля общее число нажатий на 5 (стандартная длина слова) на затраченные минуты. Net WPM применяет штраф за ошибки: Net WPM = Gross WPM − (неисправленные ошибки / время в минутах). Именно Net WPM является международным стандартом для соревнований и профессионального отбора, поскольку печать с ошибками уничтожает реальную производительность."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как определяется «одно слово» в тестах скорости печати?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "В психометрических и клинических бенчмарках скорости печати одно слово универсально стандартизировано как ровно 5 нажатий (символы, пробелы и знаки препинания). Стандартизация по 5 нажатиям гарантирует, что тесты с длинными словами (например, «достопримечательность») не штрафуют печатающего по сравнению с тестами из коротких слов (например, «дом»)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как поднять скорость печати с 50 до 100+ WPM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Чтобы преодолеть плато скорости печати: 1) Освойте слепую печать десятью пальцами по домашнему ряду (ФЫВА ОЛДЖ) не глядя на клавиатуру; 2) Сначала добейтесь точности 98%+, и только затем работайте над скоростью; 3) Смотрите на 1–2 слова вперёд, чтобы тренировать моторный буфер; 4) Практикуйте короткие 15- и 30-секундные высокоинтенсивные спринты ежедневно; 5) Перейдите на эргономичную механическую клавиатуру с переключателями с коротким ходом."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Влияет ли тип механических переключателей на скорость печати?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да. Механические переключатели обеспечивают выделенную тактильную или звуковую точку срабатывания до полного нажатия, снижая усталость пальцев. Тактильные переключатели (например, Cherry MX Brown) и линейные (например, Cherry MX Red) широко популярны среди скоростных печатников за плавное срабатывание и минимальное сопротивление хода, что позволяет быстро повторно нажимать клавиши и держать высокий темп."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Каков мировой рекорд скорости печати?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Самая высокая зафиксированная скорость печати на стандартной клавиатуре QWERTY - 216 WPM за одноминутный тест, достигнутая соревновательным печатником Шоном Роной. Рекорд Гиннесса по длительной печати принадлежит Барбаре Блэкбёрн, которая держала 150 WPM на протяжении 50-минутного испытания и достигала пика 212 WPM на раскладке Dvorak Simplified Keyboard."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Почему точность печати важнее чистой скорости?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Каждое нажатие Backspace даёт тройной штраф: время на нажатие Backspace, время на удаление ошибки и когнитивный сбой вашего ритма печати. Печатник со скоростью 80 WPM и точностью 99% создаст больше пригодного текста, чем тот, кто печатает 100 WPM с точностью 90% и тратит половину времени на исправление ошибок."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ЙЦУКЕН или QWERTY - что быстрее?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Раскладки оптимизируются под частотность букв конкретного языка. ЙЦУКЕН исторически оптимизирована под русскую частотность, а QWERTY - под английскую, хотя обе не являются строго эргономическими. Исследования показывают, что скорость печати в первую очередь определяется автоматизацией моторной коры, а не раскладкой: при достаточной практике на любой раскладке достигается высокая скорость, но эргономичная раскладка снижает физическую нагрузку на пальцы."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  enPath="/typing-test"
+  idPath="/id/tes-kecepatan-mengetik"
+  schema={schema}
+>
+  <Header currentPath="/typing-test" enPath="/typing-test" idPath="/id/tes-kecepatan-mengetik" />
+
+  <style>
+    /* Caret Pulse and Floating Smooth Movement */
+    #caret {
+      transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    @keyframes caretBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .caret-blink {
+      animation: caretBlink 1s infinite ease-in-out;
+    }
+
+    /* Word Box Line Clamping & Mask */
+    .words-box {
+      mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+    }
+
+    /* FAQ Details Chevron Transition */
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    #typingSettingsBar button { min-height: 44px; }
+    #typingSettingsBar button:active { transform: scale(0.97); transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    @media print {
+      header, footer, #typingSettingsBar, #restartBtn, .no-print {
+        display: none !important;
+      }
+      #resultsWrap {
+        display: block !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Хлебные крошки">
+      <a href="/ru/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Главная</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <a href="/ru/test" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Тесты</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Тест скорости печати</span>
+    </nav>
+
+    <!-- Header & Hero Section -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[13px] sm:text-sm font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Психомоторный ритм • Физика каретки Monkeytype • Механический звук</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-[-0.025em] leading-[1.08] mb-4">
+        Бесплатный тест скорости печати (WPM)
+      </h1>
+      <p class="text-[17px] sm:text-lg text-zinc-600 dark:text-zinc-300 leading-[1.62] max-w-2xl mx-auto">
+        Измерьте скорость печати, Net WPM, точность и стабильность нажатий. Доступны акустика механических переключателей в реальном времени, живая аналитика и интерактивная тепловая карта ошибок по пальцам.
+      </p>
+    </header>
+
+    <!-- TOP SETTINGS & MODE TOOLBAR -->
+    <section id="typingSettingsBar" class="max-w-4xl mx-auto mb-8 p-3 rounded-2xl bg-zinc-50 dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-[13px] font-mono shadow-xs">
+      <!-- Mode Tabs (Time vs Words) -->
+      <div class="flex items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/60 p-1 rounded-xl">
+        <button
+          type="button"
+          data-mode="time"
+          class="mode-btn active px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/40 inline-flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg><span>Время</span>
+        </button>
+        <button
+          type="button"
+          data-mode="words"
+          class="mode-btn px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer inline-flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg><span>Слова</span>
+        </button>
+      </div>
+
+      <!-- Time Options (15, 30, 60, 120s) -->
+      <div id="timeOptionsGroup" class="flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Секунды:</span>
+        <button type="button" data-time="15" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">15</button>
+        <button type="button" data-time="30" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">30</button>
+        <button type="button" data-time="60" class="time-opt-btn active px-2.5 py-1 rounded-md text-blue-500 font-bold transition-colors cursor-pointer">60</button>
+        <button type="button" data-time="120" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">120</button>
+      </div>
+
+      <!-- Word Options (25, 50, 100) -->
+      <div id="wordOptionsGroup" class="hidden flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Слова:</span>
+        <button type="button" data-words="25" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">25</button>
+        <button type="button" data-words="50" class="word-opt-btn active px-2.5 py-1 rounded-md text-blue-500 font-bold transition-colors cursor-pointer">50</button>
+        <button type="button" data-words="100" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">100</button>
+      </div>
+
+      <!-- Punctuation & Numbers Toggles -->
+      <div class="flex items-center gap-2">
+        <button id="togglePunctuation" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">
+          @ Пунктуация
+        </button>
+        <button id="toggleNumbers" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-blue-500 transition-colors cursor-pointer">
+          # Цифры
+        </button>
+      </div>
+
+      <!-- Mechanical Sound Selector -->
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-400 inline-flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>Звук:</span>
+        <select
+          id="soundSelect"
+          class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-blue-500 cursor-pointer"
+        >
+          <option value="blue">Cherry MX Blue (кли��)</option>
+          <option value="brown">Cherry MX Brown (тактовый)</option>
+          <option value="red">Cherry MX Red (линейный)</option>
+          <option value="mute">Без звука</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE TYPING ARENA -->
+    <section class="relative w-full max-w-4xl mx-auto mb-16">
+
+      <!-- ARENA CARD -->
+      <div id="typingArena" class="relative w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl transition-all cursor-text select-none">
+
+        <!-- Live HUD Status -->
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-6 font-mono">
+          <div class="flex items-center gap-6">
+            <div>
+              <div class="text-[13px] text-zinc-400 uppercase tracking-wider">Осталось</div>
+              <div id="hudTimer" class="font-heading font-extrabold text-2xl sm:text-3xl text-[#0066cc] dark:text-[#2997ff]">60с</div>
+            </div>
+            <div>
+              <div class="text-[13px] text-zinc-400 uppercase tracking-wider">Текущий WPM</div>
+              <div id="hudWpm" class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">0</div>
+            </div>
+            <div>
+              <div class="text-[13px] text-zinc-400 uppercase tracking-wider">Точность</div>
+              <div id="hudAccuracy" class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">100%</div>
+            </div>
+          </div>
+
+          <!-- Restart Button & Shortcut Hint -->
+          <div class="flex items-center gap-3">
+            <button
+              id="restartBtn"
+              type="button"
+              class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500/10 hover:text-blue-500 text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer shadow-xs"
+              aria-label="Перезапустить тест печати"
+              title="Перезапустить тест (Esc или Tab)"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15a9 9 0 0014.85 3.36L23 14" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Words Stream Display Box -->
+        <div class="relative words-box">
+          <div
+            id="wordsWrapper"
+            class="max-h-36 sm:max-h-44 overflow-hidden relative font-mono text-xl sm:text-2xl leading-loose sm:leading-loose text-zinc-400 dark:text-zinc-600 tracking-wide select-none"
+          >
+            <!-- Dynamically populated word spans -->
+          </div>
+
+          <!-- Smooth Caret Bar -->
+          <div
+            id="caret"
+            class="absolute top-0 left-0 w-0.5 sm:w-[3px] h-7 sm:h-8 bg-[#0066cc] dark:bg-[#2997ff] rounded-full caret-blink pointer-events-none shadow-[0_0_8px_rgba(0,102,204,0.6)]"
+          ></div>
+        </div>
+
+        <!-- Accessible Transparent Input for Desktop & Mobile IME Keyboards -->
+        <input
+          id="typingInput"
+          type="text"
+          class="absolute inset-0 opacity-0 w-full h-full cursor-text z-10"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Поле ввода теста скорости печати"
+        />
+
+        <!-- Click to focus prompt -->
+        <div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-[13px] font-mono text-zinc-400 dark:text-zinc-500">
+          <span>Нажмите на поле или сразу начинайте печатать</span>
+          <span class="hidden sm:inline">Нажмите <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Tab</kbd> или <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Esc</kbd> для перезапуска</span>
+        </div>
+      </div>
+
+      <!-- RESULTS REPORT SECTION -->
+      <div id="resultsWrap" class="hidden mt-8 space-y-8">
+
+        <div class="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-8">
+
+          <!-- Result Hero Header -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-zinc-100 dark:border-zinc-800/80 pb-8">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">
+                Результат психомоторного бенчмарка
+              </div>
+              <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">
+                Отчёт о скорости печати
+              </h3>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <span id="resPercentile" class="px-4 py-2 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400 font-mono font-bold text-sm">
+                Топ 10%
+              </span>
+              <span id="resTier" class="px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-heading font-bold text-sm">
+                Продвинутый печатник
+              </span>
+            </div>
+          </div>
+
+          <!-- Hero Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center col-span-2 sm:col-span-1">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Net WPM</div>
+              <div class="font-heading font-black text-4xl sm:text-5xl text-[#0066cc] dark:text-[#2997ff]">
+                <span id="resWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Точность</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">
+                <span id="resAccuracy">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Raw WPM</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resRawWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Стабильность</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resConsistency">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Знаков / мин</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resCpm">0</span>
+              </div>
+            </div>
+          </div>
+
+          <p id="resDesc" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
+            --
+          </p>
+
+          <!-- Live WPM Sparkline Graph -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+              <span>Динамика скорости WPM</span>
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#0066cc] dark:bg-[#2997ff] inline-block"></span> Net WPM</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400 inline-block"></span> Raw WPM</span>
+              </div>
+            </div>
+            <div class="w-full overflow-x-auto rounded-2xl bg-zinc-50 dark:bg-[#09090b] p-4 border border-zinc-200 dark:border-zinc-800">
+              <canvas id="wpmChartCanvas" width="760" height="260" class="w-full max-w-[760px] mx-auto block"></canvas>
+            </div>
+          </div>
+
+          <!-- QWERTY Keyboard Heatmap -->
+          <div class="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div class="flex items-center justify-between text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+              <span>Тепловая карта точности нажатий</span>
+              <div class="flex items-center gap-3">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> ≥95% точн.</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] inline-block"></span> 85–94% точн.</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500 inline-block"></span> &lt;85% зона ошибок</span>
+              </div>
+            </div>
+            <div id="keyboardHeatmap" class="p-4 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 overflow-x-auto">
+              <!-- Dynamically populated keyboard keys -->
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-6 border-t border-zinc-100 dark:border-zinc-800/80">
+            <button
+              id="downloadCertBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-heading font-bold text-sm shadow-lg hover:shadow-blue-500/25 transition-all cursor-pointer flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Скачать сертификат (PNG)
+            </button>
+            <button
+              id="retakeTestBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Пройти заново
+            </button>
+            <a
+              href="/ru/reaction-time-test"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Тест времени реакции →</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- COMPREHENSIVE TYPING SCIENCE & SEO GUIDE -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+
+      <!-- Section 1: Neurobiology of Touch Typing -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 1 · Нейробиология моторики
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Нейробиология слепой печати и мозжечковая автоматизация движений
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Слепая печать на высокой скорости (80–140+ WPM) - одна из самых сложных психомоторных задач, доступных человеку. Когда новичок смотрит на клавиатуру, каждое нажатие требует сознательного, визуально управляемого цикла обратной связи: зрительный поиск, определение пространственных координат, возбуждение моторной коры и визуальное подтверждение. Этот осознанный цикл ограничивает «зрячую» печать двумя-четырьмя пальцами примерно 25–35 WPM.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Напротив, опытные печатники полностью отказываются от сознательного зрительного контроля, делегируя последовательности нажатий <strong>мозжечку</strong> и <strong>базальным ганглиям</strong> - центрам процедурной моторной памяти мозга. После сотен часов осознанной практики буквосочетания (n-граммы вроде «ост», «ени», «ани», «ств») кодируются как единые баллистически исполняемые моторные блоки - <strong>мышечные моторные чанки</strong>.
+        </p>
+
+        <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+          <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+            <span class="inline-flex items-center gap-2"><svg class="w-5 h-5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" /><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" /></svg>Моторный буфер и горизонт опережающего взгляда</span>
+          </h4>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Нейрофизиологические исследования движений глаз показывают, что элитные печатники смотрят на 2–4 слова вперёд относительно текущего движения пальцев. Зрительная кора буферизует предстоящие слова в рабочей памяти, пока моторная кора одновременно выполняет физические нажатия текущего слова. Такая конвейерная архитектура устраняет паузы между словами, обеспечивая непрерывный, плавный ритмический темп.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 2: Gross WPM vs Net WPM -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 2 · Психометрические измерения
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Gross WPM и Net WPM: научные формулы точности
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Измерение скорости печати требует точной математической стандартизации. Поскольку слова естественного языка различаются по длине от односложных («я», «в») до многосложных («психомоторика»), международные бенчмарки универсально стандартизируют <strong>1 слово = 5 нажатий</strong> (включая буквы, цифры, пробелы и знаки препинания).
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h3 class="font-heading font-bold text-xl text-blue-600 dark:text-blue-400">Gross WPM (чистая скорость)</h3>
+            <p class="text-sm font-mono text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800/80 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700">
+              Gross WPM = (Всего нажатий / 5) / (Время в минутах)
+            </p>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Измеряет чистую моторную скорость без учёта опечаток. Полезно для диагностики сырой реакции пальцев и пределов срабатывания механических клавиш.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h3 class="font-heading font-bold text-xl text-blue-600 dark:text-blue-400">Net WPM (реальная скорость)</h3>
+            <p class="text-sm font-mono text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800/80 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700">
+              Net WPM = Gross WPM − (Неисправленные ошибки / Время в минутах)
+            </p>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Применяет строгий штраф за ошибки. Net WPM - клинический стандарт, поскольку неисправленные ошибки требуют последующего редактирования и разрушают рабочую производительность.
+            </p>
+          </div>
+        </div>
+
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed pt-2">
+          Кроме того, <strong>символы в минуту (CPM)</strong> дают абсолютную метрику чистой символьной скорости (<code>CPM = (Верные нажатия / Секунды) × 60</code>), которая широко используется в европейских, российских и восточноазиатских стандартах сертификации печати.
+        </p>
+      </section>
+
+      <!-- Section 3: Global Typing Speed Percentiles -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 3 · Демографические ориентиры
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Мировые процентили и популяционные ориентиры скорости печати
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Где ваши навыки печати на фоне мирового населения? По миллионам записанных стандартизированных тестов скорость печати человека подчиняется гауссову распределению со медианой 41,4 WPM:
+        </p>
+
+        <!-- Percentiles Table -->
+        <div class="overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-2">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-mono text-[13px] uppercase">
+                <th class="p-4">Скорость (WPM)</th>
+                <th class="p-4">Мировой процентиль</th>
+                <th class="p-4">Классификация</th>
+                <th class="p-4">Типичный профиль</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr>
+                <td class="p-4 font-mono font-bold text-rose-600 dark:text-rose-400">&lt; 25 WPM</td>
+                <td class="p-4 font-mono">Нижние 15%</td>
+                <td class="p-4 font-semibold">Зрячая печать</td>
+                <td class="p-4">Опора на зрительный поиск; 2–4 пальца. Высокий уровень ошибок.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-zinc-600 dark:text-zinc-300">30–45 WPM</td>
+                <td class="p-4 font-mono">40–50-й процентиль</td>
+                <td class="p-4 font-semibold">Средний уровень</td>
+                <td class="p-4">Стандартная скорость взрослого. Базовая слепая печать с частыми взглядами на клавиатуру.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-blue-600 dark:text-blue-400">50–69 WPM</td>
+                <td class="p-4 font-mono">65–85-й процентиль</td>
+                <td class="p-4 font-semibold">Продуктивный офисный профи</td>
+                <td class="p-4">Полная слепая печать; развитая клавиатурная буферная память. Минимум возвратов назад.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">70–89 WPM</td>
+                <td class="p-4 font-mono">88–96-й процентиль</td>
+                <td class="p-4 font-semibold">Быстрый профессионал</td>
+                <td class="p-4">Программисты, судебные стенографисты, медицинские транскрипционисты, журналисты.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-blue-600 dark:text-blue-400">90–119 WPM</td>
+                <td class="p-4 font-mono">Топ 2–4%</td>
+                <td class="p-4 font-semibold">Мастер слепой печати</td>
+                <td class="p-4">Полное моторное чанкирование n-грамм; устойчивая точность 98%+.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-blue-500 font-extrabold">120+ WPM</td>
+                <td class="p-4 font-mono">Топ 0,5%</td>
+                <td class="p-4 font-semibold">Элитный соревновательный</td>
+                <td class="p-4">Скорость уровня мирового киберспорта; каскадные нажатия менее 100 мс.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 4: Ergonomics & RSI Prevention -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 4 · Эргономика и здоровье
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Эргономика, нейтральное положение запястья и профилактика RSI / туннельного синдрома
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Интенсивная печать подвергает пальцы, запястья и предплечья тысячам повторяющихся микротравматических циклов в час. Плохая биомеханика часто приводит к <strong>травмам от повторяющихся нагрузок (RSI)</strong>, синдрому запястного канала (сдавлению срединного нерва) и тендовагиниту де Кервена.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-amber-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Нейтральное запястье</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Держите запястья прямыми и на весу. Никогда не опирайтесь запястьями на твёрдую поверхность стола во время печати; подставки для запястий предназначены для отдыха <em>между</em> подходами, а не во время набора.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-amber-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="6" width="20" height="12" rx="2" /><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9 14h6" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Плоский или обратный наклон</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Не используйте откидные ножки клавиатуры. Наклон клавиатуры вверх заставляет запястья разгибаться, сдавливая запястный канал. Держите клавиатуру плоско или со слегка отрицательным наклоном.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="mb-1 text-amber-500"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3" /><path d="M2 16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0Z" /><path d="M4 18v2" /><path d="M20 18v2" /></svg></div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Угол локтя 90°</h3>
+            <p class="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Отрегулируйте высоту стула так, чтобы предплечья были параллельны полу, а плечи расслаблены. Держите локти близко к корпусу под комфортным углом 90°–105°.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Deliberate Practice Protocols -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 5 · Освоение навыка
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Протоколы осознанной практики для преодоления плато в 100+ WPM
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Простая печать писем и документов годами редко поднимает скорость выше 60 WPM. Чтобы пробить плато, применяйте методики осознанной практики:
+        </p>
+
+        <ul class="space-y-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-blue-500 text-lg">01.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">Правило точности 98%:</strong> скорость - побочный продукт точности. Если точность падает ниже 96%, снизьте чистую скорость на 15%, пока точность не вернётся к 98%+. Высокая точность закрепляет чистые нейронные пути без ошибочных моторных сбоев.
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-blue-500 text-lg">02.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">Спринт-тренировки:</strong> выполняйте пять 15-секундных спринтов на максимальной скорости ежедневно. Короткие спринты учат моторную кору исполнять многопальцевые аккорды быстрее вашего обычного 60-секундного порога выносливости.
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-blue-500 text-lg">03.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">Точечные упражнения на n-граммы:</strong> используйте тепловую карту ошибок, чтобы выявить повторяющиеся пары путаницы пальцев (например, <code>б</code> и <code>в</code> левым указательным или <code>щ</code> слабым мизинцем). Проводите осознанные 5-минутные упражнения, изолирующие эти триграммы.
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 6: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-[13px] font-mono font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+          Раздел 6 · Частые вопросы
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Частые вопросы о скорости печати и WPM
+        </h2>
+
+        <div class="space-y-4 pt-4">
+          {schema[2].mainEntity.map((item) => (
+            <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+              <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+                <span>{item.name}</span>
+                <svg class="faq-chevron ml-4 w-5 h-5 text-blue-500 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+              </summary>
+              <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                {item.acceptedAnswer.text}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+
+  <!-- Client-side Typing Speed Engine (Russian) -->
+  <script src="../../scripts/tools/typing-engine-ru.js"></script>
+</Layout>

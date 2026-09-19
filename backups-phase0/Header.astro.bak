@@ -1,0 +1,1513 @@
+---
+interface Props {
+  currentPath?: string;
+  enPath?: string;
+  idPath?: string;
+  ruPath?: string;
+}
+
+const {
+  currentPath = Astro.url.pathname,
+  enPath,
+  idPath,
+  ruPath,
+} = Astro.props;
+
+const normalizePath = (p: string) => p.replace(/\/$/, "") || "/";
+const currentNorm = normalizePath(currentPath);
+
+// Build-time manifest of every route that actually exists under a locale.
+// Derived from the filesystem instead of a hand-maintained list so the switcher
+// can never point at a translated page that was never built: routes like
+// /calorie-calculator or /hearing-test ship in English only, so their switcher
+// targets must fall back to the /id and /ru homepages rather than emitting a
+// link that 404s.
+const buildLocaleRouteSet = (modules: Record<string, unknown>, locale: string) => {
+  const routes = new Set<string>([`/${locale}`]);
+  for (const filePath of Object.keys(modules)) {
+    const slug = filePath
+      .replace(/^.*\/pages\/[^/]+\//, "")
+      .replace(/\.astro$/, "")
+      .replace(/(^|\/)index$/, "");
+    routes.add(normalizePath(`/${locale}/${slug}`));
+  }
+  return routes;
+};
+
+const idRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/id/**/*.astro"), "id");
+const ruRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/ru/**/*.astro"), "ru");
+
+// An explicit prop always wins; otherwise reuse the current slug only when the
+// target locale actually publishes it, else fall back to that locale's homepage.
+const resolveLocaleTarget = (routes: Set<string>, locale: string, explicit?: string) => {
+  if (explicit) {
+    if (explicit === "/") return `/${locale}`;
+    return explicit.startsWith(`/${locale}`) ? explicit : `/${locale}${explicit}`;
+  }
+  if (currentNorm === "/") return `/${locale}`;
+  const candidate = normalizePath(`/${locale}${currentNorm}`);
+  return routes.has(candidate) ? candidate : `/${locale}`;
+};
+
+const enHref = enPath || currentNorm || "/";
+const idHref = resolveLocaleTarget(idRouteSet, "id", idPath);
+const ruHref = resolveLocaleTarget(ruRouteSet, "ru", ruPath);
+
+const isHomeActive = currentNorm === "/";
+const isTestsActive = [
+  "/test",
+  "/quick-test",
+  "/practice",
+  "/color-blind-test",
+  "/reaction-time-test",
+  "/adhd-test",
+  "/depression-test",
+  "/anxiety-test",
+  "/autism-test",
+  "/hearing-test",
+  "/eye-test",
+].some((p) => currentNorm === p || (p !== "/" && currentNorm.startsWith(p)));
+
+const isGamesActive =
+  currentNorm === "/games" ||
+  currentNorm.startsWith("/games/") ||
+  currentNorm === "/typing-test" ||
+  currentNorm === "/aim-trainer" ||
+  currentNorm === "/flag-quiz";
+
+const isToolsActive = [
+  "/tools",
+  "/sleep-calculator",
+  "/brown-noise",
+  "/calorie-calculator",
+  "/mic-test",
+  "/memento-mori",
+  "/circle-of-control",
+  "/iq-score-chart",
+  "/iq-percentile-calculator",
+].some((p) => currentNorm === p || (p !== "/" && currentNorm.startsWith(p)));
+
+const isLeaderboardActive = currentNorm === "/leaderboard";
+const isBlogActive =
+  currentNorm === "/blog" || currentNorm.startsWith("/blog/");
+
+const mobileAccordionSections = [
+  {
+    id: "assessments",
+    icon: "📁",
+    title: "Assessments & Screeners",
+    description: "Clinical & sensory diagnostics",
+    links: [
+      {
+        href: "/test",
+        label: "Full IQ Exam (20 min)",
+        badge: "Official",
+        desc: "24 items across 4 CHC domains",
+        icon: "🎯",
+      },
+      {
+        href: "/quick-test",
+        label: "Quick Screener (10 min)",
+        badge: "Fast",
+        desc: "12 calibrated questions for rapid screening",
+        icon: "⚡",
+      },
+      {
+        href: "/practice",
+        label: "Practice Hub (Untimed)",
+        badge: "",
+        desc: "Domain drills & pattern explanations",
+        icon: "🧩",
+      },
+      {
+        href: "/color-blind-test",
+        label: "Color Blind Test (Ishihara)",
+        badge: "New",
+        desc: "22-plate diagnostic red-green screener",
+        icon: "👁️",
+      },
+      {
+        href: "/reaction-time-test",
+        label: "Reaction Time Benchmark",
+        badge: "New",
+        desc: "Visual response latency in milliseconds",
+        icon: "⏱️",
+      },
+      {
+        href: "/adhd-test",
+        label: "Adult ADHD Screener",
+        badge: "New",
+        desc: "WHO ASRS v1.1 symptom checklist",
+        icon: "🧠",
+      },
+      {
+        href: "/depression-test",
+        label: "Depression Screener (PHQ-9)",
+        badge: "New",
+        desc: "Standardized clinical 9-item inventory",
+        icon: "📋",
+      },
+      {
+        href: "/anxiety-test",
+        label: "Anxiety Screener (GAD-7)",
+        badge: "New",
+        desc: "Clinical generalized anxiety scale",
+        icon: "🛡️",
+      },
+      {
+        href: "/autism-test",
+        label: "Autism Screener (AQ-10)",
+        badge: "New",
+        desc: "Adult trait profile with radar chart",
+        icon: "∞",
+      },
+      {
+        href: "/hearing-test",
+        label: "Hearing & Ear Age Test",
+        badge: "New",
+        desc: "20 Hz – 20 kHz high-frequency benchmark",
+        icon: "🔊",
+      },
+      {
+        href: "/eye-test",
+        label: "Visual Acuity & Eye Test",
+        badge: "New",
+        desc: "Digital Snellen optotype chart assessment",
+        icon: "👓",
+      },
+    ],
+  },
+  {
+    id: "games",
+    icon: "🎮",
+    title: "Brain Games & Dexterity",
+    description: "Cognitive agility & speed drills",
+    links: [
+      {
+        href: "/typing-test",
+        label: "Typing Speed Test (1-Min)",
+        badge: "New",
+        desc: "Real-time WPM & accuracy benchmark",
+        icon: "⌨️",
+      },
+      {
+        href: "/flag-quiz",
+        label: "Flag Memory Quiz",
+        badge: "New",
+        desc: "World geography recall challenge",
+        icon: "🏁",
+      },
+      {
+        href: "/games/click-speed-test",
+        label: "CPS Click Speed Test",
+        badge: "New",
+        desc: "Raw clicks-per-second index",
+        icon: "🖱️",
+      },
+      {
+        href: "/aim-trainer",
+        label: "Precision Aim Trainer",
+        badge: "New",
+        desc: "Rapid target acquisition & motor reflex",
+        icon: "🎯",
+      },
+      {
+        href: "/games",
+        label: "All 11 Cognitive Mini-Games",
+        badge: "Hub",
+        desc: "Memory matrix, Stroop clash, N-back & more",
+        icon: "🕹️",
+      },
+      {
+        href: "/leaderboard",
+        label: "Global Leaderboard",
+        badge: "",
+        desc: "Compare percentile ranks worldwide",
+        icon: "🏆",
+      },
+    ],
+  },
+  {
+    id: "tools",
+    icon: "⚙️",
+    title: "Bio-Tools & Reference",
+    description: "Calculators, rhythm & psychometrics",
+    links: [
+      {
+        href: "/sleep-calculator",
+        label: "Circadian Sleep Calculator",
+        badge: "New",
+        desc: "90-minute sleep cycle optimization",
+        icon: "🌙",
+      },
+      {
+        href: "/brown-noise",
+        label: "Brown, Pink & White Noise",
+        badge: "New",
+        desc: "Ambient acoustic generator for focus",
+        icon: "🎧",
+      },
+      {
+        href: "/calorie-calculator",
+        label: "Calorie & TDEE Metabolic Engine",
+        badge: "New",
+        desc: "Mifflin-St Jeor metabolic index",
+        icon: "🔥",
+      },
+      {
+        href: "/mic-test",
+        label: "Microphone Audio Diagnostics",
+        badge: "New",
+        desc: "Real-time waveform & frequency check",
+        icon: "🎙️",
+      },
+      {
+        href: "/memento-mori",
+        label: "Stoic Memento Mori Calendar",
+        badge: "New",
+        desc: "Interactive 4,000 weeks life in weeks",
+        icon: "🏛️",
+      },
+      {
+        href: "/circle-of-control",
+        label: "Stoic Circle of Control",
+        badge: "New",
+        desc: "Triage worries & build a clarity plan",
+        icon: "⭕",
+      },
+      {
+        href: "/iq-score-chart",
+        label: "Score Distribution Chart",
+        badge: "",
+        desc: "Gaussian bell curve & standard deviations",
+        icon: "📊",
+      },
+      {
+        href: "/iq-percentile-calculator",
+        label: "Percentile Calculator",
+        badge: "",
+        desc: "Convert raw IQ score to population percentile",
+        icon: "%",
+      },
+      {
+        href: "/methodology",
+        label: "Psychometric Methodology",
+        badge: "3PL IRT",
+        desc: "Item Response Theory calibration",
+        icon: "🔬",
+      },
+      {
+        href: "/blog",
+        label: "Research Articles & Blog",
+        badge: "",
+        desc: "Psychometrics and cognitive science",
+        icon: "📚",
+      },
+      {
+        href: "/profile",
+        label: "My Cognitive Profile",
+        badge: "",
+        desc: "Personal test history & domain radar",
+        icon: "👤",
+      },
+    ],
+  },
+];
+---
+
+<header
+  class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-zinc-950/85 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-200"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4"
+  >
+    <!-- 1. Brand Logo: Minimalist 3-Dot Cognitive Mark + Wordmark -->
+    <a
+      href="/"
+      class="flex items-center gap-2.5 group shrink-0"
+      aria-label="FreeIQExam Home"
+    >
+      <svg
+        class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform duration-200"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle
+          cx="16"
+          cy="9.5"
+          r="5.5"
+          class="fill-blue-600 dark:fill-blue-500"></circle>
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600"
+        ></circle>
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400"
+        ></circle>
+      </svg>
+      <span
+        class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-zinc-950 dark:text-white leading-tight"
+      >
+        Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
+      </span>
+    </a>
+
+    <!-- 2. Center Desktop Navigation Links (3 Core Dropdowns: Tests, Games, Tools) -->
+    <nav
+      class="hidden lg:flex items-center gap-5 xl:gap-7 text-[13.5px] font-medium"
+      aria-label="Primary Navigation"
+    >
+      <!-- Link: Home -->
+      <a
+        href="/"
+        class={`py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md ${
+          isHomeActive
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
+        }`}
+        aria-current={isHomeActive ? "page" : undefined}
+      >
+        Home
+      </a>
+
+      <!-- Dropdown 1: Tests ▾ (Clinical & Sensory Diagnostics) -->
+      <div class="relative group" id="nav-dropdown-tests">
+        <button
+          type="button"
+          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md cursor-pointer ${
+            isTestsActive
+              ? "text-blue-600 dark:text-blue-400 font-semibold"
+              : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
+          }`}
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span>Tests</span>
+          <svg
+            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            ></path>
+          </svg>
+        </button>
+
+        <!-- Tests Flyout Menu (2-Column Premium Grid) -->
+        <div
+          class="absolute top-full -left-6 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50"
+        >
+          <div
+            class="w-[560px] p-3 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40"
+          >
+            <div class="px-2 pb-2 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-zinc-800/80 mb-2">
+              Clinical & Sensory Diagnostics
+            </div>
+            <div class="grid grid-cols-2 gap-1.5">
+              <!-- Full IQ Exam -->
+              <a
+                href="/test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🎯
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Full IQ Exam (20m)
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">Official</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    24 items across 4 CHC domains
+                  </div>
+                </div>
+              </a>
+
+              <!-- Quick Screener -->
+              <a
+                href="/quick-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  ⚡
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Quick Screener (10m)
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400">Fast</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    12 calibrated rapid items
+                  </div>
+                </div>
+              </a>
+
+              <!-- Color Blind Test -->
+              <a
+                href="/color-blind-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  👁️
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Color Blind Test
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Ishihara 22-plate diagnostic
+                  </div>
+                </div>
+              </a>
+
+              <!-- Reaction Time Benchmark -->
+              <a
+                href="/reaction-time-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  ⏱️
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Reaction Time
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Visual latency in milliseconds
+                  </div>
+                </div>
+              </a>
+
+              <!-- Adult ADHD Screener -->
+              <a
+                href="/adhd-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🧠
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Adult ADHD Screener
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    WHO ASRS v1.1 protocol
+                  </div>
+                </div>
+              </a>
+
+              <!-- Depression Screener (PHQ-9) -->
+              <a
+                href="/depression-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 border border-sky-200/60 dark:border-sky-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  📋
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Depression Screener
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Standardized PHQ-9 inventory
+                  </div>
+                </div>
+              </a>
+
+              <!-- Anxiety Screener (GAD-7) -->
+              <a
+                href="/anxiety-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400 border border-violet-200/60 dark:border-violet-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🛡️
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Anxiety Screener
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-100 dark:bg-violet-950 text-violet-600 dark:text-violet-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Clinical GAD-7 scale
+                  </div>
+                </div>
+              </a>
+
+              <!-- Autism Screener (AQ-10) -->
+              <a
+                href="/autism-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  ∞
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Autism Screener
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    AQ-10 trait profile & radar
+                  </div>
+                </div>
+              </a>
+
+              <!-- Hearing & Ear Age Test -->
+              <a
+                href="/hearing-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-pink-50 dark:bg-pink-950/50 text-pink-600 dark:text-pink-400 border border-pink-200/60 dark:border-pink-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🔊
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Hearing & Ear Age
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    20 Hz – 20 kHz threshold test
+                  </div>
+                </div>
+              </a>
+
+              <!-- Visual Acuity & Eye Test -->
+              <a
+                href="/eye-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200/60 dark:border-teal-900/40 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  👓
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Visual Acuity Test
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-teal-100 dark:bg-teal-950 text-teal-600 dark:text-teal-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Digital Snellen optotype chart
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <!-- Divider: Practice Hub -->
+            <div class="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+              <a
+                href="/practice"
+                class="flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                <span class="flex items-center gap-2">
+                  <span>🧩</span>
+                  <span>Untimed Cognitive Practice Hub</span>
+                </span>
+                <span class="text-zinc-400 font-mono text-xs">Explore drills →</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropdown 2: Games ▾ (Cognitive & Performance) -->
+      <div class="relative group" id="nav-dropdown-games">
+        <button
+          type="button"
+          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md cursor-pointer ${
+            isGamesActive
+              ? "text-blue-600 dark:text-blue-400 font-semibold"
+              : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
+          }`}
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span>Games</span>
+          <svg
+            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            ></path>
+          </svg>
+        </button>
+
+        <!-- Games Flyout Menu -->
+        <div
+          class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50"
+        >
+          <div
+            class="w-80 p-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40"
+          >
+            <div class="px-2 pb-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-zinc-800/80 mb-1.5">
+              Cognitive & Performance
+            </div>
+            <div class="space-y-1">
+              <!-- Typing Speed Test -->
+              <a
+                href="/typing-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  ⌨️
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Typing Speed Test (1-Min)
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Live WPM & accuracy benchmark
+                  </div>
+                </div>
+              </a>
+
+              <!-- Flag Memory Quiz -->
+              <a
+                href="/flag-quiz"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🏁
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Flag Memory Quiz
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    World geography recall challenge
+                  </div>
+                </div>
+              </a>
+
+              <!-- CPS Click Speed Test -->
+              <a
+                href="/games/click-speed-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🖱️
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      CPS Click Speed Test
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Raw clicks-per-second index
+                  </div>
+                </div>
+              </a>
+
+              <!-- Aim Trainer -->
+              <a
+                href="/aim-trainer"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🎯
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Precision Aim Trainer
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Target acquisition & motor reflex
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <!-- Divider: All 11 Cognitive Games -->
+            <div class="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+              <a
+                href="/games"
+                class="flex items-center justify-between px-2.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs font-semibold text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                <span class="flex items-center gap-2">
+                  <span>🕹️</span>
+                  <span>All 11 Cognitive Mini-Games</span>
+                </span>
+                <span class="text-blue-600 dark:text-blue-400 font-mono text-xs">View all →</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropdown 3: Tools ▾ (Bio-Rhythm & Calculators) -->
+      <div class="relative group" id="nav-dropdown-tools">
+        <button
+          type="button"
+          class={`flex items-center gap-1.5 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md cursor-pointer ${
+            isToolsActive
+              ? "text-blue-600 dark:text-blue-400 font-semibold"
+              : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
+          }`}
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span>Tools</span>
+          <svg
+            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:rotate-180 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            ></path>
+          </svg>
+        </button>
+
+        <!-- Tools Flyout Menu -->
+        <div
+          class="absolute top-full left-0 pt-2 opacity-0 translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150 ease-out z-50"
+        >
+          <div
+            class="w-84 p-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xl shadow-zinc-950/10 dark:shadow-black/40"
+          >
+            <div class="px-2 pb-1.5 text-[11px] font-mono font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-zinc-800/80 mb-1.5">
+              Bio-Rhythm & Calculators
+            </div>
+            <div class="space-y-1">
+              <!-- Sleep Calculator -->
+              <a
+                href="/sleep-calculator"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🌙
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Circadian Sleep Calculator
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    90-minute sleep cycle timing
+                  </div>
+                </div>
+              </a>
+
+              <!-- Noise Generator -->
+              <a
+                href="/brown-noise"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🎧
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Brown, Pink & White Noise
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Ambient acoustic mask for deep focus
+                  </div>
+                </div>
+              </a>
+
+              <!-- Calorie & TDEE -->
+              <a
+                href="/calorie-calculator"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🔥
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Calorie & TDEE Engine
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Mifflin-St Jeor metabolic index
+                  </div>
+                </div>
+              </a>
+
+              <!-- Microphone Audio Diagnostics -->
+              <a
+                href="/mic-test"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  🎙️
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Microphone Diagnostics
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Live waveform & frequency check
+                  </div>
+                </div>
+              </a>
+
+              <!-- Stoic Memento Mori -->
+              <a
+                href="/circle-of-control"
+                class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors group/item"
+              >
+                <div
+                  class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80 flex items-center justify-center shrink-0 mt-0.5 text-sm"
+                >
+                  ⭕
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-zinc-900 dark:text-white text-xs group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">
+                      Stoic Circle of Control
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">New</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                    Triage worries & build a clarity plan
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <!-- Divider: IQ Score Chart & Tools -->
+            <div class="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+              <a
+                href="/iq-score-chart"
+                class="flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                <span class="flex items-center gap-2">
+                  <span>📊</span>
+                  <span>Score Chart & Percentiles</span>
+                </span>
+                <span class="text-zinc-400 font-mono text-xs">View charts →</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Standalone Leaderboard -->
+      <a
+        href="/leaderboard"
+        class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
+          isLeaderboardActive
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300"
+        }`}
+        aria-current={isLeaderboardActive ? "page" : undefined}
+      >
+        Leaderboard
+      </a>
+
+      <!-- Standalone Blog -->
+      <a
+        href="/blog"
+        class={`py-2 transition-colors hover:text-zinc-950 dark:hover:text-white ${
+          isBlogActive
+            ? "text-blue-600 dark:text-blue-400 font-semibold"
+            : "text-zinc-600 dark:text-zinc-300"
+        }`}
+        aria-current={isBlogActive ? "page" : undefined}
+      >
+        Blog
+      </a>
+    </nav>
+
+    <!-- 3. Right Action Cluster: Language Switcher + Theme Button + Profile Button + Segmented CTA Capsule -->
+    <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
+      <!-- Language Switcher Capsule (EN | ID | RU) -->
+      <div
+        class="inline-flex items-center rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 p-0.5 text-xs font-semibold shadow-2xs"
+        aria-label="Language Selector"
+      >
+        <span
+          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 shadow-xs font-bold"
+          title="English (Active)"
+        >
+          EN
+        </span>
+        <a
+          href={idHref}
+          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          title="Switch to Bahasa Indonesia"
+        >
+          ID
+        </a>
+        <a
+          href={ruHref}
+          class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          title="Переключить на русский"
+        >
+          RU
+        </a>
+      </div>
+
+      <!-- Theme Toggle (Rounded Square) -->
+      <button
+        id="theme-toggle-btn"
+        type="button"
+        class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
+        aria-label="Toggle light and dark mode"
+      >
+        <svg
+          class="w-4 h-4 hidden dark:block text-amber-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+          ></path>
+        </svg>
+        <svg
+          class="w-4 h-4 block dark:hidden text-zinc-700"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
+          ></path>
+        </svg>
+      </button>
+
+      <!-- Profile Avatar Button (Rounded Square) -->
+      <a
+        href="/profile"
+        class={`w-10 h-10 rounded-xl hidden sm:flex items-center justify-center bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
+          currentNorm === "/profile"
+            ? "text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800"
+            : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
+        }`}
+        title="My Cognitive Profile & History"
+        aria-label="My Cognitive Profile"
+      >
+        <svg
+          class="w-4.5 h-4.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+          ></path>
+        </svg>
+      </a>
+
+      <!-- Connected Segmented CTA Capsule -->
+      <div
+        class="hidden sm:inline-flex items-center bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 rounded-full p-[3px] shadow-xs"
+      >
+        <a
+          href="/quick-test"
+          class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors flex items-center gap-1.5 whitespace-nowrap"
+          title="12-question adaptive screening"
+        >
+          <span class="text-amber-500 font-bold">⚡</span>
+          <span>Quick 10m</span>
+        </a>
+        <a
+          href="/test"
+          class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-xs shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1 whitespace-nowrap"
+          title="24-item clinical assessment"
+        >
+          <span>Full Test</span>
+          <span class="font-mono">→</span>
+        </a>
+      </div>
+
+      <!-- Mobile Menu Button (Hamburger) -->
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        class="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        aria-label="Toggle navigation menu"
+        aria-controls="mobile-drawer"
+        aria-expanded="false"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Drawer Fixed Backdrop -->
+<div
+  id="mobile-menu-backdrop"
+  class="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 transition-opacity duration-300 opacity-0 pointer-events-none hidden"
+  aria-hidden="true"
+>
+</div>
+
+<!-- Mobile Navigation Slide Drawer -->
+<aside
+  id="mobile-drawer"
+  class="fixed inset-y-0 right-0 z-50 w-[85vw] max-w-sm bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl transition-transform duration-300 transform translate-x-full overflow-y-auto overscroll-contain flex flex-col pointer-events-none"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Mobile Navigation"
+  aria-hidden="true"
+>
+  <!-- Drawer Header -->
+  <div
+    class="h-16 px-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0"
+  >
+    <div class="flex items-center gap-2.5">
+      <svg
+        class="w-7 h-7 shrink-0"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle
+          cx="16"
+          cy="9.5"
+          r="5.5"
+          class="fill-blue-600 dark:fill-blue-500"></circle>
+        <circle cx="8" cy="23" r="4.8" class="fill-blue-700 dark:fill-blue-600"
+        ></circle>
+        <circle cx="24" cy="23" r="4.8" class="fill-sky-400 dark:fill-sky-400"
+        ></circle>
+      </svg>
+      <span
+        class="font-heading font-extrabold text-base text-zinc-950 dark:text-white"
+      >
+        Free<span class="text-blue-600 dark:text-blue-500">IQ</span>Exam
+      </span>
+    </div>
+    <button
+      id="mobile-drawer-close"
+      type="button"
+      class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
+      aria-label="Close navigation menu"
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Drawer Fast Action Capsule -->
+  <div
+    class="p-4 border-b border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-3"
+  >
+    <div class="flex items-center gap-2">
+      <a
+        href="/quick-test"
+        class="flex-1 py-2.5 px-3 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-800 dark:text-zinc-200 text-center flex items-center justify-center gap-1.5 shadow-2xs"
+      >
+        <span>⚡ Quick 10m</span>
+      </a>
+      <a
+        href="/test"
+        class="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold text-center flex items-center justify-center gap-1 shadow-xs"
+      >
+        <span>Full Test →</span>
+      </a>
+    </div>
+
+    <!-- Mobile Drawer Language Selector -->
+    <div class="flex items-center justify-between px-1 pt-1">
+      <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400"
+        >Language</span
+      >
+      <div
+        class="inline-flex items-center rounded-lg bg-zinc-200/70 dark:bg-zinc-800 p-0.5 text-xs font-semibold border border-zinc-300/60 dark:border-zinc-700/80"
+      >
+        <span
+          class="px-2.5 py-1 rounded-md bg-white dark:bg-zinc-700 text-blue-600 dark:text-blue-400 shadow-xs font-bold"
+          >EN</span
+        >
+        <a
+          href={idHref}
+          class="px-2.5 py-1 rounded-md text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          >ID</a
+        >
+        <a
+          href={ruHref}
+          class="px-2.5 py-1 rounded-md text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors"
+          >RU</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer Grouped Links: Collapsible Accordion Sections -->
+  <div class="p-4 flex flex-col gap-3 overflow-y-auto flex-1">
+    <!-- Home Link -->
+    <a
+      href="/"
+      class={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
+        currentNorm === "/"
+          ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold"
+          : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white"
+      }`}
+      aria-current={currentNorm === "/" ? "page" : undefined}
+    >
+      <span class="flex items-center gap-2.5 font-semibold">
+        <span>🏠</span>
+        <span>Home</span>
+      </span>
+      <span class="text-xs text-zinc-400 font-mono">/</span>
+    </a>
+
+    <!-- 3 Collapsible Accordion Sections -->
+    {
+      mobileAccordionSections.map((section) => {
+        const hasActiveLink = section.links.some(
+          (l) => currentNorm === normalizePath(l.href)
+        );
+
+        return (
+          <details
+            class="group rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/40 overflow-hidden transition-colors"
+            open={hasActiveLink ? true : undefined}
+          >
+            <summary class="flex items-center justify-between p-3 cursor-pointer list-none select-none text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100/70 dark:hover:bg-zinc-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-2xl">
+              <div class="flex items-center gap-2.5">
+                <span class="text-base">{section.icon}</span>
+                <div>
+                  <span class="font-heading font-bold text-xs sm:text-sm text-zinc-950 dark:text-white block">
+                    {section.title}
+                  </span>
+                  <span class="text-[11px] text-zinc-400 dark:text-zinc-500 font-normal">
+                    {section.description}
+                  </span>
+                </div>
+              </div>
+              <svg
+                class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 ml-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </summary>
+
+            <div class="p-2 pt-1 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-col gap-1 bg-white dark:bg-zinc-950/60">
+              {section.links.map((link) => {
+                const isActive = currentNorm === normalizePath(link.href);
+                return (
+                  <a
+                    href={link.href}
+                    class={`min-h-[42px] px-2.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-between transition-colors ${
+                      isActive
+                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 font-semibold"
+                        : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white"
+                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    <div class="flex items-center gap-2 truncate pr-2">
+                      <span class="text-sm shrink-0">{link.icon}</span>
+                      <span class="truncate">{link.label}</span>
+                    </div>
+                    {link.badge && (
+                      <span
+                        class={`text-[9.5px] font-bold px-1.5 py-0.5 rounded-md shrink-0 ${
+                          link.badge === "New"
+                            ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400"
+                            : link.badge === "Official"
+                            ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                            : link.badge === "Fast"
+                            ? "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400"
+                            : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
+                        }`}
+                      >
+                        {link.badge}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
+            </div>
+          </details>
+        );
+      })
+    }
+  </div>
+</aside>
+
+<script>
+  // 1. Theme toggle script
+  const themeToggleBtn = document.getElementById("theme-toggle-btn");
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener("click", () => {
+      try {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      } catch (e) {}
+    });
+  }
+
+  // 2. Mobile Drawer Toggle logic
+  const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+  const mobileDrawer = document.getElementById("mobile-drawer");
+  const mobileDrawerClose = document.getElementById("mobile-drawer-close");
+  const mobileBackdrop = document.getElementById("mobile-menu-backdrop");
+
+  function openDrawer() {
+    if (!mobileDrawer || !mobileBackdrop || !mobileMenuBtn) return;
+    mobileBackdrop.classList.remove("hidden");
+    requestAnimationFrame(() => {
+      mobileBackdrop.classList.remove("opacity-0", "pointer-events-none");
+      mobileBackdrop.classList.add("opacity-100", "pointer-events-auto");
+      mobileDrawer.classList.remove("translate-x-full", "pointer-events-none");
+      mobileDrawer.classList.add("translate-x-0", "pointer-events-auto");
+      mobileDrawer.setAttribute("aria-hidden", "false");
+      mobileMenuBtn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+      if (mobileDrawerClose) mobileDrawerClose.focus();
+    });
+  }
+
+  function closeDrawer() {
+    if (!mobileDrawer || !mobileBackdrop || !mobileMenuBtn) return;
+    mobileBackdrop.classList.remove("opacity-100", "pointer-events-auto");
+    mobileBackdrop.classList.add("opacity-0", "pointer-events-none");
+    mobileDrawer.classList.remove("translate-x-0", "pointer-events-auto");
+    mobileDrawer.classList.add("translate-x-full", "pointer-events-none");
+    mobileDrawer.setAttribute("aria-hidden", "true");
+    mobileMenuBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+    setTimeout(() => {
+      mobileBackdrop.classList.add("hidden");
+      mobileMenuBtn.focus();
+    }, 300);
+  }
+
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener("click", () => {
+      const isExpanded = mobileMenuBtn.getAttribute("aria-expanded") === "true";
+      if (isExpanded) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+  }
+
+  if (mobileDrawerClose) {
+    mobileDrawerClose.addEventListener("click", closeDrawer);
+  }
+
+  if (mobileBackdrop) {
+    mobileBackdrop.addEventListener("click", closeDrawer);
+  }
+
+  window.addEventListener("keydown", (e) => {
+    const isDrawerOpen =
+      mobileMenuBtn?.getAttribute("aria-expanded") === "true";
+    if (!isDrawerOpen) return;
+
+    if (e.key === "Escape") {
+      closeDrawer();
+      return;
+    }
+
+    if (e.key === "Tab" && mobileDrawer) {
+      const focusableEls = mobileDrawer.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusableEls.length === 0) return;
+      const firstEl = focusableEls[0] as HTMLElement;
+      const lastEl = focusableEls[focusableEls.length - 1] as HTMLElement;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstEl) {
+          e.preventDefault();
+          lastEl.focus();
+        }
+      } else {
+        if (document.activeElement === lastEl) {
+          e.preventDefault();
+          firstEl.focus();
+        }
+      }
+    }
+  });
+
+  // 3. Desktop Dropdown hover/click toggle & aria-expanded synchronization
+  const dropdownTests = document.getElementById("nav-dropdown-tests");
+  const dropdownGames = document.getElementById("nav-dropdown-games");
+  const dropdownTools = document.getElementById("nav-dropdown-tools");
+
+  const allDropdowns = [dropdownTests, dropdownGames, dropdownTools];
+
+  allDropdowns.forEach((dd) => {
+    if (!dd) return;
+    const btn = dd.querySelector("button");
+    if (!btn) return;
+
+    const setExpanded = (expanded: boolean) => {
+      btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+    };
+
+    dd.addEventListener("mouseenter", () => setExpanded(true));
+    dd.addEventListener("mouseleave", () => {
+      if (!dd.classList.contains("active-click")) setExpanded(false);
+    });
+
+    dd.addEventListener("focusin", () => setExpanded(true));
+    dd.addEventListener("focusout", (e) => {
+      if (!dd.contains((e as FocusEvent).relatedTarget as Node)) {
+        if (!dd.classList.contains("active-click")) setExpanded(false);
+      }
+    });
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isCurrentlyOpen = dd.classList.contains("active-click");
+      allDropdowns.forEach((d) => {
+        d?.classList.remove("active-click");
+        d?.querySelector("button")?.setAttribute("aria-expanded", "false");
+      });
+      if (!isCurrentlyOpen) {
+        dd.classList.add("active-click");
+        setExpanded(true);
+      }
+    });
+  });
+
+  document.addEventListener("click", () => {
+    allDropdowns.forEach((d) => {
+      d?.classList.remove("active-click");
+      d?.querySelector("button")?.setAttribute("aria-expanded", "false");
+    });
+  });
+</script>

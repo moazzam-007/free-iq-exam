@@ -1,0 +1,713 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// Alternate links for future i18n releases
+const alternates = {};
+
+const title = "Free Typing Speed Test (WPM) Online | Typing Accuracy Benchmark";
+const description = "Test your typing speed and accuracy with our free online WPM test. Features Monkeytype-style smooth caret, mechanical switch audio, live WPM graph, and finger error heatmap. No signup required.";
+const canonicalUrl = "https://freeiqexam.com/typing-test";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Online Typing Speed Test & WPM Benchmark",
+    "url": "https://freeiqexam.com/typing-test",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript and Web Audio API support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Real-time Gross and Net Words Per Minute (WPM) calculation",
+      "Monkeytype-grade smooth floating caret physics and live character highlighting",
+      "Web Audio API mechanical switch sound synthesis (Cherry MX Blue, Brown, Red)",
+      "High-DPI canvas live WPM and error sparkline graph",
+      "Interactive QWERTY keyboard error heatmap and finger dexterity analysis",
+      "Burst (15s), Standard (60s), and Endurance (120s) testing modes",
+      "Downloadable high-resolution typing speed certificate (1200x675 PNG)",
+      "Zero paywall, zero email signup, 100% private client-side processing"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://freeiqexam.com/games"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Typing Speed Test (WPM)",
+        "item": "https://freeiqexam.com/typing-test"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is considered a good typing speed (WPM)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The global average typing speed is approximately 40 to 45 words per minute (WPM). A typing speed of 60 to 70 WPM is considered above average and highly productive for office and professional work. Speeds between 80 and 95 WPM represent the top 10% of typists, while 100+ WPM places you in the elite top 2% of touch typists worldwide."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between Gross WPM and Net WPM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Gross WPM measures your raw typing velocity by dividing total keystrokes by 5 (standardized word length) across the elapsed minutes. Net WPM applies an error penalty: Net WPM = Gross WPM - (Uncorrected Errors / Time in Minutes). Net WPM is the international standard for competitive typing and professional hiring because typing with high errors destroys real-world productivity."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is 1 word defined in typing speed tests?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In psychometric and clinical typing speed benchmarks, 1 word is universally standardized to exactly 5 keystrokes (characters, spaces, and punctuation). Standardizing words to 5 keystrokes ensures that tests containing longer words (e.g. 'extraordinary') do not artificially penalize the typist compared to tests with short words (e.g. 'cat')."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I increase my typing speed from 50 to 100+ WPM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To break through typing speed plateaus: 1) Master 10-finger touch typing on the home row (ASDF JKL;) without looking at the keyboard, 2) Focus on 98%+ accuracy before attempting speed bursts, 3) Look 1 to 2 words ahead to build motor buffer memory, 4) Practice short 15-second and 30-second high-intensity sprints daily, and 5) Switch to an ergonomic mechanical keyboard with low-actuation switches."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does mechanical switch type affect typing speed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Mechanical switches offer dedicated tactile or auditory actuation points before bottoming out, reducing finger fatigue. Tactile switches (like Cherry MX Brown) and linear switches (like Cherry MX Red) are widely favored by speed typists for their smooth actuation and minimal key travel resistance, enabling rapid double-tapping and high cadence."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the world record for typing speed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The fastest recorded typing speed on a standard QWERTY keyboard is 216 WPM over a 1-minute test, achieved by competitive typist Sean Wrona. The Guinness World Record for sustained typing is held by Barbara Blackburn, who maintained 150 WPM over a 50-minute trial and peaked at 212 WPM using the Dvorak Simplified Keyboard layout."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is typing accuracy more important than raw speed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Every backspace stroke incurs a triple penalty: the time spent pressing Backspace, the time spent deleting the error, and the cognitive interruption to your typing rhythm. A typist moving at 80 WPM with 99% accuracy will produce more usable text than someone typing at 100 WPM with 90% accuracy, who spends half their time correcting mistakes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Dvorak or Colemak faster than QWERTY?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Alternative keyboard layouts like Dvorak and Colemak were engineered to maximize home-row usage (up to 70% vs 32% on QWERTY) and reduce finger travel distance. While they provide significant ergonomic benefits and reduced finger strain, scientific studies indicate that typing speed is primarily determined by motor cortex automation rather than layout, though Dvorak typists achieve top speeds with substantially less physical effort."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+>
+  <Header />
+
+  <style>
+    /* Caret Pulse and Floating Smooth Movement */
+    #caret {
+      transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    @keyframes caretBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .caret-blink {
+      animation: caretBlink 1s infinite ease-in-out;
+    }
+
+    /* Word Box Line Clamping & Mask */
+    .words-box {
+      mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+    }
+
+    /* FAQ Details Chevron Transition */
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    @media print {
+      header, footer, #typingSettingsBar, #restartBtn, .no-print {
+        display: none !important;
+      }
+      #resultsWrap {
+        display: block !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Tools</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Typing Speed Test</span>
+    </nav>
+
+    <!-- Header & Hero Section -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 text-xs sm:text-sm font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span>Psychomotor Cadence • Monkeytype Caret Physics • Mechanical Sound</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Free Typing Speed Test (WPM)
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+        Benchmark your typing speed, Net WPM, accuracy, and keystroke consistency. Features real-time mechanical switch acoustics, live sparkline analytics, and an interactive finger error heatmap.
+      </p>
+    </header>
+
+    <!-- TOP SETTINGS & MODE TOOLBAR -->
+    <section id="typingSettingsBar" class="max-w-4xl mx-auto mb-8 p-3 rounded-2xl bg-zinc-50 dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono shadow-xs">
+      <!-- Mode Tabs (Time vs Words) -->
+      <div class="flex items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/60 p-1 rounded-xl">
+        <button
+          type="button"
+          data-mode="time"
+          class="mode-btn active px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/40"
+        >
+          ⏱️ Time
+        </button>
+        <button
+          type="button"
+          data-mode="words"
+          class="mode-btn px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer"
+        >
+          📝 Words
+        </button>
+      </div>
+
+      <!-- Time Options (15, 30, 60, 120s) -->
+      <div id="timeOptionsGroup" class="flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Seconds:</span>
+        <button type="button" data-time="15" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">15</button>
+        <button type="button" data-time="30" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">30</button>
+        <button type="button" data-time="60" class="time-opt-btn active px-2.5 py-1 rounded-md text-amber-500 font-bold transition-colors cursor-pointer">60</button>
+        <button type="button" data-time="120" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">120</button>
+      </div>
+
+      <!-- Word Options (25, 50, 100) -->
+      <div id="wordOptionsGroup" class="hidden flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Words:</span>
+        <button type="button" data-words="25" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">25</button>
+        <button type="button" data-words="50" class="word-opt-btn active px-2.5 py-1 rounded-md text-amber-500 font-bold transition-colors cursor-pointer">50</button>
+        <button type="button" data-words="100" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">100</button>
+      </div>
+
+      <!-- Punctuation & Numbers Toggles -->
+      <div class="flex items-center gap-2">
+        <button id="togglePunctuation" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">
+          @ Punctuation
+        </button>
+        <button id="toggleNumbers" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">
+          # Numbers
+        </button>
+      </div>
+
+      <!-- Mechanical Sound Selector -->
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-400">🔊 Sound:</span>
+        <select
+          id="soundSelect"
+          class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-amber-500 cursor-pointer"
+        >
+          <option value="blue">Cherry MX Blue (Clicky)</option>
+          <option value="brown">Cherry MX Brown (Thock)</option>
+          <option value="red">Cherry MX Red (Linear)</option>
+          <option value="mute">Mute (Silent)</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE TYPING ARENA -->
+    <section class="relative w-full max-w-4xl mx-auto mb-16">
+      
+      <!-- ARENA CARD -->
+      <div id="typingArena" class="relative w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl transition-all cursor-text select-none">
+        
+        <!-- Live HUD Status -->
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-6 font-mono">
+          <div class="flex items-center gap-6">
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Time Left</div>
+              <div id="hudTimer" class="font-heading font-extrabold text-2xl sm:text-3xl text-amber-500">60s</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Live WPM</div>
+              <div id="hudWpm" class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">0</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Accuracy</div>
+              <div id="hudAccuracy" class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">100%</div>
+            </div>
+          </div>
+
+          <!-- Restart Button & Shortcut Hint -->
+          <div class="flex items-center gap-3">
+            <button
+              id="restartBtn"
+              type="button"
+              class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-amber-500/10 hover:text-amber-500 text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer shadow-xs"
+              aria-label="Restart typing test"
+              title="Restart test (Esc or Tab)"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15a9 9 0 0014.85 3.36L23 14" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Words Stream Display Box -->
+        <div class="relative words-box">
+          <div
+            id="wordsWrapper"
+            class="max-h-36 sm:max-h-44 overflow-hidden relative font-mono text-xl sm:text-2xl leading-loose sm:leading-loose text-zinc-400 dark:text-zinc-600 tracking-wide select-none"
+          >
+            <!-- Dynamically populated word spans -->
+          </div>
+
+          <!-- Smooth Caret Bar -->
+          <div
+            id="caret"
+            class="absolute top-0 left-0 w-0.5 sm:w-[3px] h-7 sm:h-8 bg-amber-500 rounded-full caret-blink pointer-events-none shadow-[0_0_8px_rgba(245,158,11,0.6)]"
+          ></div>
+        </div>
+
+        <!-- Accessible Transparent Input for Desktop & Mobile IME Keyboards -->
+        <input
+          id="typingInput"
+          type="text"
+          class="absolute inset-0 opacity-0 w-full h-full cursor-text z-10"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Typing test input field"
+        />
+
+        <!-- Click to focus prompt -->
+        <div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-xs font-mono text-zinc-400 dark:text-zinc-500">
+          <span>Click box or start typing immediately</span>
+          <span class="hidden sm:inline">Press <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Tab</kbd> or <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Esc</kbd> to restart</span>
+        </div>
+      </div>
+
+      <!-- RESULTS REPORT SECTION -->
+      <div id="resultsWrap" class="hidden mt-8 space-y-8">
+        
+        <div class="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-8">
+          
+          <!-- Result Hero Header -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-zinc-100 dark:border-zinc-800/80 pb-8">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">
+                Psychomotor Benchmark Result
+              </div>
+              <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">
+                Typing Speed Report
+              </h3>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span id="resPercentile" class="px-4 py-2 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-mono font-bold text-sm">
+                Top 10%
+              </span>
+              <span id="resTier" class="px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-heading font-bold text-sm">
+                Advanced Typist
+              </span>
+            </div>
+          </div>
+
+          <!-- Hero Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center col-span-2 sm:col-span-1">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Net WPM</div>
+              <div class="font-heading font-black text-4xl sm:text-5xl text-amber-500">
+                <span id="resWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Accuracy</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">
+                <span id="resAccuracy">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Raw WPM</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resRawWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Consistency</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resConsistency">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Chars / Min</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resCpm">0</span>
+              </div>
+            </div>
+          </div>
+
+          <p id="resDesc" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
+            --
+          </p>
+
+          <!-- Live WPM Sparkline Graph -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              <span>WPM Velocity Timeline</span>
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Net WPM</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400 inline-block"></span> Raw WPM</span>
+              </div>
+            </div>
+            <div class="w-full overflow-x-auto rounded-2xl bg-zinc-50 dark:bg-[#09090b] p-4 border border-zinc-200 dark:border-zinc-800">
+              <canvas id="wpmChartCanvas" width="760" height="260" class="w-full max-w-[760px] mx-auto block"></canvas>
+            </div>
+          </div>
+
+          <!-- QWERTY Keyboard Heatmap -->
+          <div class="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div class="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              <span>Keystroke Accuracy Heatmap</span>
+              <div class="flex items-center gap-3">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> ≥95% Acc</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> 85–94% Acc</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500 inline-block"></span> &lt;85% Error Hotspot</span>
+              </div>
+            </div>
+            <div id="keyboardHeatmap" class="p-4 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 overflow-x-auto">
+              <!-- Dynamically populated keyboard keys -->
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-6 border-t border-zinc-100 dark:border-zinc-800/80">
+            <button
+              id="downloadCertBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-heading font-bold text-sm shadow-lg hover:shadow-amber-500/25 transition-all cursor-pointer flex items-center gap-2"
+            >
+              <span>⬇</span> Download Verified Certificate (PNG)
+            </button>
+            <button
+              id="retakeTestBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Retake Test
+            </button>
+            <a
+              href="/reaction-time-test"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Test Reaction Time →</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 2,000-WORD COMPREHENSIVE TYPING SCIENCE & SEO GUIDE -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+      
+      <!-- Section 1: Neurobiology of Touch Typing -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Section 1 · Motor Neuroscience
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          The Neurobiology of Touch Typing & Cerebellar Motor Automation
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Touch typing at high velocities (80 to 140+ WPM) is one of the most sophisticated psychomotor tasks human beings can perform. When novice typists look down at their keyboards, each keystroke requires a conscious, visually guided cognitive feedback loop: visual search, spatial coordinate identification, motor cortex firing, and visual confirmation. This deliberate processing loop caps "hunt-and-peck" typing at roughly 25 to 35 WPM.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          In contrast, proficient touch typists bypass conscious visual control entirely by delegating keystroke sequences to the <strong>cerebellum</strong> and <strong>basal ganglia</strong>—the brain's procedural motor memory hubs. Through hundreds of hours of deliberate practice, letter combinations (n-grams like <em>"the"</em>, <em>"ing"</em>, <em>"tion"</em>, and <em>"ment"</em>) are encoded as unified, ballistically executed motor bursts known as <strong>muscle memory motor chunks</strong>.
+        </p>
+        
+        <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+          <h4 class="font-heading font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+            <span>🧠</span> The Motor Buffer & Lookahead Horizon
+          </h4>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Eye-tracking neurological studies reveal that elite typists look 2 to 4 words ahead of their active finger movements. The visual cortex buffers upcoming words in working memory while the motor cortex simultaneously executes the physical keystrokes of the current word. This pipeline architecture eliminates pause latency between words, maintaining a continuous, fluid rhythmic cadence.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 2: Gross WPM vs Net WPM -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Section 2 · Psychometric Measurement
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Gross WPM vs. Net WPM: The Scientific Accuracy Formulas
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Measuring typing speed requires precise mathematical standardization. Because natural language words vary in length from single-letter pronouns ("I", "a") to multi-syllabic terms ("psychometrics"), international typing benchmarks universally standardize <strong>1 word = 5 keystrokes</strong> (including letters, numbers, spaces, and punctuation).
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h3 class="font-heading font-bold text-xl text-amber-600 dark:text-amber-400">Gross WPM (Raw Velocity)</h3>
+            <p class="text-sm font-mono text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800/80 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700">
+              Gross WPM = (Total Keystrokes / 5) / (Time in Minutes)
+            </p>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Measures pure motor speed irrespective of typos. Useful for diagnosing raw finger twitch capability and mechanical key actuation limits.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h3 class="font-heading font-bold text-xl text-amber-600 dark:text-amber-400">Net WPM (True Usable Speed)</h3>
+            <p class="text-sm font-mono text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800/80 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700">
+              Net WPM = Gross WPM - (Uncorrected Errors / Time in Minutes)
+            </p>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Applies a strict error deduction penalty. Net WPM is the clinical standard because uncorrected errors require post-hoc editing, destroying workplace throughput.
+            </p>
+          </div>
+        </div>
+
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed pt-2">
+          Furthermore, <strong>Characters Per Minute (CPM)</strong> provides an absolute metric of raw character velocity (`CPM = (Correct Keystrokes / Seconds) * 60`), which is widely utilized across European, Russian, and East Asian typing certification standards.
+        </p>
+      </section>
+
+      <!-- Section 3: Global Typing Speed Percentiles -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Section 3 · Demographic Benchmarks
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Global Typing Speed Percentiles & Population Benchmarks
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Where do your typing skills stand compared to the global population? Across millions of recorded standardized tests, human typing speed follows a Gaussian bell-curve distribution with a median of 41.4 WPM:
+        </p>
+
+        <!-- Percentiles Table -->
+        <div class="overflow-x-auto rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-2">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-mono text-xs uppercase">
+                <th class="p-4">Typing Speed (WPM)</th>
+                <th class="p-4">Global Percentile</th>
+                <th class="p-4">Typist Classification</th>
+                <th class="p-4">Typical Profile</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr>
+                <td class="p-4 font-mono font-bold text-rose-600 dark:text-rose-400">&lt; 25 WPM</td>
+                <td class="p-4 font-mono">Bottom 15%</td>
+                <td class="p-4 font-semibold">Hunt & Peck</td>
+                <td class="p-4">Visual search reliance; uses 2 to 4 fingers. High error rate.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-zinc-600 dark:text-zinc-300">30–45 WPM</td>
+                <td class="p-4 font-mono">40th–50th Percentile</td>
+                <td class="p-4 font-semibold">Average Typist</td>
+                <td class="p-4">Standard adult speed. Basic touch typing with frequent visual glances.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-blue-600 dark:text-blue-400">50–69 WPM</td>
+                <td class="p-4 font-mono">65th–85th Percentile</td>
+                <td class="p-4 font-semibold">Productive Office Pro</td>
+                <td class="p-4">Full touch typing; proficient keyboard buffer memory. Minimal backspacing.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">70–89 WPM</td>
+                <td class="p-4 font-mono">88th–96th Percentile</td>
+                <td class="p-4 font-semibold">Fast Professional</td>
+                <td class="p-4">Software engineers, court reporters, medical transcriptionists, journalists.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-amber-600 dark:text-amber-400">90–119 WPM</td>
+                <td class="p-4 font-mono">Top 2–4%</td>
+                <td class="p-4 font-semibold">Master Touch Typist</td>
+                <td class="p-4">Full n-gram muscle memory chunking; 98%+ sustained accuracy.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-mono font-bold text-amber-500 font-extrabold">120+ WPM</td>
+                <td class="p-4 font-mono">Top 0.5%</td>
+                <td class="p-4 font-semibold">Elite Competitive</td>
+                <td class="p-4">World-class esports speed; sub-100ms multi-finger rolling cadences.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 4: Ergonomics & RSI Prevention -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Section 4 · Ergonomics & Physical Health
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Ergonomics, Wrist Neutrality & RSI / Carpal Tunnel Prevention
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          High-volume typing subjects the fingers, wrists, and forearms to thousands of repetitive micro-trauma cycles per hour. Poor biomechanical form frequently leads to <strong>Repetitive Strain Injury (RSI)</strong>, Carpal Tunnel Syndrome (median nerve entrapment), and de Quervain's tenosynovitis.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl">📐</div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Neutral Wrist Posture</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Keep wrists straight and floating. Never rest your wrists on hard desk surfaces while typing; wrist rests are meant for resting <em>between</em> typing bursts, not during.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl">⌨️</div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">Flat / Negative Tilt</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Avoid using the flip-out feet on keyboards. Angling the keyboard upward forces wrists into dorsiflexion, compressing the carpal tunnel. Keep keyboards flat or slightly negatively tilted.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="text-2xl">🛋️</div>
+            <h3 class="font-heading font-bold text-lg text-zinc-900 dark:text-white">90° Elbow Angle</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Adjust chair height so forearms rest parallel to the floor with relaxed shoulders. Keep elbows close to your torso at a comfortable 90° to 105° open angle.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Deliberate Practice Protocols -->
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Section 5 · Skill Acquisition
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Deliberate Practice Protocols to Break the 100+ WPM Plateau
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Simply typing emails and documents for years rarely increases typing speed beyond 60 WPM. To break through speed plateaus, adopt deliberate practice methodologies:
+        </p>
+
+        <ul class="space-y-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-amber-500 text-lg">01.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">The 98% Accuracy Rule:</strong> Speed is a byproduct of accuracy. If your accuracy dips below 96%, slow down your raw speed by 15% until accuracy returns to 98%+. High accuracy reinforces clean neural pathways without erroneous motor stutter.
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-amber-500 text-lg">02.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">Burst Sprint Training:</strong> Conduct five 15-second max-velocity sprints daily. Short sprints train your motor cortex to execute multi-finger chords at speeds exceeding your normal 60-second endurance threshold.
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="font-mono font-bold text-amber-500 text-lg">03.</span>
+            <div>
+              <strong class="text-zinc-900 dark:text-white">N-Gram Targeted Drills:</strong> Use error heatmaps to isolate recurring finger confusion pairs (e.g. <code>b</code> vs <code>v</code> with left index, or <code>p</code> with weak right pinky). Run deliberate 5-minute drills isolating those specific trigrams.
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 6: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Section 6 · Frequently Asked Questions
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Frequently Asked Questions About Typing Speed & WPM
+        </h2>
+
+        <div class="space-y-4 pt-4">
+          {schema[2].mainEntity.map((item) => (
+            <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
+              <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
+                <span>{item.name}</span>
+                <span class="faq-chevron ml-4 text-amber-500 transition-transform duration-200 font-mono text-xl">
+                  ↓
+                </span>
+              </summary>
+              <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                {item.acceptedAnswer.text}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+
+  <!-- Client-side Typing Speed Engine -->
+  <script src="../scripts/tools/typing-engine.js"></script>
+</Layout>

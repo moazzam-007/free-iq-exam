@@ -1,0 +1,110 @@
+================================================================================
+MASTER PROMPT: FINAL V3 COMPLIANCE VERIFICATION AUDIT (THIRD-AGENT REVIEW)
+Scope: Entire website, page by page, in LIGHT theme AND DARK theme separately
+Mode: AUDIT ONLY — do not edit any file. Report findings.
+================================================================================
+
+You are an expert Frontend QA & Design-Systems Auditor (Astro 5+, Tailwind v4,
+WCAG AA). Your job is to VERIFY — not to fix — whether the finalized Master
+Fusion V3 design system has been correctly and completely applied across the
+whole website, in both color themes, on every page.
+
+--------------------------------------------------------------------------------
+1. PROJECT LOCATIONS (read-only for this task)
+--------------------------------------------------------------------------------
+- Canonical source: E:\Antigravity\Fashion Deals Website\freeiqexam-ui-enhanced-v2\
+- Live preview root (dev server runs HERE): E:\Antigravity\freeiqexam.com\
+  (dev server: http://localhost:4321 — restart with `npm run dev` from that
+  folder if it is down; verify with a page fetch returning HTTP 200)
+- Golden reference file (the finalized V3 implementation — your ground truth):
+  src/pages/preview-fusion-v3.astro  (present in BOTH folders)
+- Promoted production homepage (must be byte-identical to the reference):
+  src/pages/index.astro
+- Prompt specs archive: <workspace>/master-prompts/ (Phases 0 through 10)
+
+--------------------------------------------------------------------------------
+2. THE V3 STANDARD (what "correct" looks like — check every item per page)
+--------------------------------------------------------------------------------
+A. TOKENS
+  - Action Blue ONLY: #0066cc (light) / #2997ff (dark); hovers #0071e3 / #3b82f6
+  - Monochrome Duet: #ffffff / #f5f5f7 (light) vs #000000 / #090a0f / #0f1016 (dark)
+  - Hairlines: 1px (#e4e4e7 light / rgba(255,255,255,0.08) dark). No double
+    nested borders. No heavy muddy shadows (except floating modals).
+  - ZERO purple/violet/indigo gradients, ZERO rainbow card fills, ZERO
+    gradient-clipped headline text anywhere.
+B. TYPOGRAPHY TRIAD
+  - Display/H1: Geist-first stack, 48–64px (text-4xl sm:text-5xl md:text-6xl),
+    extrabold 800, tracking -0.025em, leading ~1.08
+  - Body: Inter, 17px standard (text-[17px]), leading ~1.6–1.65
+  - Badges/telemetry/mono: Geist Mono stack, UPPERCASE tracking-widest,
+    NEVER below 13px anywhere on any page (text-[13px] minimum)
+C. MOTION (Emil Kowalski)
+  - Pressables: active:scale(0.97), ~160ms cubic-bezier(0.23,1,0.32,1)
+  - Card hover: subtle lift + 1px border brightening (never hover:scale-105
+    on cards/buttons, never scale from 0 — enter from scale(0.95)+opacity+blur)
+  - Hero: Linear-style staggered blur entrance + masked radial glow
+    (radial-gradient(circle at 50% 10%, rgba(41,151,255,0.12) 0%,
+    rgba(0,102,204,0.04) 45%, transparent 70%) with bottom fade mask —
+    must dissolve with NO visible band edge)
+  - @media (prefers-reduced-motion: reduce) must neutralize motion everywhere
+D. INTERACTION
+  - All tap targets >= 44px. Visible focus rings on all controls.
+  - Heroes must contain: mono eyebrow badge, monumental H1, 17px lead,
+    dual pill CTAs, trust dock, scope footnote (homepage pattern)
+E. TEXT FREEZE
+  - Body copy, questions, clinical wording, SEO text must be UNCHANGED from
+    the pre-refactor versions (backups in backups-phase0/). Only these
+    explicitly approved token strings may differ: 3PL→2PL instrument labels,
+    header language dropdown labels, theme ◐ glyph.
+
+--------------------------------------------------------------------------------
+3. APPROVED EXCEPTIONS (do NOT flag these — they are intentional)
+--------------------------------------------------------------------------------
+- Clinical severity tiers (emerald/amber/rose result badges) and crisis-red
+  safety visuals (988 cards, Item-9 interstitial, amber advisories)
+- Functional measurement colors: Ishihara plate dots, audiogram canvas,
+  Snellen/duochrome targets, spectrum band legend, dB meter gradient,
+  go/no-go green-red states, trial hit/miss dots, radar chart axes,
+  kids-mode shape coding, crosshair color options, rank-ladder tiers
+- Score-tier pastel pills on results.astro (flat fills, not gradients)
+- `font-heading` (Outfit) retained on section heads (Geist files are not
+  loaded; stack-swap without font files would regress rendering)
+- Duplicate id on color-blind print button (known, JS depends on it)
+
+--------------------------------------------------------------------------------
+4. METHOD (follow exactly)
+--------------------------------------------------------------------------------
+1. Confirm index.astro is byte-identical to preview-fusion-v3.astro
+   (diff must be 0 lines) in BOTH project folders.
+2. Enumerate EVERY route under src/pages (including id/ and ru/ locales,
+   games/, tools/). For EACH page, open it in LIGHT mode and in DARK mode
+   (toggle via the header ◐ control AND via prefers-color-scheme) and check
+   every item in Section 2 that applies to that page type.
+3. Pay special attention to: hero glow band edge (the most common failure —
+   compare against preview-fusion-v3 hero), staggered blur entrance order
+   (badge 80ms → H1 220ms → lead 380ms → CTAs 540ms → trust 700ms →
+   scope 860ms), selected-option outlines, progress bars (2px Action Blue),
+   timers/readouts (mono, >=13px), dropdown/menu behavior, print stylesheets.
+4. Run `npm run build` in freeiqexam-ui-enhanced-v2 (expect 171 pages,
+   0 errors). Note: freeiqexam.com builds fewer pages (~137, no candidates/
+   folder) — that is its normal baseline, not a failure.
+5. Cross-check that both folders contain the same V3 edits for every file
+   the refactor touched (index, Header, Footer, CategoryTestRunner, all
+   Phase 0 through Phase 10 pages). List ANY file that exists in one folder but
+   not the other, or whose content diverges.
+
+--------------------------------------------------------------------------------
+5. DELIVERABLE (your only output)
+--------------------------------------------------------------------------------
+A single verification report with:
+  a. Per-page × per-theme matrix: PASS / FAIL per check (A–E), one row per
+     page per theme (e.g. /test Light | /test Dark | /hearing-test Light …).
+  b. For every FAIL: file path + line number + screenshot description +
+     expected vs actual + severity (HIGH = wrong theme rendering, missing
+     glow/animation, sub-13px text, purple/gradient present, <44px target;
+     MEDIUM = token drift like blue-600 vs #0066cc; LOW = cosmetic nit).
+  c. Folder-divergence list (item 5 above).
+  d. Build results for both projects.
+  e. A final verdict: READY or NOT READY, with the complete fix-list
+     ordered by severity. Do NOT apply fixes yourself.
+================================================================================

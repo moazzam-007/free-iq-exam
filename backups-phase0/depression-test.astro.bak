@@ -1,0 +1,588 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Free Depression Screener (PHQ-9) | Evidence-Based Assessment';
+const description = 'Take the official, clinically validated PHQ-9 depression screening test online. 100% free, private, instant results, and clinician-ready summary report. No signup required.';
+const canonicalUrl = 'https://freeiqexam.com/depression-test';
+
+const alternates = {
+  // ru: '/ru/test-na-depressiyu',
+  // pt: '/pt/teste-de-depressao',
+  // es: '/es/test-de-depresion',
+  // fr: '/fr/test-de-depression',
+  // de: '/de/depression-test',
+  // id: '/id/tes-depresi',
+  // pl: '/pl/test-na-depresje',
+  // fi: '/fi/masennustesti',
+};
+
+const faqItems = [
+  [
+    'What is the PHQ-9 and who developed it?',
+    'The PHQ-9 is the 9-item depression module of the Patient Health Questionnaire, developed by Dr. Robert L. Spitzer, Dr. Janet B. W. Williams, Dr. Kurt Kroenke and colleagues with an educational grant from Pfizer. Each item maps directly onto one of the nine DSM-5 criterion symptoms for a major depressive episode, scored from 0 to 3 over a two-week recall window.'
+  ],
+  [
+    'How accurate is the PHQ-9 at detecting depression?',
+    'In the original validation studies and subsequent meta-analyses, a cut-off score of 10 or above yields pooled sensitivity and specificity of roughly 88% for major depressive disorder against a structured clinical interview. Sensitivity and specificity vary somewhat by population and setting, which is why the score is treated as a screening signal rather than a diagnosis.'
+  ],
+  [
+    'Can this test diagnose me with depression?',
+    'No. The PHQ-9 is a validated screening aid, not a diagnostic instrument. A formal diagnosis requires clinical evaluation by a licensed healthcare provider who can assess duration, impairment, history, and alternative explanations. A high score means the symptom pattern warrants professional assessment, not that you have a confirmed diagnosis.'
+  ],
+  [
+    'How should I interpret a score between 10 and 14?',
+    'A score of 10 to 14 falls in the moderate band and meets the standard PHQ-9 cut-off for probable major depression. At this level a clinical evaluation is recommended, and structured psychotherapy or pharmacotherapy is commonly considered. It is also the point at which active treatment generally outperforms watchful waiting.'
+  ],
+  [
+    'What does it mean if I scored above 0 on the self-harm question?',
+    'Item 9 asks about thoughts that you would be better off dead or of hurting yourself. Any score above 0 on this item is treated as a safety flag regardless of your total score. It does not automatically mean you are in immediate danger, but it does mean the topic deserves direct conversation with a clinician or crisis service rather than being set aside.'
+  ],
+  [
+    'Why is there a tenth question if the PHQ-9 has nine items?',
+    'The tenth item is the functional impairment question. It is not part of the 0 to 27 total score. It asks how difficult your symptoms have made it to work, manage things at home, or get along with others. Clinicians weight this heavily, because symptom severity and functional impairment are related but genuinely distinct, and impairment often drives treatment decisions.'
+  ],
+  [
+    'How is depression different from burnout or ordinary sadness?',
+    'Sadness is usually proportional to an event and lifts as circumstances change. Burnout is typically context-bound, tied to chronic occupational or caregiving load, and improves with rest and boundary changes. Major depression is more pervasive, persists across contexts, and commonly includes anhedonia, guilt, and neurovegetative symptoms such as sleep and appetite change. The distinctions matter because the treatments differ.'
+  ],
+  [
+    'How often should I retake the PHQ-9?',
+    'If you are not in treatment, re-screening every two to four weeks is reasonable when symptoms are mild, and sooner if they are escalating. If you have started treatment, the PHQ-9 is commonly repeated every two weeks so that response can be measured rather than estimated. A change of 5 points or more is generally considered clinically meaningful.'
+  ]
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'PHQ-9 Depression and Mood Screener',
+    url: canonicalUrl,
+    medicalAudience: 'Patient',
+    aspect: 'Screening',
+    isAccessibleForFree: true,
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Major Depressive Disorder',
+      alternateName: ['Depression', 'Clinical Depression', 'Major Depression'],
+      code: { '@type': 'MedicalCode', code: 'F32', codingSystem: 'ICD-10' }
+    },
+    lastReviewed: '2026-09-15'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Evidence-Based Depression Screener (PHQ-9)',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    accessibilitySummary: 'Keyboard-operable response controls (keys 1–4), visible focus states, semantic headings, live announcements, crisis-resource interstitials, and a printable clinician summary.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://freeiqexam.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Assessments', item: 'https://freeiqexam.com/test' },
+      { '@type': 'ListItem', position: 3, name: 'Depression Test (PHQ-9)', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'PHQ-9 Depression Screening Questionnaire — 9 Items',
+    url: canonicalUrl,
+    numberOfQuestions: 9,
+    isAccessibleForFree: true,
+    about: { '@type': 'MedicalCondition', name: 'Major Depressive Disorder' }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map(([name, text]) => ({
+      '@type': 'Question',
+      name,
+      acceptedAnswer: { '@type': 'Answer', text }
+    }))
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schemas}>
+  <Header />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+      <nav aria-label="Breadcrumb" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/" class="hover:text-zinc-950 dark:hover:text-white">Home</a><span aria-hidden="true">/</span>
+        <a href="/test" class="hover:text-zinc-950 dark:hover:text-white">Assessments</a><span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white">Depression Test</span>
+      </nav>
+
+      <header class="mx-auto max-w-4xl text-center">
+        <div class="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-indigo-700 dark:border-indigo-900/60 dark:bg-indigo-950/40 dark:text-indigo-300 sm:text-sm">
+          PHQ-9 · Clinically Validated Instrument
+        </div>
+        <h1 class="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Evidence-Based Depression Screener (PHQ-9)</h1>
+        <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Take the Patient Health Questionnaire-9, the most widely used depression screening instrument in clinical practice. Nine questions, instant scoring, a symptom-axis breakdown, and a printable clinician intake summary — free, private, and with no signup or email gate.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['9 clinical items', '2-week recall window', 'Instant 0–27 score', 'Printable summary', 'No account required'].map((item) => (
+            <span class="rounded-full border border-zinc-200 px-4 py-2.5 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <section id="depression-app" class="mx-auto mt-12 max-w-4xl">
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-8">
+          <div id="assessment-intro" class="rounded-[1.5rem] border border-indigo-200 bg-indigo-50 p-6 dark:border-indigo-900/50 dark:bg-indigo-950/30 sm:p-8">
+            <p class="text-xs font-semibold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 sm:text-sm">Before you begin</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Screening is not diagnosis</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Answer based on how often each symptom has bothered you over the <strong>last two weeks</strong>. The PHQ-9 estimates symptom burden against validated severity thresholds. It cannot confirm or exclude depression, and it does not replace assessment by a qualified clinician.
+            </p>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Everything you enter stays in your browser. No responses are transmitted, stored, or associated with your identity.
+            </p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <button id="begin-assessment" type="button" class="rounded-2xl bg-indigo-600 px-7 py-4 text-base font-semibold text-white transition hover:scale-[1.02] active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:rounded-full">Start the PHQ-9 screener</button>
+              <span class="self-center text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">Keyboard: 1–4 to answer · ← / → to navigate</span>
+            </div>
+            <p class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200 sm:text-base">
+              <strong>If you are in immediate danger,</strong> contact your local emergency number now. In the US and Canada, call or text <strong>988</strong>. This tool is not monitored and cannot summon help.
+            </p>
+          </div>
+
+          <section id="questionnaire-section" class="hidden" aria-labelledby="question-heading">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p id="question-part" class="text-xs font-semibold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 sm:text-sm">PHQ-9 · Past 2 weeks</p>
+                <p id="question-domain" class="mt-2 text-base font-semibold text-zinc-700 dark:text-zinc-300">Affective · mood and anhedonia</p>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="question-number" class="text-base font-semibold sm:text-lg">Question 1 of 9</div>
+                <div id="progress-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">0% answered</div>
+              </div>
+            </div>
+            <div class="mt-5 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"><div id="progress-fill" class="h-full rounded-full bg-indigo-600 transition-all duration-300" style="width:4%"></div></div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-wrap gap-2 text-sm font-semibold text-zinc-500 dark:text-zinc-400 sm:text-base">
+                <span class="rounded-full border border-zinc-200 px-3 py-1.5 dark:border-zinc-800">Choose one</span>
+                <span class="rounded-full border border-zinc-200 px-3 py-1.5 dark:border-zinc-800">Over the last 2 weeks, how often have you been bothered by…</span>
+              </div>
+              <h2 id="question-heading" class="mt-6 text-2xl font-bold tracking-tight sm:text-3xl"></h2>
+              <p id="question-context" class="mt-3 text-base text-zinc-500 dark:text-zinc-400 sm:text-lg"></p>
+              <div id="likert-options" class="mt-8 grid gap-3 sm:grid-cols-4" role="group" aria-label="Frequency response options"></div>
+              <p id="question-safety-note" class="mt-6 hidden rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200 sm:text-base">
+                This item is asked of everyone and is not an accusation. Answer honestly — it changes what help is offered, not how you are regarded. Support resources appear when you select a response above zero.
+              </p>
+              <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+                <button id="back-button" type="button" class="rounded-2xl border border-zinc-300 bg-white px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-900 sm:rounded-full">Back</button>
+                <button id="next-button" type="button" class="rounded-2xl bg-zinc-950 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-zinc-950 sm:rounded-full">Next question</button>
+              </div>
+            </article>
+          </section>
+
+          <section id="crisis-interstitial" class="hidden" role="alertdialog" aria-labelledby="crisis-interstitial-title" aria-describedby="crisis-interstitial-body">
+            <div class="rounded-[1.75rem] border-2 border-red-300 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40 sm:p-9">
+              <p class="text-xs font-semibold uppercase tracking-wider text-red-700 dark:text-red-300 sm:text-sm">Safety check</p>
+              <h2 id="crisis-interstitial-title" class="mt-3 text-2xl font-bold tracking-tight text-red-950 dark:text-red-100 sm:text-3xl">Thank you for answering honestly</h2>
+              <p id="crisis-interstitial-body" class="mt-4 text-base leading-relaxed text-red-950 dark:text-red-100 sm:text-lg">
+                You indicated thoughts that you would be better off dead or of hurting yourself. These thoughts are a sign of how much pain you are carrying — not a character flaw, and not something you have to carry alone. Talking to someone now genuinely helps.
+              </p>
+              <ul class="mt-7 grid gap-3 sm:grid-cols-2">
+                <li class="crisis-line"><span class="crisis-flag">🇺🇸 🇨🇦 US &amp; Canada</span><strong>Call or text 988</strong><span>Suicide &amp; Crisis Lifeline · 24/7 · free</span></li>
+                <li class="crisis-line"><span class="crisis-flag">🇬🇧 UK &amp; Ireland</span><strong>Call 116 123</strong><span>Samaritans · 24/7 · or NHS 111</span></li>
+                <li class="crisis-line"><span class="crisis-flag">🇦🇺 Australia</span><strong>Call 13 11 14</strong><span>Lifeline Australia · 24/7</span></li>
+                <li class="crisis-line"><span class="crisis-flag">🇩🇪 Germany</span><strong>0800 111 0 111</strong><span>TelefonSeelsorge · free &amp; anonymous</span></li>
+                <li class="crisis-line"><span class="crisis-flag">🇫🇮 Finland</span><strong>09 2525 0111</strong><span>MIELI Kriisipuhelin · 24/7</span></li>
+                <li class="crisis-line"><span class="crisis-flag">🌐 Everywhere else</span><strong>findahelpline.com</strong><span>Free helplines in 130+ countries</span></li>
+              </ul>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="crisis-continue" type="button" class="rounded-2xl bg-zinc-950 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] dark:bg-white dark:text-zinc-950 sm:rounded-full">I have read this — continue to my results</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div id="crisis-banner" class="hidden mb-6 rounded-[1.75rem] border-2 border-red-300 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/40 sm:p-8">
+              <p class="text-xs font-semibold uppercase tracking-wider text-red-700 dark:text-red-300 sm:text-sm">Immediate support available</p>
+              <h2 class="mt-3 text-2xl font-bold tracking-tight text-red-950 dark:text-red-100 sm:text-3xl">You endorsed thoughts of self-harm</h2>
+              <p class="mt-4 text-base leading-relaxed text-red-950 dark:text-red-100 sm:text-lg">
+                Whatever your total score, this item is treated as a safety priority. Please reach out to one of these now — they are free, confidential, and staffed by people trained for exactly this conversation.
+              </p>
+              <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+                <li class="crisis-line"><span class="crisis-flag">🇺🇸 🇨🇦 US &amp; Canada</span><strong>Call or text 988</strong><span>Suicide &amp; Crisis Lifeline · 24/7</span></li>
+                <li class="crisis-line"><span class="crisis-flag">🇬🇧 UK &amp; Ireland</span><strong>Call 116 123</strong><span>Samaritans · or NHS 111</span></li>
+                <li class="crisis-line"><span class="crisis-flag">🇦🇺 Australia</span><strong>Call 13 11 14</strong><span>Lifeline Australia · 24/7</span></li>
+                <li class="crisis-line"><span class="crisis-flag">🌐 Global</span><strong>findahelpline.com</strong><span>Also befrienders.org</span></li>
+              </ul>
+            </div>
+
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge minimal">Minimal or no depression symptoms</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">Your PHQ-9 result</h2>
+                  <p id="result-classification" class="mt-2 text-xl font-bold text-indigo-700 dark:text-indigo-300">Minimal or None</p>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                  <div class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-sm">Total score</div>
+                  <div id="result-score" class="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">0 / 27</div>
+                </div>
+              </div>
+
+              <p id="result-narrative" class="mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card"><div class="score-label">Affective</div><div id="affective-score" class="mt-3 text-3xl font-extrabold">0 / 9</div><div id="affective-status" class="score-status">Lower endorsement</div><div class="meter"><span id="affective-bar"></span></div><p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">Mood, anhedonia, guilt — items 1, 2, 6</p></article>
+                <article class="score-card"><div class="score-label">Somatic</div><div id="somatic-score" class="mt-3 text-3xl font-extrabold">0 / 9</div><div id="somatic-status" class="score-status">Lower endorsement</div><div class="meter"><span id="somatic-bar"></span></div><p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">Sleep, energy, appetite — items 3, 4, 5</p></article>
+                <article class="score-card"><div class="score-label">Cognitive / motor</div><div id="cognitive-score" class="mt-3 text-3xl font-extrabold">0 / 9</div><div id="cognitive-status" class="score-status">Lower endorsement</div><div class="meter"><span id="cognitive-bar"></span></div><p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">Focus, psychomotor, hope — items 7, 8, 9</p></article>
+              </div>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-base">Severity stratification</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">Where your score falls</h3>
+                <div id="severity-scale" class="mt-6 space-y-2"></div>
+              </article>
+
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-base">Symptom axes</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">Clinical sub-domain profile</h3>
+                <div id="profile-matrix" class="mt-6 space-y-5"></div>
+              </article>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-3">
+                <div class="stat-card"><span>Diagnostic cut-off (≥ 10)</span><strong id="cutoff-status">Below the validated cut-off of 10</strong></div>
+                <div class="stat-card"><span>PHQ-9 algorithm criteria</span><strong id="algorithm-status">Not met</strong></div>
+                <div class="stat-card"><span>Functional impairment</span><strong id="functional-score">Not answered</strong></div>
+              </div>
+
+              <article class="mt-6 rounded-3xl border border-indigo-200 bg-indigo-50/60 p-6 dark:border-indigo-900/50 dark:bg-indigo-950/25">
+                <h3 class="text-xl font-bold sm:text-2xl">Recommended next steps</h3>
+                <ul id="next-steps-list" class="mt-5 space-y-4"></ul>
+              </article>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="rounded-2xl bg-zinc-950 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] dark:bg-white dark:text-zinc-950 sm:rounded-full">Print Clinician Intake Summary</button>
+                <button id="share-result" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Share screening summary</button>
+                <button id="retake-result" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Retake assessment</button>
+              </div>
+
+              <div class="mt-8 rounded-3xl border border-indigo-200 bg-indigo-50 p-6 dark:border-indigo-900/50 dark:bg-indigo-950/30">
+                <h3 class="text-xl font-bold sm:text-2xl">Read the result in context</h3>
+                <p class="mt-3 text-base leading-relaxed text-indigo-950 dark:text-indigo-100 sm:text-lg">
+                  A PHQ-9 score is a symptom count, not a diagnosis. Scores are affected by medical illness, medication, grief, trauma, substance use, thyroid disease, anaemia, sleep disorders, and situational crisis. A high score means your symptoms deserve professional attention. A low score does not invalidate distress you are actually experiencing.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <p id="depression-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+        <section>
+          <p class="eyebrow">Clinical guide</p>
+          <h2 class="mt-3 section-title">Understanding depression beyond a single score</h2>
+          <p class="mt-6">Major depressive disorder is among the most common and most treatable conditions in medicine, and it remains one of the most commonly under-recognised. The PHQ-9 exists because a structured, reproducible symptom count detects depression far more reliably than clinical impression alone. This guide explains what the instrument measures, where its limits lie, and what the evidence says about what to do next.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">1. The neurobiology of major depressive disorder</h2>
+          <p class="mt-5">Depression is not a single chemical deficit, and the popular "serotonin imbalance" shorthand has not survived close scrutiny. Current models describe depression as a disorder of distributed systems — affecting synaptic plasticity, stress-hormone regulation, inflammatory signalling, and the circuits that assign value to reward. Three mechanisms are particularly well characterised.</p>
+          <p class="mt-5"><strong>BDNF and hippocampal neuroplasticity.</strong> Brain-derived neurotrophic factor is a signalling protein that supports neuronal survival, synaptic growth, and long-term potentiation — the cellular process underlying learning. In depression, BDNF signalling is reduced, and the hippocampus, a region central to memory and to contextualising emotional experience, shows measurable volume reduction in chronic and recurrent illness. This is the leading explanation for why depression impairs concentration and memory so convincingly, and it is why the condition is described as neurodegenerative in its chronic form rather than purely psychological. It also underpins the therapeutic lag: antidepressants and exercise both raise BDNF, and both take weeks to produce clinical change, because they are rebuilding synaptic infrastructure rather than correcting a transient deficit.</p>
+          <p class="mt-5"><strong>HPA-axis dysregulation.</strong> The hypothalamic-pituitary-adrenal axis governs the stress response. In a substantial proportion of people with depression, this axis is chronically overactive: cortisol is elevated, its normal diurnal decline is flattened, and the negative feedback loop that should shut the stress response down becomes insensitive. The consequence is a body held in a low-grade stress state — which explains the characteristic pattern of early-morning waking, appetite loss, and the diurnal worsening of mood that many people report. Childhood adversity and chronic psychosocial stress are the best-established drivers of this sensitisation, which is why depression is often a cumulative condition rather than a reaction to a single event.</p>
+          <p class="mt-5"><strong>Neuroinflammation.</strong> Inflammatory cytokines can induce the behavioural cluster known as sickness behaviour — fatigue, anhedonia, social withdrawal, appetite change — which is nearly indistinguishable from depression. Roughly a quarter to a third of people with depression show elevated inflammatory markers, and a significant fraction of patients treated with interferon for hepatitis or melanoma develop major depression as a direct consequence. This is not a fringe finding; it is why depression so frequently co-occurs with autoimmune disease, chronic pain, and metabolic syndrome, and why the relationship between inflammation and depression appears bidirectional.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">2. PHQ-9 clinical validity: why this instrument</h2>
+          <p class="mt-5">The Patient Health Questionnaire-9 was developed by Dr. Robert L. Spitzer, Dr. Janet B. W. Williams, and Dr. Kurt Kroenke, and validated against structured clinical interview in a sample of 6,000 primary-care and obstetric patients. Its nine items map one-to-one onto the nine DSM criterion symptoms for a major depressive episode, with a two-week recall window that matches the diagnostic duration requirement. There is no content on the instrument that a clinician would not need to know.</p>
+          <p class="mt-5">The psychometric profile is what earned it its position. At the standard cut-off of <strong>10 or above</strong>, pooled sensitivity and specificity are approximately <strong>88%</strong> for major depressive disorder. Sensitivity and specificity trade off across the range: a cut-off of 10 maximises the sum of both, while higher thresholds raise specificity and lower sensitivity. At a score of 15 or above the positive likelihood ratio for major depression rises substantially, and at 20 or above it climbs further — which is why the severity bands are not arbitrary subdivisions but correspond to genuinely different probabilities of illness.</p>
+          <p class="mt-5">The instrument also supports a second, algorithm-based scoring route. A major depressive episode is probable when <strong>five or more items are scored 2 or higher</strong>, <em>and</em> at least one of the two core items — depressed mood or anhedonia — is also scored 2 or higher. Requiring a core symptom prevents the algorithm from firing on a purely somatic pattern of sleep, appetite, and fatigue that may have a medical cause. Your results above report both the total-score threshold and the algorithm criteria, because they occasionally disagree and the disagreement is informative.</p>
+          <p class="mt-5">Two properties deserve emphasis. First, the PHQ-9 is a <em>severity</em> measure as well as a screening tool: change of five points or more is generally treated as clinically meaningful, which makes it useful for tracking treatment response. Second, it is a screening instrument and not a diagnostic one. It cannot distinguish major depression from bipolar depression, and treating bipolar depression with an antidepressant alone can precipitate a manic switch. That distinction requires a clinical history, not a questionnaire.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">3. Interpreting your score across the five bands</h2>
+          <p class="mt-5"><strong>0–4 · Minimal or none.</strong> Few symptoms, or symptoms at low frequency. No treatment is indicated on the basis of this score alone. This is not a judgement about the validity of your distress — a person can be struggling with grief, anxiety, or a difficult life situation and still score in this range, because the PHQ-9 measures a specific depressive symptom cluster and nothing else.</p>
+          <p class="mt-5"><strong>5–9 · Mild.</strong> Several symptoms at low frequency. This sits below the standard treatment threshold, but it is above a clear screen, and it is the band where the trajectory matters most. Mild depression resolves in some people and consolidates in others. Watchful waiting is reasonable here only if it is genuinely active: re-screen in two to four weeks, and treat a rising score as a signal rather than waiting to feel worse.</p>
+          <p class="mt-5"><strong>10–14 · Moderate.</strong> This meets the validated cut-off for probable major depression and is the point where clinical evaluation is recommended and active treatment is usually considered. Behavioural activation and structured psychotherapy have strong evidence at this level, and the decision between psychotherapy, pharmacotherapy, or both is properly made with a clinician who knows your history.</p>
+          <p class="mt-5"><strong>15–19 · Moderately severe.</strong> Probability of major depressive disorder is high, and functional impairment is usually substantial. Combined psychotherapy and pharmacotherapy generally outperforms either alone in this range. If you have been managing without professional support, this score indicates the balance has shifted toward treatment.</p>
+          <p class="mt-5"><strong>20–27 · Severe.</strong> Severe symptom burden with a high likelihood of major depression and marked impairment. This warrants prompt comprehensive evaluation. Severity at this level impairs precisely the executive functions needed to arrange care, which is why enlisting another person to help coordinate appointments is a clinical recommendation and not merely a kindness. Treatment is effective even at this severity — the response rate is lower and slower, but it is not absent.</p>
+          <p class="mt-5">One further point. The supplementary functional item is not included in the 0–27 total, and that is deliberate. Clinicians weight it heavily because impairment and symptom count are related but distinct, and it is often impairment that determines the intensity of treatment. Two people with identical scores frequently need different plans, because one is holding down a job and the other is not.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">4. Differential diagnosis: depression, ADHD, burnout, and hypothyroidism</h2>
+          <p class="mt-5">These four conditions produce overlapping complaints — poor concentration, low energy, disrupted sleep, reduced motivation — and they are routinely mistaken for one another. The distinctions matter because the treatments diverge sharply.</p>
+          <p class="mt-5"><strong>ADHD</strong> is a neurodevelopmental condition with onset in childhood, so the pattern should be traceable backwards through development even if it was never formally recognised. In ADHD, low mood typically follows chronic underachievement and accumulated failure rather than preceding it. Interest-based attention is preserved: a person with ADHD can concentrate intensely on something engaging while being unable to start something boring. In depression, the capacity for pleasure and engagement is blunted globally. The distinction is not perfectly clean — the two conditions co-occur frequently, and ADHD is itself a risk factor for depression — but timeline and the pattern of preserved versus lost interest are the most discriminating features.</p>
+          <p class="mt-5"><strong>Burnout</strong> is context-bound by definition. It arises from chronic occupational or caregiving load and improves when the load is reduced or the context changes. Someone on leave who feels substantially better is describing burnout, not major depression. Burnout also tends to preserve self-worth — people describe exhaustion and cynicism rather than worthlessness and guilt — while depression corrodes self-regard regardless of circumstances. Burnout is not a formal DSM diagnosis, which is a real limitation, but it is a clinically useful and distinct presentation.</p>
+          <p class="mt-5"><strong>Hypothyroidism</strong> is the most important medical mimic and the reason thyroid function testing belongs in any first episode of depression. Fatigue, low mood, cognitive slowing, weight gain, cold intolerance, constipation, and dry skin all appear in both conditions. Roughly 1 in 20 people with depression have undiagnosed hypothyroidism, and the depression will not resolve until the thyroid is treated. Anaemia, vitamin B12 and folate deficiency, obstructive sleep apnoea, and several medications — including beta-blockers, corticosteroids, and some hormonal contraceptives — produce comparable pictures and are similarly reversible.</p>
+          <p class="mt-5">The practical implication is that a first episode of moderate or severe depression warrants basic laboratory work — thyroid function, complete blood count, B12 and folate, and metabolic panel — rather than a purely psychological formulation. Ruling out reversible causes is not a delay in treatment; it is part of it.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">5. Evidence-based treatment protocols</h2>
+          <p class="mt-5"><strong>Cognitive behavioural therapy</strong> targets the cognitive triad described by Aaron Beck: negative beliefs about the self, about the world, and about the future. These beliefs operate as filters, so that ambiguous evidence is read as confirmation of worthlessness. CBT teaches explicit identification and testing of these automatic thoughts. It has the largest evidence base of any psychological treatment for depression, performs comparably to medication in mild to moderate presentations, and shows a lower relapse rate after discontinuation than medication alone — which is a significant advantage for a recurrent condition.</p>
+          <p class="mt-5"><strong>Behavioural activation</strong> is simpler, cheaper to deliver, and equally well supported. It rests on the observation that depression creates a self-reinforcing withdrawal loop: low mood reduces activity, reduced activity removes sources of reward and mastery, and the resulting emptiness deepens the mood. Behavioural activation breaks the loop by scheduling valued and previously enjoyable activities regardless of current motivation. The counterintuitive core — that action precedes motivation rather than following it — is the mechanism, and it is why waiting to feel like doing something is a trap.</p>
+          <p class="mt-5"><strong>Pharmacotherapy.</strong> SSRIs are typically first-line because of their tolerability and safety profile in overdose. They are not more effective than other classes for most people, but they are easier to stay on, and discontinuation syndrome is manageable with tapering. SNRIs, bupropion, mirtazapine, and vortioxetine are reasonable alternatives when response or side effects dictate. Onset is two to four weeks, and the full effect takes six to eight. An important early effect runs the other way: energy and psychomotor activity often recover faster than mood, which is why the first few weeks of treatment carry elevated risk and why clinical follow-up during that window matters. Any suggestion of bipolarity should prompt a mood stabiliser strategy rather than antidepressant monotherapy.</p>
+          <p class="mt-5"><strong>Exercise</strong> has a modest but real antidepressant effect, strongest at moderate-to-vigorous aerobic intensity and in mild to moderate depression. Its mechanism overlaps with pharmacotherapy: aerobic exercise raises BDNF, normalises HPA-axis reactivity, and improves sleep architecture. The practical obstacle is that depression removes the capacity to initiate exercise, which is why behavioural activation framing — schedule it, lower the threshold, do not wait for motivation — matters more than the specific protocol.</p>
+          <p class="mt-5"><strong>Circadian and lifestyle levers.</strong> Morning bright-light exposure anchors the circadian system and has direct evidence in seasonal and non-seasonal depression. Sleep architecture is best protected by consistent wake times rather than consistent bedtimes. For severe, treatment-resistant, or psychotic presentations, ECT remains the most effective treatment available, and ketamine and esketamine produce rapid effects in otherwise refractory cases. None of these should be self-directed — they are listed so that severity is not mistaken for hopelessness. Treatment-resistant does not mean untreatable; it means the first attempt was the wrong attempt.</p>
+        </section>
+
+        <section id="faq" class="guide-section">
+          <p class="eyebrow">FAQ</p>
+          <h2 class="section-title mt-3">Frequently asked questions about depression testing</h2>
+          <div class="mt-7 space-y-3">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white px-5 py-5 dark:border-zinc-800 dark:bg-zinc-950">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition group-open:rotate-45">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-200 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300 sm:text-lg">{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9">
+          <h2 class="text-2xl font-bold sm:text-3xl">Clinical disclaimer and crisis support</h2>
+          <p class="mt-4">The PHQ-9 is a validated screening aid, not a diagnostic instrument. A formal diagnosis requires clinical evaluation by a licensed healthcare provider. FreeIQExam provides educational and screening-oriented tools and does not provide medical advice, diagnosis, or treatment. Do not start, stop, or change prescription treatment on the basis of an online score.</p>
+          <p class="mt-4">If you are in crisis or having thoughts of harming yourself, contact emergency services or a crisis line immediately. <strong>US and Canada:</strong> call or text 988. <strong>UK and Ireland:</strong> Samaritans 116 123, or NHS 111. <strong>Australia:</strong> Lifeline 13 11 14. <strong>Elsewhere:</strong> findahelpline.com and befrienders.org list free helplines in over 130 countries.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h1 class="text-3xl font-extrabold">PHQ-9 DEPRESSION SCREENING SUMMARY</h1>
+      <p class="mt-2 text-sm uppercase tracking-wider">Patient Health Questionnaire-9 · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm">
+        <p><strong>Date:</strong> <span id="report-date">—</span></p>
+        <p><strong>Session:</strong> <span id="report-session">—</span></p>
+        <p><strong>Total score:</strong> <span id="print-total">—</span></p>
+        <p><strong>Cut-off status:</strong> <span id="print-cutoff">—</span></p>
+        <p><strong>Algorithm criteria:</strong> <span id="print-algorithm">—</span></p>
+        <p><strong>Affective subscale:</strong> <span id="print-affective">—</span></p>
+        <p><strong>Somatic subscale:</strong> <span id="print-somatic">—</span></p>
+        <p><strong>Cognitive / motor subscale:</strong> <span id="print-cognitive">—</span></p>
+        <p><strong>Functional impairment:</strong> <span id="print-functional">—</span></p>
+        <p><strong>Item 9 (self-harm):</strong> <span id="print-item9">—</span></p>
+      </div>
+      <p id="print-crisis-row" class="mt-6 hidden border-2 border-red-600 p-4 text-sm font-bold text-red-700">
+        SAFETY FLAG: Item 9 endorsed. Discuss suicidal ideation and risk assessment at intake. Crisis resources were provided to the respondent.
+      </p>
+      <h2 class="mt-8 text-xl font-bold">Item-level response record</h2>
+      <table class="mt-4 w-full border-collapse text-sm">
+        <thead>
+          <tr>
+            <th class="border border-zinc-300 px-2 py-2 text-left">#</th>
+            <th class="border border-zinc-300 px-2 py-2 text-left">Axis</th>
+            <th class="border border-zinc-300 px-2 py-2 text-left">Item</th>
+            <th class="border border-zinc-300 px-2 py-2 text-left">Score</th>
+            <th class="border border-zinc-300 px-2 py-2 text-left">Response</th>
+          </tr>
+        </thead>
+        <tbody id="print-answer-body"></tbody>
+      </table>
+      <p class="mt-8 text-sm leading-relaxed">This is a screening summary generated from self-report responses over a two-week recall window. It is not a medical diagnosis and requires clinical interpretation. Total score range 0–27; item 10 is reported separately and is not included in the total.</p>
+    </div>
+  </div>
+
+  <div id="share-toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-full border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm font-semibold text-white opacity-0 transition-all dark:border-zinc-200 dark:bg-white dark:text-zinc-950">Screening summary copied.</div>
+
+  <style is:global>
+    .likert-option {
+      position: relative;
+      min-height: 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 1rem 0.75rem;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      color: rgb(24 24 27);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .likert-option:hover {
+      transform: translateY(-2px);
+      border-color: rgb(129 140 248);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.14);
+    }
+    .likert-option:active { transform: scale(0.98); }
+    .likert-option:focus-visible { outline: 3px solid rgb(79 70 229); outline-offset: 2px; }
+    .likert-option.safety-zone {
+      background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+      border-color: rgb(254 202 202);
+    }
+    .likert-option.safety-zone:hover { border-color: rgb(248 113 113); }
+    .likert-option.selected {
+      background: linear-gradient(135deg, rgb(79 70 229) 0%, rgb(67 56 202) 100%) !important;
+      border-color: rgb(79 70 229) !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35);
+      transform: translateY(-2px);
+    }
+    .likert-key {
+      width: 1.75rem;
+      height: 1.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgb(228 228 231);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      font-family: ui-monospace, monospace;
+      background: rgb(244 244 245);
+      color: rgb(113 113 122);
+      transition: all 0.15s ease;
+    }
+    .likert-option:hover .likert-key { border-color: rgb(165 180 252); color: rgb(79 70 229); }
+    .likert-option.selected .likert-key {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.45);
+      color: #ffffff;
+    }
+    .likert-label { font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
+    .likert-detail { font-size: 0.78rem; font-weight: 600; opacity: 0.65; }
+
+    .crisis-line {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      padding: 1rem 1.15rem;
+      border: 1px solid rgb(254 202 202);
+      border-radius: 1.25rem;
+      background: #ffffff;
+    }
+    .crisis-line strong { font-size: 1.15rem; color: rgb(153 27 27); }
+    .crisis-line span:last-child { font-size: 0.9rem; color: rgb(82 82 91); }
+    .crisis-flag { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgb(185 28 28); }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .55rem 1.1rem; font-size: .95rem; font-weight: 700; }
+    .result-badge.minimal { color: rgb(22 101 52); background: rgb(240 253 244); border-color: rgb(187 247 208); }
+    .result-badge.mild { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.moderate { color: rgb(146 64 14); background: rgb(255 247 237); border-color: rgb(254 215 170); }
+    .result-badge.high { color: rgb(154 52 18); background: rgb(255 237 213); border-color: rgb(253 186 116); }
+    .result-badge.severe { color: rgb(153 27 27); background: rgb(254 242 242); border-color: rgb(254 202 202); }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.35rem; }
+    .score-label { font-size: .9rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .score-status { margin-top: .5rem; color: rgb(67 56 202); font-size: .95rem; font-weight: 600; }
+    .meter { margin-top: 1rem; height: .55rem; overflow: hidden; border-radius: 999px; background: rgb(228 228 231); }
+    .meter span { display: block; width: 0; height: 100%; border-radius: inherit; background: rgb(79 70 229); transition: width .35s ease; }
+    .stat-card { display: flex; flex-direction: column; gap: .5rem; padding: 1.1rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    .stat-card span { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.05rem; line-height: 1.35; }
+
+    .severity-tier {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1.15rem;
+      border: 1px solid rgb(228 228 231);
+      border-radius: 1rem;
+      background: #fff;
+    }
+    .severity-tier.active { border-color: rgb(79 70 229); background: rgb(238 242 255); box-shadow: 0 4px 14px rgba(79, 70, 229, 0.14); }
+    .severity-range { font-family: ui-monospace, monospace; font-size: 0.9rem; font-weight: 800; color: rgb(82 82 91); min-width: 3.5rem; }
+    .severity-name { font-size: 0.98rem; font-weight: 700; flex: 1; }
+    .severity-tier.active .severity-range, .severity-tier.active .severity-name { color: rgb(49 46 129); }
+    .severity-marker { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #fff; background: rgb(79 70 229); border-radius: 999px; padding: 0.3rem 0.7rem; }
+
+    .matrix-row { display: flex; flex-direction: column; gap: 0.5rem; }
+    .matrix-label { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.98rem; font-weight: 600; }
+    .matrix-label strong { font-family: ui-monospace, monospace; }
+    .matrix-track { height: 0.65rem; border-radius: 999px; background: rgb(228 228 231); overflow: hidden; }
+    .matrix-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgb(129 140 248), rgb(79 70 229)); transition: width .4s ease; }
+
+    .next-step { position: relative; padding-left: 1.9rem; font-size: 1rem; line-height: 1.6; color: rgb(49 46 129); }
+    .next-step::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 999px;
+      background: rgb(79 70 229);
+    }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(67 56 202); }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.025em; color: rgb(24 24 27); }
+    .guide-section { margin-top: 3.5rem; }
+
+    .dark .likert-option { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .likert-option.safety-zone { background: linear-gradient(180deg, rgba(69, 10, 10, 0.55) 0%, rgba(69, 10, 10, 0.8) 100%); border-color: rgb(127 29 29); }
+    .dark .likert-key { background: rgb(24 24 27); border-color: rgb(39 39 42); color: rgb(161 161 170); }
+    .dark .crisis-line { background: rgb(9 9 11); border-color: rgb(127 29 29); }
+    .dark .crisis-line strong { color: rgb(252 165 165); }
+    .dark .crisis-line span:last-child { color: rgb(161 161 170); }
+    .dark .crisis-flag { color: rgb(248 113 113); }
+    .dark .result-badge.minimal { color: rgb(134 239 172); background: rgba(5, 46, 22, 0.55); border-color: rgb(22 101 52); }
+    .dark .result-badge.mild { color: rgb(212 212 216); background: rgb(24 24 27); border-color: rgb(63 63 70); }
+    .dark .result-badge.moderate { color: rgb(252 211 77); background: rgba(69, 26, 3, 0.5); border-color: rgb(146 64 14); }
+    .dark .result-badge.high { color: rgb(253 186 116); background: rgba(67, 20, 7, 0.55); border-color: rgb(154 52 18); }
+    .dark .result-badge.severe { color: rgb(252 165 165); background: rgba(69, 10, 10, 0.55); border-color: rgb(153 27 27); }
+    .dark .score-card, .dark .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .score-status { color: rgb(165 180 252); }
+    .dark .meter, .dark .matrix-track { background: rgb(39 39 42); }
+    .dark .severity-tier { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .severity-tier.active { border-color: rgb(99 102 241); background: rgba(49, 46, 129, 0.35); }
+    .dark .severity-range { color: rgb(161 161 170); }
+    .dark .severity-tier.active .severity-range, .dark .severity-tier.active .severity-name { color: rgb(199 210 254); }
+    .dark .next-step { color: rgb(199 210 254); }
+    .dark .eyebrow { color: rgb(165 180 252); }
+    .dark .section-title { color: rgb(250 250 250); }
+
+    .print-only { display: none; }
+    @media print {
+      body * { visibility: hidden; }
+      #printable-report, #printable-report * {
+        visibility: visible;
+      }
+      #printable-report {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+      /* No display override for #print-crisis-row: the row must stay governed by
+         the .hidden class the engine toggles on item 9. A block !important rule
+         here would outrank .hidden and print a false safety flag for everyone. */
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+
+    @media (max-width: 640px) {
+      .section-title { font-size: 1.75rem; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../scripts/tools/depression-screener.js"></script>
+</Layout>

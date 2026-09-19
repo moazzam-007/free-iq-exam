@@ -3,1516 +3,1442 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-const title = "Free IQ Test Online 2026: Instant Results, No Email Required | FreeIQExam";;
-const description = "Take our free, scientifically validated online IQ test. 24 standardized questions scored via 2PL Item Response Theory. Instant score, percentile, and CHC breakdown with zero paywall.";;
+const title = "Free IQ Test Online 2026 - Instant Results, No Email Required | FreeIQExam";
+const description = "Take a free, scientifically grounded online IQ test. 24 standardized items scored with 2PL Item Response Theory. Instant score, percentile and cognitive breakdown, plus 30+ free brain games, clinical screeners and wellness tools. Zero paywall.";
+
+const SITE = "https://freeiqexam.com";
+
+/* ---------------------------------------------------------------------------
+   DATA MODEL
+   One source of truth for every tool on the page. The visible sections, the
+   footer sitemap and the ItemList schema are all generated from these arrays,
+   so a slug can never drift between them.
+--------------------------------------------------------------------------- */
+
+interface Tool {
+  slug: string;
+  title: string;
+  tag: string;          // neutral mono badge text
+  blurb: string;
+}
+
+interface Game extends Tool {
+  glyph: string;
+  metric: string;
+  metricLabel: string;
+  chips: string[];
+  source: string;
+  cat: 'memory' | 'speed' | 'reasoning';
+}
+
+const games: Game[] = [
+  {
+    slug: "/games/n-back", title: "Dual N-Back", tag: "Gwm · Working Memory", cat: "memory",
+    blurb: "Track simultaneous auditory letter streams and spatial coordinates to expand working-memory buffer capacity.",
+    glyph: "N", metric: "2-Back", metricLabel: "Current level", chips: ["Audio", "Spatial", "Adaptive"], source: "Jaeggi (2008)",
+  },
+  {
+    slug: "/games/memory-matrix", title: "Memory Matrix", tag: "Gv · Spatial Span", cat: "memory",
+    blurb: "Observe briefly illuminated tiles across escalating 3×3, 4×4 and 5×5 grids, then reconstruct the exact pattern.",
+    glyph: "▦", metric: "Level 7", metricLabel: "Best span", chips: ["750 ms", "5×5", "Recall"], source: "Corsi (1972)",
+  },
+  {
+    slug: "/games/digit-span", title: "Digit Span Loop", tag: "Gwm · Serial Recall", cat: "memory",
+    blurb: "Forward and reverse serial recall of numerical sequences, extending by one digit on every success.",
+    glyph: "7", metric: "9 digits", metricLabel: "Longest span", chips: ["Forward", "Reverse", "Adaptive"], source: "Wechsler Subtest",
+  },
+  {
+    slug: "/games/stroop-clash", title: "Stroop Color Clash", tag: "Gs · Inhibition", cat: "speed",
+    blurb: "Name the font colour of conflicting words and override automatic semantic interference under time pressure.",
+    glyph: "S", metric: "112 ms", metricLabel: "Interference cost", chips: ["Congruent", "Conflict", "60 s"], source: "Stroop (1935)",
+  },
+  {
+    slug: "/games/flanker-test", title: "Flanker Response", tag: "Gs · Selective Attention", cat: "speed",
+    blurb: "Report the direction of a central arrow while suppressing the flanking distractor array beside it.",
+    glyph: "⇢", metric: "38 ms", metricLabel: "Flanker effect", chips: ["Congruent", "Incongruent", "Neutral"], source: "Eriksen (1974)",
+  },
+  {
+    slug: "/games/math-sprint", title: "Speed Math Sprint", tag: "Gq · Arithmetic Fluency", cat: "speed",
+    blurb: "Solve mental arithmetic against a 60-second clock while holding an unbroken accuracy streak.",
+    glyph: "+", metric: "46 solved", metricLabel: "Personal best", chips: ["60 s", "Streak", "4 ops"], source: "Fluency Trial",
+  },
+  {
+    slug: "/games/symbol-match", title: "Symbol Match", tag: "Gs · Perceptual Coding", cat: "speed",
+    blurb: "Translate symbols to digits against a legend as fast as possible — the classic processing-speed paradigm.",
+    glyph: "⌘", metric: "92 pairs", metricLabel: "Coding rate", chips: ["Legend", "120 s", "Accuracy"], source: "Coding Subtest",
+  },
+  {
+    slug: "/games/rotation", title: "3D Mental Rotation", tag: "Gv · Spatial Transformation", cat: "reasoning",
+    blurb: "Rotate isometric cube assemblies in your head and decide whether two viewpoints describe one object.",
+    glyph: "◱", metric: "140°", metricLabel: "Mean angular disparity", chips: ["Pitch", "Yaw", "Mirror"], source: "Shepard–Metzler",
+  },
+  {
+    slug: "/games/sequence-rush", title: "Sequence Rush", tag: "Gf · Inductive Series", cat: "reasoning",
+    blurb: "Deduce the generating rule behind numeric and alphabetic series before the response window closes.",
+    glyph: "∿", metric: "Δ² rules", metricLabel: "Top tier reached", chips: ["Numeric", "Alpha", "Interleaved"], source: "Induction Drill",
+  },
+  {
+    slug: "/games/syllogism", title: "Syllogism Blitz", tag: "Gc · Deductive Logic", cat: "reasoning",
+    blurb: "Judge the validity of categorical premises without leaning on real-world plausibility or belief bias.",
+    glyph: "∴", metric: "Darii", metricLabel: "Hardest mood cleared", chips: ["Valid", "Invalid", "15 s"], source: "Aristotelian Moods",
+  },
+];
+
+const clinical: (Tool & { instrument: string; items: string })[] = [
+  { slug: "/adhd-test", title: "Adult ADHD Screener", tag: "WHO ASRS v1.1", instrument: "DSM-5 Aligned", items: "18 items · 5 min", blurb: "Standardised self-report checklist reviewing inattentive and hyperactive-impulsive patterns across six Part A criteria." },
+  { slug: "/depression-test", title: "Depression Screener", tag: "PHQ-9", instrument: "Clinical Scale", items: "9 items · 3 min", blurb: "The nine-item Patient Health Questionnaire with severity banding and a printable clinician-ready summary." },
+  { slug: "/anxiety-test", title: "Generalised Anxiety Screener", tag: "GAD-7", instrument: "Clinical Scale", items: "7 items · 3 min", blurb: "Seven-item generalised anxiety scale with dual-domain scoring separating cognitive worry from somatic tension." },
+  { slug: "/autism-test", title: "Autism Spectrum Screener", tag: "AQ-10", instrument: "Screening Tool", items: "10 items · 3 min", blurb: "Abridged Autism Spectrum Quotient with a social, attention-switching and sensory trait profile." },
+  { slug: "/color-blind-test", title: "Ishihara Colour Vision Test", tag: "38-Plate Ishihara", instrument: "Sensory", items: "38 plates · 6 min", blurb: "Full plate series for red-green deficiency, with a numeral-free children's mode using traceable paths." },
+  { slug: "/hearing-test", title: "Frequency Hearing Test", tag: "20 Hz – 20 kHz", instrument: "Sensory", items: "Pure-tone sweep", blurb: "Browser-synthesised pure-tone sweep with independent left and right calibration and an ear-age estimate." },
+  { slug: "/eye-test", title: "Visual Acuity & Snellen Chart", tag: "Snellen / Tumbling E", instrument: "Sensory", items: "Distance calibrated", blurb: "Screen-calibrated Tumbling E acuity chart paired with an astigmatism dial and contrast sensitivity ramp." },
+  { slug: "/mic-test", title: "Microphone Benchmark", tag: "Audio Hardware", instrument: "Diagnostic", items: "Live spectrum", blurb: "Live waveform, decibel meter and instant loopback playback. Audio never leaves your device." },
+];
+
+const reflex: (Tool & { metric: string; metricLabel: string })[] = [
+  { slug: "/reaction-time-test", title: "Visual Reaction Time", tag: "Millisecond Latency", metric: "182", metricLabel: "ms · median of 5", blurb: "Benchmark visuomotor reflex latency using high-resolution hardware timestamps and outlier rejection." },
+  { slug: "/typing-test", title: "Typing Speed & Accuracy", tag: "WPM Benchmark", metric: "94", metricLabel: "wpm · 98% accuracy", blurb: "Monkeytype-grade word and quote modes with a live consistency graph and a per-key error heatmap." },
+  { slug: "/aim-trainer", title: "Precision Aim Trainer", tag: "60 FPS Tracking", metric: "0.42", metricLabel: "s · mean time to target", blurb: "Gridshot and smooth-tracking modes with eDPI conversion and per-target flick accuracy telemetry." },
+  { slug: "/games/click-speed-test", title: "Click Speed Test (CPS)", tag: "Clicks Per Second", metric: "8.6", metricLabel: "cps · 10 s trial", blurb: "Raw clicks-per-second across 5, 10 and 30-second trials with jitter and butterfly technique tracking." },
+];
+
+const circadian: Tool[] = [
+  { slug: "/sleep-calculator", title: "90-Minute Sleep Cycle Calculator", tag: "Circadian", blurb: "Derive wake and bedtimes from full 90-minute cycles, adjusted for your sleep-onset latency and chronotype." },
+  { slug: "/brown-noise", title: "10-Band Brown Noise Generator", tag: "Focus / Sleep", blurb: "Browser-synthesised brown, pink and white noise with a ten-band equaliser, binaural layer and sleep timer." },
+  { slug: "/calorie-calculator", title: "TDEE & Neuro-Metabolic Engine", tag: "Metabolic", blurb: "Mifflin-St Jeor BMR, activity-adjusted TDEE, macro split and a per-organ resting energy breakdown." },
+  { slug: "/circle-of-control", title: "Stoic Circle of Control Matrix", tag: "Mindset", blurb: "Sort what is weighing on you into Control, Influence and Concern, then export a one-page clarity plan." },
+  { slug: "/memento-mori", title: "Memento Mori Life Grid", tag: "Perspective", blurb: "An interactive 80-year, 4,000-week grid rendered against your own date of birth and life expectancy." },
+];
+
+const pillars: (Tool & { cta: string })[] = [
+  { slug: "/matrix-reasoning-test", title: "Matrix Reasoning Guide", tag: "Core Domain", cta: "Explore the guide", blurb: "The five Carpenter transformation rules: progression, distribution of three, XOR superposition, subtraction and topological series." },
+  { slug: "/iq-score-chart", title: "IQ Score Distribution", tag: "Bell Curve", cta: "View the distribution", blurb: "Gaussian parameters (mean 100, SD 15), standard-deviation bands and the classification tiers that map onto them." },
+  { slug: "/iq-percentile-calculator", title: "Percentile Rank Calculator", tag: "Statistical Tool", cta: "Calculate percentile", blurb: "Two-way conversion between deviation IQ and population percentile, with rarity expressed as 1-in-N people." },
+  { slug: "/methodology", title: "2PL IRT Methodology", tag: "Psychometrics", cta: "Read the whitepaper", blurb: "Our 2-parameter logistic item model, Bayesian EAP ability estimation, standard error bands and CHC construct definitions." },
+];
+
+const batteries = [
+  { slug: "/fluid-reasoning-test", code: "Gf", title: "Fluid Reasoning", blurb: "Abstract matrix induction, topological series and XOR cancellation. Culture-reduced, fully non-verbal stimuli." },
+  { slug: "/spatial-reasoning-test", code: "Gv", title: "Visual-Spatial", blurb: "Isometric cube rotation, surface-net folding and orthographic perspective synthesis." },
+  { slug: "/quantitative-reasoning-test", code: "Gq", title: "Quantitative Logic", blurb: "Higher-order difference sequences, interleaved progressions and multi-step relational rate deductions." },
+  { slug: "/verbal-reasoning-test", code: "Gc", title: "Verbal Reasoning", blurb: "Relational analogies, categorical syllogisms and taxonomic language abstraction." },
+];
+
+const faqs = [
+  {
+    q: "Is this IQ test really 100% free with immediate results?",
+    a: "Yes. Many competing sites make you sit a 30-minute exam and then hide the result behind a subscription. FreeIQExam shows your score, percentile and domain breakdown the moment you finish, with no card details and no payment of any kind."
+  },
+  {
+    q: "Why do you not require an email address or user account?",
+    a: "Privacy is the point. We do not collect email addresses, sell user data or send marketing. Scoring runs as JavaScript inside your own browser, so there is no account to create and no personal information to disclose."
+  },
+  {
+    q: "How does this compare to a full clinical assessment?",
+    a: "Our assessment estimates reasoning ability with a 2-parameter logistic item-response model across progressively difficult items. It is an educational screening estimate, not a diagnostic instrument, and it does not replace a WAIS-IV or SB-V battery administered by a licensed psychologist."
+  },
+  {
+    q: "How are the 24 questions structured?",
+    a: "Twenty-four calibrated items are split evenly across the four core CHC domains: six Fluid Reasoning (Gf), six Visual-Spatial (Gv), six Quantitative Reasoning (Gq) and six Verbal Comprehension (Gc) items, rising in difficulty as you progress."
+  },
+  {
+    q: "How can I check my IQ level online right now?",
+    a: "Take the standardised 20-minute assessment or the 10-minute quick screening directly in your browser. Both estimate a deviation IQ on an SD-15 scale with a population percentile and a 95% confidence interval, shown instantly."
+  },
+  {
+    q: "Can you actually increase your IQ score?",
+    a: "Biological fluid intelligence is largely stable, but measured performance is not. Familiarity with matrix transformation rules, regular working-memory and processing-speed drills, good sleep, lower test anxiety and better pacing all remove unforced errors and move your observed score toward your true ceiling."
+  },
+  {
+    q: "Are the clinical screeners a diagnosis?",
+    a: "No. Instruments such as the PHQ-9, GAD-7, ASRS v1.1 and AQ-10 are validated screening questionnaires that indicate whether a conversation with a qualified clinician is worthwhile. They cannot diagnose any condition on their own, and results should be discussed with a healthcare professional."
+  },
+  {
+    q: "What are IQ tests primarily used for today?",
+    a: "In clinical and educational settings, standardised batteries such as the WAIS-IV and WISC-V help identify learning differences, assess cognitive recovery after neurological injury, identify gifted learners and profile relative strengths across working memory, perceptual reasoning and processing speed."
+  },
+];
+
+/* Every indexable tool URL, derived from the arrays above. */
+const allTools = [...games, ...clinical, ...reflex, ...circadian, ...pillars];
 
 const schema = [
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "FreeIQExam",
-    "url": "https://freeiqexam.com/",
-    "description": "Free scientifically grounded cognitive assessment platform utilizing modern psychometrics with zero paywalls."
+    "url": `${SITE}/`,
+    "description": "Free, scientifically grounded cognitive assessment platform using modern psychometrics with zero paywalls."
   },
   {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "FreeIQExam",
-    "url": "https://freeiqexam.com/",
-    "logo": "https://freeiqexam.com/logo-horizontal.svg",
-    "sameAs": [
-      "https://github.com/freeiqexam"
-    ],
-    "description": "An open, privacy-first psychometric platform providing free, research-backed cognitive assessments and brain training drills with zero paywalls."
+    "url": `${SITE}/`,
+    "logo": `${SITE}/logo-horizontal.svg`,
+    "sameAs": ["https://github.com/freeiqexam"],
+    "description": "An open, privacy-first psychometric platform providing free, research-backed cognitive assessments, clinical screeners and brain-training drills with zero paywalls."
   },
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "FreeIQExam Cognitive Assessment",
-    "url": "https://freeiqexam.com/",
+    "url": `${SITE}/`,
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Any",
-    "description": "Standardized 24-item non-verbal cognitive assessment using 2PL Item Response Theory. Instant IQ-scale score estimate with percentile ranking.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "featureList": "24-question non-verbal IQ test, 2PL IRT scoring, instant results, no email required"
+    "browserRequirements": "Requires JavaScript",
+    "description": "Standardised 24-item cognitive assessment scored with 2PL Item Response Theory. Instant IQ-scale estimate with percentile ranking and a 95% confidence interval.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": "24-question CHC-calibrated IQ test, 2PL IRT scoring, instant results, no email required, fully client-side"
   },
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Is this IQ test really 100% free with immediate results?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. Many competitor sites require 30 minutes on an exam only to hit you with a subscription paywall. FreeIQExam.com gives you your score, percentile, and performance breakdown immediately without a credit card or payment of any kind."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Why do you not require an email address or user account?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "We prioritize privacy. We do not harvest email addresses, sell user data, or send spam. Calculations run directly in your browser, so you never need to create accounts or disclose personal information."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How does this test compare to a comprehensive clinical exam?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Our test evaluates non-verbal fluid reasoning using 2-Parameter Logistic Item Response Theory on progressive items. It provides an educational screening estimate of reasoning ability, but is not a clinical diagnostic instrument like a full WAIS-IV or SB-V examination administered by a licensed psychologist."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How are the 24 questions structured?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The assessment consists of 24 original procedural items: 12 classic 3x3 Matrix Reasoning puzzles, 6 3D Cube Rotations, 3 Folding Cube Nets, and 3 Topological Series items. Items scale progressively from introductory patterns to high-difficulty abstract transformations."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How can I actually check my IQ level online?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "You can take our standardized 20-minute cognitive assessment or 10-minute quick screening directly in your browser. Both tests assess non-verbal fluid reasoning and pattern induction, computing an estimated deviation IQ score and population percentile with instant results and no paywalls."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can you increase your IQ score?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "While fundamental biological fluid intelligence is largely genetically stable, your operational performance on IQ tests can improve significantly. Familiarity with matrix transformation rules, cognitive drills (like N-back and mental rotation), high sleep quality, stress management, and test pacing help eliminate unforced errors and unlock your highest natural score."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What are IQ tests primarily used for today?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "In clinical and educational settings, standardized IQ batteries (such as the WAIS-IV and WISC-V) are used to diagnose learning differences, assess cognitive recovery following neurological injury, identify gifted learners, and analyze specific cognitive strengths and weaknesses across working memory, perceptual reasoning, and processing speed."
-        }
-      }
-    ]
+    "mainEntity": faqs.map((f) => ({
+      "@type": "Question",
+      "name": f.q,
+      "acceptedAnswer": { "@type": "Answer", "text": f.a }
+    }))
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "FreeIQExam Cognitive, Clinical and Wellness Tools",
+    "description": "Complete directory of free cognitive games, clinical screeners, reflex benchmarks, circadian utilities and psychometric guides.",
+    "numberOfItems": allTools.length,
+    "itemListElement": allTools.map((t, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": t.title,
+      "url": `${SITE}${t.slug}`
+    }))
   }
 ];
+
+const gameTabs = [
+  { id: "all", label: `All Drills (${games.length})` },
+  { id: "memory", label: "Working Memory" },
+  { id: "speed", label: "Attention & Speed" },
+  { id: "reasoning", label: "Reasoning & Space" },
+];
+
+const steps = ["1. Matrix", "2. Cube Net", "3. Series", "4. Syllogism", "5. XOR"];
+
+const cardBase =
+  "fx-card group flex flex-col justify-between rounded-3xl p-6 sm:p-7 transition-all duration-200";
+const badgeBase =
+  "inline-flex items-center rounded-md border px-2.5 py-1 font-mono text-[13px] font-semibold tracking-wide fx-badge";
+const linkRow =
+  "mt-6 flex items-center gap-2 border-t pt-4 text-[15px] font-semibold fx-hairline fx-action-text";
 ---
 
 <Layout title={title} description={description} schema={schema}>
-  <!-- Shared Global Navigation Header -->
+  <style is:inline>
+    /* =====================================================================
+       FREEIQEXAM DESIGN TOKENS — Apple canvas + Vercel hairlines +
+       Raycast dark glass. One action accent. No decorative rainbows.
+       HYBRID FUSION v2: Candidate 3 base + Candidate 2 radial glow.
+       Typography triad: Geist display / Inter body / Geist Mono badges.
+       ===================================================================== */
+    :root {
+      --font-display: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --ease-fusion: cubic-bezier(0.23, 1, 0.32, 1);
+                  --fx-canvas: #ffffff;
+      --fx-parchment: #f5f5f7;
+      --fx-surface: #ffffff;
+      --fx-surface-2: #fafafa;
+      --fx-line: #e4e4e7;
+      --fx-line-soft: #f0f0f0;
+      --fx-ink: #09090b;
+      --fx-ink-2: #52525b;
+      --fx-ink-3: #71717a;
+      --fx-action: #0066cc;
+      --fx-action-hover: #0071e3;
+      --fx-action-ink: #ffffff;
+      --fx-badge-bg: #f4f4f5;
+      --fx-badge-ink: #3f3f46;
+      --fx-halo: rgba(0, 102, 204, 0.10);
+      --fx-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 8px 24px -12px rgba(0, 0, 0, 0.08);
+      --fx-shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 36px -14px rgba(0, 0, 0, 0.14);
+      --fx-bevel: none;
+    }
+
+    .dark {
+      --fx-canvas: #000000;
+      --fx-parchment: #090a0f;
+      --fx-surface: #0f1016;
+      --fx-surface-2: #0b0c11;
+      --fx-line: rgba(255, 255, 255, 0.08);
+      --fx-line-soft: rgba(255, 255, 255, 0.05);
+      --fx-ink: #ffffff;
+      --fx-ink-2: #a1a1aa;
+      --fx-ink-3: #71717a;
+      --fx-action: #2997ff;
+      --fx-action-hover: #3b82f6;
+      --fx-action-ink: #000814;
+      --fx-badge-bg: #18181b;
+      --fx-badge-ink: #d4d4d8;
+      --fx-halo: rgba(41, 151, 255, 0.14);
+      --fx-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.7);
+      --fx-shadow-lift: 0 20px 44px -16px rgba(0, 0, 0, 0.8);
+      --fx-bevel: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+    }
+
+    /* ---------- Surfaces ---------- */
+    .fx-canvas { background: var(--fx-canvas); }
+    .fx-parchment { background: var(--fx-parchment); }
+    .fx-ink { color: var(--fx-ink); }
+    .fx-ink-2 { color: var(--fx-ink-2); }
+    .fx-ink-3 { color: var(--fx-ink-3); }
+    .fx-hairline { border-color: var(--fx-line); }
+    .fx-rule { border-top: 1px solid var(--fx-line); }
+
+    .fx-action-text { color: var(--fx-action); }
+    .fx-action-dot { background: var(--fx-action); }
+
+    /* ---------- Cards: single-level anatomy, 1px hairline, no nesting ---------- */
+    .fx-card {
+      background: var(--fx-surface);
+      border: 1px solid var(--fx-line);
+      box-shadow: var(--fx-shadow), var(--fx-bevel);
+    }
+    .fx-card:hover {
+      border-color: color-mix(in srgb, var(--fx-action) 45%, var(--fx-line));
+      box-shadow: var(--fx-shadow-lift), var(--fx-bevel);
+      transform: translateY(-2px);
+    }
+    .fx-card-flat { background: var(--fx-surface); border: 1px solid var(--fx-line); box-shadow: var(--fx-bevel); }
+
+    /* ---------- Unified neutral badge (identical in every category) ---------- */
+    .fx-badge {
+      background: var(--fx-badge-bg);
+      color: var(--fx-badge-ink);
+      border-color: var(--fx-line);
+    }
+
+    /* ---------- Button grammar — Emil tactile 160ms, scale 0.97 ---------- */
+    .fx-cta {
+      background: var(--fx-action);
+      color: var(--fx-action-ink);
+      border-radius: 100px;
+      transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms ease, box-shadow 200ms ease, opacity 200ms ease;
+      box-shadow: 0 10px 28px -12px var(--fx-halo);
+    }
+    .fx-cta:hover { background: var(--fx-action-hover); transform: scale(1.01); }
+    .fx-cta:active { transform: scale(0.97); }
+
+    .fx-ghost {
+      background: var(--fx-surface-2);
+      color: var(--fx-ink);
+      border: 1px solid var(--fx-line);
+      border-radius: 100px;
+      transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease, opacity 200ms ease;
+    }
+    .fx-ghost:hover { border-color: color-mix(in srgb, var(--fx-action) 55%, var(--fx-line)); transform: scale(1.01); }
+    .fx-ghost:active { transform: scale(0.97); }
+
+    /* ---------- Card hover: 1px brightening + ambient halo reveal ---------- */
+    .fx-card-halo { opacity: 0; transition: opacity 200ms ease; }
+    .fx-card:hover .fx-card-halo { opacity: 1; }
+
+    /* ---------- Entering states: never from scale(0) ---------- */
+    .fx-enter { transform: scale(0.95); opacity: 0; filter: blur(2px); }
+    .fx-enter.is-in { transform: scale(1); opacity: 1; filter: blur(0); transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1), opacity 200ms ease, filter 200ms ease; }
+
+    /* ---------- Hero fusion glow (Candidate 2 luxury depth) ---------- */
+    
+    /* ---------- Typography triad enforcement (scoped) ---------- */
+    .fx-display { font-family: var(--font-display); }
+    .fx-body { font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+    .fx-mono { font-family: var(--font-mono); }
+
+    .fx-focus:focus-visible { outline: 2px solid var(--fx-action); outline-offset: 2px; }
+
+    /* ---------- Segmented tabs ---------- */
+    .fx-tabs { background: var(--fx-surface-2); border: 1px solid var(--fx-line); border-radius: 100px; }
+    .fx-tab { color: var(--fx-ink-2); border-radius: 100px; transition: color .2s ease, background-color .2s ease; }
+    .fx-tab:hover { color: var(--fx-ink); }
+    .fx-tab[aria-selected="true"] { background: var(--fx-action); color: var(--fx-action-ink); }
+
+    /* ---------- Full-bleed reel ---------- */
+    .fx-reel-bleed { width: 100%; overflow: hidden; }
+    .fx-reel {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-x: contain;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      cursor: grab;
+      padding: 10px max(1rem, calc((100vw - 80rem) / 2 + 1.5rem)) 36px;
+      mask-image: linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 64px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 64px), transparent 100%);
+    }
+    @media (min-width: 768px) {
+      .fx-reel {
+        gap: 28px;
+        mask-image: linear-gradient(to right, transparent 0, #000 72px, #000 calc(100% - 180px), transparent 100%);
+        -webkit-mask-image: linear-gradient(to right, transparent 0, #000 72px, #000 calc(100% - 180px), transparent 100%);
+      }
+    }
+    .fx-reel::-webkit-scrollbar { display: none; }
+    .fx-reel.is-dragging { cursor: grabbing; scroll-behavior: auto; scroll-snap-type: none; user-select: none; }
+
+    .fx-reel-card {
+      flex: 0 0 286px;
+      width: 286px;
+      scroll-snap-align: start;
+    }
+    @media (min-width: 768px) { .fx-reel-card { flex-basis: 344px; width: 344px; } }
+
+    .fx-nav-btn {
+      width: 44px; height: 44px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 9999px;
+      background: var(--fx-surface-2);
+      border: 1px solid var(--fx-line);
+      color: var(--fx-ink);
+      transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease, opacity 200ms ease;
+      box-shadow: var(--fx-bevel);
+    }
+    .fx-nav-btn:hover:not(:disabled) { border-color: color-mix(in srgb, var(--fx-action) 55%, var(--fx-line)); }
+    .fx-nav-btn:active:not(:disabled) { transform: scale(0.97); }
+    .fx-nav-btn:disabled { opacity: .35; cursor: default; }
+
+    /* ---------- Linear-style hardware-accelerated hero entrance (v3 fusion) ----------
+       Rare/first-time load animation only. GPU properties: transform + opacity + filter.
+       Marketing-tier duration (1050ms) is intentional for hero storytelling;
+       all UI controls stay under 250ms per Emil 250ms rule. */
+    @keyframes linearHeroEntrance {
+      0% { opacity: 0; filter: blur(14px); transform: translateY(18px) scale(0.98); }
+      100% { opacity: 1; filter: blur(0px); transform: translateY(0px) scale(1); }
+    }
+    .linear-fade-in {
+      opacity: 0;
+      animation: linearHeroEntrance 1050ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: transform, opacity, filter;
+    }
+    .linear-delay-100 { animation-delay: 80ms; }
+    .linear-delay-200 { animation-delay: 220ms; }
+    .linear-delay-300 { animation-delay: 380ms; }
+    .linear-delay-400 { animation-delay: 540ms; }
+    .linear-delay-500 { animation-delay: 700ms; }
+    .linear-delay-600 { animation-delay: 860ms; }
+
+    /* ---------- HUD visual inside cards (no nested hard border) ---------- */
+    .fx-hud {
+      position: relative;
+      border-radius: 18px;
+      background: var(--fx-surface-2);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .fx-hud::before {
+      content: "";
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(90% 90% at 50% 0%, var(--fx-halo), transparent 70%);
+    }
+    .fx-hud > * { position: relative; z-index: 1; }
+    .fx-hud-glyph {
+      font-variant-numeric: tabular-nums;
+      color: var(--fx-action);
+    }
+
+    /* ---------- Sample puzzle stage ---------- */
+    .fx-stage { background: var(--fx-surface-2); border: 1px solid var(--fx-line); border-radius: 22px; box-shadow: var(--fx-bevel); }
+    .fx-cell { background: transparent; }
+    .fx-slot { border: 1.5px dashed var(--fx-action); border-radius: 14px; color: var(--fx-action); }
+    .fx-chip { background: var(--fx-badge-bg); color: var(--fx-ink); border-radius: 10px; }
+    .fx-premise { background: var(--fx-surface-2); border: 1px solid var(--fx-line); border-radius: 14px; }
+    .fx-glyph { stroke: var(--fx-action); }
+    .fx-fill { fill: var(--fx-action); }
+
+    .fx-opt {
+      background: var(--fx-surface);
+      border: 1px solid var(--fx-line);
+      border-radius: 16px;
+      transition: transform .18s cubic-bezier(.16,1,.3,1), border-color .18s ease, box-shadow .18s ease;
+      box-shadow: var(--fx-bevel);
+    }
+    .fx-opt:hover { border-color: var(--fx-action); transform: translateY(-2px); }
+    .fx-opt.is-correct { border-color: #10b981; box-shadow: 0 0 0 1px #10b981; transform: none; }
+    .fx-opt.is-wrong { border-color: #f43f5e; box-shadow: 0 0 0 1px #f43f5e; transform: none; }
+    .fx-opt.is-reveal { border-color: rgba(16, 185, 129, .65); border-style: dashed; }
+    .fx-feedback { background: var(--fx-surface-2); border: 1px solid var(--fx-line); border-radius: 16px; }
+    .fx-feedback.is-correct { border-color: rgba(16, 185, 129, .5); }
+    .fx-feedback.is-wrong { border-color: rgba(244, 63, 94, .5); }
+
+    /* ---------- Stepper pills ---------- */
+    .fx-step { background: var(--fx-surface-2); color: var(--fx-ink-2); border: 1px solid var(--fx-line); border-radius: 14px; transition: all .2s ease; }
+    .fx-step:hover { color: var(--fx-ink); }
+    .fx-step.is-active { background: var(--fx-action); color: var(--fx-action-ink); border-color: transparent; }
+    .fx-step.is-done { color: var(--fx-ink); border-color: color-mix(in srgb, var(--fx-action) 45%, var(--fx-line)); }
+
+    /* ---------- FAQ ---------- */
+    .fx-faq { background: var(--fx-surface); border: 1px solid var(--fx-line); border-radius: 20px; box-shadow: var(--fx-bevel); }
+    .fx-faq[open] { background: var(--fx-surface-2); }
+    .fx-faq summary::-webkit-details-marker { display: none; }
+
+    /* ---------- Scroll reveal ---------- */
+    .reveal-on-scroll { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+    .reveal-on-scroll.revealed { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal-on-scroll { opacity: 1 !important; transform: none !important; transition: none !important; }
+      .fx-card:hover, .fx-opt:hover, .fx-cta:hover, .fx-ghost:hover, .fx-nav-btn:hover { transform: none !important; }
+      .fx-reel { scroll-behavior: auto; }
+      .fx-pulse { animation: none !important; }
+      .fx-enter { transform: none !important; opacity: 1 !important; filter: none !important; transition-duration: 0.01ms !important; }
+            .linear-fade-in { opacity: 1 !important; animation: none !important; filter: none !important; transform: none !important; will-change: auto !important; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+
+    .fx-pulse { animation: fxPulse 2.4s ease-in-out infinite; }
+    @keyframes fxPulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  </style>
+
   <Header currentPath="/" />
 
-  <main class="flex-1 bg-white dark:bg-black transition-colors">
-    <!-- HERO SECTION (Pure White Background + Monumental Apple Scale) -->
-    <section class="relative pt-12 pb-14 md:pt-20 md:pb-20 bg-white dark:bg-black overflow-hidden">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center reveal-on-scroll">
-        <!-- Vercel-Style Eyebrow Badge -->
-        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono text-zinc-700 dark:text-zinc-300 shadow-2xs mb-8">
-          <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
-          <span class="hidden sm:inline">4-DOMAIN CHC ASSESSMENT - FLUID, SPATIAL, QUANTITATIVE, VERBAL</span>
-          <span class="sm:hidden">4-DOMAIN CHC ASSESSMENT</span>
-        </div>
+  <main class="flex-1 fx-canvas transition-colors">
 
-        <!-- Monumental Display H1 (Apple Monochrome Typography) -->
-        <h1 class="font-heading font-extrabold text-4xl sm:text-6xl md:text-7xl text-zinc-950 dark:text-white tracking-tight leading-[1.08] mb-8">
-          Free Online IQ Test.<br />
-          <span class="text-blue-600 dark:text-blue-500">
-            Get Your Estimated Score Instantly.
-          </span>
+    <!-- ===================================================================
+         1. HERO — Flagship Cognitive Assessment
+         =================================================================== -->
+    <section id="hero" aria-labelledby="hero-title" class="relative fx-canvas overflow-hidden pt-14 pb-16 md:pt-24 md:pb-24">
+            <div class="relative mx-auto max-w-4xl px-4 sm:px-6 text-center">
+
+        <p class="fx-mono linear-fade-in linear-delay-100 inline-flex min-h-[44px] items-center gap-2.5 text-[13px] sm:text-sm font-medium uppercase tracking-widest fx-ink-2">
+          <span class="h-2 w-2 rounded-full fx-action-dot fx-pulse" aria-hidden="true"></span>
+          <span class="hidden sm:inline">4-Domain CHC Assessment · Fluid · Spatial · Quantitative · Verbal</span>
+          <span class="sm:hidden">4-Domain CHC Assessment</span>
+        </p>
+
+        <h1 id="hero-title" class="fx-display linear-fade-in linear-delay-200 mt-8 text-4xl font-extrabold leading-[1.08] tracking-[-0.025em] fx-ink sm:text-5xl md:text-6xl">
+          Measure how you think.<br />
+          <span class="fx-action-text">Keep the result yours.</span>
         </h1>
 
-        <!-- High-Legibility Subtitle -->
-        <p class="text-lg sm:text-2xl text-zinc-600 dark:text-zinc-300 max-w-3xl mx-auto mb-10 sm:mb-12 leading-relaxed font-normal">
-          Evaluate your cognitive abilities across Fluid Reasoning, Visual-Spatial, Quantitative, and Verbal domains. Get your estimated IQ-scale score (SD 15) and percentile rank instantly, with <strong class="text-zinc-950 dark:text-white font-semibold">no email, no sign-up, and no credit card required.</strong>
+        <p class="fx-body linear-fade-in linear-delay-300 mx-auto mt-8 max-w-2xl fx-ink-2">
+          A free online IQ test and cognitive assessment hub built around 24 standardized items, 2PL Item Response Theory scoring, instant results, and a zero-paywall, no-email starting point.
         </p>
 
-        <!-- Large Tactile Action Buttons - Dual Track -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
-          <a 
-            href="/test" 
-            class="w-full sm:w-auto px-9 py-4 sm:py-5 rounded-full text-base sm:text-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-600/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3"
-          >
-            <span>Full Test (20 Min)</span>
-            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        <div class="linear-fade-in linear-delay-400 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a href="/test" class="fx-cta fx-focus flex min-h-[44px] w-full items-center justify-center gap-3 px-9 py-4 text-base font-semibold sm:w-auto sm:py-[18px] sm:text-lg">
+            <span>Take the Full Test (20 min)</span>
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </a>
-          <a 
-            href="/quick-test" 
-            class="w-full sm:w-auto px-8 py-4 sm:py-5 rounded-full text-base sm:text-lg font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-all flex items-center justify-center gap-2"
-          >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          <a href="/quick-test" class="fx-ghost fx-focus flex min-h-[44px] w-full items-center justify-center gap-2.5 px-8 py-4 text-base font-semibold sm:w-auto sm:py-[18px] sm:text-lg">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            <span>Quick Screening (10 Min)</span>
+            <span>Quick Screening (10 min)</span>
           </a>
         </div>
 
-        <!-- Clean 4-Bullet Trust Strip -->
-        <div class="flex flex-wrap items-center justify-center gap-y-3 gap-x-8 text-sm sm:text-base font-medium text-zinc-600 dark:text-zinc-400">
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span>Instant Results</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span>No Email Needed</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span>Standardized SD 15</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span>Zero Paywalls</span>
-          </div>
+        <ul class="linear-fade-in linear-delay-500 mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] font-medium fx-ink-2 sm:text-sm">
+          <li class="flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full fx-action-dot" aria-hidden="true"></span>4-Domain CHC Calibrated
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full fx-action-dot" aria-hidden="true"></span>2PL IRT Scoring Math
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full fx-action-dot" aria-hidden="true"></span>100% Free, 100% Client-Side
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="h-1.5 w-1.5 rounded-full fx-action-dot" aria-hidden="true"></span>Instant Results, Zero Paywalls
+          </li>
+        </ul>
+
+        <p class="linear-fade-in linear-delay-600 mt-8 inline-flex items-center gap-2 font-mono text-[13px] fx-ink-3">
+          Scope: non-verbal fluid reasoning (Gf) and visual processing (Gv) are weighted most heavily.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         2. INTERACTIVE SAMPLE STEPPER — 5 live puzzles
+         =================================================================== -->
+    <section id="sample-items" aria-labelledby="sample-title" class="fx-parchment fx-rule py-16 transition-colors sm:py-24">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 reveal-on-scroll">
+
+        <div class="text-center">
+          <p class="font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider fx-action-text">Interactive Sample Items</p>
+          <h2 id="sample-title" class="mt-3 font-heading text-3xl font-bold tracking-tight fx-ink sm:text-4xl md:text-5xl">
+            Try the reasoning before you commit
+          </h2>
+          <p class="mx-auto mt-4 max-w-2xl text-base leading-relaxed fx-ink-2 sm:text-lg">
+            Try 5 free IQ test practice questions, one from each reasoning family used in the full exam, and see the exact transformation rule behind each solution.
+          </p>
         </div>
 
-        <!-- Transparent Scope Disclosure -->
-        <div class="mt-8 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300">
-          <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>
-          <span>Evaluates Non-Verbal Fluid Reasoning (Gf) &amp; Visual Processing (Gv)</span>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3" role="tablist" aria-label="Sample question stepper">
+          {steps.map((label, i) => (
+            <button
+              type="button"
+              id={`step-dot-${i}`}
+              role="tab"
+              aria-selected={i === 0 ? "true" : "false"}
+              aria-controls="sample-stage"
+              class={`fx-step fx-focus sample-step-btn min-h-[44px] px-4 py-2 text-[13px] font-semibold sm:text-sm ${i === 0 ? "is-active" : ""}`}
+            >{label}</button>
+          ))}
+        </div>
+
+        <!-- Stage: single-level anatomy, no card inside a card -->
+        <div id="sample-stage" class="mt-10">
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4 fx-hairline">
+            <div class="flex flex-wrap items-center gap-3">
+              <span id="sample-domain-badge" class={badgeBase}>Fluid Reasoning (Gf)</span>
+              <span id="sample-subtype-text" class="text-[13px] font-medium fx-ink-2 sm:text-sm">Shape &amp; count progression</span>
+            </div>
+            <span id="sample-counter-text" class="font-mono text-[13px] font-semibold fx-ink-3">Item 1 of 5</span>
+          </div>
+
+          <div class="mt-8 flex min-h-[360px] flex-col items-center justify-between gap-10 lg:flex-row lg:gap-14">
+            <div id="sample-stimulus-box" class="flex w-full shrink-0 flex-col items-center justify-center lg:w-auto"></div>
+
+            <div class="flex w-full flex-col justify-center lg:w-1/2">
+              <p id="sample-prompt-text" class="mb-4 text-center text-[15px] font-semibold leading-snug fx-ink sm:text-base lg:text-left">
+                Which tile completes the matrix pattern?
+              </p>
+
+              <div id="sample-options-container" class="grid grid-cols-2 gap-3" role="group" aria-label="Answer options"></div>
+
+              <div id="sample-feedback" class="fx-feedback mt-5 p-4 text-center text-[13px] font-medium fx-ink-2 sm:text-sm" role="status" aria-live="polite">
+                Select an option above to check your solution.
+              </div>
+
+              <button
+                type="button"
+                id="btn-sample-advance"
+                class="fx-cta fx-focus mt-4 hidden min-h-[44px] w-full items-center justify-center gap-2 px-6 py-3.5 text-[15px] font-semibold sm:text-base"
+              >
+                <span id="btn-sample-advance-text">Next sample item</span>
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="sample-completion-banner" class="fx-card-flat mt-10 hidden flex-col items-center rounded-3xl p-7 text-center sm:p-9">
+            <span class={badgeBase}>5 of 5 samples explored</span>
+            <h3 class="mt-4 font-heading text-xl font-semibold fx-ink sm:text-2xl">Ready for the full assessment?</h3>
+            <p class="mt-2 max-w-lg text-[15px] leading-relaxed fx-ink-2 sm:text-base">
+              These five items map onto the four broad CHC domains. The standardised 24-item assessment returns a scored estimate with a percentile rank and confidence interval.
+            </p>
+            <div class="mt-6 flex w-full max-w-md flex-col items-center justify-center gap-3 sm:flex-row">
+              <a href="/test" class="fx-cta fx-focus flex min-h-[44px] w-full items-center justify-center px-7 py-3.5 text-[15px] font-semibold sm:w-auto">Full assessment (20 min)</a>
+              <a href="/quick-test" class="fx-ghost fx-focus flex min-h-[44px] w-full items-center justify-center px-6 py-3.5 text-[15px] font-semibold sm:w-auto">Quick screening (10 min)</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- INTERACTIVE 5-ITEM COGNITIVE SAMPLE -->
-    <section id="demo-puzzle" class="py-14 sm:py-18 bg-zinc-50 dark:bg-zinc-950/60 border-t border-zinc-200/80 dark:border-zinc-800 transition-colors">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 reveal-on-scroll">
-        <!-- Section Header -->
-        <div class="text-center mb-8 sm:mb-10">
-          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wider mb-3">
-            <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-            Interactive Sample Items
-          </div>
-          <h2 class="font-heading font-bold text-3xl sm:text-4xl text-zinc-950 dark:text-white mt-1 tracking-tight">
-            Test Your Cognitive Reasoning
-          </h2>
-          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 mt-2 max-w-2xl mx-auto">
-            Experience 5 calibrated sample questions across Fluid, Spatial, Quantitative, and Verbal intelligence domains.
-          </p>
+    <!-- ===================================================================
+         3. NEUROCOGNITIVE BRAIN TRAINING ARENA — full-bleed reel, 10 drills
+         =================================================================== -->
+    <section id="training-arena" aria-labelledby="arena-title" class="fx-canvas fx-rule overflow-hidden py-16 transition-colors sm:py-24">
 
-          <!-- Stepper Navigation Pills -->
-          <div class="flex items-center justify-center gap-2 sm:gap-3 mt-6" aria-label="Sample questions stepper">
-            <button
-              type="button"
-              id="step-dot-0"
-              class="sample-step-btn min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-bold transition-all bg-blue-600 text-white shadow-xs cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-              aria-label="Jump to sample question 1"
-            >
-              1. Matrix
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end reveal-on-scroll">
+          <div class="max-w-xl">
+            <p class="font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider fx-action-text">Evidence-Based Brain Training</p>
+            <h2 id="arena-title" class="mt-3 font-heading text-3xl font-bold tracking-tight fx-ink sm:text-4xl md:text-5xl">
+              Ten drills for the machinery underneath the score
+            </h2>
+            <p class="mt-4 text-base leading-relaxed fx-ink-2 sm:text-lg">
+              Working memory, inhibitory control, processing speed and mental rotation are the core brain games and cognitive drills that support higher test performance.
+            </p>
+          </div>
+
+          <div class="fx-tabs inline-flex items-center gap-1 self-start p-1.5 lg:self-end" role="tablist" aria-label="Filter drills by cognitive category">
+            {gameTabs.map((t, i) => (
+              <button
+                type="button"
+                role="tab"
+                data-arena-tab={t.id}
+                aria-selected={i === 0 ? "true" : "false"}
+                aria-controls="arena-reel"
+                class="fx-tab fx-focus min-h-[44px] shrink-0 whitespace-nowrap px-4 py-2 text-[13px] font-semibold sm:text-sm"
+              >{t.label}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- 100vw bleed track; header above stays container-aligned -->
+      <div class="fx-reel-bleed mt-10">
+        <div class="fx-reel" id="arena-reel" role="region" aria-label="Cognitive training drills carousel" tabindex="0">
+          {games.map((g) => (
+            <article class={`fx-reel-card ${cardBase}`} data-cat={g.cat}>
+              <div>
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <span class="fx-hud-glyph fx-card-flat flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-heading text-xl font-bold" aria-hidden="true">{g.glyph}</span>
+                    <div>
+                      <h3 class="font-heading text-xl font-semibold leading-tight fx-ink">{g.title}</h3>
+                      <p class="mt-1 font-mono text-[13px] fx-ink-3">{g.tag}</p>
+                    </div>
+                  </div>
+                  <span class={badgeBase}>{g.source}</span>
+                </div>
+
+                <p class="mt-4 text-[15px] leading-relaxed fx-ink-2 sm:text-base">{g.blurb}</p>
+
+                <!-- Seamless HUD preview: no nested hard border -->
+                <div class="fx-hud mt-6 flex h-40 flex-col justify-between p-4">
+                  <div class="flex items-center justify-between font-mono text-[13px] fx-ink-3">
+                    <span class="flex items-center gap-1.5">
+                      <span class="h-1.5 w-1.5 rounded-full fx-action-dot" aria-hidden="true"></span>Live session
+                    </span>
+                    <span class="fx-ink">{g.metricLabel}</span>
+                  </div>
+                  <p class="my-auto text-center font-heading text-3xl font-extrabold tracking-tight fx-ink">{g.metric}</p>
+                  <div class="flex items-center justify-center gap-2">
+                    {g.chips.map((c) => (
+                      <span class="fx-chip px-2.5 py-1 font-mono text-[13px]">{c}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <a href={g.slug} class={`${linkRow} fx-focus min-h-[44px]`}>
+                <span>Play drill</span>
+                <span class="transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div class="mx-auto max-w-7xl px-4 sm:px-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-t pt-6 fx-hairline">
+          <a href="/games" class="fx-focus group inline-flex min-h-[44px] items-center gap-2 text-[15px] font-semibold fx-ink-2 hover:opacity-80 sm:text-base">
+            <span>Open the full training hub</span>
+            <span class="transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+          </a>
+          <div class="flex items-center gap-2.5">
+            <button type="button" id="arena-prev" class="fx-nav-btn fx-focus" aria-label="Scroll to previous drills" disabled>
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
             </button>
-            <button
-              type="button"
-              id="step-dot-1"
-              class="sample-step-btn min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-semibold transition-all bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-              aria-label="Jump to sample question 2"
-            >
-              2. 3D Cube
-            </button>
-            <button
-              type="button"
-              id="step-dot-2"
-              class="sample-step-btn min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-semibold transition-all bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-              aria-label="Jump to sample question 3"
-            >
-              3. Series
-            </button>
-            <button
-              type="button"
-              id="step-dot-3"
-              class="sample-step-btn min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-semibold transition-all bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-              aria-label="Jump to sample question 4"
-            >
-              4. Logic
-            </button>
-            <button
-              type="button"
-              id="step-dot-4"
-              class="sample-step-btn min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-semibold transition-all bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-              aria-label="Jump to sample question 5"
-            >
-              5. XOR Rule
+            <button type="button" id="arena-next" class="fx-nav-btn fx-focus" aria-label="Scroll to next drills">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
             </button>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Elevated Question Card Container -->
-        <div class="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden">
-          <!-- Card Header Bar -->
-          <div class="px-6 sm:px-8 py-4 sm:py-5 border-b border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 bg-zinc-50/60 dark:bg-zinc-900/80">
-            <div class="flex items-center gap-3">
-              <span id="sample-domain-badge" class="font-mono font-bold text-xs px-3 py-1 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                Fluid Reasoning (Gf)
-              </span>
-              <span id="sample-subtype-text" class="text-xs sm:text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Shape &amp; Count Progression
-              </span>
-            </div>
+    <!-- ===================================================================
+         4. CLINICAL & SENSORY SCREENERS — 8 instruments
+         =================================================================== -->
+    <section id="clinical" aria-labelledby="clinical-title" class="fx-parchment fx-rule py-16 transition-colors sm:py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 reveal-on-scroll">
 
-            <!-- Stepper Controls -->
-            <div class="flex items-center gap-2">
-              <span id="sample-counter-text" class="text-xs font-mono font-semibold text-zinc-500 mr-2">
-                Item 1 of 5
+        <div class="max-w-2xl">
+          <p class="font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider fx-action-text">Clinical &amp; Sensory Screeners</p>
+          <h2 id="clinical-title" class="mt-3 font-heading text-3xl font-bold tracking-tight fx-ink sm:text-4xl md:text-5xl">
+            Validated instruments, run entirely on your device
+          </h2>
+          <p class="mt-4 text-base leading-relaxed fx-ink-2 sm:text-lg">
+            Standardised self-assessment screeners for ADHD, depression, anxiety, autism, and sensory acuity, scored client-side with published clinical cut-offs. These indicate whether a conversation with a clinician is worthwhile &mdash; they are not diagnoses.
+          </p>
+        </div>
+
+        <div class="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {clinical.map((t) => (
+            <a href={t.slug} class={`${cardBase} fx-focus`}>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class={badgeBase}>{t.tag}</span>
+                  <span class={badgeBase}>{t.instrument}</span>
+                </div>
+                <h3 class="mt-5 font-heading text-xl font-semibold leading-snug fx-ink sm:text-2xl">{t.title}</h3>
+                <p class="mt-3 text-[15px] leading-relaxed fx-ink-2">{t.blurb}</p>
+                <p class="mt-4 font-mono text-[13px] fx-ink-3">{t.items}</p>
+              </div>
+              <span class={`${linkRow} min-h-[44px]`}>
+                <span>Start screener</span>
+                <span class="transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
               </span>
-              <button
-                type="button"
-                id="btn-sample-prev"
-                class="min-h-[44px] min-w-[44px] p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-                aria-label="Previous sample question"
-                disabled
-              >
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                id="btn-sample-next"
-                class="min-h-[44px] min-w-[44px] p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-                aria-label="Next sample question"
-              >
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-              </button>
-            </div>
+            </a>
+          ))}
+        </div>
+
+        <p class="mt-8 max-w-3xl text-[13px] leading-relaxed fx-ink-3 sm:text-sm">
+          These screeners are educational tools. They do not diagnose any condition and are not a substitute for assessment by a qualified healthcare professional. If your results concern you, speak to a clinician.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         5. REFLEX, SPEED & MOTOR PRECISION LABS — 4 tools
+         =================================================================== -->
+    <section id="reflex-labs" aria-labelledby="reflex-title" class="fx-canvas fx-rule py-16 transition-colors sm:py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 reveal-on-scroll">
+
+        <div class="max-w-2xl">
+          <p class="font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider fx-action-text">Reflex, Speed &amp; Motor Precision</p>
+          <h2 id="reflex-title" class="mt-3 font-heading text-3xl font-bold tracking-tight fx-ink sm:text-4xl md:text-5xl">
+            Millisecond telemetry for the motor layer
+          </h2>
+          <p class="mt-4 text-base leading-relaxed fx-ink-2 sm:text-lg">
+            High-resolution online benchmarks for reaction time, typing speed WPM, click speed (CPS), and mouse aim precision, with millisecond telemetry.
+          </p>
+        </div>
+
+        <div class="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {reflex.map((t) => (
+            <a href={t.slug} class={`${cardBase} fx-focus`}>
+              <div>
+                <span class={badgeBase}>{t.tag}</span>
+                <div class="fx-hud mt-5 flex h-28 flex-col items-center justify-center p-4">
+                  <p class="font-heading text-4xl font-extrabold tracking-tight fx-ink">{t.metric}</p>
+                  <p class="mt-1.5 font-mono text-[13px] fx-ink-3">{t.metricLabel}</p>
+                </div>
+                <h3 class="mt-5 font-heading text-xl font-semibold leading-snug fx-ink sm:text-2xl">{t.title}</h3>
+                <p class="mt-3 text-[15px] leading-relaxed fx-ink-2">{t.blurb}</p>
+              </div>
+              <span class={`${linkRow} min-h-[44px]`}>
+                <span>Run benchmark</span>
+                <span class="transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         6. CIRCADIAN, HEALTH & RESILIENCE — 5 tools (bento)
+         =================================================================== -->
+    <section id="circadian" aria-labelledby="circadian-title" class="fx-parchment fx-rule py-16 transition-colors sm:py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 reveal-on-scroll">
+
+        <div class="max-w-2xl">
+          <p class="font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider fx-action-text">Circadian, Health &amp; Resilience</p>
+          <h2 id="circadian-title" class="mt-3 font-heading text-3xl font-bold tracking-tight fx-ink sm:text-4xl md:text-5xl">
+            The conditions your cognition actually runs on
+          </h2>
+          <p class="mt-4 text-base leading-relaxed fx-ink-2 sm:text-lg">
+            Calculate optimal 90-minute sleep cycles, stream soothing brown noise, and determine your daily calorie intake and TDEE maintenance requirements.
+          </p>
+        </div>
+
+        <div class="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
+          {circadian.map((t, i) => (
+            <a href={t.slug} class={`${cardBase} fx-focus ${i < 2 ? "lg:col-span-3" : "lg:col-span-2"}`}>
+              <div>
+                <span class={badgeBase}>{t.tag}</span>
+                <h3 class="mt-5 font-heading text-xl font-semibold leading-snug fx-ink sm:text-2xl">{t.title}</h3>
+                <p class="mt-3 text-[15px] leading-relaxed fx-ink-2 sm:text-base">{t.blurb}</p>
+              </div>
+              <span class={`${linkRow} min-h-[44px]`}>
+                <span>Open tool</span>
+                <span class="transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         7. SCIENTIFIC INTELLIGENCE PILLARS + specialised batteries
+         =================================================================== -->
+    <section id="pillars" aria-labelledby="pillars-title" class="fx-canvas fx-rule py-16 transition-colors sm:py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 reveal-on-scroll">
+
+        <div class="mx-auto max-w-3xl text-center">
+          <p class="font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider fx-action-text">Assessment Architecture</p>
+          <h2 id="pillars-title" class="mt-3 font-heading text-3xl font-bold tracking-tight fx-ink sm:text-4xl md:text-5xl">
+            Scientific intelligence pillars
+          </h2>
+          <p class="mt-4 text-base leading-relaxed fx-ink-2 sm:text-lg">
+            Explore standard IQ score distribution bell curves, percentile rank conversions, WAIS classification tiers, and 2PL IRT psychometric scoring models.
+          </p>
+        </div>
+
+        <div class="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
+          {pillars.map((p) => (
+            <a href={p.slug} class={`${cardBase} fx-focus sm:p-8`}>
+              <div>
+                <span class={badgeBase}>{p.tag}</span>
+                <h3 class="mt-5 font-heading text-xl font-semibold fx-ink sm:text-2xl">{p.title}</h3>
+                <p class="mt-3 text-[15px] leading-relaxed fx-ink-2 sm:text-base">{p.blurb}</p>
+              </div>
+              <span class={`${linkRow} min-h-[44px]`}>
+                <span>{p.cta}</span>
+                <span class="transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+              </span>
+            </a>
+          ))}
+        </div>
+
+        <h3 class="mt-20 text-center font-heading text-2xl font-bold tracking-tight fx-ink sm:text-3xl">
+          Or isolate a single CHC domain
+        </h3>
+        <p class="mx-auto mt-3 max-w-2xl text-center text-[15px] leading-relaxed fx-ink-2 sm:text-base">
+          Each specialised battery runs 16 calibrated items with both a 15-minute timed mode and an untimed practice mode with worked solutions.
+        </p>
+
+        <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {batteries.map((b) => (
+            <a href={b.slug} class={`${cardBase} fx-focus`}>
+              <div>
+                <div class="flex items-center justify-between gap-2">
+                  <span class={badgeBase}>{b.code}</span>
+                  <span class="font-mono text-[13px] fx-ink-3">16 items</span>
+                </div>
+                <h4 class="mt-5 font-heading text-xl font-semibold fx-ink">{b.title}</h4>
+                <p class="mt-3 text-[15px] leading-relaxed fx-ink-2">{b.blurb}</p>
+              </div>
+              <span class={`${linkRow} min-h-[44px]`}>
+                <span>Open battery</span>
+                <span class="transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+              </span>
+            </a>
+          ))}
+        </div>
+
+        <div class="fx-card-flat mt-8 flex flex-col items-center justify-between gap-4 rounded-3xl p-6 text-center sm:flex-row sm:text-left">
+          <div>
+            <p class="font-heading text-base font-semibold fx-ink sm:text-lg">Want untimed drilling with step-by-step solutions?</p>
+            <p class="mt-1 text-[13px] fx-ink-2 sm:text-sm">The Practice Hub lets you train one item type at a time with the reasoning written out in full.</p>
           </div>
+          <a href="/practice" class="fx-cta fx-focus flex min-h-[44px] shrink-0 items-center gap-2 px-6 py-3 text-[15px] font-semibold">
+            <span>Open Practice Hub</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
 
-          <!-- Question Viewport + Interactive Choices Area -->
-          <div id="sample-card-body" class="p-5 sm:p-8 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 min-h-[380px]">
-            <!-- Dynamic Stimulus Container -->
-            <div id="sample-stimulus-box" class="flex flex-col items-center justify-center w-full lg:w-auto shrink-0">
-              <!-- Dynamically populated via script -->
-            </div>
+    <!-- ===================================================================
+         8. WHY WE STAND APART + FAQ
+         =================================================================== -->
+    <section id="trust" aria-labelledby="trust-title" class="fx-parchment fx-rule py-16 transition-colors sm:py-24">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 reveal-on-scroll">
 
-            <!-- Answer Options & Feedback Container -->
-            <div class="w-full lg:w-1/2 flex flex-col justify-center">
-              <div id="sample-prompt-text" class="text-sm sm:text-base font-semibold text-zinc-900 dark:text-white mb-4 text-center lg:text-left leading-snug">
-                Which tile logically completes the matrix pattern?
-              </div>
+        <div class="mx-auto max-w-3xl text-center">
+          <p class="font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider fx-action-text">Clarity &amp; Trust</p>
+          <h2 id="trust-title" class="mt-3 font-heading text-3xl font-bold tracking-tight fx-ink sm:text-4xl md:text-5xl">
+            Why FreeIQExam stands apart
+          </h2>
+        </div>
 
-              <!-- Options Grid Container -->
-              <div id="sample-options-container" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
-                <!-- Dynamically populated via script -->
-              </div>
+        <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div class="fx-card-flat rounded-3xl p-7">
+            <span class={badgeBase}>Privacy</span>
+            <h3 class="mt-5 font-heading text-xl font-semibold fx-ink">Everything runs in your browser</h3>
+            <p class="mt-3 text-[15px] leading-relaxed fx-ink-2">
+              Responses and ability estimates are computed in client-side JavaScript. No answer you give is transmitted to a server or stored in a remote database.
+            </p>
+          </div>
+          <div class="fx-card-flat rounded-3xl p-7">
+            <span class={badgeBase}>No Paywall</span>
+            <h3 class="mt-5 font-heading text-xl font-semibold fx-ink">No card, no email, no unlock</h3>
+            <p class="mt-3 text-[15px] leading-relaxed fx-ink-2">
+              There is no paywall, no card details, and no email required; your complete IQ test score and percentile breakdown render instantly upon test completion.
+            </p>
+          </div>
+          <div class="fx-card-flat rounded-3xl p-7">
+            <span class={badgeBase}>2PL IRT</span>
+            <h3 class="mt-5 font-heading text-xl font-semibold fx-ink">Real item-response scoring</h3>
+            <p class="mt-3 text-[15px] leading-relaxed fx-ink-2">
+              Each item carries its own difficulty (b) and discrimination (a) parameter rather than counting correct answers, producing an estimate with an honest standard error band.
+            </p>
+          </div>
+        </div>
 
-              <!-- Real-Time Feedback Container -->
-              <div id="demo-feedback" class="mt-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-300 text-center transition-all">
-                Select an option above to verify your solution.
-              </div>
+        <h3 id="faq" class="mt-20 text-center font-heading text-2xl font-bold tracking-tight fx-ink sm:text-3xl">
+          Frequently asked questions
+        </h3>
 
-              <!-- Dynamic Action Row (Next Question or Bridge to Test) -->
-              <div id="sample-action-row" class="mt-4 flex flex-col sm:flex-row items-center gap-3">
-                <button
-                  type="button"
-                  id="btn-sample-advance"
-                  class="hidden w-full py-3.5 px-6 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm sm:text-base shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer items-center justify-center gap-2"
-                >
-                  <span id="btn-sample-advance-text">Next Sample Question</span>
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        <div class="mt-10 space-y-4">
+          {faqs.map((f, i) => (
+            <details class="fx-faq p-5 sm:p-7" open={i === 0}>
+              <summary class="fx-focus flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-4 font-heading text-lg font-semibold fx-ink sm:text-xl">
+                <span>{f.q}</span>
+                <span class="fx-card-flat flex h-9 w-9 shrink-0 items-center justify-center rounded-full fx-ink-2" aria-hidden="true">
+                  <svg class="h-4 w-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- All 5 Completed Banner (Appears after solving all items) -->
-          <div id="sample-completion-banner" class="hidden p-6 sm:p-8 bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 text-center flex-col items-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs font-mono font-semibold text-emerald-700 dark:text-emerald-300 mb-3">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-              5 of 5 Samples Explored
-            </div>
-            <h3 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-2">
-              Ready for Your Comprehensive Assessment?
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-lg mb-6 leading-relaxed">
-              These sample items represent the 4 broad CHC cognitive domains. Start the standardized 24-question assessment to receive your psychometric IQ score estimate and percentile ranking.
-            </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md">
-              <a
-                href="/test"
-                class="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] text-center"
-              >
-                Full Assessment (20 Min) &rarr;
-              </a>
-              <a
-                href="/quick-test"
-                class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-semibold text-sm border border-zinc-200 dark:border-zinc-700 transition-all text-center"
-              >
-                Quick Screening (10 Min)
-              </a>
-            </div>
-          </div>
+                </span>
+              </summary>
+              <p class="mt-4 border-t pt-4 text-[15px] leading-relaxed fx-ink-2 fx-hairline sm:text-base">{f.a}</p>
+            </details>
+          ))}
         </div>
       </div>
     </section>
 
-    <!-- COGNITIVE TRAINING & BRAIN GAMES SHOWCASE — Pastel playful (light pastel, dark subtle) -->
-    <section id="cognitive-drills" class="pastel-home py-14 sm:py-18 transition-colors">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 reveal-on-scroll">
-        <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div class="pastel-eyebrow pastel-eyebrow-mint mb-3">
-            <span class="w-1.5 h-1.5 rounded-full bg-[var(--pastel-mint-ink)] animate-pulse"></span>
-            EVIDENCE-BASED BRAIN TRAINING
-          </div>
-          <h2 class="font-heading font-bold text-3xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
-            Boost Your IQ Score & Mental Speed With Daily Drills
+    <!-- ===================================================================
+         9. GLOBAL CATEGORISED DIRECTORY + PRE-FOOTER CTA
+         =================================================================== -->
+    <section id="directory" aria-labelledby="directory-title" class="fx-canvas fx-rule py-16 transition-colors sm:py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 reveal-on-scroll">
+
+        <div class="max-w-2xl">
+          <p class="font-mono text-[13px] sm:text-sm font-semibold uppercase tracking-wider fx-action-text">Complete Directory</p>
+          <h2 id="directory-title" class="mt-3 font-heading text-3xl font-bold tracking-tight fx-ink sm:text-4xl">
+            Every assessment, drill and tool on FreeIQExam
           </h2>
-          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 mt-3 leading-relaxed">
-            Targeted practice sharpens working memory, processing speed, and pattern recognition. Train with 10 interactive neurocognitive games to maximize your assessment performance.
-          </p>
         </div>
 
-        <!-- 4 Featured Game Cards Grid — Pastel playful -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
-          <!-- Game 1: Dual N-Back — mint -->
-          <div class="pastel-home-card p-6 rounded-3xl flex flex-col justify-between group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="pastel-icon pastel-icon-mint" aria-hidden="true">N</div>
-                  <span class="pastel-tag pastel-tag-mint">Gwm - Working Memory</span>
-                </div>
-                <span class="text-xs font-mono text-zinc-400 shrink-0">Jaeggi (2008)</span>
-              </div>
-              <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2 group-hover:text-[var(--pastel-mint-ink)] dark:group-hover:text-[#7ab5a0] transition-colors">
-                Dual N-Back Memory
-              </h3>
-              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Track simultaneous auditory letter streams and spatial square coordinates to expand working memory buffer capacity.
-              </p>
-            </div>
-            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-              <span class="pastel-tag pastel-tag-mint !py-1 !text-[11px]">Multimodal Buffer • Calm + focused</span>
-              <a
-                href="/games/n-back"
-                class="min-h-[44px] inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--pastel-mint-ink)] dark:text-[#7ab5a0] hover:opacity-80 group-hover:translate-x-0.5 transition-all cursor-pointer"
-              >
-                <span>Play Drill</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
+        <nav class="mt-12 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4" aria-label="Full site directory">
+
+          <div>
+            <h3 class="font-mono text-[13px] font-semibold uppercase tracking-wider fx-ink-3">Core Assessments</h3>
+            <ul class="mt-4 space-y-1">
+              <li><a href="/test" class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">Full IQ Test &mdash; 24 items, 20 min</a></li>
+              <li><a href="/quick-test" class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">Quick Screening &mdash; 10 min</a></li>
+              {batteries.map((b) => (
+                <li><a href={b.slug} class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">{b.title} Battery ({b.code})</a></li>
+              ))}
+              <li><a href="/practice" class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">Cognitive Practice Hub</a></li>
+            </ul>
+
+            <h3 class="mt-10 font-mono text-[13px] font-semibold uppercase tracking-wider fx-ink-3">Science &amp; Guides</h3>
+            <ul class="mt-4 space-y-1">
+              {pillars.map((p) => (
+                <li><a href={p.slug} class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">{p.title}</a></li>
+              ))}
+              <li><a href="/iq-classification-scale" class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">IQ Classification Scale</a></li>
+              <li><a href="/high-iq-societies" class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">High-IQ Societies Compared</a></li>
+              <li><a href="/blog" class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">Cognitive Science Blog</a></li>
+            </ul>
           </div>
 
-          <!-- Game 2: Memory Matrix Span — cyan -->
-          <div class="pastel-home-card p-6 rounded-3xl flex flex-col justify-between group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="pastel-icon pastel-icon-cyan" aria-hidden="true">▦</div>
-                  <span class="pastel-tag pastel-tag-cyan">Gwm / Gv - Visuospatial</span>
-                </div>
-                <span class="text-xs font-mono text-zinc-400 shrink-0">Corsi (1972)</span>
-              </div>
-              <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2 group-hover:text-[var(--pastel-cyan-ink)] dark:group-hover:text-[#7fb8c5] transition-colors">
-                Memory Matrix Span
-              </h3>
-              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Observe brief illuminated target tiles in escalating 3x3, 4x4, and 5x5 grids, then recall exact spatial coordinates.
-              </p>
-            </div>
-            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-              <span class="pastel-tag pastel-tag-cyan !py-1 !text-[11px]">Spatial Retention • Fresh + visual</span>
-              <a
-                href="/games/memory-matrix"
-                class="min-h-[44px] inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--pastel-cyan-ink)] dark:text-[#7fb8c5] hover:opacity-80 group-hover:translate-x-0.5 transition-all cursor-pointer"
-              >
-                <span>Play Drill</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
+          <div>
+            <h3 class="font-mono text-[13px] font-semibold uppercase tracking-wider fx-ink-3">Brain Training Arena</h3>
+            <ul class="mt-4 space-y-1">
+              {games.map((g) => (
+                <li><a href={g.slug} class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">{g.title}</a></li>
+              ))}
+              <li><a href="/games" class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">All Drills &mdash; Training Hub</a></li>
+            </ul>
           </div>
 
-          <!-- Game 3: Speed Math Sprint — yellow -->
-          <div class="pastel-home-card p-6 rounded-3xl flex flex-col justify-between group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="pastel-icon pastel-icon-yellow" aria-hidden="true">+</div>
-                  <span class="pastel-tag pastel-tag-yellow">Gs / Gq - Speed</span>
-                </div>
-                <span class="text-xs font-mono text-zinc-400 shrink-0">Fluency • 60s</span>
-              </div>
-              <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2 group-hover:text-[var(--pastel-yellow-ink)] dark:group-hover:text-[#c2a84a] transition-colors">
-                Speed Math Sprint
-              </h3>
-              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Race against the 60-second timer solving mental arithmetic operations, maintaining high accuracy streaks under time pressure.
-              </p>
-            </div>
-            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-              <span class="pastel-tag pastel-tag-yellow !py-1 !text-[11px]">Mental Arithmetic • Bright + energetic</span>
-              <a
-                href="/games/math-sprint"
-                class="min-h-[44px] inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--pastel-yellow-ink)] dark:text-[#c2a84a] hover:opacity-80 group-hover:translate-x-0.5 transition-all cursor-pointer"
-              >
-                <span>Play Drill</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
+          <div>
+            <h3 class="font-mono text-[13px] font-semibold uppercase tracking-wider fx-ink-3">Clinical &amp; Sensory</h3>
+            <ul class="mt-4 space-y-1">
+              {clinical.map((t) => (
+                <li><a href={t.slug} class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">{t.title}</a></li>
+              ))}
+            </ul>
           </div>
 
-          <!-- Game 4: Stroop Color Clash — coral -->
-          <div class="pastel-home-card p-6 rounded-3xl flex flex-col justify-between group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="pastel-icon pastel-icon-coral" aria-hidden="true">S</div>
-                  <span class="pastel-tag pastel-tag-coral">Gf / Gs - Inhibitory</span>
-                </div>
-                <span class="text-xs font-mono text-zinc-400 shrink-0">Stroop (1935)</span>
-              </div>
-              <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2 group-hover:text-[var(--pastel-coral-ink)] dark:group-hover:text-[#d89b94] transition-colors">
-                Stroop Color Clash
-              </h3>
-              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Identify the font color of conflicting words. Overcome automatic semantic interference and sharpen cognitive inhibition.
-              </p>
-            </div>
-            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-              <span class="pastel-tag pastel-tag-coral !py-1 !text-[11px]">Interference Cost • Bold + focused</span>
-              <a
-                href="/games/stroop-clash"
-                class="min-h-[44px] inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--pastel-coral-ink)] dark:text-[#d89b94] hover:opacity-80 group-hover:translate-x-0.5 transition-all cursor-pointer"
-              >
-                <span>Play Drill</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
-          </div>
-        </div>
+          <div>
+            <h3 class="font-mono text-[13px] font-semibold uppercase tracking-wider fx-ink-3">Reflex &amp; Speed</h3>
+            <ul class="mt-4 space-y-1">
+              {reflex.map((t) => (
+                <li><a href={t.slug} class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">{t.title}</a></li>
+              ))}
+            </ul>
 
-        <!-- Section Footer Link to All 10 Games — pastel playful -->
-        <div class="pastel-home-card p-5 sm:p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-3.5">
-            <div class="pastel-icon pastel-icon-lav w-11 h-11 rounded-2xl shrink-0" aria-hidden="true">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-              </svg>
-            </div>
-            <div>
-              <div class="font-heading font-bold text-base text-zinc-950 dark:text-white">
-                Explore All 10 Cognitive Mini-Games
-              </div>
-              <div class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
-                Including Wechsler Digit Span, Eriksen Flanker Blitz, Sequence Rush, and 3D Rotation.
-              </div>
-            </div>
+            <h3 class="mt-10 font-mono text-[13px] font-semibold uppercase tracking-wider fx-ink-3">Circadian &amp; Wellness</h3>
+            <ul class="mt-4 space-y-1">
+              {circadian.map((t) => (
+                <li><a href={t.slug} class="fx-focus block min-h-[44px] py-2 text-[15px] fx-ink-2 hover:opacity-70">{t.title}</a></li>
+              ))}
+            </ul>
           </div>
-          <a
-            href="/games"
-            class="pastel-play w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm text-center whitespace-nowrap cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all"
-          >
-            Open Training Hub &rarr;
-          </a>
-        </div>
+        </nav>
       </div>
     </section>
 
-    <!-- 4 ASSESSMENT PILLAR CARDS (Interlinked Deep Dives) -->
-    <section id="pillars" class="py-14 sm:py-20 max-w-6xl mx-auto px-4 sm:px-6 bg-white dark:bg-black transition-colors reveal-on-scroll">
-      <div class="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
-        <span class="text-xs sm:text-sm font-mono font-semibold tracking-wider text-blue-600 dark:text-blue-400 uppercase">
-          Assessment Architecture
-        </span>
-        <h2 class="font-heading font-bold text-3xl sm:text-5xl text-zinc-950 dark:text-white mt-2 tracking-tight">
-          Scientific Intelligence Pillars
+    <section id="final-cta" aria-labelledby="final-cta-title" class="fx-parchment fx-rule py-20 text-center transition-colors sm:py-28">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 id="final-cta-title" class="font-heading text-3xl font-extrabold tracking-tight fx-ink sm:text-4xl md:text-5xl">
+          Ready to test your fluid intelligence?
         </h2>
-        <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 mt-4 leading-relaxed">
-          Explore the psychometric frameworks, scoring models, and reasoning patterns behind the assessment.
+        <p class="mx-auto mt-4 max-w-2xl text-base leading-relaxed fx-ink-2 sm:text-lg">
+          Twenty-four progressive items. A twenty-minute clock. Take the free online IQ test with instant scoring and a 95% confidence interval the moment you finish.
         </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-        <!-- Pillar Card 1: Matrix Reasoning -->
-        <a 
-          href="/matrix-reasoning-test" 
-          class="group p-8 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900 transition-all hover:translate-y-[-2px] shadow-sm flex flex-col justify-between"
-        >
-          <div>
-            <div class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-200 flex items-center justify-center font-bold text-lg mb-6 border border-zinc-200 dark:border-zinc-700 group-hover:scale-105 transition-transform">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-            </div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-semibold uppercase tracking-wider">Core Domain</span>
-            </div>
-            <h3 class="font-heading font-bold text-2xl text-zinc-950 dark:text-white mb-3">
-              Matrix Reasoning Guide
-            </h3>
-            <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-              Master the 5 fundamental Carpenter transformation rules: progression, distribution of three, XOR logic, subtraction, and topological series.
-            </p>
-          </div>
-          <div class="flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Explore Matrix Guide</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- Pillar Card 2: Score Distribution -->
-        <a 
-          href="/iq-score-chart" 
-          class="group p-8 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900 transition-all hover:translate-y-[-2px] shadow-sm flex flex-col justify-between"
-        >
-          <div>
-            <div class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-200 flex items-center justify-center font-bold text-lg mb-6 border border-zinc-200 dark:border-zinc-700 group-hover:scale-105 transition-transform">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-              </svg>
-            </div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-semibold uppercase tracking-wider">Bell Curve</span>
-            </div>
-            <h3 class="font-heading font-bold text-2xl text-zinc-950 dark:text-white mb-3">
-              IQ Score Distribution Chart
-            </h3>
-            <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-              Understand Gaussian normal distribution parameters (Mean 100, SD 15), standard deviation bands, and standard classification bands.
-            </p>
-          </div>
-          <div class="flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>View Score Distribution</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- Pillar Card 3: Percentile Calculator -->
-        <a 
-          href="/iq-percentile-calculator" 
-          class="group p-8 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900 transition-all hover:translate-y-[-2px] shadow-sm flex flex-col justify-between"
-        >
-          <div>
-            <div class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-200 flex items-center justify-center font-bold text-lg mb-6 border border-zinc-200 dark:border-zinc-700 group-hover:scale-105 transition-transform">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-semibold uppercase tracking-wider">Statistical Tool</span>
-            </div>
-            <h3 class="font-heading font-bold text-2xl text-zinc-950 dark:text-white mb-3">
-              Percentile Rank Calculator
-            </h3>
-            <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-              Convert between IQ scores and exact population percentiles with live 2-way statistical calculations and rarity ratios (e.g., 1 in N people).
-            </p>
-          </div>
-          <div class="flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Calculate Percentile</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- Pillar Card 4: Methodology -->
-        <a 
-          href="/methodology" 
-          class="group p-8 rounded-3xl bg-zinc-50/70 dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-900 transition-all hover:translate-y-[-2px] shadow-sm flex flex-col justify-between"
-        >
-          <div>
-            <div class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/90 text-zinc-800 dark:text-zinc-200 flex items-center justify-center font-bold text-lg mb-6 border border-zinc-200 dark:border-zinc-700 group-hover:scale-105 transition-transform">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-              </svg>
-            </div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80 text-xs font-mono font-semibold uppercase tracking-wider">Psychometrics</span>
-            </div>
-            <h3 class="font-heading font-bold text-2xl text-zinc-950 dark:text-white mb-3">
-              Psychometric Methodology
-            </h3>
-            <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-              Review our 2-Parameter Logistic (2PL) Item Response Theory math, Bayesian Expected A Posteriori (EAP) ability estimation, and CHC construct definitions.
-            </p>
-          </div>
-          <div class="flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Read Methodology</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <!-- SPECIALIZED COGNITIVE BATTERIES -->
-    <section class="py-16 sm:py-20 max-w-6xl mx-auto px-4 sm:px-6 border-t border-zinc-200/80 dark:border-zinc-800 transition-colors reveal-on-scroll">
-      <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-14">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4">
-          SPECIALIZED DOMAIN ASSESSMENTS &bull; 16-ITEM BATTERIES
-        </span>
-        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight mb-4">
-          Specialized Cognitive Batteries
-        </h2>
-        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
-          Focus your evaluation on a specific cognitive factor. Each dedicated assessment features 16 calibrated items with both 15-minute timed test and untimed practice drill modes.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- 1. Fluid Reasoning -->
-        <a
-          href="/fluid-reasoning-test"
-          class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group"
-        >
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-4">
-              <span class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
-                Gf
-              </span>
-              <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">16 Questions</span>
-            </div>
-            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">
-              Fluid Reasoning
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-              Abstract matrix induction, topological pattern series, and XOR cancellation. Pure non-verbal culture-reduced stimuli.
-            </p>
-          </div>
-          <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Explore Gf Battery</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- 2. Visual-Spatial -->
-        <a
-          href="/spatial-reasoning-test"
-          class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group"
-        >
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-4">
-              <span class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
-                Gv
-              </span>
-              <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">16 Questions</span>
-            </div>
-            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">
-              Visual-Spatial
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-              3D isometric cube rotation, surface folding net transformations, and orthographic spatial perspective synthesis.
-            </p>
-          </div>
-          <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Explore Gv Battery</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- 3. Quantitative -->
-        <a
-          href="/quantitative-reasoning-test"
-          class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group"
-        >
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-4">
-              <span class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
-                Gq
-              </span>
-              <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">16 Questions</span>
-            </div>
-            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">
-              Quantitative Logic
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-              Higher-order difference sequences, dual interleaved progressions, and multi-step relational rate deductions.
-            </p>
-          </div>
-          <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Explore Gq Battery</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- 4. Verbal Comprehension -->
-        <a
-          href="/verbal-reasoning-test"
-          class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group"
-        >
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-4">
-              <span class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
-                Gc
-              </span>
-              <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">16 Questions</span>
-            </div>
-            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-2">
-              Verbal Reasoning
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-              Relational analogies, formal Aristotelian categorical syllogisms, and taxonomical language abstraction logic.
-            </p>
-          </div>
-          <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Explore Gc Battery</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-      </div>
-
-      <!-- Practice Hub Callout Banner -->
-      <div class="mt-8 p-4 sm:p-6 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-        <div>
-          <span class="font-heading font-bold text-zinc-950 dark:text-white text-sm sm:text-base">
-            Looking for untimed drills with immediate solution feedback?
-          </span>
-          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-            Visit the Cognitive Practice Hub to train individual question types with step-by-step reasoning guides.
-          </p>
-        </div>
-        <a
-          href="/practice"
-          class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors shrink-0 flex items-center gap-1.5"
-        >
-          <span>Open Practice Hub</span>
-          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <a href="/test" class="fx-cta fx-focus mt-10 inline-flex min-h-[44px] items-center gap-3 px-9 py-4 text-base font-semibold sm:py-[18px] sm:text-lg">
+          <span>Start the assessment</span>
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
-        </a>
-      </div>
-    </section>
-
-    <!-- RIGOROUS SCIENTIFIC DIFFERENCES -->
-    <section class="py-16 sm:py-20 max-w-5xl mx-auto px-4 sm:px-6 reveal-on-scroll">
-      <div class="p-8 sm:p-12 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-zinc-950 dark:text-white mb-6 text-center">
-          Why FreeIQExam Stands Apart
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-          <div class="space-y-2">
-            <h3 class="font-heading font-semibold text-base sm:text-lg text-zinc-900 dark:text-white">
-              1. 100% Client-Side Privacy
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Your test answers and ability estimates are computed locally in client JavaScript. No user responses are ever transmitted to remote databases.
-            </p>
-          </div>
-          <div class="space-y-2">
-            <h3 class="font-heading font-semibold text-base sm:text-lg text-zinc-900 dark:text-white">
-              2. Zero Predatory Paywalls
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              We never ask for credit cards, payment subscriptions, or email subscriptions to unlock your test report. Your complete score is displayed immediately.
-            </p>
-          </div>
-          <div class="space-y-2">
-            <h3 class="font-heading font-semibold text-base sm:text-lg text-zinc-900 dark:text-white">
-              3. 2PL IRT Scoring Framework
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Utilizes individual item difficulty (b) and discrimination (a) parameters rather than crude percentage counts, yielding an estimated score range with standard error margins.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FREQUENTLY ASKED QUESTIONS -->
-    <section id="faq" class="py-16 sm:py-20 max-w-4xl mx-auto px-4 sm:px-6 bg-white dark:bg-black border-t border-zinc-200/80 dark:border-zinc-800 transition-colors reveal-on-scroll">
-      <div class="text-center mb-14 sm:mb-16">
-        <span class="text-xs sm:text-sm font-mono font-semibold tracking-wider text-blue-600 dark:text-blue-400 uppercase">
-          Clarity &amp; Trust
-        </span>
-        <h2 class="font-heading font-bold text-3xl sm:text-5xl text-zinc-950 dark:text-white mt-2">
-          Frequently Asked Questions
-        </h2>
-      </div>
-
-      <div class="space-y-4">
-        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs" open>
-          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
-            <span>Is this IQ test really 100% free with immediate results?</span>
-            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </span>
-          </summary>
-          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            Yes. Many competitor sites require 30 minutes on an exam only to hit you with a subscription paywall. FreeIQExam.com gives you your score, percentile, and performance breakdown immediately without a credit card or payment of any kind.
-          </p>
-        </details>
-
-        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
-          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
-            <span>Why do you not require an email address or user account?</span>
-            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </span>
-          </summary>
-          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            We prioritize privacy. We do not harvest email addresses, sell user data, or send spam. Calculations run directly in your browser, so you never need to create accounts or disclose personal information.
-          </p>
-        </details>
-
-        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
-          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
-            <span>How does this test compare to a comprehensive clinical exam?</span>
-            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </span>
-          </summary>
-          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            Our test evaluates non-verbal fluid reasoning using 2-Parameter Logistic Item Response Theory on progressive items. It provides an educational screening estimate of reasoning ability, but is not a clinical diagnostic instrument like a full WAIS-IV or SB-V examination administered by a licensed psychologist.
-          </p>
-        </details>
-
-        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
-          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
-            <span>How are the 24 questions structured?</span>
-            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </span>
-          </summary>
-          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            The assessment consists of 24 original procedural items: 12 classic 3x3 Matrix Reasoning puzzles, 6 3D Cube Rotations, 3 Folding Cube Nets, and 3 Topological Series items. Items scale progressively from introductory patterns to high-difficulty abstract transformations.
-          </p>
-        </details>
-
-        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
-          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
-            <span>How can I actually check my IQ level online?</span>
-            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </span>
-          </summary>
-          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            You can take our standardized 20-minute cognitive assessment or 10-minute quick screening directly in your browser. Both tests assess non-verbal fluid reasoning and pattern induction, computing an estimated deviation IQ score and population percentile with instant results and no paywalls.
-          </p>
-        </details>
-
-        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
-          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
-            <span>Can you increase your IQ score?</span>
-            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </span>
-          </summary>
-          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            While fundamental biological fluid intelligence is largely genetically stable, your operational performance on IQ tests can improve significantly. Familiarity with matrix transformation rules, cognitive drills (like N-back and mental rotation), high sleep quality, stress management, and test pacing help eliminate unforced errors and unlock your highest natural score.
-          </p>
-        </details>
-
-        <details class="group border border-zinc-200/80 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-zinc-50/50 dark:bg-zinc-900/40 transition-all open:bg-zinc-50 dark:open:bg-zinc-900/70 shadow-2xs">
-          <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
-            <span>What are IQ tests primarily used for today?</span>
-            <span class="ml-4 shrink-0 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-              <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </span>
-          </summary>
-          <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            In clinical and educational settings, standardized IQ batteries (such as the WAIS-IV and WISC-V) are used to diagnose learning differences, assess cognitive recovery following neurological injury, identify gifted learners, and analyze specific cognitive strengths and weaknesses across working memory, perceptual reasoning, and processing speed.
-          </p>
-        </details>
-      </div>
-    </section>
-
-    <!-- COGNITIVE RESEARCH & BLOG ARTICLES SHOWCASE -->
-    <section class="py-16 sm:py-20 max-w-6xl mx-auto px-4 sm:px-6 border-t border-zinc-200/80 dark:border-zinc-800 transition-colors reveal-on-scroll">
-      <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-10 sm:mb-12">
-        <div>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-3">
-            EVALUATION SCIENCE &bull; RESEARCH ARTICLES
-          </span>
-          <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
-            Cognitive Science &amp; Research Blog
-          </h2>
-          <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 mt-2 max-w-xl">
-            Evidence-based guides exploring psychometric measurement scales, high-IQ societies, and cognitive development.
-          </p>
-        </div>
-        <a
-          href="/blog"
-          class="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors shrink-0 group"
-        >
-          <span>View All Articles</span>
-          <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-        </a>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Card 1: Score Classification -->
-        <a
-          href="/iq-classification-scale"
-          class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group"
-        >
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-3 text-xs">
-              <span class="px-2.5 py-0.5 rounded-full font-mono font-semibold bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
-                Psychometrics
-              </span>
-              <span class="text-zinc-500 dark:text-zinc-400 font-mono">8 min read</span>
-            </div>
-            <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
-              The Comprehensive IQ Classification Scale
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-              Compare Wechsler WAIS-IV, Stanford-Binet, and Woodcock-Johnson score tiers across the Gaussian normal curve.
-            </p>
-          </div>
-          <div class="flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Read Article</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- Card 2: High-IQ Societies -->
-        <a
-          href="/high-iq-societies"
-          class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group"
-        >
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-3 text-xs">
-              <span class="px-2.5 py-0.5 rounded-full font-mono font-semibold bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
-                Societies
-              </span>
-              <span class="text-zinc-500 dark:text-zinc-400 font-mono">7 min read</span>
-            </div>
-            <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
-              High-IQ Societies Compared: Mensa to TNS
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-              Explore percentile cutoffs and accepted prior evidence test scores for Mensa, Intertel, and Triple Nine Society.
-            </p>
-          </div>
-          <div class="flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Read Article</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-
-        <!-- Card 3: Matrix Reasoning Rules -->
-        <a
-          href="/matrix-reasoning-test"
-          class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group"
-        >
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-3 text-xs">
-              <span class="px-2.5 py-0.5 rounded-full font-mono font-semibold bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
-                Cognitive Training
-              </span>
-              <span class="text-zinc-500 dark:text-zinc-400 font-mono">6 min read</span>
-            </div>
-            <h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white mb-2">
-              Carpenter's 5 Rules: Raven's Matrices
-            </h3>
-            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-              Master the 5 core transformation rules governing abstract matrix puzzles and topological progressions.
-            </p>
-          </div>
-          <div class="flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 pt-3 border-t border-zinc-200/60 dark:border-zinc-800">
-            <span>Read Article</span>
-            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <!-- GLOBAL COGNITIVE LEADERBOARD PREVIEW -->
-    <section class="py-16 sm:py-20 border-t border-zinc-200/80 dark:border-zinc-800 transition-colors reveal-on-scroll">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6">
-        <!-- Section intro -->
-        <div class="text-center mb-10">
-          <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-blue-600 dark:text-blue-300 uppercase tracking-wider mb-4">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            GLOBAL COHORT BENCHMARKS
-          </span>
-          <h2 class="font-heading font-bold text-3xl sm:text-4xl text-zinc-950 dark:text-white mt-2">
-            Global Cognitive Leaderboard
-          </h2>
-          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 mt-3 max-w-2xl mx-auto">
-            Representative top-tier scores from standardized sessions worldwide.
-          </p>
-        </div>
-
-        <!-- Leaderboard card -->
-        <div class="rounded-3xl overflow-hidden border border-zinc-200/80 dark:border-zinc-800 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)]">
-          <!-- Dark header -->
-          <div class="px-6 sm:px-8 py-5 bg-gradient-to-br from-zinc-950 via-blue-950/80 to-indigo-950/60 flex items-center justify-between">
-            <span class="text-sm font-mono font-semibold text-blue-200 uppercase tracking-wider">Top Scorers - Hall of Fame</span>
-            <span class="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-xs font-mono font-semibold text-amber-300">Launching Soon</span>
-          </div>
-
-          <!-- Table container with responsive scroll -->
-          <div class="overflow-x-auto">
-            <div class="w-full">
-              <!-- Table header -->
-              <div class="grid grid-cols-[36px_1fr_75px_65px] sm:grid-cols-[40px_1fr_90px_80px_1fr] gap-2.5 sm:gap-3 px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-500 uppercase tracking-wider bg-zinc-50/60 dark:bg-zinc-900/60">
-                <span>#</span>
-                <span>Examinee</span>
-                <span class="text-right">Score</span>
-                <span class="text-right">Pctile</span>
-                <span class="hidden sm:block">Strongest Domain</span>
-              </div>
-
-              <!-- Rows -->
-              <div class="bg-white dark:bg-zinc-900">
-                <div class="grid grid-cols-[36px_1fr_75px_65px] sm:grid-cols-[40px_1fr_90px_80px_1fr] gap-2.5 sm:gap-3 items-center px-4 sm:px-6 py-3.5 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
-                  <span class="font-mono font-bold text-sm text-amber-500">#1</span>
-                  <div class="flex items-center gap-2"><span class="text-lg">&#127482;&#127480;</span><span class="font-medium text-sm text-zinc-900 dark:text-white truncate">Alex_V.</span></div>
-                  <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">146 IQ</span>
-                  <span class="font-mono text-xs text-zinc-500 text-right">99.9th</span>
-                  <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Fluid Reasoning (FRI: 148)</span>
-                </div>
-                <div class="grid grid-cols-[36px_1fr_75px_65px] sm:grid-cols-[40px_1fr_90px_80px_1fr] gap-2.5 sm:gap-3 items-center px-4 sm:px-6 py-3.5 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
-                  <span class="font-mono font-bold text-sm text-zinc-500 dark:text-zinc-400">#2</span>
-                  <div class="flex items-center gap-2"><span class="text-lg">&#127471;&#127477;</span><span class="font-medium text-sm text-zinc-900 dark:text-white truncate">Hana_K.</span></div>
-                  <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">142 IQ</span>
-                  <span class="font-mono text-xs text-zinc-500 text-right">99.7th</span>
-                  <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Visual-Spatial (VSI: 145)</span>
-                </div>
-                <div class="grid grid-cols-[36px_1fr_75px_65px] sm:grid-cols-[40px_1fr_90px_80px_1fr] gap-2.5 sm:gap-3 items-center px-4 sm:px-6 py-3.5 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
-                  <span class="font-mono font-bold text-sm text-amber-700">#3</span>
-                  <div class="flex items-center gap-2"><span class="text-lg">&#127465;&#127466;</span><span class="font-medium text-sm text-zinc-900 dark:text-white truncate">Marcus_S.</span></div>
-                  <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">138 IQ</span>
-                  <span class="font-mono text-xs text-zinc-500 text-right">99.4th</span>
-                  <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Quantitative (QRI: 141)</span>
-                </div>
-                <div class="grid grid-cols-[36px_1fr_75px_65px] sm:grid-cols-[40px_1fr_90px_80px_1fr] gap-2.5 sm:gap-3 items-center px-4 sm:px-6 py-3.5 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
-                  <span class="font-mono font-semibold text-sm text-zinc-500">#4</span>
-                  <div class="flex items-center gap-2"><span class="text-lg">&#127464;&#127462;</span><span class="font-medium text-sm text-zinc-900 dark:text-white truncate">Elena_R.</span></div>
-                  <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">135 IQ</span>
-                  <span class="font-mono text-xs text-zinc-500 text-right">99.0th</span>
-                  <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Verbal Logic (VCI: 137)</span>
-                </div>
-                <div class="grid grid-cols-[36px_1fr_75px_65px] sm:grid-cols-[40px_1fr_90px_80px_1fr] gap-2.5 sm:gap-3 items-center px-4 sm:px-6 py-3.5 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
-                  <span class="font-mono font-semibold text-sm text-zinc-500">#5</span>
-                  <div class="flex items-center gap-2"><span class="text-lg">&#127468;&#127463;</span><span class="font-medium text-sm text-zinc-900 dark:text-white truncate">David_L.</span></div>
-                  <span class="font-mono font-bold text-sm text-zinc-900 dark:text-white text-right">132 IQ</span>
-                  <span class="font-mono text-xs text-zinc-500 text-right">98.3rd</span>
-                  <span class="hidden sm:block text-xs text-zinc-500 dark:text-zinc-400 truncate">Fluid Reasoning (FRI: 134)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Callout -->
-          <div class="px-6 sm:px-8 py-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-t border-blue-200/60 dark:border-blue-800/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-200 text-center sm:text-left">
-              <strong>Live Competitive Leaderboard &amp; Daily Cohort Rankings</strong> - Launching Soon!
-            </p>
-            <div class="flex items-center gap-3 shrink-0">
-              <a href="/leaderboard" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors">
-                View Full Board &rarr;
-              </a>
-              <a href="/test" class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors whitespace-nowrap">
-                Take the Test Now
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRE-FOOTER CALL TO ACTION BANNER -->
-    <section class="py-16 sm:py-20 bg-gradient-to-b from-white to-blue-50/40 dark:from-black dark:to-blue-950/20 border-t border-zinc-200/80 dark:border-zinc-800 text-center">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6">
-        <h2 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white mb-4 tracking-tight">
-          Ready to Test Your Fluid Intelligence?
-        </h2>
-        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-8">
-          24 progressive visual items. 20-minute countdown timer. Instant standard IQ score with 95% confidence interval.
-        </p>
-        <a 
-          href="/test" 
-          class="inline-flex items-center gap-3 px-9 py-4 sm:py-5 rounded-full text-base sm:text-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-600/25 hover:scale-[1.02] active:scale-[0.98] transition-all"
-        >
-          <span>Start Assessment Now</span>
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
         </a>
       </div>
     </section>
   </main>
 
-  <!-- Shared Global Footer -->
   <Footer />
-</Layout>
-<!-- Client Side Interactive Script for 5-Item Sample Puzzle & Scroll Animations -->
-<script is:inline>
-  (function() {
-    var SAMPLE_ITEMS = [
-      {
-        id: 1,
-        domainBadge: 'Fluid Reasoning (Gf)',
-        subtypeText: 'Shape & Count Progression',
-        promptText: 'Which tile logically completes the 3x3 matrix pattern?',
-        renderStimulus: function() {
-          return '<div class="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 bg-white dark:bg-black rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 w-full max-w-[280px] sm:max-w-[320px] aspect-square shadow-sm">' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800"><div class="w-5 h-5 rounded-full bg-blue-600"></div></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center gap-1.5 border border-zinc-200 dark:border-zinc-800"><div class="w-4 h-4 rounded-full bg-blue-600"></div><div class="w-4 h-4 rounded-full bg-blue-600"></div></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center gap-1 border border-zinc-200 dark:border-zinc-800"><div class="w-3.5 h-3.5 rounded-full bg-blue-600"></div><div class="w-3.5 h-3.5 rounded-full bg-blue-600"></div><div class="w-3.5 h-3.5 rounded-full bg-blue-600"></div></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800"><div class="w-5 h-5 rounded-xs bg-blue-600"></div></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center gap-1.5 border border-zinc-200 dark:border-zinc-800"><div class="w-4 h-4 rounded-xs bg-blue-600"></div><div class="w-4 h-4 rounded-xs bg-blue-600"></div></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center gap-1 border border-zinc-200 dark:border-zinc-800"><div class="w-3.5 h-3.5 rounded-xs bg-blue-600"></div><div class="w-3.5 h-3.5 rounded-xs bg-blue-600"></div><div class="w-3.5 h-3.5 rounded-xs bg-blue-600"></div></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800"><div class="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-b-[16px] border-b-blue-600"></div></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center gap-1.5 border border-zinc-200 dark:border-zinc-800"><div class="w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[13px] border-b-blue-600"></div><div class="w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[13px] border-b-blue-600"></div></div>' +
-            '<div class="bg-blue-50/70 dark:bg-blue-950/40 rounded-xl flex items-center justify-center border-2 border-dashed border-blue-500 animate-pulse"><span class="font-heading font-black text-3xl text-blue-600 dark:text-blue-400">?</span></div>' +
-          '</div>';
+
+  <script is:inline>
+    /* =====================================================================
+       A. INTERACTIVE 5-ITEM SAMPLE STEPPER
+       ===================================================================== */
+    (function () {
+      var STAGE = 'fx-stage w-full max-w-[290px] sm:max-w-[330px] aspect-square';
+
+      var ITEMS = [
+        {
+          badge: 'Fluid Reasoning (Gf)',
+          subtype: 'Shape & count progression',
+          prompt: 'Which tile logically completes the 3×3 matrix?',
+          stimulus: function () {
+            function dot(size) { return '<div class="rounded-full" style="width:' + size + 'px;height:' + size + 'px;background:var(--fx-action)"></div>'; }
+            function sq(size) { return '<div class="rounded-[3px]" style="width:' + size + 'px;height:' + size + 'px;background:var(--fx-action)"></div>'; }
+            function tri(w, h) { return '<div style="width:0;height:0;border-left:' + w + 'px solid transparent;border-right:' + w + 'px solid transparent;border-bottom:' + h + 'px solid var(--fx-action)"></div>'; }
+            function cell(inner, gap) { return '<div class="fx-cell flex items-center justify-center gap-' + gap + '">' + inner + '</div>'; }
+            return '<div class="' + STAGE + ' grid grid-cols-3 gap-2 p-4 sm:gap-3">' +
+              cell(dot(20), '0') +
+              cell(dot(16) + dot(16), '1.5') +
+              cell(dot(14) + dot(14) + dot(14), '1') +
+              cell(sq(20), '0') +
+              cell(sq(16) + sq(16), '1.5') +
+              cell(sq(14) + sq(14) + sq(14), '1') +
+              cell(tri(9, 16), '0') +
+              cell(tri(7, 13) + tri(7, 13), '1.5') +
+              '<div class="fx-slot flex items-center justify-center"><span class="font-heading text-3xl font-black">?</span></div>' +
+              '</div>';
+          },
+          options: [
+            { label: 'A', html: '<div class="flex h-8 items-center justify-center"><div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:13px solid var(--fx-action)"></div></div>', correct: false },
+            { label: 'B', html: '<div class="flex h-8 items-center justify-center gap-1"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid var(--fx-action)"></div><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid var(--fx-action)"></div></div>', correct: false },
+            { label: 'C', html: '<div class="flex h-8 items-center justify-center gap-1"><div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:10px solid var(--fx-action)"></div><div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:10px solid var(--fx-action)"></div><div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:10px solid var(--fx-action)"></div></div>', correct: true },
+            { label: 'D', html: '<div class="flex h-8 items-center justify-center gap-1"><div class="h-3.5 w-3.5 rounded-full" style="background:var(--fx-action)"></div><div class="h-3.5 w-3.5 rounded-full" style="background:var(--fx-action)"></div><div class="h-3.5 w-3.5 rounded-full" style="background:var(--fx-action)"></div></div>', correct: false }
+          ],
+          rule: 'Across every row the shape stays constant while the count increments 1 → 2 → 3. Row three is built from triangles, so the missing tile holds exactly three triangles.',
+          hint: 'Read left to right and count the shapes in each row before looking at the shape itself.'
         },
-        options: [
-          { label: 'A', content: '<div class="h-8 flex items-center justify-center"><div class="w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[13px] border-b-blue-600"></div></div>', isCorrect: false },
-          { label: 'B', content: '<div class="h-8 flex items-center justify-center gap-1"><div class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[11px] border-b-blue-600"></div><div class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[11px] border-b-blue-600"></div></div>', isCorrect: false },
-          { label: 'C', content: '<div class="h-8 flex items-center justify-center gap-1"><div class="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[10px] border-b-blue-600"></div><div class="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[10px] border-b-blue-600"></div><div class="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[10px] border-b-blue-600"></div></div>', isCorrect: true },
-          { label: 'D', content: '<div class="h-8 flex items-center justify-center gap-1"><div class="w-3.5 h-3.5 rounded-full bg-blue-600"></div><div class="w-3.5 h-3.5 rounded-full bg-blue-600"></div><div class="w-3.5 h-3.5 rounded-full bg-blue-600"></div></div>', isCorrect: false }
-        ],
-        rule: 'In each horizontal row, the shape count increments progressively (1 to 2 to 3) while geometry remains constant. Row 3 requires exactly 3 triangles.',
-        hint: 'Count the number of shapes in each row from left to right.'
-      },
-      {
-        id: 2,
-        domainBadge: 'Visual-Spatial (Gv)',
-        subtypeText: 'Isometric Cube Net Folding',
-        promptText: 'When folded into a 3D cube, which option is geometrically conforming?',
-        renderStimulus: function() {
-          return '<div class="p-3 bg-white dark:bg-black rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 w-full max-w-[280px] sm:max-w-[320px] aspect-square flex items-center justify-center shadow-sm">' +
-            '<svg viewBox="0 0 200 200" class="w-full h-full max-w-[210px]" fill="none">' +
-              '<rect x="75" y="15" width="50" height="50" fill="none" rx="4" stroke="#71717a" stroke-width="2"/>' +
-              '<circle cx="100" cy="40" r="14" fill="#2563eb"/>' +
-              '<rect x="25" y="65" width="50" height="50" fill="none" rx="4" stroke="#71717a" stroke-width="2"/>' +
-              '<polygon points="50,75 65,105 35,105" fill="#2563eb"/>' +
-              '<rect x="75" y="65" width="50" height="50" fill="none" rx="4" stroke="#71717a" stroke-width="2"/>' +
-              '<rect x="88" y="78" width="24" height="24" fill="#2563eb" rx="2"/>' +
-              '<rect x="125" y="65" width="50" height="50" fill="none" rx="4" stroke="#71717a" stroke-width="2"/>' +
-              '<polygon points="150,73 165,90 150,107 135,90" fill="#2563eb"/>' +
-              '<rect x="75" y="115" width="50" height="50" fill="none" rx="4" stroke="#71717a" stroke-width="2"/>' +
-              '<path d="M100,125 L100,155 M85,140 L115,140" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>' +
-              '<rect x="75" y="165" width="50" height="25" fill="none" rx="2" stroke="#71717a" stroke-width="1.5" stroke-dasharray="3 3"/>' +
-            '</svg>' +
-          '</div>';
+        {
+          badge: 'Visual-Spatial (Gv)',
+          subtype: 'Isometric cube net folding',
+          prompt: 'Folded into a cube, which option is geometrically consistent with this net?',
+          stimulus: function () {
+            return '<div class="' + STAGE + ' flex items-center justify-center p-4">' +
+              '<svg viewBox="0 0 200 200" class="h-full w-full max-w-[220px]" fill="none" role="img" aria-label="Cube net with circle, triangle, square, diamond and cross faces">' +
+              '<rect x="75" y="15" width="50" height="50" rx="5" stroke="currentColor" stroke-opacity=".35" stroke-width="2"/>' +
+              '<circle cx="100" cy="40" r="13" class="fx-fill"/>' +
+              '<rect x="25" y="65" width="50" height="50" rx="5" stroke="currentColor" stroke-opacity=".35" stroke-width="2"/>' +
+              '<polygon points="50,76 64,104 36,104" class="fx-fill"/>' +
+              '<rect x="75" y="65" width="50" height="50" rx="5" stroke="currentColor" stroke-opacity=".35" stroke-width="2"/>' +
+              '<rect x="88" y="78" width="24" height="24" rx="3" class="fx-fill"/>' +
+              '<rect x="125" y="65" width="50" height="50" rx="5" stroke="currentColor" stroke-opacity=".35" stroke-width="2"/>' +
+              '<polygon points="150,74 165,90 150,106 135,90" class="fx-fill"/>' +
+              '<rect x="75" y="115" width="50" height="50" rx="5" stroke="currentColor" stroke-opacity=".35" stroke-width="2"/>' +
+              '<path d="M100,126 L100,154 M86,140 L114,140" class="fx-glyph" stroke-width="4" stroke-linecap="round"/>' +
+              '<rect x="75" y="165" width="50" height="24" rx="3" stroke="currentColor" stroke-opacity=".25" stroke-width="1.5" stroke-dasharray="4 4"/>' +
+              '</svg></div>';
+          },
+          options: [
+            { label: 'A', html: cubeSvg(['circle', 'cross', null]), correct: false },
+            { label: 'B', html: cubeSvg(['square', 'triangle', 'diamond']), correct: true },
+            { label: 'C', html: cubeSvg(['diamond', 'triangle', null]), correct: false },
+            { label: 'D', html: cubeSvg(['circle', 'triangle', 'diamond']), correct: false }
+          ],
+          rule: 'Faces separated by exactly one cell on the net fold to opposite, parallel faces and can never be seen together. Circle/cross and triangle/diamond are opposite pairs, so only option B shows three mutually adjacent faces.',
+          hint: 'Find the opposite-face pairs first. Any option showing two opposite faces at once is impossible.'
         },
-        options: [
-          { label: 'A', content: '<div class="h-12 w-12 mx-auto flex items-center justify-center"><svg viewBox="0 0 60 60" class="w-12 h-12" fill="none"><path d="M30,10 L50,22 L30,34 L10,22 Z" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/><path d="M10,22 L30,34 L30,55 L10,43 Z" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><path d="M50,22 L30,34 L30,55 L50,43 Z" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5"/><circle cx="30" cy="22" r="6" fill="#2563eb"/><path d="M20,38 L20,48 M15,43 L25,43" stroke="#2563eb" stroke-width="2"/></svg></div>', isCorrect: false },
-          { label: 'B', content: '<div class="h-12 w-12 mx-auto flex items-center justify-center"><svg viewBox="0 0 60 60" class="w-12 h-12" fill="none"><path d="M30,10 L50,22 L30,34 L10,22 Z" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/><path d="M10,22 L30,34 L30,55 L10,43 Z" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><path d="M50,22 L30,34 L30,55 L50,43 Z" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5"/><rect x="24" y="16" width="12" height="12" fill="#2563eb" rx="1"/><polygon points="20,36 26,48 14,48" fill="#2563eb"/><polygon points="40,36 46,42 40,48 34,42" fill="#2563eb"/></svg></div>', isCorrect: true },
-          { label: 'C', content: '<div class="h-12 w-12 mx-auto flex items-center justify-center"><svg viewBox="0 0 60 60" class="w-12 h-12" fill="none"><path d="M30,10 L50,22 L30,34 L10,22 Z" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/><path d="M10,22 L30,34 L30,55 L10,43 Z" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><path d="M50,22 L30,34 L30,55 L50,43 Z" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5"/><polygon points="20,20 25,26 20,32 15,26" fill="#2563eb"/><polygon points="40,36 46,48 34,48" fill="#2563eb"/></svg></div>', isCorrect: false },
-          { label: 'D', content: '<div class="h-12 w-12 mx-auto flex items-center justify-center"><svg viewBox="0 0 60 60" class="w-12 h-12" fill="none"><path d="M30,10 L50,22 L30,34 L10,22 Z" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/><path d="M10,22 L30,34 L30,55 L10,43 Z" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><path d="M50,22 L30,34 L30,55 L50,43 Z" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5"/><circle cx="30" cy="22" r="6" fill="#2563eb"/><polygon points="40,36 46,42 40,48 34,42" fill="#2563eb"/><polygon points="20,36 26,48 14,48" fill="#2563eb"/></svg></div>', isCorrect: false }
-        ],
-        rule: 'Opposite Face Rule: Faces separated by exactly one intervening cell (Top Circle & Bottom Cross, Left Triangle & Right Diamond) fold into opposite parallel faces and can never share an edge. Option B is the uniquely conforming cube.',
-        hint: 'Identify opposite face pairs on the flat net; opposite faces can never be visible simultaneously.'
-      },
-      {
-        id: 3,
-        domainBadge: 'Quantitative (Gq)',
-        subtypeText: 'Exponential Series Progression',
-        promptText: 'Identify the mathematical pattern and determine the missing term:',
-        renderStimulus: function() {
-          return '<div class="p-6 bg-white dark:bg-black rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 w-full max-w-[280px] sm:max-w-[320px] aspect-square flex flex-col items-center justify-center shadow-sm">' +
-            '<div class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 mb-3">Sequence:</div>' +
-            '<div class="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap text-center font-mono font-bold text-lg sm:text-xl text-zinc-900 dark:text-white">' +
-              '<span class="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">3</span>' +
-              '<span class="text-zinc-400">&rarr;</span>' +
-              '<span class="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">5</span>' +
-              '<span class="text-zinc-400">&rarr;</span>' +
-              '<span class="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">9</span>' +
-              '<span class="text-zinc-400">&rarr;</span>' +
-              '<span class="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">17</span>' +
-              '<span class="text-zinc-400">&rarr;</span>' +
-              '<span class="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">33</span>' +
-              '<span class="text-zinc-400">&rarr;</span>' +
-              '<span class="px-2 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-500 text-blue-600 dark:text-blue-400 rounded-lg animate-pulse">?</span>' +
-            '</div>' +
-            '<div class="mt-4 text-xs font-mono text-zinc-500 dark:text-zinc-400">Step deltas: +2, +4, +8, +16, +?</div>' +
-          '</div>';
+        {
+          badge: 'Quantitative (Gq)',
+          subtype: 'Doubling-difference series',
+          prompt: 'Identify the generating rule and supply the missing term.',
+          stimulus: function () {
+            var seq = [3, 5, 9, 17, 33];
+            var html = '<div class="' + STAGE + ' flex flex-col items-center justify-center p-6">' +
+              '<p class="font-mono text-[13px] fx-ink-3">Sequence</p>' +
+              '<div class="mt-4 flex flex-wrap items-center justify-center gap-2 font-mono text-lg font-bold fx-ink sm:text-xl">';
+            for (var i = 0; i < seq.length; i++) {
+              html += '<span class="fx-chip px-2.5 py-1">' + seq[i] + '</span>';
+              html += '<span class="fx-ink-3" aria-hidden="true">&rarr;</span>';
+            }
+            html += '<span class="fx-slot px-3 py-1 font-black">?</span></div>' +
+              '<p class="mt-5 font-mono text-[13px] fx-ink-3">Deltas: +2, +4, +8, +16, +?</p></div>';
+            return html;
+          },
+          options: [
+            { label: 'A', html: '<span class="font-mono text-base font-bold fx-ink">49</span>', correct: false },
+            { label: 'B', html: '<span class="font-mono text-base font-bold fx-ink">57</span>', correct: false },
+            { label: 'C', html: '<span class="font-mono text-base font-bold fx-ink">65</span>', correct: true },
+            { label: 'D', html: '<span class="font-mono text-base font-bold fx-ink">67</span>', correct: false }
+          ],
+          rule: 'Each successive difference doubles (+2, +4, +8, +16), so the next delta is +32 and 33 + 32 = 65. Equivalently, every term is 2n − 1 of the one before it.',
+          hint: 'Subtract each term from the next and look at how that list of differences behaves.'
         },
-        options: [
-          { label: 'A', content: '<span class="font-mono text-base font-bold text-zinc-800 dark:text-zinc-200">49</span>', isCorrect: false },
-          { label: 'B', content: '<span class="font-mono text-base font-bold text-zinc-800 dark:text-zinc-200">57</span>', isCorrect: false },
-          { label: 'C', content: '<span class="font-mono text-base font-bold text-zinc-800 dark:text-zinc-200">65</span>', isCorrect: true },
-          { label: 'D', content: '<span class="font-mono text-base font-bold text-zinc-800 dark:text-zinc-200">67</span>', isCorrect: false }
-        ],
-        rule: 'The difference between consecutive terms doubles at each step (+2, +4, +8, +16). The next delta is +32: 33 + 32 = 65 (Alternately: x * 2 - 1).',
-        hint: 'Calculate the differences: 5-3=2, 9-5=4, 17-9=8, 33-17=16.'
-      },
-      {
-        id: 4,
-        domainBadge: 'Verbal Comprehension (Gc)',
-        subtypeText: 'Categorical Deductive Syllogism',
-        promptText: 'Analyze the logical conclusion based strictly on the two given premises:',
-        renderStimulus: function() {
-          return '<div class="p-5 sm:p-6 bg-white dark:bg-black rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 w-full max-w-[280px] sm:max-w-[320px] aspect-square flex flex-col justify-center shadow-sm">' +
-            '<div class="space-y-2.5 text-xs sm:text-sm font-sans">' +
-              '<div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200">' +
-                '<span class="font-mono font-bold text-blue-600 dark:text-blue-400">P1:</span> All matrix puzzles require spatial reasoning.' +
-              '</div>' +
-              '<div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200">' +
-                '<span class="font-mono font-bold text-blue-600 dark:text-blue-400">P2:</span> Some cognitive screening tasks are matrix puzzles.' +
-              '</div>' +
-              '<div class="p-2.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80 text-blue-950 dark:text-blue-200 font-semibold">' +
-                '<span class="font-mono font-bold text-blue-600 dark:text-blue-400">C:</span> Some cognitive screening tasks require spatial reasoning.' +
-              '</div>' +
-            '</div>' +
-          '</div>';
+        {
+          badge: 'Verbal Comprehension (Gc)',
+          subtype: 'Categorical syllogism',
+          prompt: 'Judged strictly on the premises, is the conclusion valid?',
+          stimulus: function () {
+            return '<div class="' + STAGE + ' flex flex-col justify-center p-5 sm:p-6">' +
+              '<div class="space-y-3 text-[13px] sm:text-sm">' +
+              '<div class="fx-premise p-3 fx-ink"><span class="font-mono font-bold fx-action-text">P1</span> &nbsp;All matrix puzzles require spatial reasoning.</div>' +
+              '<div class="fx-premise p-3 fx-ink"><span class="font-mono font-bold fx-action-text">P2</span> &nbsp;Some cognitive screening tasks are matrix puzzles.</div>' +
+              '<div class="fx-premise p-3 font-semibold fx-ink"><span class="font-mono font-bold fx-action-text">C</span> &nbsp;Some cognitive screening tasks require spatial reasoning.</div>' +
+              '</div></div>';
+          },
+          options: [
+            { label: 'A', html: '<span class="text-[13px] font-medium fx-ink sm:text-sm">Valid</span>', correct: true },
+            { label: 'B', html: '<span class="text-[13px] font-medium fx-ink sm:text-sm">Invalid</span>', correct: false },
+            { label: 'C', html: '<span class="text-[13px] font-medium fx-ink sm:text-sm">Indeterminate</span>', correct: false }
+          ],
+          rule: 'This is the valid mood Darii: All M are P; some S are M; therefore some S are P. Any screening task that is a matrix puzzle necessarily inherits the spatial-reasoning property.',
+          hint: 'Ask whether the subset named in P2 must inherit the universal property asserted in P1.'
         },
-        options: [
-          { label: 'A', content: '<span class="font-medium text-xs sm:text-sm text-zinc-900 dark:text-white">Logically Valid (True)</span>', isCorrect: true },
-          { label: 'B', content: '<span class="font-medium text-xs sm:text-sm text-zinc-900 dark:text-white">Logically Invalid (False)</span>', isCorrect: false },
-          { label: 'C', content: '<span class="font-medium text-xs sm:text-sm text-zinc-900 dark:text-white">Indeterminate (Uncertain)</span>', isCorrect: false }
-        ],
-        rule: 'Valid Aristotelian categorical syllogism (Mood Darii: All M are P; Some S are M; therefore Some S are P). Any cognitive tasks that are matrix puzzles must inherit the spatial property.',
-        hint: 'Does the subset of tasks described in Premise 2 necessarily inherit the universal rule established in Premise 1?'
-      },
-      {
-        id: 5,
-        domainBadge: 'Fluid Reasoning (Gf)',
-        subtypeText: 'Boolean XOR Superposition Rule',
-        promptText: 'In each row, Column 3 is formed by combining Columns 1 and 2 with an XOR cancellation rule. Select the correct tile:',
-        renderStimulus: function() {
-          return '<div class="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 bg-white dark:bg-black rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 w-full max-w-[280px] sm:max-w-[320px] aspect-square shadow-sm">' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800 p-2"><svg viewBox="0 0 40 40" class="w-8 h-8 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="20" y1="6" x2="20" y2="34"/></svg></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800 p-2"><svg viewBox="0 0 40 40" class="w-8 h-8 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="20" y1="6" x2="20" y2="34"/><line x1="6" y1="20" x2="34" y2="20"/></svg></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800 p-2"><svg viewBox="0 0 40 40" class="w-8 h-8 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="6" y1="20" x2="34" y2="20"/></svg></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800 p-2"><svg viewBox="0 0 40 40" class="w-8 h-8 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="6" y1="20" x2="34" y2="20"/></svg></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800 p-2"><svg viewBox="0 0 40 40" class="w-8 h-8 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="20" y1="6" x2="20" y2="34"/><line x1="6" y1="20" x2="34" y2="20"/></svg></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800 p-2"><svg viewBox="0 0 40 40" class="w-8 h-8 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="20" y1="6" x2="20" y2="34"/></svg></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800 p-2"><svg viewBox="0 0 40 40" class="w-8 h-8 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="8" y1="32" x2="32" y2="8"/></svg></div>' +
-            '<div class="bg-zinc-50/70 dark:bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-200 dark:border-zinc-800 p-2"><svg viewBox="0 0 40 40" class="w-8 h-8 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="8" y1="32" x2="32" y2="8"/><line x1="8" y1="8" x2="32" y2="32"/></svg></div>' +
-            '<div class="bg-blue-50/70 dark:bg-blue-950/40 rounded-xl flex items-center justify-center border-2 border-dashed border-blue-500 animate-pulse"><span class="font-heading font-black text-3xl text-blue-600 dark:text-blue-400">?</span></div>' +
-          '</div>';
-        },
-        options: [
-          { label: 'A', content: '<div class="h-8 flex items-center justify-center"><svg viewBox="0 0 40 40" class="w-7 h-7 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="8" y1="8" x2="32" y2="32"/></svg></div>', isCorrect: true },
-          { label: 'B', content: '<div class="h-8 flex items-center justify-center"><svg viewBox="0 0 40 40" class="w-7 h-7 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="8" y1="32" x2="32" y2="8"/></svg></div>', isCorrect: false },
-          { label: 'C', content: '<div class="h-8 flex items-center justify-center"><svg viewBox="0 0 40 40" class="w-7 h-7 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="8" y1="32" x2="32" y2="8"/><line x1="8" y1="8" x2="32" y2="32"/></svg></div>', isCorrect: false },
-          { label: 'D', content: '<div class="h-8 flex items-center justify-center"><svg viewBox="0 0 40 40" class="w-7 h-7 stroke-blue-600" stroke-width="3" stroke-linecap="round"><line x1="20" y1="6" x2="20" y2="34"/><line x1="6" y1="20" x2="34" y2="20"/></svg></div>', isCorrect: false }
-        ],
-        rule: 'Exclusive OR (XOR) Superposition: Identical segments appearing in BOTH columns cancel out, while unique segments remain. In Row 3, the forward slash / cancels out, leaving only the backslash \\.',
-        hint: 'Notice that identical lines present in both Column 1 and Column 2 disappear in Column 3.'
+        {
+          badge: 'Fluid Reasoning (Gf)',
+          subtype: 'Boolean XOR superposition',
+          prompt: 'Column 3 combines columns 1 and 2 by XOR. Which tile completes row three?',
+          stimulus: function () {
+            function g(lines) {
+              var s = '<div class="fx-cell flex items-center justify-center p-2"><svg viewBox="0 0 40 40" class="h-8 w-8 fx-glyph" stroke-width="3" stroke-linecap="round" aria-hidden="true">';
+              for (var i = 0; i < lines.length; i++) s += lines[i];
+              return s + '</svg></div>';
+            }
+            var V = '<line x1="20" y1="6" x2="20" y2="34"/>';
+            var H = '<line x1="6" y1="20" x2="34" y2="20"/>';
+            var F = '<line x1="8" y1="32" x2="32" y2="8"/>';
+            var B = '<line x1="8" y1="8" x2="32" y2="32"/>';
+            return '<div class="' + STAGE + ' grid grid-cols-3 gap-2 p-4 sm:gap-3">' +
+              g([V]) + g([V, H]) + g([H]) +
+              g([H]) + g([V, H]) + g([V]) +
+              g([F]) + g([F, B]) +
+              '<div class="fx-slot flex items-center justify-center"><span class="font-heading text-3xl font-black">?</span></div>' +
+              '</div>';
+          },
+          options: [
+            { label: 'A', html: '<div class="flex h-8 items-center justify-center"><svg viewBox="0 0 40 40" class="h-7 w-7 fx-glyph" stroke-width="3" stroke-linecap="round"><line x1="8" y1="8" x2="32" y2="32"/></svg></div>', correct: true },
+            { label: 'B', html: '<div class="flex h-8 items-center justify-center"><svg viewBox="0 0 40 40" class="h-7 w-7 fx-glyph" stroke-width="3" stroke-linecap="round"><line x1="8" y1="32" x2="32" y2="8"/></svg></div>', correct: false },
+            { label: 'C', html: '<div class="flex h-8 items-center justify-center"><svg viewBox="0 0 40 40" class="h-7 w-7 fx-glyph" stroke-width="3" stroke-linecap="round"><line x1="8" y1="32" x2="32" y2="8"/><line x1="8" y1="8" x2="32" y2="32"/></svg></div>', correct: false },
+            { label: 'D', html: '<div class="flex h-8 items-center justify-center"><svg viewBox="0 0 40 40" class="h-7 w-7 fx-glyph" stroke-width="3" stroke-linecap="round"><line x1="20" y1="6" x2="20" y2="34"/><line x1="6" y1="20" x2="34" y2="20"/></svg></div>', correct: false }
+          ],
+          rule: 'Segments present in both columns cancel; segments unique to one column survive. In row three the forward slash appears in both tiles and cancels, leaving the backslash alone.',
+          hint: 'Compare rows one and two first: the element shared by columns 1 and 2 is the one that disappears.'
+        }
+      ];
+
+      function cubeSvg(faces) {
+        var glyphs = {
+          circle: '<circle cx="30" cy="22" r="6" fill="currentColor"/>',
+          square: '<rect x="24" y="16" width="12" height="12" rx="1" fill="currentColor"/>',
+          diamond: '<polygon points="40,36 46,42 40,48 34,42" fill="currentColor"/>',
+          triangle: '<polygon points="20,36 26,48 14,48" fill="currentColor"/>',
+          cross: '<path d="M20,38 L20,48 M15,43 L25,43" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'
+        };
+        var inner = '';
+        for (var i = 0; i < faces.length; i++) if (faces[i]) inner += glyphs[faces[i]];
+        return '<div class="mx-auto flex h-14 w-14 items-center justify-center" style="color:var(--fx-action)">' +
+          '<svg viewBox="0 0 60 60" class="h-14 w-14" fill="none" aria-hidden="true">' +
+          '<path d="M30,10 L50,22 L30,34 L10,22 Z" stroke="currentColor" stroke-opacity=".55" stroke-width="1.5"/>' +
+          '<path d="M10,22 L30,34 L30,55 L10,43 Z" stroke="currentColor" stroke-opacity=".55" stroke-width="1.5"/>' +
+          '<path d="M50,22 L30,34 L30,55 L50,43 Z" stroke="currentColor" stroke-opacity=".55" stroke-width="1.5"/>' +
+          inner + '</svg></div>';
       }
-    ];
 
-    var currentSampleIdx = 0;
-    var userResponses = {}; // index -> { optionLabel, isCorrect }
+      var idx = 0;
+      var answers = {};
 
-    // Elements
-    var domainBadge = document.getElementById('sample-domain-badge');
-    var subtypeText = document.getElementById('sample-subtype-text');
-    var counterText = document.getElementById('sample-counter-text');
-    var promptText = document.getElementById('sample-prompt-text');
-    var stimulusBox = document.getElementById('sample-stimulus-box');
-    var optionsContainer = document.getElementById('sample-options-container');
-    var feedbackBox = document.getElementById('demo-feedback');
-    var btnAdvance = document.getElementById('btn-sample-advance');
-    var btnAdvanceText = document.getElementById('btn-sample-advance-text');
-    var btnPrev = document.getElementById('btn-sample-prev');
-    var btnNext = document.getElementById('btn-sample-next');
-    var completionBanner = document.getElementById('sample-completion-banner');
+      var $badge = document.getElementById('sample-domain-badge');
+      var $subtype = document.getElementById('sample-subtype-text');
+      var $counter = document.getElementById('sample-counter-text');
+      var $prompt = document.getElementById('sample-prompt-text');
+      var $stimulus = document.getElementById('sample-stimulus-box');
+      var $options = document.getElementById('sample-options-container');
+      var $feedback = document.getElementById('sample-feedback');
+      var $advance = document.getElementById('btn-sample-advance');
+      var $advanceText = document.getElementById('btn-sample-advance-text');
+      var $banner = document.getElementById('sample-completion-banner');
 
-    function updateStepperUI() {
-      for (var i = 0; i < SAMPLE_ITEMS.length; i++) {
-        var dot = document.getElementById('step-dot-' + i);
-        if (!dot) continue;
-        if (i === currentSampleIdx) {
-          dot.className = 'sample-step-btn min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-bold transition-all bg-blue-600 text-white shadow-xs cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
-        } else if (userResponses[i]) {
-          dot.className = 'sample-step-btn min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-semibold transition-all bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
-        } else {
-          dot.className = 'sample-step-btn min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-semibold transition-all bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600';
+      if (!$stimulus || !$options) return;
+
+      function paintStepper() {
+        for (var i = 0; i < ITEMS.length; i++) {
+          var dot = document.getElementById('step-dot-' + i);
+          if (!dot) continue;
+          dot.classList.remove('is-active', 'is-done');
+          dot.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+          if (i === idx) dot.classList.add('is-active');
+          else if (answers[i]) dot.classList.add('is-done');
         }
       }
 
-      if (btnPrev) btnPrev.disabled = currentSampleIdx === 0;
-      if (btnNext) btnNext.disabled = currentSampleIdx === SAMPLE_ITEMS.length - 1;
-    }
-
-    function renderActiveQuestion() {
-      var item = SAMPLE_ITEMS[currentSampleIdx];
-      if (!item) return;
-
-      if (domainBadge) domainBadge.textContent = item.domainBadge;
-      if (subtypeText) subtypeText.textContent = item.subtypeText;
-      if (counterText) counterText.textContent = 'Item ' + (currentSampleIdx + 1) + ' of ' + SAMPLE_ITEMS.length;
-      if (promptText) promptText.textContent = item.promptText;
-
-      if (stimulusBox) {
-        stimulusBox.innerHTML = item.renderStimulus();
+      function paintFeedback(rec, item) {
+        $feedback.className = 'fx-feedback mt-5 p-4 sm:p-5 text-center text-[13px] sm:text-sm';
+        if (rec.correct) {
+          $feedback.classList.add('is-correct');
+          $feedback.innerHTML =
+            '<p class="font-semibold" style="color:#059669">Correct &mdash; option ' + rec.label + '.</p>' +
+            '<p class="mt-1.5 leading-relaxed fx-ink-2">' + item.rule + '</p>';
+        } else {
+          $feedback.classList.add('is-wrong');
+          $feedback.innerHTML =
+            '<p class="font-semibold" style="color:#e11d48">Option ' + rec.label + ' is not the solution.</p>' +
+            '<p class="mt-1.5 leading-relaxed fx-ink-2">' + item.hint + '</p>' +
+            '<p class="mt-2 leading-relaxed fx-ink-3">' + item.rule + '</p>';
+        }
+        $advance.classList.remove('hidden');
+        $advance.classList.add('flex');
+        $advanceText.textContent = idx < ITEMS.length - 1
+          ? 'Next sample item (' + (idx + 2) + ' of 5)'
+          : 'Start the full assessment';
       }
 
-      if (optionsContainer) {
-        optionsContainer.innerHTML = '';
-        var answered = userResponses[currentSampleIdx];
+      function render() {
+        var item = ITEMS[idx];
+        var rec = answers[idx];
 
-        item.options.forEach(function(opt) {
+        $badge.textContent = item.badge;
+        $subtype.textContent = item.subtype;
+        $counter.textContent = 'Item ' + (idx + 1) + ' of ' + ITEMS.length;
+        $prompt.textContent = item.prompt;
+        $stimulus.innerHTML = item.stimulus();
+
+        $options.innerHTML = '';
+        item.options.forEach(function (opt) {
           var btn = document.createElement('button');
           btn.type = 'button';
-          btn.setAttribute('data-option', opt.label);
-          btn.setAttribute('data-correct', String(opt.isCorrect));
-          btn.className = 'option-btn min-h-[52px] p-3 sm:p-4 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-500 bg-zinc-50/50 dark:bg-black flex flex-col items-center justify-center gap-1.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer';
-
-          // Apply state if already answered
-          if (answered) {
-            if (answered.optionLabel === opt.label) {
-              if (opt.isCorrect) {
-                btn.className = 'option-btn min-h-[52px] p-3 sm:p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 flex flex-col items-center justify-center gap-1.5 transition-all';
-              } else {
-                btn.className = 'option-btn min-h-[52px] p-3 sm:p-4 rounded-2xl border-2 border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 flex flex-col items-center justify-center gap-1.5 transition-all';
-              }
-            } else if (opt.isCorrect && !answered.isCorrect) {
-              btn.className = 'option-btn min-h-[52px] p-3 sm:p-4 rounded-2xl border-2 border-dashed border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 flex flex-col items-center justify-center gap-1.5 transition-all';
+          btn.className = 'fx-opt fx-focus flex min-h-[56px] flex-col items-center justify-center gap-1.5 p-3 sm:p-4';
+          btn.setAttribute('aria-label', 'Option ' + opt.label);
+          if (rec) {
+            btn.disabled = true;
+            if (rec.label === opt.label) btn.classList.add(opt.correct ? 'is-correct' : 'is-wrong');
+            else if (opt.correct && !rec.correct) btn.classList.add('is-reveal');
+          }
+          btn.innerHTML = '<span class="font-mono text-[13px] font-bold fx-ink-3">' + opt.label + '</span>' + opt.html;
+          btn.addEventListener('click', function () {
+            if (answers[idx]) return;
+            answers[idx] = { label: opt.label, correct: opt.correct };
+            render();
+            if (Object.keys(answers).length >= ITEMS.length && $banner) {
+              $banner.classList.remove('hidden');
+              $banner.classList.add('flex');
             }
-          }
-
-          var labelSpan = '<span class="font-mono text-xs sm:text-sm font-bold text-zinc-500 dark:text-zinc-400">' + opt.label + '</span>';
-          btn.innerHTML = labelSpan + opt.content;
-
-          btn.addEventListener('click', function() {
-            handleOptionSelect(opt.label, opt.isCorrect, item);
           });
-
-          optionsContainer.appendChild(btn);
+          $options.appendChild(btn);
         });
-      }
 
-      // Restore feedback box state
-      if (feedbackBox) {
-        var answeredState = userResponses[currentSampleIdx];
-        if (answeredState) {
-          renderFeedback(answeredState.optionLabel, answeredState.isCorrect, item);
+        if (rec) {
+          paintFeedback(rec, item);
         } else {
-          feedbackBox.textContent = 'Select an option above to verify your solution.';
-          feedbackBox.className = 'mt-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-300 text-center transition-all';
-          if (btnAdvance) btnAdvance.classList.add('hidden');
+          $feedback.className = 'fx-feedback mt-5 p-4 text-center text-[13px] font-medium fx-ink-2 sm:text-sm';
+          $feedback.textContent = 'Select an option above to check your solution.';
+          $advance.classList.add('hidden');
+          $advance.classList.remove('flex');
         }
+
+        paintStepper();
       }
 
-      updateStepperUI();
-    }
-
-    function renderFeedback(label, isCorrect, item) {
-      if (!feedbackBox) return;
-      feedbackBox.classList.remove('animate-fade-in');
-      void feedbackBox.offsetWidth;
-
-      if (isCorrect) {
-        feedbackBox.innerHTML = '<div class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-1">Correct! Option ' + label + ' is the exact solution.</div>' +
-          '<div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">' + item.rule + '</div>';
-        feedbackBox.className = 'mt-5 p-4 sm:p-5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800 text-center animate-fade-in transition-all';
-      } else {
-        feedbackBox.innerHTML = '<div class="text-sm sm:text-base font-bold text-rose-600 dark:text-rose-400 mb-1">Option ' + label + ' is not correct.</div>' +
-          '<div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">' + item.hint + '</div>' +
-          '<div class="mt-2 text-xs text-zinc-500 dark:text-zinc-400 font-mono">' + item.rule + '</div>';
-        feedbackBox.className = 'mt-5 p-4 sm:p-5 rounded-2xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-300 dark:border-rose-800 text-center animate-fade-in transition-all';
+      for (var s = 0; s < ITEMS.length; s++) {
+        (function (i) {
+          var dot = document.getElementById('step-dot-' + i);
+          if (dot) dot.addEventListener('click', function () { idx = i; render(); });
+        })(s);
       }
 
-      // Show advance action button
-      if (btnAdvance) {
-        btnAdvance.classList.remove('hidden');
-        btnAdvance.classList.add('flex');
-        if (btnAdvanceText) {
-          if (currentSampleIdx < SAMPLE_ITEMS.length - 1) {
-            btnAdvanceText.textContent = 'Next Sample Question (' + (currentSampleIdx + 2) + '/5)';
-          } else {
-            btnAdvanceText.textContent = 'Explore Completed - Take Full Test';
-          }
-        }
+      $advance.addEventListener('click', function () {
+        if (idx < ITEMS.length - 1) { idx++; render(); }
+        else { window.location.href = '/test'; }
+      });
+
+      render();
+    })();
+
+    /* =====================================================================
+       B. FULL-BLEED DRILL REEL — tabs, arrows, drag physics
+       ===================================================================== */
+    (function () {
+      var reel = document.getElementById('arena-reel');
+      var prev = document.getElementById('arena-prev');
+      var next = document.getElementById('arena-next');
+      var tabs = document.querySelectorAll('[data-arena-tab]');
+      if (!reel || !prev || !next) return;
+
+      function step() {
+        var card = reel.querySelector('.fx-reel-card:not([hidden])');
+        if (!card) return 320;
+        var gap = parseFloat(getComputedStyle(reel).columnGap) || 20;
+        return card.getBoundingClientRect().width + gap;
       }
-    }
 
-    function handleOptionSelect(label, isCorrect, item) {
-      userResponses[currentSampleIdx] = { optionLabel: label, isCorrect: isCorrect };
-      renderActiveQuestion();
-
-      // Check if all 5 answered
-      var answeredCount = Object.keys(userResponses).length;
-      if (answeredCount >= SAMPLE_ITEMS.length && completionBanner) {
-        completionBanner.classList.remove('hidden');
-        completionBanner.classList.add('flex');
+      function syncArrows() {
+        var max = reel.scrollWidth - reel.clientWidth - 8;
+        prev.disabled = reel.scrollLeft <= 8;
+        next.disabled = reel.scrollLeft >= max;
       }
-    }
 
-    // Step button event listeners
-    for (var s = 0; s < SAMPLE_ITEMS.length; s++) {
-      (function(idx) {
-        var dot = document.getElementById('step-dot-' + idx);
-        if (dot) {
-          dot.addEventListener('click', function() {
-            currentSampleIdx = idx;
-            renderActiveQuestion();
+      prev.addEventListener('click', function () { reel.scrollBy({ left: -step(), behavior: 'smooth' }); });
+      next.addEventListener('click', function () { reel.scrollBy({ left: step(), behavior: 'smooth' }); });
+      reel.addEventListener('scroll', syncArrows, { passive: true });
+      window.addEventListener('resize', syncArrows);
+
+      var down = false, startX = 0, startScroll = 0, moved = false;
+
+      reel.addEventListener('mousedown', function (e) {
+        if (e.target.closest('a, button')) return;
+        down = true; moved = false;
+        reel.classList.add('is-dragging');
+        startX = e.pageX;
+        startScroll = reel.scrollLeft;
+      });
+      window.addEventListener('mousemove', function (e) {
+        if (!down) return;
+        var walk = (e.pageX - startX) * 1.25;
+        if (Math.abs(walk) > 5) moved = true;
+        reel.scrollLeft = startScroll - walk;
+      });
+      window.addEventListener('mouseup', function () {
+        if (!down) return;
+        down = false;
+        reel.classList.remove('is-dragging');
+        setTimeout(function () { moved = false; }, 0);
+      });
+      reel.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } });
+      });
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var cat = tab.getAttribute('data-arena-tab');
+          tabs.forEach(function (t) { t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+          reel.querySelectorAll('.fx-reel-card').forEach(function (card) {
+            var show = cat === 'all' || card.getAttribute('data-cat') === cat;
+            card.hidden = !show;
+            card.style.display = show ? 'flex' : 'none';
           });
-        }
-      })(s);
-    }
-
-    if (btnPrev) {
-      btnPrev.addEventListener('click', function() {
-        if (currentSampleIdx > 0) {
-          currentSampleIdx--;
-          renderActiveQuestion();
-        }
+          reel.scrollTo({ left: 0, behavior: 'smooth' });
+          setTimeout(syncArrows, 320);
+        });
       });
-    }
 
-    if (btnNext) {
-      btnNext.addEventListener('click', function() {
-        if (currentSampleIdx < SAMPLE_ITEMS.length - 1) {
-          currentSampleIdx++;
-          renderActiveQuestion();
-        }
-      });
-    }
+      syncArrows();
+    })();
 
-    if (btnAdvance) {
-      btnAdvance.addEventListener('click', function() {
-        if (currentSampleIdx < SAMPLE_ITEMS.length - 1) {
-          currentSampleIdx++;
-          renderActiveQuestion();
-        } else {
-          window.location.href = '/test';
-        }
-      });
-    }
-
-    // Initial render
-    renderActiveQuestion();
-  })();
-
-  // Scroll Reveal Observer for Homepage Sections
-  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    var revealEls = document.querySelectorAll('.reveal-on-scroll');
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    revealEls.forEach(function(el) { observer.observe(el); });
-  } else {
-    var allEls = document.querySelectorAll('.reveal-on-scroll');
-    for (var e = 0; e < allEls.length; e++) {
-      allEls[e].classList.add('revealed');
-    }
-  }
-</script>
+    /* =====================================================================
+       C. SCROLL REVEAL
+       ===================================================================== */
+    (function () {
+      var els = document.querySelectorAll('.reveal-on-scroll');
+      if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        els.forEach(function (el) { el.classList.add('revealed'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { entry.target.classList.add('revealed'); io.unobserve(entry.target); }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      els.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
+</Layout>

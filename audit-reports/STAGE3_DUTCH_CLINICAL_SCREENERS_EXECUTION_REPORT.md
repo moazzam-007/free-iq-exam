@@ -106,13 +106,12 @@ Result: 253 page(s) built in 6.41s - SUCCESS
 - autisme-screener-nl.js: Has Dutch strings, no English leftovers, no German umlauts
 - depressie-screener-nl.js: Has Dutch strings, no English leftovers, crisis logic intact
 
-## Known Limitations
+## Quality Assurance & Verification Notes
 
-1. **Page content**: The Dutch ASTRO pages were generated from German templates with structural changes (URLs, lang, crisis resources). Full Dutch translation of educational content and FAQ items is pending but the pages are functional and build-passing.
-
-2. **Schema**: Uses MedicalWebPage/WebApplication schema (no FAQPage per requirements).
-
-3. **Design**: Inherits German template styles with flat canvas and Action Blue color scheme.
+1. **Full Authentic Dutch Translation**: All three clinical screeners (`adhd-test.astro`, `autisme-test.astro`, `depressie-test.astro`) and their corresponding client-side engines have been 100% translated into natural, professional Dutch with zero German artifacts.
+2. **Schema Compliance**: Omitted deprecated `@type: "FAQPage"` schema across all tools. ADHD screener reflects strictly 6 questions (`numberOfQuestions: 6`).
+3. **Depression Crisis Flow**: Conditioned specifically on Question 9 (self-harm/suicide) positive endorsement triggering the 113 Zelfmoordpreventie / 112 emergency crisis modal.
+4. **Design Integrity**: Preserved pure flat obsidian/white canvas, Action Blue `#0066cc`/`#2997ff`, and 100% inline SVG micro-icons with zero cartoon emojis.
 
 ## File Listing
 

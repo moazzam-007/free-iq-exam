@@ -1,52 +1,125 @@
 (() => {
   'use strict';
 
-   /* ------------------------------------------------------------------ *
-    * AQ-10 / Autismuspektrumoriëntatie, 10-item versie voor volwassenen
-    * Allison, Auyeung en Baron-Cohen. Binair samengevouwen scoring (0-10)
-    * met omgewerkte items, gemapt op vier subschalen voor profilering.
-    *
-    * Scoring (NICE-uitgelijnd): elk item telt 1 punt waneer de
-    * respons in de autistische richting valt --
-    *   richting 'agree'    => Zeer/Minder instemmeren scoreren 1
-    *   richting 'disagree' => Minder/Niet instemmeren scoreren 1
-    * Verwijstgrendel: totaal >= 6 van 10.
-    *
-    * Subschalen:
-    *   social        Q5, Q6, Q7, Q9, Q10 (max 5) -- communicatie & relaties
-    *   sensory       Q1, Q2 (max 2)              -- sensorik & detailfocus
-    *   attention     Q3, Q4 (max 2)              -- aandachtskavers
-    *   systematizing Q8 (max 1)                  -- systematische belangen
-    *
-    * Deze engine produceert uitsluitend screening-informatie. Het is geen
-    * diagnostisch instrument en kan autisme niet vaststellen of uitsluiten.
-    * ------------------------------------------------------------------ */
+  /* ------------------------------------------------------------------ *
+   * AQ-10 — Autism-Spectrum Quotient (10-item versie voor volwassenen)
+   * Allison, Auyeung & Baron-Cohen (Autism Research Centre, Cambridge).
+   * Binaire scoring (0–10) volgens de NICE-richtlijnen (CG142).
+   * Verwijsdrempel: score ≥ 6 van 10.
+   *
+   * Deze engine produceert uitsluitend informatieve screeningresultaten.
+   * Het is geen formele diagnose en kan autisme niet definitief vaststellen.
+   * ------------------------------------------------------------------ */
 
   const OPTIONS = [
-    { value: 0, label: 'Zeer instemmeren' },
-    { value: 1, label: 'Minder instemmeren' },
-    { value: 2, label: 'Minder niet-instemmeren' },
-    { value: 3, label: 'Niet instemmeren' }
+    { value: 0, label: 'Helemaal mee eens' },
+    { value: 1, label: 'Mee eens' },
+    { value: 2, label: 'Mee oneens' },
+    { value: 3, label: 'Helemaal mee oneens' }
   ];
 
   const QUESTIONS = [
-    { id: 1, subscale: 'sensory', direction: 'agree', context: 'Sensory · Attention to Detail', text: 'Ik merk vaak stille geluiden wanneer anderen dat niet horen.' },
-    { id: 2, subscale: 'sensory', direction: 'disagree', context: 'Geheelbeeld vs detail', text: 'Ik richt me meestal op het grotere geheel in plaats van op kleine details.' },
-    { id: 3, subscale: 'attention', direction: 'disagree', context: 'Aandachtskavers', text: 'Het is moeilijk voor mij om meerdere dingen tegelijk te doen.' },
-    { id: 4, subscale: 'attention', direction: 'disagree', context: 'Aandachtskavers', text: 'Na een onderbreking kan ik snel terugkeren naar mijn vorige activiteit.' },
-    { id: 5, subscale: 'social', direction: 'disagree', context: 'Sociale communicatie', text: "Ik kan gemakkelijk tussen de regels lezen als iemand met mij praat." },
-    { id: 6, subscale: 'social', direction: 'disagree', context: 'Sociale relaties', text: 'Ik weet hoe ik herken of iemand die me naar zich luistert verveerd wordt.' },
-    { id: 7, subscale: 'social', direction: 'agree', context: 'Theory of Mind · Social Context', text: "Als ik een verhaal lees, heb ik moeite met de bedoelingen van de personages." },
-    { id: 8, subscale: 'systematizing', direction: 'agree', context: 'Systematizing · Circumscribed Interests', text: 'Ik verzamel graag informatie over bepaalde categorien van dingen.' },
-    { id: 9, subscale: 'social', direction: 'disagree', context: 'Facial Affect · Empathy', text: 'Ik kan weten wat iemand denkt of voelt aan zijn gezichtsausdruk.' },
-    { id: 10, subscale: 'social', direction: 'agree', context: 'Sociale relaties', text: 'Ik heb moeite om nieuwe vriendschappen te maken.' }
+    {
+      id: 1,
+      subscale: 'sensory',
+      direction: 'agree',
+      context: 'Sensorische waarneming & detailfocus',
+      text: 'Ik merk vaak kleine geluiden op als anderen dat niet doen.'
+    },
+    {
+      id: 2,
+      subscale: 'sensory',
+      direction: 'disagree',
+      context: 'Overzicht versus detailwaarneming',
+      text: 'Ik concentreer me meestal meer op het grote geheel dan op de details.'
+    },
+    {
+      id: 3,
+      subscale: 'attention',
+      direction: 'disagree',
+      context: 'Aandacht & multitasking',
+      text: 'Ik vind het makkelijk om meer dan één ding tegelijk te doen.'
+    },
+    {
+      id: 4,
+      subscale: 'attention',
+      direction: 'disagree',
+      context: 'Taakomschakeling na onderbreking',
+      text: 'Als ik onderbroken word, kan ik heel snel weer verdergaan waarmee ik bezig was.'
+    },
+    {
+      id: 5,
+      subscale: 'social',
+      direction: 'disagree',
+      context: 'Sociale communicatie & nuance',
+      text: "Ik vind het makkelijk om 'tussen de regels door te lezen' als iemand tegen me praat."
+    },
+    {
+      id: 6,
+      subscale: 'social',
+      direction: 'disagree',
+      context: 'Sociale signalen & interactie',
+      text: 'Ik weet hoe ik kan zien of iemand die naar me luistert zich verveelt.'
+    },
+    {
+      id: 7,
+      subscale: 'social',
+      direction: 'agree',
+      context: 'Theory of Mind & verhaallijnen',
+      text: 'Wanneer ik een verhaal lees, vind ik het moeilijk om de bedoelingen van de personages te begrijpen.'
+    },
+    {
+      id: 8,
+      subscale: 'systematizing',
+      direction: 'agree',
+      context: 'Systematisering & gerichte interesses',
+      text: "Ik verzamel graag informatie over categorieën van dingen (zoals types auto's, vogels, treinen of planten)."
+    },
+    {
+      id: 9,
+      subscale: 'social',
+      direction: 'disagree',
+      context: 'Emotieherkenning & mimiek',
+      text: 'Ik vind het makkelijk om aan iemands gezichtsuitdrukking te zien wat diegene denkt of voelt.'
+    },
+    {
+      id: 10,
+      subscale: 'social',
+      direction: 'agree',
+      context: 'Vriendschappen & sociale relaties',
+      text: 'Ik vind het moeilijk om nieuwe vrienden te maken.'
+    }
   ];
 
   const SUBSCALES = {
-    social: { label: 'Sociale communicatie', short: 'Social', max: 5, color: '#10b981', blurb: 'Theory of mind, sociale signalen, wederzijdigheid' },
-    sensory: { label: 'Sensorik en detailfocus', short: 'Sensory', max: 2, color: '#06b6d4', blurb: 'Sensorische waarneming, detail versus geheelbeeld' },
-    attention: { label: 'Aandachtskavers', short: 'Switching', max: 2, color: '#8b5cf6', blurb: 'Takenwissel, flexibiliteit, vastgerichte patronen' },
-    systematizing: { label: 'Systematische belangen', short: 'System.', max: 1, color: '#f59e0b', blurb: 'Patroonfocus, classificatie, diepgaande belangen' }
+    social: {
+      label: 'Sociale communicatie & empathie',
+      short: 'Sociaal',
+      max: 5,
+      color: '#10b981',
+      blurb: 'Theory of mind, sociale signalen, communicatieve wederkerigheid'
+    },
+    sensory: {
+      label: 'Sensorische waarneming & detailfocus',
+      short: 'Sensorisch',
+      max: 2,
+      color: '#06b6d4',
+      blurb: 'Prikkelverwerking en oog voor subtiele details'
+    },
+    attention: {
+      label: 'Aandacht & taakomschakeling',
+      short: 'Aandacht',
+      max: 2,
+      color: '#8b5cf6',
+      blurb: 'Flexibiliteit, taakwisseling en verwerken van onderbrekingen'
+    },
+    systematizing: {
+      label: 'Systematisering & patronen',
+      short: 'Systematisch',
+      max: 1,
+      color: '#f59e0b',
+      blurb: 'Informatie categoriseren, patronen herkennen en diepgaande interesses'
+    }
   };
 
   const SUBSCALE_ORDER = ['social', 'sensory', 'attention', 'systematizing'];
@@ -90,7 +163,7 @@
     const meta = SUBSCALES[q.subscale];
 
     $('question-number').textContent = `Vraag ${q.id} van ${total}`;
-    $('question-part').textContent = 'AQ-10 · Adult autismus screener';
+    $('question-part').textContent = 'AQ-10 · Autism-Spectrum Quotient';
     $('question-domain').textContent = meta.label;
     $('question-heading').textContent = q.text;
     $('question-context').textContent = q.context;
@@ -112,7 +185,7 @@
       button.innerHTML = `
         <span class="likert-key">${option.value + 1}</span>
         <span class="likert-label">${option.label}</span>
-        ${scores ? '<span class="likert-clinical-badge">Scores 1</span>' : ''}
+        ${scores ? '<span class="likert-clinical-badge">Scoort 1 punt</span>' : ''}
       `;
       button.addEventListener('click', () => selectAnswer(option.value));
       options.appendChild(button);
@@ -120,7 +193,7 @@
 
     $('back-button').disabled = state.currentIndex === 0 || state.transitionLocked;
     $('next-button').disabled = selected === undefined || state.transitionLocked;
-    $('next-button').textContent = state.currentIndex === total - 1 ? 'Resultaat weergeven' : 'Volgende vraag';
+    $('next-button').textContent = state.currentIndex === total - 1 ? 'Bekijk uitslag' : 'Volgende vraag';
     announce(`Vraag ${q.id} van ${total}. ${q.text}`);
   }
 
@@ -191,16 +264,16 @@
 
     if (aboveThreshold) {
       tone = 'high';
-      badge = 'Boven de verwijstgrendel -- klinische evaluatie aanbevolen';
-      classification = 'Klinisch significant autistisch trekpatroon';
+      badge = 'Boven de verwijsdrempel (≥6) — nader onderzoek aanbevolen';
+      classification = 'Klinisch relevant autistisch kenmerkenpatroon';
     } else if (total >= 4) {
       tone = 'moderate';
-      badge = 'Grensgebied -- context overwegen';
-      classification = 'Grensautistisch trekpatroon';
+      badge = 'Grensgebied (4–5) — context en lijdensdruk bepalend';
+      classification = 'Verhoogd autistisch kenmerkenpatroon';
     } else {
       tone = 'low';
-      badge = 'Onder de klinische drempel';
-      classification = 'Lager autistisch patroon';
+      badge = 'Onder de klinische verwijsdrempel (<4)';
+      classification = 'Laag aantal autistische kenmerken';
     }
 
     return { total, subscaleTotals, aboveThreshold, classification, badge, tone };
@@ -372,7 +445,7 @@
         if (best >= 0) {
           const key = SUBSCALE_ORDER[best];
           const meta = SUBSCALES[key];
-          tooltip.textContent = `${meta.label}: ${results.subscaleTotals[key]} of ${meta.max} — ${meta.blurb}`;
+          tooltip.textContent = `${meta.label}: ${results.subscaleTotals[key]} van ${meta.max} — ${meta.blurb}`;
           tooltip.classList.remove('hidden');
           const [px, py] = points[best];
           tooltip.style.left = `${Math.max(4, Math.min(rect.width - 4, px))}px`;
@@ -396,10 +469,10 @@
 
   function subscaleStatus(value, max) {
     const ratio = max === 0 ? 0 : value / max;
-    if (ratio >= 0.75) return 'Sterk ondersteund';
-    if (ratio >= 0.5) return 'Matig ondersteund';
-    if (ratio > 0) return 'Licht ondersteund';
-    return 'Minimale ondersteuning';
+    if (ratio >= 0.75) return 'Sterk aanwezig';
+    if (ratio >= 0.5) return 'Matig aanwezig';
+    if (ratio > 0) return 'Licht aanwezig';
+    return 'Niet of nauwelijks aanwezig';
   }
 
   function displayResults() {
@@ -416,14 +489,14 @@
     $('result-classification').textContent = results.classification;
     $('result-score').textContent = `${results.total} / 10`;
     $('threshold-status').textContent = results.aboveThreshold
-      ? `Op of boven de verwijstgrendel van ${REFERRAL_CUTOFF}`
-      : `Onder de verwijstgrendel van ${REFERRAL_CUTOFF}`;
+      ? `Op of boven de verwijsdrempel van ${REFERRAL_CUTOFF}`
+      : `Onder de verwijsdrempel van ${REFERRAL_CUTOFF}`;
 
     $('result-narrative').textContent = results.aboveThreshold
-      ? 'Je reacties overschrijden de screeningdrempel die door deze implementatie wordt gebruikt. Dit ondersteunt het zoeken naar een volledige diagnostische evaluatie met een specialistisch multidisciplinaire groep; het stelt autisme niet vast.'
+      ? 'Uw antwoorden overschrijden de officiële verwijsdrempel van de AQ-10 (score ≥ 6). Dit betekent dat u een significant aantal autistische kenmerken vertoont. Dit rechtvaardigt nader specialistisch onderzoek via een huisarts of GGZ-poli. Het is geen definitieve diagnose.'
       : results.total >= 4
-        ? 'Je reacties zitten net onder de screeningdrempel. Kenmerken op dit niveau kunnen nog steeds betekenisvol zijn — vooral bij camoufling, wat scores kan onderdrukken — wanneer ze persistent of belemmerend zijn.'
-        : 'Je reacties vallen onder de screeningdrempel. Een lagere score sluit niet elke oorzaak uit van sociale, sensorische of aandachtsgerelateerde problemen, en blijvende zorgen zijn om te bespreken.';
+        ? 'Uw antwoorden liggen in het grensgebied (4–5 punten). Bij veel volwassenen (met name vrouwen) kan jarenlang aangeleerd compensatiegedrag ("masking") de score dempen. Als u aanzienlijke hinder ondervindt in uw dagelijks leven, is overleg met een specialist aan te raden.'
+        : 'Uw antwoorden vallen onder de klinische verwijsdrempel. Een lage score sluit specifieke sensorische of communicatieve gevoeligheden niet uit, maar duidt niet op een primair autistisch patroon volgens de AQ-10.';
 
     $('social-score').textContent = `${results.subscaleTotals.social} / 5`;
     $('sensory-score').textContent = `${results.subscaleTotals.sensory} / 2`;
@@ -448,10 +521,10 @@
 
   function renderMatrix(results) {
     const axes = [
-      ['Social communication (Q5–Q7, Q9–Q10)', results.subscaleTotals.social, 5],
-      ['Sensorik en detailfocus (Q1-Q2)', results.subscaleTotals.sensory, 2],
-      ['Aandachtskavers (Q3-Q4)', results.subscaleTotals.attention, 2],
-      ['Systematische belangen (Q8)', results.subscaleTotals.systematizing, 1]
+      ['Sociale communicatie & empathie (V5–V7, V9–V10)', results.subscaleTotals.social, 5],
+      ['Sensorische waarneming & detailfocus (V1–V2)', results.subscaleTotals.sensory, 2],
+      ['Aandacht & taakomschakeling (V3–V4)', results.subscaleTotals.attention, 2],
+      ['Systematisering & patronen (V8)', results.subscaleTotals.systematizing, 1]
     ];
 
     $('profile-matrix').innerHTML = axes
@@ -470,8 +543,8 @@
     for (let score = 0; score <= 10; score += 1) {
       const active = score === results.total;
       const inZone = score >= REFERRAL_CUTOFF;
-      cells += `<div class="threshold-cell${active ? ' active' : ''}${inZone ? ' referral-zone' : ''}" title="Score ${score}${score >= REFERRAL_CUTOFF ? ' — referral range' : ''}">
-        <span>${score}</span>${active ? '<em>You</em>' : ''}
+      cells += `<div class="threshold-cell${active ? ' active' : ''}${inZone ? ' referral-zone' : ''}" title="Score ${score}${score >= REFERRAL_CUTOFF ? ' — verwijsbereik' : ''}">
+        <span>${score}</span>${active ? '<em>U</em>' : ''}
       </div>`;
     }
     container.innerHTML = cells;
@@ -480,24 +553,22 @@
   function renderNextSteps(results) {
     const steps = results.aboveThreshold
       ? [
-        'Plan een volledige diagnostische evaluatie met een specialistisch multidisciplinaire groep — meestal via je huisarts, een neuropsycholoog of een volwassen autismus-dienst.',
-        'Breng dit overzicht mee plus concrete voorbeelden uit je levensloop: sociale situaties, sensorische ervaringen, routines en belangen, inclusief kindertijd patronen waar beschikbaar.',
-        'Vraag wat de evaluatie omvat (commonly developmental history, structured observation or interview, and questionnaires) zodat je kunt voorbereiden zonder te oefenen.',
-        'Als je camoufleert of maskert in sociale situaties, zeg dit expliciet — maskering kan waarneembare kenmerken onderdrukken tijdens korte afspraken.',
-        'Verken werkplek- of studietoelagingen gelijktijdig; veel aanpassingen vereisen geen formele diagnose om te verzoeken.'
+        'Bespreek deze uitslag met uw huisarts voor een verwijzing naar een gespecialiseerd diagnostisch centrum of GGZ-poli voor volwassenen met autisme.',
+        'Neem dit afgedrukte rapport mee, aangevuld met voorbeelden uit uw jeugd en dagelijks leven: sociale interacties, overprikkeling en routines.',
+        'Benoem expliciet of u geneigd bent gedrag sociaal te compenseren ("masking"), aangezien dit tijdens korte gesprekken kenmerken kan maskeren.',
+        'Onderzoek tegelijkertijd praktische aanpassingen op de werkplek of studie (zoals een prikkelarme werkplek of duidelijke schriftelijke instructies).'
       ]
       : results.total >= 4
         ? [
-          'Scores near the threshold deserve context, not dismissal. Note when traits appear, what triggers them, and what they cost you in daily life.',
-          'Consider screening for commonly overlapping conditions — ADHD, anxiety, depression, and sensory processing differences can share surface features.',
-          'If difficulties persist or cause real impairment, a clinical conversation is still worthwhile; thresholds are guides, not gates.',
-          'Re-screen after a few months if your self-understanding changes, particularly if you begin unmasking long-held coping strategies.'
+          'Scores in het grensgebied verdienen context. Noteer in welke situaties u spanning ervaart en wat de impact is op uw dagelijks leven.',
+          'Overweeg mogelijke overlap met ADHD (AuDHD), hooggevoeligheid of angststoornissen, die raakvlakken hebben met dit profiel.',
+          'Wanneer u aanzienlijke hinder ervaart in uw functioneren, is een oriënterend gesprek met een psycholoog of de praktijkondersteuner (POH-GGZ) altijd waardevol.',
+          'Herhaal de zelftest gerust na enkele maanden wanneer u meer inzicht krijgt in uw eigen copingmechanismen.'
         ]
         : [
-          'No referral is indicated on the basis of this score alone.',
-          'If you are still struggling, the score is not the whole story. Persistent social, sensory, or attention-related distress deserves a conversation regardless of the number.',
-          'Consider whether another explanation fits better — ADHD, social anxiety, depression, trauma responses, and sleep disorders can each mimic parts of this pattern.',
-          'Re-screen if your experiences change meaningfully over time.'
+          'Op basis van deze score is een gerichte verwijzing voor diagnostisch autismeonderzoek niet direct geïndiceerd.',
+          'Blijft u tegen hardnekkige sociale of sensorische problemen aanlopen? Bespreek uw klachten dan open met uw huisarts.',
+          'Onderzoek of een andere verklaring beter past, zoals chronische stress, sociale angst, oververmoeidheid of stemmingsproblemen.'
         ];
 
     $('next-steps-list').innerHTML = steps
@@ -509,12 +580,12 @@
     const dateEl = $('report-date');
     if (!dateEl) return;
 
-    dateEl.textContent = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date());
+    dateEl.textContent = new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date());
     $('report-session').textContent = state.sessionId;
     $('print-total').textContent = `${results.total} / 10 — ${results.classification}`;
     $('print-threshold').textContent = results.aboveThreshold
-      ? `Op of boven de verwijstgrendel van ${REFERRAL_CUTOFF}`
-      : `Onder de verwijstgrendel van ${REFERRAL_CUTOFF}`;
+      ? `Op of boven de verwijsdrempel van ${REFERRAL_CUTOFF}`
+      : `Onder de verwijsdrempel van ${REFERRAL_CUTOFF}`;
     $('print-social').textContent = `${results.subscaleTotals.social} / 5`;
     $('print-sensory').textContent = `${results.subscaleTotals.sensory} / 2`;
     $('print-attention').textContent = `${results.subscaleTotals.attention} / 2`;
@@ -533,16 +604,16 @@
 
   async function shareResult() {
     const results = calculateScores();
-    const text = `Ik heb de FreeIQExam AQ-10 autismus screener afgerond. Score: ${results.total}/10 (verwijstgrendel ≥6). Result: ${results.badge}. This is screening information, not a diagnosis.`;
+    const text = `Ik heb de FreeIQExam AQ-10 autisme zelftest afgerond. Score: ${results.total}/10 (verwijsdrempel ≥6). Uitslag: ${results.badge}. Dit is een indicatieve screening, geen diagnose.`;
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'FreeIQExam AQ-10 Screener', text, url: window.location.href });
+        await navigator.share({ title: 'FreeIQExam AQ-10 Autisme Zelftest', text, url: window.location.href });
         return;
       }
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);
-        showToast('Screening samenvatting gekopieerd.');
+        showToast('Samenvatting gekopieerd naar klembord.');
         return;
       }
       const textarea = document.createElement('textarea');
@@ -554,7 +625,7 @@
       textarea.select();
       document.execCommand('copy');
       textarea.remove();
-      showToast('Screening samenvatting gekopieerd.');
+      showToast('Samenvatting gekopieerd naar klembord.');
     } catch (error) {
       if (error?.name !== 'AbortError') showToast('Delen niet beschikbaar.');
     }
@@ -585,7 +656,7 @@
     $('assessment-intro').classList.remove('hidden');
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    announce('Screening opnieuw gestart. Klaar om opnieuw te beginnen.');
+    announce('Zelftest opnieuw gestart.');
   }
 
   /* ---------------------------------------------------------------- *

@@ -2,82 +2,83 @@
   'use strict';
 
   /* ------------------------------------------------------------------ *
-   * PHQ-9 — Patient Health Vragenlijst 9-item depression module
-   * Spitzer, Williams & Kroenke. Scored 0–27 across 9 DSM-5 criterion
-   * items over a 2-week recall window, plus a supplementary functional
-   * impairment item (item 10) reported separately from the total.
+   * PHQ-9 — Patient Health Questionnaire (9-item depressiemodule)
+   * Spitzer, Williams & Kroenke.
+   * Bereik: 0–27 over 9 DSM-criteria binnen een 14-daags venster,
+   * plus een aanvullende functionele vraag (vraag 10).
    *
-   * Deze engine produceert uitsluitend screening-informatie. Het is geen
-   * diagnostisch instrument en kan een diagnose niet vaststellen of uitsluiten.
+   * Deze tool biedt een indicatieve screening en psycho-educatie.
+   * Het is geen formele medische of psychiatrische diagnose.
    * ------------------------------------------------------------------ */
 
   const LIKERT_OPTIONS = [
-    { value: 0, label: 'Niet op alleen', detail: '0 dagen' },
-    { value: 1, label: 'Een paar dagen', detail: '1-6 dagen' },
-    { value: 2, label: 'Meer dan de helft van de dagen', detail: '7-11 dagen' },
-    { value: 3, label: 'Bijna elke dag', detail: '12-14 dagen' }
+    { value: 0, label: 'Helemaal niet', detail: '0 dagen' },
+    { value: 1, label: 'Meerdere dagen', detail: '1–6 dagen' },
+    { value: 2, label: 'Meer dan de helft van de dagen', detail: '7–11 dagen' },
+    { value: 3, label: 'Bijna elke dag', detail: '12–14 dagen' }
   ];
 
   const FUNCTIONAL_OPTIONS = [
-    { value: 0, label: 'Helemaal niet moeilijk', detail: 'Geen interferentie' },
-    { value: 1, label: 'Een beetje moeilijk', detail: 'Lichte interferentie' },
-    { value: 2, label: 'Zeer moeilijk', detail: 'Aanzienlijke interferentie' },
-    { value: 3, label: 'Zeer zwaar', detail: 'Zware interferentie' }
+    { value: 0, label: 'Helemaal niet moeilijk', detail: 'Geen belemmering' },
+    { value: 1, label: 'Een beetje moeilijk', detail: 'Lichte belemmering' },
+    { value: 2, label: 'Erg moeilijk', detail: 'Aanzienlijke belemmering' },
+    { value: 3, label: 'Heel erg moeilijk', detail: 'Zware belemmering' }
   ];
 
   const QUESTIONS = [
     {
       id: 1,
       axis: 'affective',
-      context: 'Anhedonie en verminderde beloningsgevoeligheid',
-      text: 'Weinig interesse of plezier in dingen doen'
+      context: 'Anhedonie & verlies van interesse',
+      text: 'Weinig interesse of plezier in uw bezigheden'
     },
     {
       id: 2,
       axis: 'affective',
-      context: 'Gedeprimeerde stemming en aanhoudende negatieve emotie',
-      text: 'Neerslappend gevoel, somber of hoopeloos zijn'
+      context: 'Neerslachtigheid & somberheid',
+      text: 'Zich neerslachtig, depressief of hopeloos voelen'
     },
     {
       id: 3,
       axis: 'somatic',
-      context: 'Slaapstoornis en insomnia of hypersomnie',
-      text: 'Moeite met inslaap of blijven slapen, of te veel slapen'
+      context: 'Slaappatroon & vermoeidheid',
+      text: 'Moeite met inslapen of doorslapen, of juist te veel slapen'
     },
     {
       id: 4,
       axis: 'somatic',
-      context: 'Vermoeidheid en verminderde energie',
-      text: 'Moe zijn of weinig energie hebben'
+      context: 'Energieniveau & vitaliteit',
+      text: 'Zich moe voelen of weinig energie hebben'
     },
     {
       id: 5,
       axis: 'somatic',
-      context: 'Eetlustafwijkingen en onder- of over-eten',
-      text: 'Slechte eetlust of over-eten'
+      context: 'Eetlust & gewichtsveranderingen',
+      text: 'Weinig eetlust of juist te veel eten'
     },
     {
       id: 6,
       axis: 'affective',
-      context: 'Niet-waardigheidsgevoel en overmatig schuldgevoel',
-      text: 'Slecht over jezelf voelen of dat je een falen bent of dat je jezelf of je familie hebt teleursteld'    },
+      context: 'Zelfbeeld & schuldgevoel',
+      text: 'Slecht over uzelf denken — of het gevoel hebben dat u gefaald heeft of uzelf of uw familie heeft teleurgesteld'
+    },
     {
       id: 7,
       axis: 'cognitive',
-      context: 'Concentratievermindering en aandachtsbelasting',
-      text: 'Moeite met concentreren op dingen zoals een krant lezen of tv kijken'
+      context: 'Concentratie & mentale focus',
+      text: 'Moeite met concentreren op zaken zoals het lezen van de krant of televisiekijken'
     },
     {
       id: 8,
       axis: 'cognitive',
-      context: 'Psychomotorische agitatie of retardatie',
-      text: 'Zo langzaam bewegen of spreken dat anderen dit zouden merken, of juist zo onrustig zijn dat je veel meer in beweging bent dan gebruikelijk'
+      context: 'Psychomotorische onrust of vertraging',
+      text: 'Zodanig traag bewegen of spreken dat het anderen opvalt? Of juist zo rusteloos of wiebelig zijn dat u veel meer rondloopt dan gewoonlijk'
     },
     {
       id: 9,
       axis: 'cognitive',
-      context: 'Veiligheidskritisch item en zelfkader en suïcidale ideatie',
-      text: 'Gedachten dat het beter zou zijn als je niet meer woedt, of jezelf op een of andere manier krenen zou wensen',
+      context: 'Veiligheidskritisch item · Suïcidaliteit',
+      text: 'Gedachten dat u beter dood zou kunnen zijn of dat u uzelf op de een of andere manier pijn zou willen doen',
       critical: true
     }
   ];
@@ -85,8 +86,8 @@
   const FUNCTIONAL_ITEM = {
     id: 10,
     axis: 'functional',
-    context: 'Supplementair item en functionele belemmering',
-    text: 'Als je problemen aankruist, hoe moeilijk zijn deze problemen geweest om je werk te doen, omgaam met dingen thuis, of om te gaan met andere mensen?'
+    context: 'Aanvullende vraag · Impact op het dagelijks functioneren',
+    text: 'Indien u een of meer van deze problemen heeft ervaren: in hoeverre hebben deze problemen het voor u moeilijk gemaakt om uw werk te doen, thuis voor dingen te zorgen, of met andere mensen om te gaan?'
   };
 
   const TOTAL_STEPS = QUESTIONS.length + 1;
@@ -97,88 +98,69 @@
       min: 0,
       max: 4,
       label: 'Minimaal of geen',
-      badge: 'Minimale of geen depressiesymptomen',
-      tone: 'minimaal',
-      summary: 'Je reacties vallen onder de drempel die meestal wordt gekoppeld aan klinisch significante depressie.',
-      narrative:
-        'Je totaalscore zit in het minimale bereik. Dit betekent dat je weinig depressieve symptomen hebt aangekruld, of ze alleen incidenteel. Een score in deze band betekent niet dat moeilijke gevoelens onbelangrijk zijn — het betekent dat het symptoompatroon dat dit instrument vastvangt momenteel niet verhoogd is.',
+      badge: 'Minimale of geen depressieve klachten (0–4)',
+      tone: 'low',
+      narrative: 'Uw score (0–4) duidt op afwezigheid van klinisch relevante depressieve symptomen. Dit patroon valt binnen het normale bereik van alledaagse stemmingswisselingen.',
       steps: [
-        'Geen behandeling wordt aangewezen op basis van alleen deze score.',
-        'Als je nog steeds moeite hebt, is de score niet het geheel. Aanhoudende angst verdient een gesprek met een klinicus ongeacht het getal.',
-        'Her-screen als je stemming, slaap, energie of interesse in dagelijks leven aanzienlijk verandert.',
-        'Houd de basis in stand die stemming beschermt: consistente slaap- en wakkerheidstijden, daglicht blootstelling, aerobe beweging en regelmatig sociaal contact.'
+        'Geen specifieke behandeling geïndiceerd op basis van deze score.',
+        'Blijf aandacht besteden aan een gezond slaapritme, regelmatige beweging en ontspanning.',
+        'Herhaal de zelftest wanneer u in de toekomst aanhoudende stemmingsveranderingen opmerkt.'
       ]
     },
     {
       key: 'mild',
       min: 5,
       max: 9,
-      label: 'Lichte Depressie',
-      badge: 'Milde depressieve symptomen',
-      tone: 'mild',
-      summary: 'Je hebt meerdere symptomen aangekruist op lage frequentie. Dit is onder de standaard behandeldrempel maar boven een volledig schone screening.',
-      narrative:
-        'Een score in het milde bereik is best read as an early signal rather than a verdict. Symptoms at this level often respond well to structured behavioural and lifestyle intervention, and watchful waiting is a legitimate clinical strategy — provided the symptoms are actually being watched. Re-screen in two to four weeks to see whether the pattern is settling or consolidating.',
+      label: 'Lichte depressieve klachten',
+      badge: 'Lichte depressieve symptomen (5–9)',
+      tone: 'moderate',
+      narrative: 'Uw score (5–9) wijst op lichte depressieve klachten. Hoewel dit vaak tijdelijk is (bijvoorbeeld door stress of overbelasting), kan waakzaamheid en leefstijlinterventie verergering voorkomen.',
       steps: [
-        'Waakzaam wachten is redelijk op dit niveau, maar het moet actief zijn: volg je symptomen in plaats van te wachten tot het slechter wordt.',
-        'Gedragsactivatie helpt. Schedule small, achievable, previously enjoyable activities even when motivation has not arrived yet — motivation typically follows action rather than preceding it.',
-        'Bescherm slaaparchitectuur. Consistente wakker-tijden zijn effectiever voor de circadiane ritme dan consistente slaap-tijden.',
-        'Aerobe oefening in matige intensiteit heeft een meetbare antidepressieve effect op dit ernstniveau.',
-        'Her-screen over twee tot vier weken, en zoek klinisch advies als de score stijgt of dagelijkse functie afnemende.'
+        'Bewaak uw klachten: houd bij of uw stemming na twee tot vier weken verbetert.',
+        'Bespreek uw gevoelens met vertrouwde naasten of uw huisarts/POH-GGZ als de klachten aanhouden.',
+        'Zorg voor een vast dagritme, voldoende daglicht en vermijd overmatige stress.'
       ]
     },
     {
-      key: 'moderate',
+      key: 'matig',
       min: 10,
       max: 14,
-      label: 'Matige Depressie',
-      badge: 'Moderate depression — klinische evaluatie aanbevolen',
+      label: 'Matige depressieve klachten',
+      badge: 'Matige depressieve symptomen (10–14) — consultatie geadviseerd',
       tone: 'moderate',
-      summary: 'Je score ontmoet de standaard PHQ-9-drempel van 10 voor waarschijnlijke major depressie.',
-      narrative:
-        'Een score van 10 of hoger is de meest breed validatorische drempel op de PHQ-9, met een gepoolde sensitiviteit en specificiteit van ongeveer 88% voor major depressieve stoornis bij een gestructureerd klinisch interview. Op dit niveau wordt een formele klinische evaluatie aanbevolen. Dit is het punt waar gestructureerde psychotherapie of farmacotherapie vaak wordt overwogen, en het punt waar het bereik van nut versus waakzaam wachten zich opschuift naar actieve behandeling.',
+      narrative: 'Uw score (10–14) overschrijdt de gevalideerde klinische drempel van de PHQ-9. Dit patroon wijst op een matige depressieve episode die vaak merkbare hinder oplevert in werk of relaties.',
       steps: [
-        'Plan een klinische evaluatie with a huisarts, psychiatrist, or psychologist.',
-        'Breng een kopie van dit overzicht mee. Een gestructureerde symptoomregistratie verkort de evaluatie en verbetert de diagnostische nauwkeurigheid.',
-        'Op wetenschap gebaseerde psychotherapie — vooral CBT and behavioural activation — has strong support at this severity level.',
-        'Bespreek of medicatie geschikt is voor je historie, en vraag naar de verwachte tijd tot ontkoming, meestal twee tot vier weken.',
-        'Her-screen elke twee weken als je behandeling start, zodat de respons gemeten kan worden in plaats van te worden geraden.'
+        'Maak een afspraak met uw huisarts of praktijkondersteuner GGZ (POH-GGZ) voor een formele evaluatie.',
+        'Neem dit afgedrukte rapport mee naar het consult als voorbereiding op het gesprek.',
+        'Effectieve behandelopties (zoals cognitieve gedragstherapie of activering) kunnen een snelle verbetering bewerkstelligen.'
       ]
     },
     {
-      key: 'moderately-severe',
+      key: 'matig-ernstig',
       min: 15,
       max: 19,
-      label: 'Matig-zware Depressie',
-      badge: 'Moderately severe depression — actieve behandeling aangegeven',
+      label: 'Matig-ernstige depressieve klachten',
+      badge: 'Matig-ernstige depressieve symptomen (15–19) — medische evaluatie vereist',
       tone: 'high',
-      summary: 'Je score is ver boven de diagnostische drempel en in het bereik waar actieve behandeling aangewezen is.',
-      narrative:
-        'Scores in this band are associated with a high probability of major depressive disorder and with substantial functional impairment. At this level, combined treatment — psychotherapie plus farmacotherapie — generally outperforms either alone, and the risk of not treating is significant. If you have been managing this without professional support, this score is a clear signal that the balance has changed.',
+      narrative: 'Uw score (15–19) duidt op aanzienlijke depressieve ontregeling. Professionele medische en psychologische begeleiding is dringend aanbevolen om herstel te ondersteunen.',
       steps: [
-        'Zoek snel klinische evaluatie in plaats van dit alleen te monitoren.',
-        'Gecombineerde psychotherapie en farmacotherapie is de gebruikelijke eerste aanpak op dit ernstniveau.',
-        'Vraag je behandelend arts about the functional impairment item on this summary — it captures impairment that the symptom total alone does not.',
-        'Als je slaap, eetlust of energie sterk zijn verslechterd, of als je basis-zorg voor jezelf kunt opnemen, zeg dit expliciet tijdens intake.',
-        'Stop niet of wijzig enige voorgeschreven medicatie zonder contact op te nemen met de voorschrijver.'
+        'Neem contact op met uw huisarts voor een gerichte verwijzing naar de basis- of specialistische GGZ.',
+        'Deel uw situatie met iemand in uw directe omgeving die u kan ondersteunen bij het maken van afspraken.',
+        'Stel grote levensbeslissingen voorlopig uit en focus op rust en herstel.'
       ]
     },
     {
-      key: 'severe',
+      key: 'ernstig',
       min: 20,
       max: 27,
-      label: 'Zware Depressie',
-      badge: 'Severe depression — snelle omvattende evaluatie',
-      tone: 'severe',
-      summary: 'Je score is in het hoogste ernstbereik op de PHQ-9.',
-      narrative:
-        'Een score van 20 of hoger vertegenwoordigt zware symptoombelasting en is gekoppeld aan een hoge waarschijnlijkheid voor major depressieve stoornis, aanzienlijke functionele belemmering en verhoogd risico. Dit vereist snelle, omvattende medische en psychiaten evaluatie. Ernst op dit niveau is geen karakterfout en is het niet blijvend — het is een behandelbare klinische toestand, maar het vereist behandeling in plaats van zelf-management.',
+      label: 'Ernstige depressieve klachten',
+      badge: 'Ernstige depressieve symptomen (20–27) — acute professionele zorg aanbevolen',
+      tone: 'high',
+      narrative: 'Uw score (20–27) wijst op een ernstige depressieve episode met zware invloed op het dagelijks functioneren. Professionele interventie is noodzakelijk.',
       steps: [
-        'Plan een omvattende medische and psychiatric evaluation promptly. If you cannot get an appointment quickly, neem contact op met een crisislijn or an urgent-care service.',
-        'Vraag een vertrouwde persoon to help you coordinate appointments and transportation. Severe depression impairs exactly the executive functions needed to arrange care.',
-        'Combined pharmacotherapy and psychotherapy is standard, and your clinician may discuss other interventions such as ECT or ketamine-based treatment for severe or treatment-resistant presentations.',
-        'Give a copy of this summary to whoever assesses you, and be candid about the self-harm item — clinicians ask because it changes the plan, not because it changes how they regard you.',
-        'If you have any thought of ending your life or harming yourself, contact emergency services or a crisis line now. Do not wait for an appointment.'
+        'Neem vandaag nog contact op met uw huisarts of de regionale huisartsenpost.',
+        'Vraag een naaste om u te vergezellen naar medische afspraken.',
+        'Blijf niet alleen met zware gevoelens rondlopen; professionele hulp is effectief en beschikbaar.'
       ]
     }
   ];
@@ -189,9 +171,9 @@
     functional: undefined,
     transitionTimer: null,
     transitionLocked: false,
+    crisisAcknowledged: false,
     sessionId: '',
-    startedAt: null,
-    crisisAcknowledged: false
+    startedAt: null
   };
 
   const $ = (id) => document.getElementById(id);
@@ -228,6 +210,20 @@
     else state.answers[item.id] = value;
   }
 
+  function axisLabel(axis) {
+    if (axis === 'affective') return 'Stemming & Emotionele beleving';
+    if (axis === 'somatic') return 'Lichamelijke & neurovegetatieve symptomen';
+    if (axis === 'cognitive') return 'Cognitief functioneren & focus';
+    return 'Dagelijkse belemmering & functioneren';
+  }
+
+  function axisShort(axis) {
+    if (axis === 'affective') return 'Stemming';
+    if (axis === 'somatic') return 'Somatisch';
+    if (axis === 'cognitive') return 'Cognitief';
+    return 'Functioneel';
+  }
+
   /* ---------------------------------------------------------------- *
    * Rendering
    * ---------------------------------------------------------------- */
@@ -239,9 +235,9 @@
     const stepNumber = state.currentStep + 1;
 
     $('question-number').textContent =
-      item.id === 10 ? 'Final question' : `Vraag ${item.id} van 9`;
+      item.id === 10 ? 'Aanvullende vraag' : `Vraag ${item.id} van 9`;
     $('question-part').textContent =
-      item.id === 10 ? 'Supplementary · Functional impairment' : 'PHQ-9 · Past 2 weeks';
+      item.id === 10 ? 'Dagelijkse impact · Functionele belemmering' : 'PHQ-9 · Afgelopen 2 weken';
     $('question-domain').textContent = axisLabel(item.axis);
     $('question-heading').textContent = item.text;
     $('question-context').textContent = item.context;
@@ -278,16 +274,9 @@
     $('back-button').disabled = state.currentStep === 0 || state.transitionLocked;
     $('next-button').disabled = selected === undefined || state.transitionLocked;
     $('next-button').textContent =
-      state.currentStep === TOTAL_STEPS - 1 ? 'Resultaat weergeven' : 'Volgende vraag';
+      state.currentStep === TOTAL_STEPS - 1 ? 'Bekijk uitslag' : 'Volgende vraag';
 
-    announce(`Vraag ${stepNumber} of ${TOTAL_STEPS}. ${item.text}`);
-  }
-
-  function axisLabel(axis) {
-    if (axis === 'affective') return 'Affectioneel en anhedonie'
-    if (axis === 'somatic') return 'Somatisch en neurovegetatieve symptomen'
-    if (axis === 'cognitive') return 'Cognitief en motorisch en focus'
-    return 'Functioneel en dagelijkse belemmering'
+    announce(`Stap ${stepNumber} van ${TOTAL_STEPS}. ${item.text}`);
   }
 
   function selectAnswer(value) {
@@ -295,8 +284,7 @@
 
     setCurrentValue(value);
 
-    // Safety interlock: any endorsement of item 9 pauses the flow so the
-    // crisis panel is seen rather than skipped past on the way to results.
+    // Crisis interlock: Question 9 positive triggers crisis modal
     const item = currentItem();
     if (item.id === 9 && value >= 1 && !state.crisisAcknowledged) {
       renderQuestion();
@@ -342,20 +330,18 @@
   }
 
   /* ---------------------------------------------------------------- *
-   * Crisis interstitial — shown the moment item 9 is endorsed.
+   * Crisis interstitial — triggers ONLY when item 9 is endorsed
    * ---------------------------------------------------------------- */
 
   function openCrisisInterstitial() {
     const panel = $('crisis-interstitial');
     if (!panel) return;
-    // Modal: hide the questionnaire so background Likert buttons and nav
-    // controls cannot be clicked while the safety resources are showing.
     $('questionnaire-section')?.classList.add('hidden');
     panel.classList.remove('hidden');
     panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
     const focusTarget = $('crisis-continue');
     if (focusTarget) focusTarget.focus({ preventScroll: true });
-    announce('Support resources are available. Please review before continuing.');
+    announce('Belangrijke hulpbronnen beschikbaar. Bekijk deze alstublieft voor u doorgaat.');
   }
 
   function closeCrisisInterstitial() {
@@ -411,9 +397,6 @@
       axisTotals,
       elevatedItems,
       coreElevated,
-      // Standard PHQ-9 alternative algorithm for major depressive episode:
-      // five or more items scored >= 2, with at least one of the two core
-      // items (depressed mood, anhedonia) also scored >= 2.
       meetsAlgorithm: elevatedItems >= 5 && coreElevated,
       meetsCutoff: total >= 10
     };
@@ -431,8 +414,8 @@
   function axisStatus(value, max) {
     const ratio = value / max;
     if (ratio >= 0.67) return 'Aanzienlijk verhoogd';
-    if (ratio >= 0.45) return 'Elevated';
-    if (ratio >= 0.22) return 'Mildly elevated';
+    if (ratio >= 0.45) return 'Verhoogd';
+    if (ratio >= 0.22) return 'Licht verhoogd';
     return 'Lage score';
   }
 
@@ -443,6 +426,7 @@
     $('results-section').classList.remove('hidden');
     $('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+    // Only show emergency crisis banner on results if item 9 was positive
     const crisisBanner = $('crisis-banner');
     if (crisisBanner) crisisBanner.classList.toggle('hidden', !results.item9Flag);
 
@@ -466,17 +450,17 @@
     updateBar('cognitive-bar', results.axisTotals.cognitive, 9);
 
     $('functional-score').textContent =
-      results.functional === null ? 'Not answered' : FUNCTIONAL_OPTIONS[results.functional].label;
+      results.functional === null ? 'Niet ingevuld' : FUNCTIONAL_OPTIONS[results.functional].label;
 
     $('algorithm-status').textContent = results.meetsAlgorithm
-      ? 'Met — pattern consistent with a major depressive episode'
+      ? 'Vervuld — patroon consistent met een depressieve episode volgens DSM-5 criteria'
       : results.meetsCutoff
-        ? 'Total above cut-off, algorithm criteria not fully met'
-        : 'Not met';
+        ? 'Drempelwaarde overschreden (≥10), maar niet alle algoritmische criteria vervuld'
+        : 'Niet vervuld';
 
     $('cutoff-status').textContent = results.meetsCutoff
-      ? 'Op of boven de gevalideerde drempel van 10'
-      : 'Onder de gevalideerde drempel van 10';
+      ? 'Op of boven de klinische drempel van 10'
+      : 'Onder de klinische drempel van 10';
 
     $('next-steps-list').innerHTML = results.band.steps
       .map((step) => `<li class="next-step">${step}</li>`)
@@ -489,10 +473,10 @@
 
   function renderMatrix(results) {
     const axes = [
-      ['Affectioneel en anhedonie', results.axisTotals.affective, 9],
-      ['Somatisch en neurovegetatieve symptomen', results.axisTotals.somatic, 9],
-      ['Cognitief / motorisch (focus, psychomotorisch, hoop)', results.axisTotals.cognitive, 9],
-      ['Symptoom breedte (items met score ≥ 2)', results.elevatedItems, 9]
+      ['Stemming & emotionele beleving (V1, V2, V6)', results.axisTotals.affective, 9],
+      ['Lichamelijke symptomen & energie (V3, V4, V5)', results.axisTotals.somatic, 9],
+      ['Cognitief functioneren & psychomotoriek (V7, V8, V9)', results.axisTotals.cognitive, 9],
+      ['Symptoombreedte (aantal items met score ≥ 2)', results.elevatedItems, 9]
     ];
 
     $('profile-matrix').innerHTML = axes
@@ -512,7 +496,7 @@
       return `<div class="severity-tier${active ? ' active' : ''}">
         <span class="severity-range">${band.min}–${band.max}</span>
         <span class="severity-name">${band.label}</span>
-        ${active ? '<span class="severity-marker">You are here</span>' : ''}
+        ${active ? '<span class="severity-marker">Uw positie</span>' : ''}
       </div>`;
     }).join('');
   }
@@ -521,23 +505,23 @@
     const dateEl = $('report-date');
     if (!dateEl) return;
 
-    dateEl.textContent = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date());
+    dateEl.textContent = new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date());
     $('report-session').textContent = state.sessionId;
     $('print-total').textContent = `${results.total} / 27 — ${results.band.label}`;
     $('print-cutoff').textContent = results.meetsCutoff
-      ? 'Op of boven de gevalideerde drempel van 10'
-      : 'Onder de gevalideerde drempel van 10';
+      ? 'Op of boven de drempelwaarde van 10'
+      : 'Onder de drempelwaarde van 10';
     $('print-algorithm').textContent = results.meetsAlgorithm ? 'Criteria vervuld' : 'Criteria niet vervuld';
     $('print-affective').textContent = `${results.axisTotals.affective} / 9`;
     $('print-somatic').textContent = `${results.axisTotals.somatic} / 9`;
     $('print-cognitive').textContent = `${results.axisTotals.cognitive} / 9`;
     $('print-functional').textContent =
       results.functional === null
-        ? 'Not answered'
+        ? 'Niet beantwoord'
         : FUNCTIONAL_OPTIONS[results.functional].label;
     $('print-item9').textContent = results.item9Flag
-      ? `ENDORSED — ${LIKERT_OPTIONS[results.item9].label}`
-      : 'Not endorsed';
+      ? `POSITIEF BEANTWOORD — ${LIKERT_OPTIONS[results.item9].label}`
+      : 'Niet van toepassing (score 0)';
 
     const crisisRow = $('print-crisis-row');
     if (crisisRow) crisisRow.classList.toggle('hidden', !results.item9Flag);
@@ -548,14 +532,8 @@
         const flagged = q.id === 9 && value >= 1;
         return `<tr${flagged ? ' class="flagged"' : ''}><td>${q.id}</td><td>${axisShort(q.axis)}</td><td>${q.text}</td><td>${value}</td><td>${LIKERT_OPTIONS[value].label}</td></tr>`;
       }),
-      `<tr><td>10</td><td>Functional</td><td>${FUNCTIONAL_ITEM.text}</td><td>${results.functional === null ? '—' : results.functional}</td><td>${results.functional === null ? 'Not answered' : FUNCTIONAL_OPTIONS[results.functional].label}</td></tr>`
+      `<tr><td>10</td><td>Functioneel</td><td>${FUNCTIONAL_ITEM.text}</td><td>${results.functional === null ? '—' : results.functional}</td><td>${results.functional === null ? 'Niet ingevuld' : FUNCTIONAL_OPTIONS[results.functional].label}</td></tr>`
     ].join('');
-  }
-
-  function axisShort(axis) {
-    if (axis === 'affective') return 'Affectioneel';
-    if (axis === 'somatic') return 'Somatisch';
-    return 'Cognitive';
   }
 
   /* ---------------------------------------------------------------- *
@@ -564,16 +542,16 @@
 
   async function shareResult() {
     const results = calculateScores();
-    const text = `Ik heb de FreeIQExam PHQ-9 depressie screener afgerond. Score: ${results.total}/27 (${results.band.label}). Dit is screening informatie, geen diagnose.`;
+    const text = `Ik heb de FreeIQExam PHQ-9 depressie zelftest afgerond. Score: ${results.total}/27 (${results.band.label}). Dit is een indicatieve screening, geen medische diagnose.`;
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'FreeIQExam PHQ-9 Screener', text, url: window.location.href });
+        await navigator.share({ title: 'FreeIQExam PHQ-9 Depressie Zelftest', text, url: window.location.href });
         return;
       }
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);
-        showToast('Screening samenvatting gekopieerd.');
+        showToast('Samenvatting gekopieerd naar klembord.');
         return;
       }
       const textarea = document.createElement('textarea');
@@ -585,7 +563,7 @@
       textarea.select();
       document.execCommand('copy');
       textarea.remove();
-      showToast('Screening samenvatting gekopieerd.');
+      showToast('Samenvatting gekopieerd naar klembord.');
     } catch (error) {
       if (error?.name !== 'AbortError') showToast('Delen niet beschikbaar.');
     }
@@ -618,7 +596,7 @@
     $('assessment-intro').classList.remove('hidden');
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    announce('Screening opnieuw gestart. Klaar om opnieuw te beginnen.');
+    announce('Zelftest opnieuw gestart.');
   }
 
   /* ---------------------------------------------------------------- *
@@ -648,7 +626,7 @@
     $('retake-result')?.addEventListener('click', resetAssessment);
 
     document.addEventListener('keydown', (event) => {
-      // Crisis interstitial is modal: it captures its own keys.
+      // Crisis interstitial captures keys when modal is open
       if ($('crisis-interstitial') && !$('crisis-interstitial').classList.contains('hidden')) {
         if (event.key === 'Escape' || event.key === 'Enter') {
           event.preventDefault();

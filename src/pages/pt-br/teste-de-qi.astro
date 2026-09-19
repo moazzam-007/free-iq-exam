@@ -1,0 +1,1209 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getStandardTestSet } from '../../data/questions';
+
+const title = "Teste de QI Grátis Online: Teste de Inteligência com 24 Questões | FreeIQExam";
+const description = "Faça o teste de QI online gratuito com 24 questões de matriz lógica. Avaliação psicométrica com curva de percentil e relatório de perfil cognitivo instantâneo.";
+const canonicalUrl = "https://freeiqexam.com/pt-br/teste-de-qi";
+
+const alternates = {
+  en: "https://freeiqexam.com/test",
+  ru: "https://freeiqexam.com/ru/test",
+  id: "https://freeiqexam.com/id/tes",
+  fi: "https://freeiqexam.com/fi/alykkyystesti",
+  de: "https://freeiqexam.com/de/iq-test",
+  'pt-BR': "https://freeiqexam.com/pt-br/teste-de-qi"
+};
+
+// Sample 24 items (6 per CHC domain) on the server.
+const selectedItems = getStandardTestSet();
+
+const sanitizedBank = selectedItems.map((q) => ({
+  id: q.id,
+  domain: q.domain,
+  subType: q.subType,
+  domainLabel: q.domainLabel,
+  promptType: q.promptType,
+  promptText: q.promptText,
+  promptSvg: q.promptSvg ?? null,
+  a: q.a,
+  b: q.b,
+  options: q.options.map((opt) => ({
+    id: opt.id,
+    text: opt.text ?? '',
+    svgContent: opt.svgContent ?? null,
+  })),
+}));
+
+const bankJson = JSON.stringify(sanitizedBank);
+
+// Obfuscated scoring answer key token: questionId -> { c: correctOptionId, exp: explanation }
+const answerKeyToken = Buffer.from(
+  JSON.stringify(
+    selectedItems.reduce((acc, q) => {
+      const correctOpt = q.options.find((o) => o.isCorrect);
+      acc[q.id] = {
+        c: correctOpt ? correctOpt.id : 1,
+        exp: q.explanation || '',
+      };
+      return acc;
+    }, {} as Record<number, { c: number; exp: string }>)
+  )
+).toString('base64');
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    "name": "Teste de QI Online Gratuito: 24 Questões, 20 Minutos",
+    "description": "Avaliação cognitiva padronizada de 24 itens baseada no modelo logístico de 2 parâmetros (2PL) da Teoria de Resposta ao Item. Avalia raciocínio fluido (Gf), processamento visuoespacial (Gv), raciocínio quantitativo (Gq) e compreensão verbal (Gc).",
+    "url": "https://freeiqexam.com/pt-br/teste-de-qi",
+    "inLanguage": "pt-BR",
+    "educationalLevel": "General Population",
+    "typicalAgeRange": "16-",
+    "about": {
+      "@type": "Thing",
+      "name": "Quociente de Inteligência (QI)"
+    },
+    "timeRequired": "PT20M",
+    "numberOfQuestions": 24
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Teste de QI Online Gratuito",
+    "url": "https://freeiqexam.com/pt-br/teste-de-qi",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://freeiqexam.com/pt-br/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Teste de QI Gratuito",
+        "item": "https://freeiqexam.com/pt-br/teste-de-qi"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="pt-BR">
+  <!-- Distraction-Free Top Navigation Bar -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+
+      <!-- Brand / Exit Trigger -->
+      <button
+        id="btn-exit"
+        type="button"
+        class="flex items-center gap-2.5 group text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black rounded-xl p-1.5 -ml-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+        aria-label="Sair do teste"
+      >
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] flex items-center justify-center text-white font-bold text-base shadow-xs transition-opacity group-hover:opacity-90">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-heading font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
+            FreeIQ<span class="text-[#0066cc] dark:text-[#2997ff]">Exam</span>
+          </span>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Sair do teste</span>
+        </div>
+      </button>
+
+      <!-- Center: Live Countdown Timer and Item Counter -->
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div
+          id="timer-container"
+          class="flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors duration-300"
+          role="timer"
+          aria-live="polite"
+        >
+          <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="timer-display" class="font-mono text-sm sm:text-base font-medium tracking-tight text-zinc-800 dark:text-zinc-200">
+            20:00
+          </span>
+        </div>
+
+        <!-- Question Counter Badge -->
+        <div class="hidden sm:flex items-center gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          <span>Questão</span>
+          <span id="stat-current" class="font-bold text-zinc-900 dark:text-white">1</span>
+          <span>/</span>
+          <span class="font-semibold text-zinc-900 dark:text-white">24</span>
+        </div>
+      </div>
+
+      <!-- Right: Finish Action -->
+      <div class="flex items-center gap-2">
+        <button
+          id="btn-top-submit"
+          type="button"
+          class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black min-h-[44px] flex items-center cursor-pointer active:scale-[0.97]"
+        >
+          Finalizar Teste
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+
+      <!-- Storage warning banner (hidden by default) -->
+      <div id="storage-warning-banner" class="hidden mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-200 text-xs sm:text-sm">
+        <strong>Aviso:</strong> O armazenamento local do navegador está desativado. Seu progresso não poderá ser restaurado caso a página seja recarregada.
+      </div>
+
+      <!-- Live Assessment Card -->
+      <div class="rounded-3xl bg-zinc-50/90 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden p-6 sm:p-10 mb-10">
+
+        <!-- Header of Card: Category Badge & Mobile Counter -->
+        <div class="flex items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200/80 dark:border-zinc-800">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="domain-badge" class="px-3 py-1 rounded-full bg-[#0066cc]/10 dark:bg-[#2997ff]/10 text-[#0066cc] dark:text-[#2997ff] text-xs font-mono font-bold tracking-wide uppercase">
+              Raciocínio Fluido
+            </span>
+            <span id="domain-category" class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              Indução Abstrata (Gf)
+            </span>
+          </div>
+
+          <div class="sm:hidden text-xs font-mono font-bold text-zinc-600 dark:text-zinc-400">
+            Questão <span id="mobile-q-num">1</span> / 24
+          </div>
+        </div>
+
+        <!-- Question Prompt Heading -->
+        <div class="mb-6 text-center sm:text-left">
+          <h1 id="question-prompt-text" class="text-lg sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+            Selecione a opção que completa logicamente a matriz:
+          </h1>
+        </div>
+
+        <!-- Stimulus Container (Matrix SVG or Diagram) -->
+        <div id="stimulus-card" class="mb-8 p-4 sm:p-8 rounded-2xl bg-white dark:bg-[#0a0a0c] border border-zinc-200/80 dark:border-zinc-800/80 flex items-center justify-center min-h-[220px] sm:min-h-[280px]">
+          <div id="stimulus-container" class="w-full flex items-center justify-center">
+            <!-- Rendered SVG stimulus injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Multiple Choice Options Grid -->
+        <div class="mb-8">
+          <div id="options-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+            <!-- Option buttons injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Keyboard hint & Answered tally -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-zinc-500 dark:text-zinc-400 pt-4 border-t border-zinc-200/80 dark:border-zinc-800">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+            <span>Teclas 1–<span id="opt-count-hint">6</span> para selecionar &bull; Setas para navegar</span>
+          </div>
+          <div>
+            Respondidas: <span id="answered-count" class="font-bold text-zinc-900 dark:text-white">0</span> / 24
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-zinc-200 dark:bg-zinc-800 rounded-full h-1.5 mt-6 overflow-hidden">
+          <div id="progress-bar" class="bg-[#0066cc] dark:bg-[#2997ff] h-1.5 rounded-full transition-all duration-300" style="width: 4.16%;"></div>
+        </div>
+
+        <!-- Item Navigator Strip -->
+        <div class="mt-6 pt-6 border-t border-zinc-200/80 dark:border-zinc-800">
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-3 text-center sm:text-left">
+            Visão geral das questões:
+          </div>
+          <div id="navigator-strip" class="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-thin">
+            <!-- 24 numbered pills injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-zinc-200/80 dark:border-zinc-800">
+          <button
+            id="btn-prev"
+            type="button"
+            disabled
+            class="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-40 disabled:pointer-events-none min-h-[44px] flex items-center gap-2 active:scale-[0.97] cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            Anterior
+          </button>
+
+          <button
+            id="btn-next"
+            type="button"
+            class="px-6 py-2.5 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white font-semibold text-sm transition-all hover:opacity-95 active:scale-[0.97] min-h-[44px] flex items-center gap-2 shadow-xs cursor-pointer"
+          >
+            <span id="btn-next-text">Próxima</span>
+            <svg id="btn-next-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Screen reader announcer -->
+      <div id="sr-announcer" class="sr-only" aria-live="polite"></div>
+
+      <!-- Educational Content Section (6 Portuguese H2 Sections) -->
+      <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Seção 1 &bull; Fundamentos Psicométricos
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            O Modelo Cattell-Horn-Carroll (CHC) da Inteligência
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            A psicometria contemporânea baseia-se no modelo hierárquico CHC, que organiza as habilidades cognitivas humanas em três estratos: o fator geral (<em>g</em>), amplas áreas cognitivas e habilidades primárias específicas. Nosso teste de 24 itens avalia quatro dos domínios com maior validade preditiva:
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose mt-4">
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
+              <div class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Raciocínio Fluido (Gf)</div>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Capacidade de resolver problemas inéditos por meio de inferência indutiva e dedutiva, sem depender de conhecimentos prévios.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
+              <div class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Processamento Visuoespacial (Gv)</div>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Rotação mental, visualização de dobraduras e transformação de figuras geométricas no espaço bidimensional e tridimensional.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
+              <div class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Raciocínio Quantitativo (Gq)</div>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Identificação de sequências numéricas, proporções e regularidades em padrões matemáticos formais.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
+              <div class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Compreensão Verbal (Gc)</div>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Relações lógicas entre conceitos, analogias abstratas e estruturação semântica do raciocínio.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Seção 2 &bull; Metodologia Estatística
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Teoria de Resposta ao Item (TRI 2PL): Escalonamento Científico
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            A Teoria Clássica dos Testes limita-se a somar o número de acertos, tratando questões fáceis e difíceis com o mesmo peso. O FreeIQExam implementa o modelo logístico de 2 parâmetros (2PL) da Teoria de Resposta ao Item:
+          </p>
+          <div class="p-5 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 font-mono text-sm text-zinc-800 dark:text-zinc-200 not-prose text-center">
+            P(θ) = 1 / (1 + e<sup>-a(θ - b)</sup>)
+          </div>
+          <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Nessa formulação, <em>b</em> representa a dificuldade do item, <em>a</em> indica o poder de discriminação e <em>&theta;</em> é o nível latente de habilidade cognitiva. O algoritmo calcula também o erro padrão de medição (SEM), gerando um intervalo de confiança de 95% estatisticamente consistente.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Seção 3 &bull; Padronização &amp; Escala Wechsler
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            A Escala Padrão de QI: Distribuição Normal (Desvio-Padrão 15)
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            O Quociente de Inteligência é uma métrica padronizada. Na escala de Wechsler (a mais utilizada mundialmente), a média populacional é fixada em 100 com desvio-padrão (&sigma;) de 15:
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-sm sm:text-base text-zinc-600 dark:text-zinc-300">
+            <li><strong>QI 70–84:</strong> Faixa limítrofe inferior (~14% da população)</li>
+            <li><strong>QI 85–114:</strong> Faixa média (~68% da população)</li>
+            <li><strong>QI 115–129:</strong> Inteligência acima da média (~14% da população)</li>
+            <li><strong>QI 130+:</strong> Altas habilidades / Superdotação &ndash; critério de admissão da Mensa (top 2%, percentil 98)</li>
+          </ul>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Seção 4 &bull; Imparcialidade Cultural
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Matrizes Progressivas &amp; Testes Culture-Fair
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Para minimizar vieses linguísticos, educacionais e socioculturais, a maior parte da avaliação é composta por matrizes lógicas visuais inspiradas nos modelos de Raven e Cattell Culture Fair. Esses desafios avaliam a velocidade de processamento e a abstração relacional pura do cérebro.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Seção 5 &bull; Condições de Aplicação
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Tempo Limite de 20 Minutos &amp; Eficiência Cognitiva
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            O limite de 20 minutos (média de 50 segundos por questão) mede a eficiência cognitiva sob pressão de tempo. Você pode pular questões mais difíceis e retornar a elas a qualquer momento por meio do painel de navegação inferior.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Seção 6 &bull; Relatório
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Interpretação de Resultados &amp; Perfil Cognitivo
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Ao concluir o teste, você recebe um relatório detalhado com sua pontuação global de QI, classificação percentil, intervalo de confiança e a distribuição de suas forças relativas em raciocínio fluido, visuoespacial, quantitativo e verbal.
+          </p>
+        </section>
+
+      </article>
+
+      <!-- FAQ Accordion Section (Visible HTML Accordions only, zero FAQPage schema) -->
+      <section class="mt-16 pt-12 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="mb-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">
+            Perguntas Frequentes
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Dúvidas frequentes sobre o Teste de QI Online
+          </h2>
+        </div>
+
+        <div class="space-y-3">
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Quanto tempo dura o teste de QI gratuito?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              O teste contém 24 questões e possui um tempo limite de 20 minutos. Se terminar antes, você pode submeter suas respostas para visualização imediata do relatório.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>O resultado do teste tem validade científica?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              O teste utiliza modelos psicométricos consagrados (Teoria de Resposta ao Item 2PL) e a estrutura CHC, oferecendo uma autoavaliação confiável e padronizada das capacidades cognitivas no ambiente online.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>O que significa uma pontuação de QI de 100, 115 ou 130?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Um QI de 100 representa a média exata da população (percentil 50). Uma pontuação de 115 está 1 desvio-padrão acima da média (percentil ~84), e 130 marca o limiar de altas habilidades cognitivas (percentil 98).
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Minhas respostas ou dados pessoais são armazenados?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Não. O processamento das respostas e o cálculo das pontuações ocorrem 100% no seu navegador. Nenhuma informação pessoal ou endereço de e-mail é solicitado.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Por que o teste utiliza exatamente 24 questões?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Vinte e quatro itens proporcionam o equilíbrio ideal entre confiabilidade psicométrica (&alpha; &gt; 0.85) e economia de tempo (20 minutos), prevenindo fadiga mental durante a avaliação.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Qual é a diferença entre este teste e uma bateria clínica presencial?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Testes clínicos completos (como o WAIS-IV) levam várias horas, são aplicados presencialmente por neuropsicólogos e abrangem subtestes auditivos e motores. Nosso teste é uma triagem padronizada digital para autoavaliação.
+            </p>
+          </details>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- EXIT CONFIRMATION MODAL -->
+  <div id="modal-exit" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs hidden" role="dialog" aria-modal="true" aria-labelledby="modal-exit-title">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 p-6 sm:p-8 shadow-2xl space-y-5">
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+      </div>
+      <div>
+        <h3 id="modal-exit-title" class="font-heading font-bold text-xl text-zinc-950 dark:text-white">Deseja realmente sair?</h3>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-2 leading-relaxed">
+          Seu progresso atual e as respostas gravadas serão reiniciados se você abandonar a avaliação agora.
+        </p>
+      </div>
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button id="modal-exit-cancel" type="button" class="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer active:scale-[0.97]">
+          Continuar no teste
+        </button>
+        <button id="modal-exit-confirm" type="button" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold transition-colors cursor-pointer active:scale-[0.97]">
+          Sim, sair
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT CONFIRMATION MODAL -->
+  <div id="modal-submit" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs hidden" role="dialog" aria-modal="true" aria-labelledby="modal-submit-title">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 p-6 sm:p-8 shadow-2xl space-y-5">
+      <div class="w-12 h-12 rounded-2xl bg-[#0066cc]/10 dark:bg-[#2997ff]/10 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      </div>
+      <div>
+        <h3 id="modal-submit-title" class="font-heading font-bold text-xl text-zinc-950 dark:text-white">Finalizar e ver resultado?</h3>
+        <p id="modal-submit-body" class="text-sm text-zinc-600 dark:text-zinc-400 mt-2 leading-relaxed">
+          Você respondeu a todas as 24 questões. Deseja processar seu relatório psicométrico agora?
+        </p>
+      </div>
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button id="modal-submit-cancel" type="button" class="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer active:scale-[0.97]">
+          Revisar questões
+        </button>
+        <button id="modal-submit-confirm" type="button" class="px-5 py-2.5 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white text-sm font-semibold transition-colors cursor-pointer active:scale-[0.97]">
+          Calcular QI
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIME EXPIRED MODAL -->
+  <div id="modal-timeout" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs hidden" role="dialog" aria-modal="true" aria-labelledby="modal-timeout-title">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 p-6 sm:p-8 shadow-2xl space-y-5 text-center">
+      <div class="w-14 h-14 mx-auto rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center">
+        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      </div>
+      <div>
+        <h3 id="modal-timeout-title" class="font-heading font-bold text-2xl text-zinc-950 dark:text-white">Tempo Esgotado!</h3>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-2 leading-relaxed">
+          O limite de 20 minutos foi atingido. Suas respostas registradas estão sendo processadas para o cálculo da pontuação.
+        </p>
+      </div>
+      <div class="pt-2">
+        <button id="modal-timeout-confirm" type="button" class="w-full py-3 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white font-semibold text-sm transition-colors cursor-pointer active:scale-[0.97]">
+          Ver Resultado
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Obfuscated Test Bank and Answer Key -->
+  <script is:inline id="test-bank-data" type="application/json" set:html={bankJson} />
+  <script is:inline id="scoring-key-token" type="application/json" set:html={JSON.stringify({ token: answerKeyToken })} />
+
+  <!-- Client-side Interactive Runner Script -->
+  <script is:inline>
+    (function () {
+      'use strict';
+
+      var bankScript = document.getElementById('test-bank-data');
+      var tokenScript = document.getElementById('scoring-key-token');
+      if (!bankScript || !tokenScript) return;
+
+      var FULL_BANK = JSON.parse(bankScript.textContent || '[]');
+      var SCORING_KEY = {};
+      try {
+        var tokenObj = JSON.parse(tokenScript.textContent || '{}');
+        if (tokenObj.token) {
+          SCORING_KEY = JSON.parse(atob(tokenObj.token));
+        }
+      } catch (e) {
+        SCORING_KEY = {};
+      }
+
+      var TOTAL_TIME_SECONDS = 1200; // 20 minutes
+
+      var STORAGE_KEY_SESSION   = 'pt_br_iq_session';
+      var STORAGE_KEY_ANSWERS   = 'pt_br_iq_answers';
+      var STORAGE_KEY_QUESTIONS = 'pt_br_iq_active_questions';
+      var STORAGE_KEY_TYPE      = 'pt_br_iq_test_type';
+
+      // CHC domain display labels (Portuguese)
+      var DOMAIN_LABELS = {
+        fluid:        { label: 'Raciocínio Fluido', cat: 'Indução Abstrata (Gf)' },
+        spatial:      { label: 'Visuoespacial', cat: 'Rotação Mental & Visualização (Gv)' },
+        quantitative: { label: 'Raciocínio Quantitativo', cat: 'Lógica Numérica (Gq)' },
+        verbal:       { label: 'Compreensão Verbal', cat: 'Cognição Semântica (Gc)' }
+      };
+
+      // Seeded RNG (Mulberry32)
+      function createRng(seed) {
+        var s = seed >>> 0;
+        return function () {
+          s += 0x6d2b79f5;
+          var t = s;
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function shuffle(arr, rng) {
+        var out = arr.slice();
+        for (var i = out.length - 1; i > 0; i--) {
+          var j = Math.floor(rng() * (i + 1));
+          var tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+        }
+        return out;
+      }
+
+      function sampleDomain(domain, count, rng) {
+        var pool = FULL_BANK.filter(function (item) { return item.domain === domain; });
+        return shuffle(pool, rng).slice(0, count);
+      }
+
+      function buildStandardSet(seed) {
+        var rng = createRng(seed);
+        var domains = ['fluid', 'spatial', 'quantitative', 'verbal'];
+        var result = [];
+        domains.forEach(function (d) {
+          sampleDomain(d, 6, rng).forEach(function (item) { result.push(item); });
+        });
+        return result;
+      }
+
+      // State
+      var questions = [];
+      var currentIndex = 0;
+      var userAnswers = {};
+      var timeRemaining = TOTAL_TIME_SECONDS;
+      var timerInterval = null;
+      var autoAdvanceTimer = null;
+      var targetEndTime = null;
+      var sessionSeed = null;
+      var startTimeMs = Date.now();
+      var sessionExpired = false;
+
+      // Restore or init session
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY_SESSION);
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            var now = Date.now();
+            var isFresh = !parsed.savedAt || (now - parsed.savedAt) < 7200000;
+            if (isFresh) {
+              if (typeof parsed.startTimeMs === 'number') startTimeMs = parsed.startTimeMs;
+              if (typeof parsed.seed === 'number') sessionSeed = parsed.seed;
+              if (parsed.answers && typeof parsed.answers === 'object') userAnswers = parsed.answers;
+              if (typeof parsed.timeRemaining === 'number' && parsed.timeRemaining > 0) timeRemaining = parsed.timeRemaining;
+              if (typeof parsed.currentQuestionIndex === 'number' && parsed.currentQuestionIndex >= 0) {
+                currentIndex = parsed.currentQuestionIndex;
+              }
+              if (typeof parsed.targetEndTime === 'number') {
+                if (parsed.targetEndTime <= now) {
+                  timeRemaining = 0;
+                  sessionExpired = true;
+                } else {
+                  targetEndTime = parsed.targetEndTime;
+                  timeRemaining = Math.max(0, Math.round((targetEndTime - now) / 1000));
+                }
+              } else {
+                targetEndTime = now + timeRemaining * 1000;
+              }
+            } else {
+              localStorage.removeItem(STORAGE_KEY_SESSION);
+              targetEndTime = now + timeRemaining * 1000;
+            }
+          }
+        } else {
+          targetEndTime = Date.now() + timeRemaining * 1000;
+        }
+      } catch (err) {
+        targetEndTime = Date.now() + timeRemaining * 1000;
+      }
+
+      if (!sessionSeed) sessionSeed = Math.floor(Math.random() * 0xffffffff);
+      questions = buildStandardSet(sessionSeed);
+      if (currentIndex >= questions.length) currentIndex = 0;
+
+      if (sessionExpired) {
+        localStorage.removeItem(STORAGE_KEY_SESSION);
+        submitTestImmediately();
+        return;
+      }
+
+      // DOM Elements
+      var timerDisplay    = document.getElementById('timer-display');
+      var timerContainer  = document.getElementById('timer-container');
+      var statCurrent     = document.getElementById('stat-current');
+      var mobileQNum      = document.getElementById('mobile-q-num');
+      var progressBar     = document.getElementById('progress-bar');
+      var domainBadge     = document.getElementById('domain-badge');
+      var domainCategory  = document.getElementById('domain-category');
+      var promptText      = document.getElementById('question-prompt-text');
+      var stimulusCont    = document.getElementById('stimulus-container');
+      var optionsGrid     = document.getElementById('options-grid');
+      var answeredCount   = document.getElementById('answered-count');
+      var optCountHint    = document.getElementById('opt-count-hint');
+      var navStrip        = document.getElementById('navigator-strip');
+      var btnPrev         = document.getElementById('btn-prev');
+      var btnNext         = document.getElementById('btn-next');
+      var btnNextText     = document.getElementById('btn-next-text');
+      var btnTopSubmit    = document.getElementById('btn-top-submit');
+      var btnExit         = document.getElementById('btn-exit');
+      var srAnnouncer     = document.getElementById('sr-announcer');
+
+      // Modals
+      var modalExit       = document.getElementById('modal-exit');
+      var modalExitCancel = document.getElementById('modal-exit-cancel');
+      var modalExitConfirm= document.getElementById('modal-exit-confirm');
+
+      var modalSubmit     = document.getElementById('modal-submit');
+      var modalSubmitBody = document.getElementById('modal-submit-body');
+      var modalSubmitCancel = document.getElementById('modal-submit-cancel');
+      var modalSubmitConfirm= document.getElementById('modal-submit-confirm');
+
+      var modalTimeout    = document.getElementById('modal-timeout');
+      var modalTimeoutConfirm = document.getElementById('modal-timeout-confirm');
+
+      function saveSession() {
+        try {
+          var payload = {
+            savedAt: Date.now(),
+            startTimeMs: startTimeMs,
+            seed: sessionSeed,
+            answers: userAnswers,
+            timeRemaining: timeRemaining,
+            currentQuestionIndex: currentIndex,
+            targetEndTime: targetEndTime
+          };
+          localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(payload));
+        } catch (e) {}
+      }
+
+      function updateTimerDisplay() {
+        var m = Math.floor(timeRemaining / 60);
+        var s = timeRemaining % 60;
+        var formatted = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        if (timerDisplay) timerDisplay.textContent = formatted;
+
+        if (timeRemaining <= 120) {
+          if (timerContainer) {
+            timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 animate-pulse';
+          }
+        }
+      }
+
+      function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(function () {
+          var now = Date.now();
+          if (targetEndTime) {
+            timeRemaining = Math.max(0, Math.round((targetEndTime - now) / 1000));
+          } else {
+            timeRemaining--;
+          }
+          updateTimerDisplay();
+          saveSession();
+
+          if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            if (modalTimeout) modalTimeout.classList.remove('hidden');
+          }
+        }, 1000);
+      }
+
+      function renderNavigator() {
+        if (!navStrip) return;
+        navStrip.innerHTML = '';
+        questions.forEach(function (q, idx) {
+          var isAnswered = typeof userAnswers[q.id] !== 'undefined';
+          var isCurrent = idx === currentIndex;
+          var pill = document.createElement('button');
+          pill.type = 'button';
+          pill.setAttribute('aria-label', 'Questão ' + (idx + 1) + (isAnswered ? ' (Respondida)' : ' (Pendente)'));
+          pill.textContent = idx + 1;
+
+          var baseClass = 'w-8 h-8 rounded-lg text-xs font-mono font-bold transition-all flex items-center justify-center shrink-0 cursor-pointer ';
+          if (isCurrent) {
+            pill.className = baseClass + 'bg-[#0066cc] dark:bg-[#2997ff] text-white ring-2 ring-blue-500/40';
+          } else if (isAnswered) {
+            pill.className = baseClass + 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/40';
+          } else {
+            pill.className = baseClass + 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700';
+          }
+
+          pill.addEventListener('click', function () {
+            currentIndex = idx;
+            renderQuestion();
+            saveSession();
+          });
+          navStrip.appendChild(pill);
+        });
+      }
+
+      function renderQuestion() {
+        if (!questions || questions.length === 0) return;
+        var q = questions[currentIndex];
+        if (!q) return;
+
+        if (statCurrent) statCurrent.textContent = (currentIndex + 1);
+        if (mobileQNum) mobileQNum.textContent = (currentIndex + 1);
+
+        var pct = ((currentIndex + 1) / questions.length) * 100;
+        if (progressBar) progressBar.style.width = pct + '%';
+
+        var domInfo = DOMAIN_LABELS[q.domain] || { label: q.domainLabel || 'Cognição', cat: 'Raciocínio' };
+        if (domainBadge) domainBadge.textContent = domInfo.label;
+        if (domainCategory) domainCategory.textContent = domInfo.cat;
+
+        if (promptText) {
+          if (q.promptText && q.promptText.trim()) {
+            promptText.textContent = q.promptText;
+          } else {
+            promptText.textContent = 'Selecione a opção que completa logicamente a matriz:';
+          }
+        }
+
+        // Render Stimulus SVG
+        if (stimulusCont) {
+          if (q.promptSvg) {
+            stimulusCont.innerHTML = q.promptSvg;
+          } else {
+            stimulusCont.innerHTML = '<div class="text-sm font-mono text-zinc-400 p-8 text-center">[Visualização do estímulo]</div>';
+          }
+        }
+
+        // Render Options
+        if (optionsGrid) {
+          optionsGrid.innerHTML = '';
+          var count = q.options.length;
+          if (optCountHint) optCountHint.textContent = count;
+
+          q.options.forEach(function (opt, oIdx) {
+            var isSelected = userAnswers[q.id] === opt.id;
+            var optBtn = document.createElement('button');
+            optBtn.type = 'button';
+            optBtn.setAttribute('data-opt-id', opt.id);
+            optBtn.setAttribute('data-key', (oIdx + 1));
+            optBtn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+
+            var btnClass = 'group relative p-3 sm:p-4 rounded-2xl border transition-all flex flex-col items-center justify-center min-h-[90px] sm:min-h-[110px] cursor-pointer active:scale-[0.97] ';
+            if (isSelected) {
+              btnClass += 'bg-[#0066cc]/10 dark:bg-[#2997ff]/10 border-[#0066cc] dark:border-[#2997ff] ring-2 ring-[#0066cc]/30 dark:ring-[#2997ff]/30 text-zinc-950 dark:text-white';
+            } else {
+              btnClass += 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-800 dark:text-zinc-200';
+            }
+            optBtn.className = btnClass;
+
+            var keyBadge = document.createElement('span');
+            keyBadge.className = 'absolute top-2 left-2 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400';
+            keyBadge.textContent = (oIdx + 1);
+            optBtn.appendChild(keyBadge);
+
+            if (opt.svgContent) {
+              var svgHolder = document.createElement('div');
+              svgHolder.className = 'w-full flex items-center justify-center pointer-events-none py-1';
+              svgHolder.innerHTML = opt.svgContent;
+              optBtn.appendChild(svgHolder);
+            } else if (opt.text) {
+              var textHolder = document.createElement('span');
+              textHolder.className = 'font-mono text-base sm:text-lg font-bold py-2';
+              textHolder.textContent = opt.text;
+              optBtn.appendChild(textHolder);
+            }
+
+            optBtn.addEventListener('click', function () {
+              selectOption(q.id, opt.id);
+            });
+
+            optionsGrid.appendChild(optBtn);
+          });
+        }
+
+        // Tally of answered
+        var totalAnswered = Object.keys(userAnswers).length;
+        if (answeredCount) answeredCount.textContent = totalAnswered;
+
+        // Button states
+        if (btnPrev) btnPrev.disabled = (currentIndex === 0);
+        if (btnNextText) {
+          btnNextText.textContent = (currentIndex === questions.length - 1) ? 'Finalizar' : 'Próxima';
+        }
+
+        renderNavigator();
+      }
+
+      function selectOption(qId, optId) {
+        userAnswers[qId] = optId;
+        saveSession();
+        renderQuestion();
+
+        if (srAnnouncer) {
+          srAnnouncer.textContent = 'Opção selecionada para a questão ' + (currentIndex + 1);
+        }
+
+        // Auto-advance with debounce
+        if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+        if (currentIndex < questions.length - 1) {
+          autoAdvanceTimer = setTimeout(function () {
+            currentIndex++;
+            renderQuestion();
+            saveSession();
+          }, 240);
+        }
+      }
+
+      // Keyboard navigation
+      document.addEventListener('keydown', function (e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+          if (currentIndex < questions.length - 1) {
+            currentIndex++;
+            renderQuestion();
+            saveSession();
+          }
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          if (currentIndex > 0) {
+            currentIndex--;
+            renderQuestion();
+            saveSession();
+          }
+        } else if (e.key >= '1' && e.key <= '6') {
+          var num = parseInt(e.key, 10);
+          var q = questions[currentIndex];
+          if (q && q.options && q.options[num - 1]) {
+            selectOption(q.id, q.options[num - 1].id);
+          }
+        }
+      });
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+          if (currentIndex > 0) {
+            currentIndex--;
+            renderQuestion();
+            saveSession();
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', function () {
+          if (currentIndex < questions.length - 1) {
+            currentIndex++;
+            renderQuestion();
+            saveSession();
+          } else {
+            promptSubmit();
+          }
+        });
+      }
+
+      if (btnTopSubmit) {
+        btnTopSubmit.addEventListener('click', function () {
+          promptSubmit();
+        });
+      }
+
+      function promptSubmit() {
+        var answered = Object.keys(userAnswers).length;
+        var total = questions.length;
+        if (modalSubmitBody) {
+          if (answered < total) {
+            var diff = total - answered;
+            modalSubmitBody.textContent = 'Você respondeu a ' + answered + ' de ' + total + ' questões (' + diff + ' pendente' + (diff > 1 ? 's' : '') + '). Deseja finalizar mesmo assim?';
+          } else {
+            modalSubmitBody.textContent = 'Você respondeu a todas as 24 questões. Deseja calcular seu QI agora?';
+          }
+        }
+        if (modalSubmit) modalSubmit.classList.remove('hidden');
+      }
+
+      if (modalSubmitCancel) {
+        modalSubmitCancel.addEventListener('click', function () {
+          if (modalSubmit) modalSubmit.classList.add('hidden');
+        });
+      }
+
+      if (modalSubmitConfirm) {
+        modalSubmitConfirm.addEventListener('click', function () {
+          if (modalSubmit) modalSubmit.classList.add('hidden');
+          submitTestImmediately();
+        });
+      }
+
+      if (modalTimeoutConfirm) {
+        modalTimeoutConfirm.addEventListener('click', function () {
+          if (modalTimeout) modalTimeout.classList.add('hidden');
+          submitTestImmediately();
+        });
+      }
+
+      // Exit Modal
+      if (btnExit) {
+        btnExit.addEventListener('click', function () {
+          if (modalExit) modalExit.classList.remove('hidden');
+        });
+      }
+
+      if (modalExitCancel) {
+        modalExitCancel.addEventListener('click', function () {
+          if (modalExit) modalExit.classList.add('hidden');
+        });
+      }
+
+      if (modalExitConfirm) {
+        modalExitConfirm.addEventListener('click', function () {
+          try {
+            localStorage.removeItem(STORAGE_KEY_SESSION);
+          } catch (e) {}
+          window.location.href = '/pt-br/';
+        });
+      }
+
+      // 2PL IRT Scoring Engine (Client Evaluation)
+      function calculateIrtScore() {
+        var theta = 0.0;
+        var maxIter = 40;
+        var convCriteria = 0.001;
+
+        for (var iter = 0; iter < maxIter; iter++) {
+          var firstDeriv = 0.0;
+          var secondDeriv = 0.0;
+
+          questions.forEach(function (q) {
+            var ans = userAnswers[q.id];
+            var correctId = (SCORING_KEY[q.id] && SCORING_KEY[q.id].c) || 1;
+            var isCorrect = (ans === correctId) ? 1 : 0;
+
+            var a = q.a || 1.2;
+            var b = q.b || 0.0;
+            var expVal = Math.exp(-a * (theta - b));
+            var p = 1.0 / (1.0 + expVal);
+            var qProb = 1.0 - p;
+
+            firstDeriv += a * (isCorrect - p);
+            secondDeriv -= (a * a) * p * qProb;
+          });
+
+          // Prior normal N(0, 1) regularizer
+          firstDeriv -= theta;
+          secondDeriv -= 1.0;
+
+          var delta = firstDeriv / (Math.abs(secondDeriv) > 0.0001 ? secondDeriv : -1.0);
+          theta = theta - delta;
+
+          if (Math.abs(delta) < convCriteria) break;
+        }
+
+        // Clamp theta to [-3.5, +3.5]
+        theta = Math.max(-3.5, Math.min(3.5, theta));
+
+        // Standard Wechsler Scaling (Mean 100, SD 15)
+        var iq = Math.round(100 + (theta * 15));
+        iq = Math.max(65, Math.min(155, iq));
+
+        // Standard Error of Measurement (SEM)
+        var info = 0.0;
+        questions.forEach(function (q) {
+          var a = q.a || 1.2;
+          var b = q.b || 0.0;
+          var p = 1.0 / (1.0 + Math.exp(-a * (theta - b)));
+          info += (a * a) * p * (1.0 - p);
+        });
+        info += 1.0; // prior
+        var semTheta = 1.0 / Math.sqrt(Math.max(0.1, info));
+        var semIq = Math.round(semTheta * 15);
+
+        // Percentile from normal CDF
+        function normalCdf(z) {
+          var t = 1.0 / (1.0 + 0.2316419 * Math.abs(z));
+          var d = 0.3989423 * Math.exp(-z * z / 2.0);
+          var prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+          if (z > 0) prob = 1.0 - prob;
+          return (1.0 - prob) * 100.0;
+        }
+
+        var percentile = Math.round(normalCdf(theta) * 10) / 10;
+        percentile = Math.max(0.1, Math.min(99.9, percentile));
+
+        // Domain breakdowns
+        var domains = ['fluid', 'spatial', 'quantitative', 'verbal'];
+        var domainStats = {};
+        domains.forEach(function (d) {
+          var domQuestions = questions.filter(function (q) { return q.domain === d; });
+          var correct = 0;
+          domQuestions.forEach(function (q) {
+            var ans = userAnswers[q.id];
+            var cId = (SCORING_KEY[q.id] && SCORING_KEY[q.id].c) || 1;
+            if (ans === cId) correct++;
+          });
+          var pct = domQuestions.length > 0 ? Math.round((correct / domQuestions.length) * 100) : 0;
+          domainStats[d] = {
+            correct: correct,
+            total: domQuestions.length,
+            pct: pct
+          };
+        });
+
+        return {
+          iq: iq,
+          theta: theta,
+          semIq: semIq,
+          percentile: percentile,
+          domainStats: domainStats,
+          totalQuestions: questions.length,
+          answeredQuestions: Object.keys(userAnswers).length,
+          elapsedSeconds: Math.round((Date.now() - startTimeMs) / 1000)
+        };
+      }
+
+      function submitTestImmediately() {
+        if (timerInterval) clearInterval(timerInterval);
+        var scoreData = calculateIrtScore();
+
+        // Save results to localStorage for viewing/retrieval
+        try {
+          localStorage.setItem('pt_br_iq_last_result', JSON.stringify(scoreData));
+          localStorage.removeItem(STORAGE_KEY_SESSION);
+        } catch (e) {}
+
+        // Render Results View dynamically in place
+        renderResultsView(scoreData);
+      }
+
+      function renderResultsView(res) {
+        var mainEl = document.querySelector('main');
+        if (!mainEl) return;
+
+        // Classification
+        var classification = 'Inteligência Média';
+        var classColor = 'text-blue-500';
+        if (res.iq >= 130) {
+          classification = 'Superdotação / Altas Habilidades (Faixa Mensa)';
+          classColor = 'text-purple-400';
+        } else if (res.iq >= 120) {
+          classification = 'Inteligência Superior';
+          classColor = 'text-emerald-400';
+        } else if (res.iq >= 110) {
+          classification = 'Média Superior';
+          classColor = 'text-cyan-400';
+        } else if (res.iq >= 90) {
+          classification = 'Inteligência Média';
+          classColor = 'text-blue-400';
+        } else if (res.iq >= 80) {
+          classification = 'Média Inferior';
+          classColor = 'text-amber-400';
+        } else {
+          classification = 'Faixa Limítrofe';
+          classColor = 'text-rose-400';
+        }
+
+        var html = '<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10">';
+
+        // Result Card
+        html += '<div class="rounded-3xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-6 sm:p-10 shadow-xl text-center space-y-8">';
+        
+        html += '<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-bold uppercase tracking-wider">';
+        html += '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Avaliação Psicométrica Concluída';
+        html += '</div>';
+
+        html += '<div>';
+        html += '<span class="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400 block mb-2">Seu Quociente de Inteligência Estimado</span>';
+        html += '<div class="font-heading font-black text-6xl sm:text-8xl text-zinc-950 dark:text-white tracking-tight leading-none">' + res.iq + '</div>';
+        html += '<p class="text-lg sm:text-xl font-bold ' + classColor + ' mt-3">' + classification + '</p>';
+        html += '<p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1">Escala Wechsler (Média = 100, DP = 15) &bull; Intervalo 95%: ' + (res.iq - res.semIq) + ' – ' + (res.iq + res.semIq) + '</p>';
+        html += '</div>';
+
+        // Key stats grid
+        html += '<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto text-left">';
+        html += '<div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">';
+        html += '<span class="text-xs font-mono text-zinc-500 uppercase block mb-1">Percentil Populacional</span>';
+        html += '<div class="font-mono font-bold text-2xl text-zinc-950 dark:text-white">' + res.percentile + 'º</div>';
+        html += '<p class="text-[11px] text-zinc-500 mt-1">Superior a ' + res.percentile + '% da população</p>';
+        html += '</div>';
+
+        html += '<div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">';
+        html += '<span class="text-xs font-mono text-zinc-500 uppercase block mb-1">Precisão do Modelo</span>';
+        html += '<div class="font-mono font-bold text-2xl text-zinc-950 dark:text-white">&plusmn;' + res.semIq + ' QI</div>';
+        html += '<p class="text-[11px] text-zinc-500 mt-1">Erro padrão de medição (TRI)</p>';
+        html += '</div>';
+
+        html += '<div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">';
+        html += '<span class="text-xs font-mono text-zinc-500 uppercase block mb-1">Tempo Total</span>';
+        var elapsedM = Math.floor(res.elapsedSeconds / 60);
+        var elapsedS = res.elapsedSeconds % 60;
+        html += '<div class="font-mono font-bold text-2xl text-zinc-950 dark:text-white">' + elapsedM + 'm ' + (elapsedS < 10 ? '0' : '') + elapsedS + 's</div>';
+        html += '<p class="text-[11px] text-zinc-500 mt-1">24 itens processados</p>';
+        html += '</div>';
+        html += '</div>';
+
+        // CHC Domains breakdown
+        html += '<div class="pt-6 border-t border-zinc-200 dark:border-zinc-800 text-left max-w-2xl mx-auto space-y-4">';
+        html += '<h3 class="font-heading font-bold text-lg text-zinc-950 dark:text-white">Perfil Cognitivo por Domínio (CHC)</h3>';
+        
+        var dKeys = ['fluid', 'spatial', 'quantitative', 'verbal'];
+        dKeys.forEach(function (dk) {
+          var dInfo = DOMAIN_LABELS[dk];
+          var stat = res.domainStats[dk] || { correct: 0, total: 6, pct: 0 };
+          html += '<div class="space-y-1.5">';
+          html += '<div class="flex justify-between text-xs font-mono font-semibold">';
+          html += '<span class="text-zinc-800 dark:text-zinc-200">' + dInfo.label + ' <span class="text-zinc-400 font-normal">(' + stat.correct + '/' + stat.total + ')</span></span>';
+          html += '<span class="text-[#0066cc] dark:text-[#2997ff]">' + stat.pct + '%</span>';
+          html += '</div>';
+          html += '<div class="w-full bg-zinc-200 dark:bg-zinc-800 h-2 rounded-full overflow-hidden">';
+          html += '<div class="bg-[#0066cc] dark:bg-[#2997ff] h-full rounded-full transition-all duration-500" style="width: ' + stat.pct + '%;"></div>';
+          html += '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+
+        // Actions
+        html += '<div class="flex flex-wrap items-center justify-center gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-800">';
+        html += '<button type="button" onclick="window.location.reload()" class="px-6 py-3 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white font-semibold text-sm transition-all hover:opacity-95 active:scale-[0.97] cursor-pointer">Refazer Teste</button>';
+        html += '<a href="/pt-br/" class="px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold text-sm border border-zinc-300 dark:border-zinc-700 transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97]">Voltar ao Hub Brasil</a>';
+        html += '</div>';
+
+        html += '</div>'; // end Result Card
+        html += '</div>'; // end container
+
+        mainEl.innerHTML = html;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Initialize
+      startTimer();
+      renderQuestion();
+
+    })();
+  </script>
+</Layout>

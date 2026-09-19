@@ -1,50 +1,79 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
 
 const alternates = {
+  'en': 'https://freeiqexam.com/hearing-test',
   'fi': 'https://freeiqexam.com/fi/kuulotesti',
   'de': 'https://freeiqexam.com/de/hoertest',
   'nl': 'https://freeiqexam.com/nl/gehoortest'
 };
 
-const title = "Free Hearing Test Online: Frequency & Audio Range Test | FreeIQExam";
-const description = "Test your hearing frequency limits from 20 Hz to 20 kHz with our free online hearing test. Determine your ear age, check stereo balance, and spot high-frequency loss.";
-const canonicalUrl = "https://freeiqexam.com/hearing-test";
+const title = "Gratis Gehoortest Online: Frequentie & Audio Bereik | FreeIQExam";
+const description = "Test uw gehoor van 20 Hz tot 20 kHz met onze gratis online gehoortest. Bepaal uw biologische oorleeftijd, controleer uw stereobalans en ontdek hoge frequentie verlies.";
+const canonicalUrl = "https://freeiqexam.com/nl/gehoortest";
+
+const faqItems = [
+  {
+    question: "Hoe nauwkeurig is een online gehoortest?",
+    answer: "Online gehoortests via de Web Audio API bieden een betrouwbare indicatieve vroege waarschuwingsscreening van gehoordrempels wanneer ze worden uitgevoerd met een goede over-ear hoofdtelefoon in een stille omgeving. Hoewel ze een formeel klinisch audiologisch onderzoek in een geluiddichte cabine niet kunnen vervangen, identificeren ze betrouwbaar leeftijdsgebonden hoogfrequent gehoorverlies (presbyacusis) en asymmetrieën tussen beide oren."
+  },
+  {
+    question: "Heb ik per se een hoofdtelefoon nodig voor deze test?",
+    answer: "Ja, een stereohoofdtelefoon of in-ear oortelefoons zijn essentieel. Luidsprekers mengen linker- en rechter audiokanalen in de kamer, waardoor het onmogelijk is elk oor afzonderlijk te testen. Bovendien vervormen kamerakoestiek en achtergrondgeluid de meting en kunnen laptopluidsprekers frequenties boven 10.000 Hz vaak niet zuiver weergeven. Schakel ruimtelijke audio of equalizers uit voor een betrouwbaar resultaat."
+  },
+  {
+    question: "Wat is biologische oorleeftijd en hoe wordt deze berekend?",
+    answer: "Biologische oorleeftijd is een schatting van auditieve slijtage gebaseerd op de hoogste akoestische frequentie die u nog kunt waarnemen. Gezonde pasgeborenen hebben circa 16.000 haarcellen en horen tot 20.000 Hz. Naarmate we ouder worden sterven de haarcellen aan de basis van het slakkenhuis geleidelijk af door cumulatieve geluidsbelasting, waardoor de bovengrens daalt: 19 kHz komt overeen met jonger dan 18 jaar, 17 kHz met circa 24 jaar, 15 kHz met 34 jaar, 12 kHz met 54 jaar en 8 kHz met 65+ jaar."
+  },
+  {
+    question: "Wat is het verschil tussen Hertz (Hz) en Decibels (dB)?",
+    answer: "Hertz (Hz) meet de frequentie of toonhoogte — hoe snel geluidsgolven trillen per seconde (bijv. een lage bastoon van 250 Hz versus een hoge piep van 17.000 Hz). Decibels (dB) meten de geluidsdruk of het volume op een logaritmische schaal. In de audiometrie geeft dB HL (Hearing Level) de gehoordrempel aan ten opzichte van een gezond menselijk gehoor (0 dB HL)."
+  },
+  {
+    question: "Waarom kunnen jongeren de 'mosquito tone' wel horen en ouderen niet?",
+    answer: "De mosquito-toon heeft een frequentie van circa 17.400 Hz (17,4 kHz). De haarcellen die deze ultrahoge frequenties detecteren bevinden zich bij de ingang (basis) van het slakkenhuis en ervaren levenslang de zwaarste mechanische belasting. Rond het 25e levensjaar zijn deze cellen bij de meeste mensen al dermate afgesleten dat 17,4 kHz onhoorbaar wordt, terwijl tieners dit nog scherp waarnemen."
+  },
+  {
+    question: "Wat is de 'spraakbanaan' op een audiogram?",
+    answer: "De spraakbanaan is een banaanvormig gebied op een audiogram tussen 250 Hz en 6.000 Hz en 20 tot 55 dB HL waarin menselijke spraakklanken zich bevinden. Klinkers (a, o, oe) zijn laagfrequent (250–1.000 Hz) en dragen het meeste volume. Medeklinkers (s, f, th, k) zijn hoogfrequent (2.000–6.000 Hz) en bepalen de spraakverstaanbaarheid. Bij hoogfrequent gehoorverlies klinkt spraak gedempt en onverstaanbaar."
+  },
+  {
+    question: "Wat is de 60/60 regel van de WHO voor veilig luisteren?",
+    answer: "De 60/60-regel van de Wereldgezondheidsorganisatie (WHO) adviseert om audio via een hoofdtelefoon op maximaal 60% van het maximale volume te beluisteren en niet langer dan 60 minuten achter elkaar. Neem daarna minstens 10 tot 15 minuten rust om tijdelijke gehoorvermoeidheid te laten herstellen en permanente schade te voorkomen."
+  },
+  {
+    question: "Kan permanent gehoorverlies worden hersteld of genezen?",
+    answer: "Perceptief gehoorverlies (schade aan haarcellen in het slakkenhuis of de gehoorzenuw) is momenteel onomkeerbaar omdat menselijke haarcellen niet teruggroeien. Geleidingsverlies (door bijvoorbeeld oorsmeer of vocht) kan medisch behandeld worden. Perceptief verlies kan succesvol gerevalideerd worden met moderne hoortoestellen of cochleaire implantaten."
+  }
+];
 
 const schema = [
   {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",
-    "name": "Clinical Pure-Tone Audiometry & Biological Ear Age Frequency Test",
-    "description": "Online clinical hearing screener featuring Hughson-Westlake pure-tone audiometry (250 Hz – 8,000 Hz) and high-frequency presbycusis ear age analysis (8,000 Hz – 20,000 Hz).",
-    "url": "https://freeiqexam.com/hearing-test",
+    "name": "Online Gehoorscreening & Biologische Oorleeftijd Test",
+    "description": "Indicatieve online gehoorscreening met zuivere toon audiometrie (250 Hz - 8.000 Hz) en presbyacusis frequentieanalyse (8.000 Hz - 20.000 Hz).",
+    "url": canonicalUrl,
+    "inLanguage": "nl",
     "medicalAudience": "Patient",
-    "aspect": "Diagnostic"
+    "aspect": "Screening"
   },
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "FreeIQExam Online Hearing Test & Ear Age Calculator",
-    "url": "https://freeiqexam.com/hearing-test",
+    "name": "FreeIQExam Online Gehoortest & Oorleeftijd Calculator",
+    "url": canonicalUrl,
     "applicationCategory": "HealthApplication",
     "operatingSystem": "All",
-    "browserRequirements": "Requires Web Audio API support and stereo headphones",
+    "browserRequirements": "Vereist Web Audio API ondersteuning en een stereohoofdtelefoon",
+    "inLanguage": "nl",
     "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "USD"
+      "priceCurrency": "EUR"
     },
-    "featureList": [
-      "Pure-Tone Audiometry screening (250 Hz to 8,000 Hz) with Hughson-Westlake staircase method",
-      "Biological Ear Age frequency sweep (8,000 Hz to 20,000 Hz) mapping presbycusis degradation",
-      "Stereo channel isolation for independent left and right ear hearing assessment",
-      "Real-time interactive canvas audiogram with speech banana reference overlay",
-      "Anti-popping 15ms exponential gain envelopes for acoustic transducer protection",
-      "Downloadable high-resolution biological ear age certificate and clinical audiogram report",
-      "Zero paywall, zero email registration, 100% private in-browser Web Audio synthesis"
-    ],
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "4.96",
@@ -60,90 +89,20 @@ const schema = [
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "Home",
-        "item": "https://freeiqexam.com/"
+        "name": "Startpagina",
+        "item": "https://freeiqexam.com/nl/"
       },
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Tools",
-        "item": "https://freeiqexam.com/hearing-test"
+        "name": "Zelftests",
+        "item": "https://freeiqexam.com/nl/#tests"
       },
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "Hearing Test & Ear Age Calculator",
-        "item": "https://freeiqexam.com/hearing-test"
-      }
-    ]
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How accurate is an online hearing test?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Online hearing tests using the Web Audio API provide an accurate early-warning screening of hearing thresholds when taken with quality over-ear headphones in a quiet environment. While they cannot replace a formal diagnostic examination in a sound-treated booth with calibrated audiometric transducers, they reliably identify high-frequency presbycusis, asymmetric hearing loss between ears, and threshold elevations across speech frequencies (500 Hz to 4,000 Hz)."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Do I need headphones to take this hearing test?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, stereo headphones or in-ear monitors (IEMs) are essential. Loudspeakers mix left and right audio channels acoustically in the room, making it impossible to evaluate each ear independently. Furthermore, room reflections and ambient noise distort sound pressure levels, and standard laptop speakers rapidly roll off frequencies above 10,000 Hz. For valid results, use wired headphones and disable spatial audio, surround sound, and active equalizer presets."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is biological ear age, and how is it calculated?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Biological ear age is an estimate of auditory wear based on your highest audible acoustic frequency. Healthy newborns possess approximately 16,000 cochlear hair cells and can hear up to 20,000 Hz. Over decades, cumulative noise exposure, microvascular changes, and mechanical stress damage stereocilia at the basal turn of the cochlea, lowering the audible ceiling: 19 kHz corresponds to under 18 years, 17 kHz to ~24 years, 15 kHz to ~34 years, 14 kHz to ~44 years, 12 kHz to ~54 years, and 8 kHz to 65+ years."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the difference between Hertz (Hz) and Decibels (dB)?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Hertz (Hz) measures frequency or pitch—how rapidly sound waves oscillate each second (e.g., a low bass rumble at 250 Hz vs. a high mosquito pitch at 17,000 Hz). Decibels (dB) measure sound pressure level or loudness on a logarithmic scale. In clinical audiology, dB HL (Hearing Level) indicates the threshold of audibility relative to a young, healthy human ear (0 dB HL), where conversational speech registers between 40 and 60 dB HL."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Why can young people hear the mosquito ringtone while older adults cannot?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The mosquito tone operates at approximately 17,400 Hz (17.4 kHz). The hair cells responsible for detecting this ultra-high frequency reside at the entrance (base) of the cochlea and endure the highest fluid shear forces throughout a lifetime. By age 25, most individuals have sustained sufficient natural hair cell attrition (presbycusis) that 17.4 kHz becomes inaudible, whereas teenagers and young adults retain intact basal hair cells and easily perceive it."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the 'speech banana' on an audiogram?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The speech banana is a distinctive banana-shaped region plotted on a clinical audiogram spanning frequencies from 250 Hz to 6,000 Hz and intensity levels between 20 dB HL and 55 dB HL. Almost all human speech phonemes fall within this zone: low-frequency vowels (u, o, a) live between 250 and 1,000 Hz, while critical high-frequency consonants (s, f, th, k) reside above 2,000 Hz. Hearing loss entering the speech banana causes speech to sound muffled and unintelligible."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the WHO 60/60 safe listening rule?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The World Health Organization (WHO) 60/60 rule advises listening to personal audio devices at no more than 60% of maximum volume for no longer than 60 minutes at a stretch, followed by at least 10 to 15 minutes of acoustic rest. Adhering to this guideline prevents metabolic exhaustion and oxidative damage in cochlear hair cells, dramatically reducing the risk of noise-induced hearing loss (NIHL) and permanent tinnitus."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can permanent hearing loss be reversed or cured?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Sensorineural hearing loss—caused by destruction of cochlear hair cells or auditory nerve fibers—is currently irreversible in humans because sensory hair cells do not regenerate once lost. However, conductive hearing loss caused by cerumen impaction or middle-ear effusion can often be treated medically. Sensorineural loss can be successfully rehabilitated through modern hearing aids, frequency-lowering algorithms, or cochlear implants."
-        }
+        "name": "Gehoortest & Oorleeftijd",
+        "item": canonicalUrl
       }
     ]
   }
@@ -156,8 +115,9 @@ const schema = [
   canonicalUrl={canonicalUrl}
   alternates={alternates}
   schema={schema}
+  lang="nl"
 >
-  <Header />
+  <Header currentPath="/nl/gehoortest" />
 
   <style>
     /* Custom acoustic waveform bar animations */
@@ -243,13 +203,13 @@ const schema = [
     <header class="text-center max-w-3xl mx-auto mb-10">
       <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-800 text-xs sm:text-sm font-mono font-semibold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider mb-4 shadow-xs">
         <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-        <span>Clinical Pure-Tone Audiometry • Biological Ear Age Sweep</span>
+        <span>Klinische Zuivere Toon Audiometrie • Biologische Oorleeftijd Sweep</span>
       </div>
       <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
-        Free Online Hearing Test & Audio Frequency Check
+        Gratis Online Gehoortest & Audio Frequentie Check
       </h1>
       <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
-        Screen your auditory acuity with clinical precision. Perform high-frequency biological ear age sweeps (8–20 kHz) or complete pure-tone audiometry (250–8,000 Hz) with independent left and right ear stereo isolation.
+        Screen uw auditieve scherpte met klinische precisie. Voer hoge-frequentie biologische oorleeftijd sweeps (8-20 kHz) uit of complete zuivere toon audiometrie (250-8.000 Hz) met onafhankelijke linker- en rechteroor stereo-isolatie.
       </p>
     </header>
 
@@ -258,9 +218,9 @@ const schema = [
       <div class="flex items-start gap-3">
         <svg class="w-6 h-6 shrink-0 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 18v-6a9 9 0 0 1 18 0v6" /><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" /></svg>
         <div class="space-y-1">
-          <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Acoustic Safety & Headphone Requirement</h4>
+          <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Akoestische Veiligheid & Koptelefoon Vereist</h4>
           <p class="text-amber-800 dark:text-amber-300/90 text-xs sm:text-sm leading-relaxed">
-            <strong>1)</strong> Put on high-quality stereo headphones. <strong>2)</strong> Never set your system volume to maximum; start at 50% volume and use our 1,000 Hz calibration tone to confirm comfortable audibility. <strong>3)</strong> Disable spatial audio, Dolby Atmos, and equalizer presets for clinical accuracy.
+            <strong>1)</strong> Zet een hoogwaardige stereo koptelefoon op. <strong>2)</strong> Zet uw systeemvolume nooit op maximum; begin op 50% volume en gebruik onze 1.000 Hz kalibratietoon om een comfortabele hoorbaarheid te bevestigen. <strong>3)</strong> Schakel ruimtelijke audio, Dolby Atmos en equalizer-presets uit voor klinische nauwkeurigheid.
           </p>
         </div>
       </div>
@@ -283,24 +243,24 @@ const schema = [
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
             </div>
             <div class="text-xs font-mono font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-1">
-              High-Frequency Sweep (8–20 kHz)
+              Hoge-Frequentie Sweep (8-20 kHz)
             </div>
             <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-              Biological Ear Age Test
+              Biologische Oorleeftijd Test
             </h3>
             <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Find the highest frequency your ears can detect. Maps your acoustic cutoff against epidemiological presbycusis data to calculate biological auditory age.
+              Vind de hoogste frequentie die uw oren kunnen detecteren. Brengt uw akoestische afkappunt in kaart tegen epidemiologische presbyacusis-gegevens om uw biologische auditieve leeftijd te berekenen.
             </p>
           </div>
           <div class="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Duration: ~60 Seconds</span>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Duur: ~60 Seconden</span>
             <span class="text-sm font-semibold text-cyan-600 dark:text-cyan-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Start Ear Age Test →
+              Start Oorleeftijd Test →
             </span>
           </div>
         </button>
 
-        <!-- Card 2: Pure-Tone Audiometry -->
+        <!-- Card 2: Zuivere Toon Audiometrie -->
         <button
           type="button"
           data-mode="audiometry"
@@ -312,19 +272,19 @@ const schema = [
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
             </div>
             <div class="text-xs font-mono font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-1">
-              Clinical Hughson-Westlake Protocol
+              Klinisch Hughson-Westlake Protocol
             </div>
             <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-              Pure-Tone Audiometry
+              Zuivere Toon Audiometrie
             </h3>
             <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Standard clinical screening evaluating 250 Hz to 8,000 Hz independently in your left and right ears. Plots an official audiogram against normal hearing thresholds.
+              Standaard klinische screening die 250 Hz tot 8.000 Hz onafhankelijk in uw linker- en rechteroor evalueert. Zet een officieel audiogram uit tegen normale gehoordrempels.
             </p>
           </div>
           <div class="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Duration: ~3 Minutes</span>
+            <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Duur: ~3 Minuten</span>
             <span class="text-sm font-semibold text-cyan-600 dark:text-cyan-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Start Audiometry →
+              Start Audiometrie →
             </span>
           </div>
         </button>
@@ -337,11 +297,11 @@ const schema = [
           <div class="flex items-center gap-3">
             <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
             <h2 id="workspaceTitle" class="font-heading font-bold text-lg sm:text-xl text-zinc-900 dark:text-white">
-              Acoustic Testing
+              Akoestische Test
             </h2>
           </div>
           <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
-            Step <span id="stepNum" class="font-bold text-cyan-600 dark:text-cyan-400">1</span> of 3
+            Stap <span id="stepNum" class="font-bold text-cyan-600 dark:text-cyan-400">1</span> van 3
           </div>
         </div>
 
@@ -352,16 +312,16 @@ const schema = [
           </div>
           <div class="space-y-2">
             <h3 class="font-heading font-bold text-2xl text-zinc-900 dark:text-white">
-              Reference Volume Calibration
+              Referentie Volume Kalibratie
             </h3>
             <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              We play a safe 1,000 Hz reference tone. Adjust your system volume until the sound is clearly audible, comfortable, and not uncomfortably loud.
+              We spelen een veilige 1.000 Hz referentietoon. Pas uw systeemvolume aan totdat het geluid duidelijk hoorbaar, comfortabel en niet ongemakkelijk luid is.
             </p>
           </div>
 
           <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 space-y-4">
             <div class="flex items-center justify-between text-xs font-mono font-semibold text-zinc-500 dark:text-zinc-400">
-              <span>Calibration Level</span>
+              <span>Kalibratieniveau</span>
               <span id="calibDbDisplay" class="text-cyan-600 dark:text-cyan-400 font-bold">40 dB HL</span>
             </div>
             <input
@@ -379,7 +339,7 @@ const schema = [
                 type="button"
                 class="px-5 py-2.5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
               >
-                <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" fill="currentColor" /></svg> Test Tone (1 kHz)
+                <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" fill="currentColor" /></svg> Test Toon (1 kHz)
               </button>
               <button
                 id="calibStopBtn"
@@ -396,7 +356,7 @@ const schema = [
             type="button"
             class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-heading font-bold text-base shadow-lg hover:shadow-cyan-500/25 transition-all cursor-pointer inline-flex items-center justify-center gap-2"
           >
-            <span>Volume Is Set · Begin Test</span>
+            <span>Volume is Ingesteld · Begin Test</span>
             <span>→</span>
           </button>
         </div>
@@ -404,13 +364,13 @@ const schema = [
         <!-- STEP 2A: BIOLOGICAL EAR AGE PANEL -->
         <div id="earAgePanel" class="hidden max-w-xl mx-auto text-center space-y-6">
           <div class="space-y-1">
-            <div class="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Current Frequency Tone</div>
+            <div class="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Huidige Frequentietoon</div>
             <div class="flex items-baseline justify-center gap-2 font-mono font-extrabold text-5xl sm:text-6xl text-cyan-600 dark:text-cyan-400 tracking-tight">
               <span id="earAgeFreq">20,000</span>
               <span class="text-2xl text-zinc-400 font-bold">Hz</span>
             </div>
             <p id="earAgeStatus" class="text-sm text-zinc-600 dark:text-zinc-400 pt-1">
-              Listen carefully. Can you hear this high-frequency pitch?
+              Luister goed. Kunt u deze hoge frequentietoon horen?
             </p>
           </div>
 
@@ -436,7 +396,7 @@ const schema = [
               class="py-4 px-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-3 shadow-xs"
             >
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12" /></svg>
-              <span>I Can Hear It</span>
+              <span>Ik Kan Het Horen</span>
             </button>
             <button
               id="earAgeNoHearBtn"
@@ -444,7 +404,7 @@ const schema = [
               class="py-4 px-6 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-3 shadow-xs"
             >
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" /></svg>
-              <span>I Cannot Hear It</span>
+              <span>Ik Kan Het Niet Horen</span>
             </button>
           </div>
 
@@ -454,7 +414,7 @@ const schema = [
               type="button"
               class="text-xs font-mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
             >
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg> Replay Current Frequency
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg> Herhaal Huidige Frequentie
             </button>
           </div>
         </div>
@@ -468,7 +428,7 @@ const schema = [
               </div>
               <div>
                 <div id="audEarLabel" class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                  Left Ear (Blue)
+                  Linkeroor (Blauw)
                 </div>
                 <div id="audFreqValue" class="font-heading font-extrabold text-2xl text-zinc-900 dark:text-white">
                   1,000 Hz
@@ -477,7 +437,7 @@ const schema = [
             </div>
             <div class="text-right">
               <div class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                Testing Intensity
+                Testintensiteit
               </div>
               <div class="font-mono font-extrabold text-2xl text-cyan-600 dark:text-cyan-400">
                 <span id="audDbValue">40</span> <span class="text-sm font-normal text-zinc-400">dB HL</span>
@@ -489,7 +449,7 @@ const schema = [
           <div id="audProgress" class="flex items-center gap-1.5 w-full"></div>
 
           <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            A tone will play for 1.5 seconds. Click whether you heard the sound clearly.
+            Er klinkt een toon gedurende 1,5 seconde. Klik of u het geluid duidelijk heeft gehoord.
           </p>
 
           <!-- Response Buttons -->
@@ -500,7 +460,7 @@ const schema = [
               class="py-4 px-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12" /></svg>
-              <span>Yes, I Heard It</span>
+              <span>Ja, Ik Hoorde Het</span>
             </button>
             <button
               id="audNoBtn"
@@ -508,7 +468,7 @@ const schema = [
               class="py-4 px-6 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/30 font-heading font-bold text-base transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" /></svg>
-              <span>Did Not Hear It</span>
+              <span>Niet Gehoord</span>
             </button>
           </div>
 
@@ -518,7 +478,7 @@ const schema = [
               type="button"
               class="text-xs font-mono text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
             >
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg> Replay Tone
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg> Herhaal Toon
             </button>
           </div>
         </div>
@@ -531,11 +491,11 @@ const schema = [
         <!-- EAR AGE RESULTS CARD -->
         <div id="panel-earage" class="hidden p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl text-center space-y-8">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-800 text-xs font-mono font-semibold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">
-            Auditory Health Assessment
+            Auditieve Gezondheidsbeoordeling
           </div>
           
           <div class="space-y-2">
-            <div class="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Estimated Biological Ear Age</div>
+            <div class="text-xs font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Geschatte Biologische Oorleeftijd</div>
             <div class="font-heading font-black text-6xl sm:text-7xl md:text-8xl text-zinc-950 dark:text-white tracking-tight">
               <span id="resultEarAge">--</span>
             </div>
@@ -547,20 +507,20 @@ const schema = [
           <!-- Metrics Breakdown -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
             <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
-              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Acoustic Cutoff</div>
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Akoestisch Afkappunt</div>
               <div class="font-mono font-bold text-2xl text-cyan-600 dark:text-cyan-400">
                 <span id="resultMaxFreq">--</span> Hz
               </div>
             </div>
             <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
-              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Acuity Index</div>
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Acuïteit Index</div>
               <div class="font-mono font-bold text-2xl text-emerald-600 dark:text-emerald-400">
                 <span id="resultScore">--</span>/100
               </div>
             </div>
             <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
-              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Rating</div>
-              <div id="resultRating" class="font-heading font-bold text-xl text-zinc-900 dark:text-white">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Beoordeling</div>
+              <div id="resultBeoordeling" class="font-heading font-bold text-xl text-zinc-900 dark:text-white">
                 --
               </div>
             </div>
@@ -573,21 +533,21 @@ const schema = [
               type="button"
               class="px-8 py-3.5 rounded-full bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-heading font-bold text-sm shadow-lg hover:shadow-cyan-500/25 transition-all cursor-pointer flex items-center gap-2"
             >
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Download Ear Age Certificate
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Download Oorleeftijd Certificaat
             </button>
             <button
               id="retakeEarAgeBtn"
               type="button"
               class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
             >
-              Retake Test
+              Test Opnieuw Doen
             </button>
             <button
               id="tryOtherBtn"
               type="button"
               class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
             >
-              Take Pure-Tone Audiogram →
+              Doe Zuivere Toon Audiogram →
             </button>
           </div>
         </div>
@@ -600,17 +560,17 @@ const schema = [
                 Pure-Tone Audiogram
               </div>
               <h3 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
-                Clinical Threshold Chart
+                Klinische Drempelgrafiek
               </h3>
             </div>
             <div class="flex items-center gap-6 font-mono text-xs font-semibold">
               <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
-                <span class="text-zinc-700 dark:text-zinc-300">Left Ear (X)</span>
+                <span class="text-zinc-700 dark:text-zinc-300">Linkeroor (X)</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
-                <span class="text-zinc-700 dark:text-zinc-300">Right Ear (O)</span>
+                <span class="text-zinc-700 dark:text-zinc-300">Rechteroor (O)</span>
               </div>
             </div>
           </div>
@@ -630,21 +590,21 @@ const schema = [
               type="button"
               class="px-8 py-3.5 rounded-full bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-heading font-bold text-sm shadow-lg hover:shadow-cyan-500/25 transition-all cursor-pointer flex items-center gap-2"
             >
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Download Clinical Audiogram (PNG)
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Download Klinisch Audiogram (PNG)
             </button>
             <button
               id="retakeAudBtn"
               type="button"
               class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
             >
-              Retake Audiometry
+              Audiometrie Opnieuw Doen
             </button>
             <button
               id="tryEarAgeBtn"
               type="button"
               class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
             >
-              Check Biological Ear Age →
+              Check Biologische Oorleeftijd →
             </button>
           </div>
         </div>
@@ -804,7 +764,7 @@ const schema = [
           Section 4 · Diagnostic Comparative
         </div>
         <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
-          Biological Ear Age vs Clinical Pure-Tone Audiometry
+          Biological Ear Age vs Clinical Zuivere Toon Audiometrie
         </h2>
         <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
           While both tests evaluate the health of your auditory periphery, they address distinct clinical questions:
@@ -825,7 +785,7 @@ const schema = [
 
           <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
             <h3 class="font-heading font-bold text-xl text-cyan-600 dark:text-cyan-400">
-              2. Pure-Tone Audiometry (Speech Frequencies)
+              2. Zuivere Toon Audiometrie (Speech Frequencies)
             </h3>
             <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
               Focuses on 250 Hz, 500 Hz, 1,000 Hz, 2,000 Hz, 4,000 Hz, and 8,000 Hz using the clinical <strong>Hughson-Westlake protocol</strong>. This evaluates actual social communication handicap, calculates Pure-Tone Average (PTA), and identifies conductive or sensorineural asymmetries between ears.
@@ -882,21 +842,21 @@ const schema = [
       <!-- Section 6: Comprehensive FAQ Accordion -->
       <section class="space-y-6 pt-4">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-800 text-xs font-mono font-semibold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">
-          Section 6 · Frequently Asked Questions
+          Sectie 6 · Veelgestelde Vragen
         </div>
         <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
-          Frequently Asked Questions About Hearing & Ear Age
+          Veelgestelde Vragen over Gehoor &amp; Oorleeftijd
         </h2>
 
         <div class="space-y-4 pt-4">
-          {schema[3].mainEntity.map((item) => (
+          {faqItems.map((item) => (
             <details class="group rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 transition-all duration-200 open:bg-white dark:open:bg-[#121215] open:shadow-lg">
               <summary class="flex items-center justify-between cursor-pointer font-heading font-bold text-lg text-zinc-900 dark:text-white select-none">
-                <span>{item.name}</span>
+                <span>{item.question}</span>
                 <svg class="faq-chevron ml-4 w-5 h-5 text-cyan-600 dark:text-cyan-400 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
               </summary>
               <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                {item.acceptedAnswer.text}
+                {item.answer}
               </div>
             </details>
           ))}
@@ -909,5 +869,5 @@ const schema = [
   <Footer />
 
   <!-- Pure Web Audio Client Engine Script -->
-  <script src="../scripts/tools/hearing-engine.js"></script>
+  <script src="../../scripts/tools/hearing-engine.js"></script>
 </Layout>

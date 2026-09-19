@@ -1,0 +1,773 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Gratis Ogentest Online: Snellen Visuele Acuïteit & Astigmatisme | FreeIQExam";
+const description = "Test uw zicht thuis met onze gratis online ogentest. Controleer visuele acuïteit met de Tumbling-E kaart en ontdek astigmatisme met onze radiale wijzerplaat.";
+const canonicalUrl = 'https://freeiqexam.com/nl/ogentest';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/eye-test',
+  'fi': 'https://freeiqexam.com/fi/nakotesti',
+  'de': 'https://freeiqexam.com/de/sehtest',
+  'pt-BR': 'https://freeiqexam.com/pt-br/teste-de-visao',
+  'nl': 'https://freeiqexam.com/nl/ogentest'
+};
+
+const faqItems = [
+  [
+    'Hoe nauwkeurig is een online ogentest vergeleken met een optometrist?',
+    'Een online screening kan een nuttige indicatie geven van uw gezichtsscherpte op een bepaalde afstand, maar kan geen refractieafwijking, oogdruk, netvliesgezondheid of binoculaire oogcoördinatie meten. Schermgrootte, pixeldichtheid, kijkafstand en kamerverlichting beïnvloeden de meting. Zie het resultaat als een reden voor een oogmeting bij een opticien of oogarts, nooit als vervanging.'
+  ],
+  [
+    'Waarom moet ik een pasje (zoals een bankpas) tegen het scherm houden?',
+    'Visuele acuïteit (gezichtsscherpte) wordt bepaald door de kijkhoek die een letter op het netvlies maakt, niet door de grootte in pixels. Een 20/20-optotype op 1 meter afstand is precies 1,45 mm hoog, ongeacht uw monitor. Omdat een browser de fysieke pixeldichtheid van uw beeldscherm niet kan meten, gebruikt de test een ISO/IEC 7810 ID-1 pasje (exact 85,60 mm breed) om de pixels-per-millimeterverhouding exact te kalibreren.'
+  ],
+  [
+    'Waarom meet de test soms niet scherper dan 20/40?',
+    'Op 1 meter afstand is een 20/20 letter 1,45 mm hoog. Op een standaard 96 DPI-scherm is dat slechts circa 5 pixels hoog — te klein om een vijf-streepige Tumbling-E getrouw weer te geven. In plaats van de letter kunstmatig te vergroten, toont de test de maximale scherptetrap die uw scherm fysiek kan weergeven. Door verder naar achteren te gaan zitten (bijv. 2 meter), worden de letters groter en kan een scherpere trap gemeten worden.'
+  ],
+  [
+    'Wat is de Tumbling-E en waarom wordt deze gebruikt?',
+    'De Tumbling-E is een Snellen-E die naar boven, onder, links of rechts wijst. U geeft alleen de richting van de opening aan in plaats van een letter te benoemen. Hierdoor spelen taalvaardigheid, geletterdheid en letterherkenning geen rol. Het is de internationale standaard voor kinderen en personen die het Latijnse alfabet niet beheersen.'
+  ],
+  [
+    'Wat meet de radiale astigmatismewijzerplaat?',
+    'De wijzerplaat toont stralende lijnen in alle meridianen. Wanneer het hoornvlies of de ooglens een cilindrische afwijking (astigmatisme) heeft, breekt het licht in de ene meridiaan anders dan in de loodrechte meridiaan. Hierdoor lijken sommige lijnen donkerder, scherper of dikker dan andere. Als u specifieke lijnen als opvallend scherper ervaart, wijst dat op mogelijk astigmatisme.'
+  ],
+  [
+    'Waarom wijzen de rode en groene vlakken op bijziendheid of verziendheid?',
+    'Dit berust op longitudinale chromatische aberratie. Groen licht (circa 535 nm) breekt sterker dan rood licht (circa 650 nm). Groen focust iets vóór het netvlies en rood iets erachter. Als de symbolen op het rode vlak scherper lijken, is het oog relatief bijziend (myoop); lijken ze op groen scherper, dan is het oog relatief verziend (hypermetroop). Lijken beide even scherp, dan ligt de focus dicht bij het netvlies.'
+  ],
+  [
+    'Geeft deze test mij een brilvoorschrift of sterkte?',
+    'Nee. Een officieel brilrecept specificeert sfeer (sterkte), cilinder, as en vaak een leesadditie en pupilafstand. Deze test schat slechts de gezichtsscherpte op één afstand en geeft een indicatie van astigmatisme en sferische balans. Alleen een gediplomeerd optometrist of oogarts kan een brilvoorschrift opstellen.'
+  ],
+  [
+    'Wanneer moet ik direct naar een oogarts, ongeacht de testscore?',
+    'Maak direct een afspraak bij plotselinge zichtvermindering, lichtflitsen, een plotselinge toename van zwevende vlekjes (mouches volantes), een donkere schaduw of gordijn in uw gezichtsveld, oogpijn, aanhoudende roodheid of dubbelzien. Plotseling visusverlies is een medisch spoedgeval — ga dan direct naar de spoedeisende hulp of oogarts.'
+  ]
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Online Visuele Acuïteit, Astigmatisme en Duochroom Ogentest',
+    url: canonicalUrl,
+    inLanguage: 'nl',
+    medicalAudience: 'Patient',
+    aspect: 'Screening',
+    isAccessibleForFree: true,
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Refractieafwijking',
+      alternateName: ['Myopie', 'Hypermetropie', 'Astigmatisme', 'Presbyopie']
+    }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Gratis Online Ogentest — Snellen, Astigmatisme en Duochroom',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'nl',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    accessibilitySummary: 'Toetsenbordbediening voor richtingen, kalibratieschuifregelaar op ware grootte, schermlezerondersteuning en afdrukbare samenvatting.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Startpagina', item: 'https://freeiqexam.com/nl/' },
+      { '@type': 'ListItem', position: 2, name: 'Zelftests', item: 'https://freeiqexam.com/nl/#tests' },
+      { '@type': 'ListItem', position: 3, name: 'Ogentest', item: canonicalUrl }
+    ]
+  }
+];
+
+const stages = [
+  ['intro-section', '1 · Overzicht'],
+  ['calibration-section', '2 · Kalibratie'],
+  ['acuity-section', '3 · Acuïteit'],
+  ['astigmatism-section', '4 · Astigmatisme'],
+  ['duochrome-section', '5 · Duochroom'],
+  ['results-section', '6 · Resultaten']
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schemas} lang="nl">
+  <Header currentPath="/nl/ogentest" />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+      <nav aria-label="Kruimelpad" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/nl/" class="hover:text-zinc-950 dark:hover:text-white">Startpagina</a><span aria-hidden="true">/</span>
+        <a href="/nl/#tests" class="hover:text-zinc-950 dark:hover:text-white">Zelftests</a><span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white">Ogentest</span>
+      </nav>
+
+      <header class="mx-auto max-w-4xl text-center">
+        <div class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300 sm:text-sm">
+          Scherm-gekalibreerd · Optometrische screening
+        </div>
+        <h1 class="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Gratis Online Ogentest (Snellen Acuïteit Kaart)</h1>
+        <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Meet de visuele acuïteit met een fysiek gekalibreerde Snellen Tumbling E-kaart, breng meridionale onscherpte in kaart met een astigmatisme wijzerplaat, en controleer de sferische balans op een rood-groen duochroom. Volledig in uw browser — niets wat u invoert verlaat uw apparaat.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['Kaart-gekalibreerde schaal', 'Tumbling E acuïteit', 'Astigmatisme wijzerplaat', 'Duochroom balans', 'Geen account vereist'].map((item) => (
+            <span class="rounded-full border border-zinc-200 px-4 py-2.5 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <section id="eye-app" class="mx-auto mt-12 max-w-4xl">
+        <ol class="stage-strip" aria-label="Test progress">
+          {stages.map(([id, label]) => (
+            <li data-stage={id} class="stage-chip">{label}</li>
+          ))}
+        </ol>
+
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-8">
+
+          <section id="intro-section" class="rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900/50 dark:bg-emerald-950/30 sm:p-8">
+            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Voordat u begint</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Een screeningstool, geen onderzoek</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Deze test schat in hoe goed u ziet op een gekozen afstand. Het kan uw refractie, oogdruk, gezichtsvelden of de gezondheid van uw netvlies niet meten, en het kan geen recept genereren. Schermgrootte, pixeldichtheid, kijkafstand en kamerverlichting beïnvloeden allemaal het resultaat.
+            </p>
+            <ul class="mt-5 space-y-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              <li class="intro-bullet">Houd een standaard bankkaart of ID-kaart bij de hand — u zult deze matchen met het scherm om de fysieke schaal te kalibreren.</li>
+              <li class="intro-bullet">U moet één oog tegelijk bedekken. Een handpalm werkt beter dan een holle hand over het oog.</li>
+              <li class="intro-bullet">Test in gelijkmatige, matige verlichting. Vermijd een fel raam direct achter of voor het scherm.</li>
+              <li class="intro-bullet">Draag uw gebruikelijke bril of contactlenzen als u controleert hoe goed uw huidige correctie werkt. Doe ze alleen af als u uw ongecorrigeerde gezichtsscherpte wilt weten.</li>
+            </ul>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <button id="begin-eye-test" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition hover:scale-[1.02] active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 sm:rounded-full">Start de visietest</button>
+              <span class="self-center text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">Toetsenbord: ↑ ↓ ← → om te antwoorden tijdens de acuïteitstest</span>
+            </div>
+            <p class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200 sm:text-base">
+              <strong>Plotseling zichtverlies, flitsen, een gordijn voor uw zicht of oogpijn is een medische noodsituatie.</strong> Test niet online — zoek onmiddellijk medische hulp.
+            </p>
+          </section>
+
+          <section id="calibration-section" class="hidden" aria-labelledby="calibration-title">
+            <div class="rounded-[1.5rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Stap 1 · Fysieke kalibratie</p>
+              <h2 id="calibration-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Match een echte kaart met het scherm</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Houd een standaard bank-, ID- of bibliotheekkaart plat tegen het scherm en sleep de schuifregelaar totdat de witte omtreklijn precies even breed is als de kaart. Dit geeft de test de ware pixels-per-millimeter verhouding van uw scherm, wat de optotypes fysiek nauwkeurig maakt.
+              </p>
+
+              <div class="calibration-stage">
+                <div id="card-preview" class="card-preview" aria-hidden="true"></div>
+              </div>
+
+              <label for="card-slider" class="mt-8 block text-base font-semibold">Kaartbreedte op het scherm</label>
+              <input id="card-slider" type="range" min="100" max="600" step="1" value="260" class="calibration-slider" />
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                <span>Kaartbreedte: <strong id="card-width-label" class="font-mono">260 px</strong></span>
+                <span>Schermschaal: <strong id="ppm-readout" class="font-mono">—</strong></span>
+              </div>
+
+              <div class="mt-8">
+                <p class="text-base font-semibold">Testafstand</p>
+                <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Zit of sta zodat uw oog zich precies zo ver van het scherm bevindt. Verder naar achteren maakt scherpere optotypes fysiek groter — en daardoor meetbaar.</p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  {[['near', '40 cm', '16 in · telefoon'], ['desk', '1 m', '3.3 ft · desktop'], ['room', '2 m', '6.6 ft'], ['hall', '3 m', '10 ft'], ['snellen', '6 m', '20 ft · Snellen standaard']].map(([id, label, hint]) => (
+                    <button type="button" data-distance={id} class="distance-button">
+                      <span class="distance-label">{label}</span>
+                      <span class="distance-hint">{hint}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <p id="resolution-warning" class="mt-7 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200 sm:text-base"></p>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="confirm-calibration" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] sm:rounded-full">Gekalibreerd — begin acuïteitstest</button>
+                <button id="skip-calibration" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Overslaan naar astigmatisme &amp; duochroom</button>
+              </div>
+              <p class="mt-4 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Kalibratie is alleen nodig voor de acuïteitskaart. De wijzerplaat- en duochroom-modules werken zonder.</p>
+            </div>
+          </section>
+
+          <section id="acuity-section" class="hidden" aria-labelledby="acuity-title">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Stap 2 · Visuele acuïteit</p>
+                <h2 id="acuity-title" class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl"><span id="acuity-eye-label">Rechteroog</span></h2>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="acuity-eye-progress" class="text-base font-semibold sm:text-lg">Oog 1 van 3</div>
+                <div id="acuity-trial-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">—</div>
+              </div>
+            </div>
+            <div class="mt-5 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"><div id="acuity-progress-fill" class="h-full rounded-full bg-emerald-600 transition-all duration-300" style="width:0%"></div></div>
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div id="acuity-tier-dots" class="tier-dots" aria-hidden="true"></div>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Drie goed voltooit een niveau · twee fout gaat een niveau omlaag of beëindigt het oog</p>
+            </div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p id="acuity-instruction" class="rounded-2xl border border-emerald-200 bg-emerald-50/70 px-5 py-4 text-base font-semibold text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-200 sm:text-lg">Bedek uw LINKEROOG.</p>
+              <p class="mt-6 text-base text-zinc-500 dark:text-zinc-400 sm:text-lg">
+                In welke richting wijst de E? Huidig niveau <strong id="acuity-tier-label" class="font-mono text-zinc-900 dark:text-white">—</strong>
+              </p>
+
+              <div id="optotype-mount" class="mt-6"></div>
+
+              <div class="direction-pad mt-8">
+                <div></div>
+                <button type="button" data-direction="up" class="direction-button" aria-label="E points up">↑</button>
+                <div></div>
+                <button type="button" data-direction="left" class="direction-button" aria-label="E points left">←</button>
+                <div class="direction-center" aria-hidden="true">E</div>
+                <button type="button" data-direction="right" class="direction-button" aria-label="E points right">→</button>
+                <div></div>
+                <button type="button" data-direction="down" class="direction-button" aria-label="E points down">↓</button>
+                <div></div>
+              </div>
+
+              <p id="acuity-feedback" class="acuity-feedback" role="status" aria-live="polite"></p>
+              <p class="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                Drie keer goed op een niveau voltooit het. Twee keer fout beëindigt dat oog.
+              </p>
+            </article>
+          </section>
+
+          <section id="astigmatism-section" class="hidden" aria-labelledby="astig-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Step 3 · Astigmatisme wijzerplaat</p>
+              <h2 id="astig-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Zien sommige lijnen er donkerder of scherper uit?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Ga staan of zitten op de gekozen afstand. Kijk met één oog tegelijk naar het midden van de wijzerplaat en vergelijk de twaalf lijnen. Sommige mensen met ongecorrigeerd astigmatisme zien een of twee lijnen als merkbaar donkerder, dikker of scherper dan de rest. Selecteer elke lijn die opvalt.
+              </p>
+              <p class="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Elke straal is afzonderlijk te selecteren, inclusief de twee tegenoverliggende stralen die op dezelfde lijn door het midden liggen — die twee beschrijven een en dezelfde meridiaan, dus als een lijn aan beide uiteinden onscherp lijkt, markeer dan beide.
+              </p>
+              <div id="dial-mount" class="dial-stage mt-8"></div>
+              <p id="dial-selection-label" class="mt-6 text-base font-semibold text-emerald-800 dark:text-emerald-300 sm:text-lg">Nog geen lijnen geselecteerd.</p>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="submit-astigmatism" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] sm:rounded-full">Ga door naar duochroom</button>
+                <button id="dial-none" type="button" aria-pressed="false" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Alle lijnen zien er gelijk uit</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="duochrome-section" class="hidden" aria-labelledby="duo-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Stap 4 · Rood-groen duochroom</p>
+              <h2 id="duo-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Welke ring ziet er scherper uit?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Vergelijk de zwarte ring op het rode paneel met de zwarte ring op het groene paneel. Beoordeel <strong>scherpte en helderheid</strong>, niet felheid — de twee kleuren hebben bewust een verschillende luminantie. Kijk naar beide gedurende een paar seconden voordat u beslist.
+              </p>
+              <div class="duochrome-grid mt-8">
+                <div class="duochrome-panel duo-red">
+                  <div id="duochrome-red" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Rood · ~650 nm</span>
+                </div>
+                <div class="duochrome-panel duo-green">
+                  <div id="duochrome-green" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Groen · ~535 nm</span>
+                </div>
+              </div>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button type="button" data-duo="red" class="duo-choice rounded-2xl border-2 border-red-300 bg-red-50 px-6 py-4 text-base font-semibold text-red-900 transition active:scale-[0.99] dark:border-red-900 dark:bg-red-950/40 dark:text-red-200 sm:rounded-full">Rood ziet er scherper uit</button>
+                <button type="button" data-duo="green" class="duo-choice rounded-2xl border-2 border-emerald-300 bg-emerald-50 px-6 py-4 text-base font-semibold text-emerald-900 transition active:scale-[0.99] dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200 sm:rounded-full">Groen ziet er scherper uit</button>
+                <button type="button" data-duo="equal" class="duo-choice rounded-2xl border-2 border-zinc-300 bg-zinc-100 px-6 py-4 text-base font-semibold text-zinc-800 transition active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 sm:rounded-full">Beide zien er hetzelfde uit</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge neutral">Acuïteitsresultaat vastgelegd</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">Uw visiescreening samenvatting</h2>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 sm:text-base">Geen diagnose</div>
+              </div>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card reveal"><div class="score-label">Rechteroog</div><div id="acuity-right" class="acuity-fraction">—</div><div id="acuity-right-note" class="score-status">Beste niveau behaald</div></article>
+                <article class="score-card reveal"><div class="score-label">Linkeroog</div><div id="acuity-left" class="acuity-fraction">—</div><div id="acuity-left-note" class="score-status">Beste niveau behaald</div></article>
+                <article class="score-card reveal"><div class="score-label">Beide ogen</div><div id="acuity-both" class="acuity-fraction">—</div><div id="acuity-both-note" class="score-status">Beste niveau behaald</div></article>
+              </div>
+
+              <p id="acuity-summary-note" class="reveal mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <article class="stat-card reveal"><span>Astigmatisme wijzerplaat</span><strong id="astig-result">Niet vastgelegd</strong><p id="astig-note" class="stat-note"></p></article>
+                <article class="stat-card reveal"><span>Duochroom balans</span><strong id="duo-result">Niet vastgelegd</strong><p id="duo-note" class="stat-note"></p></article>
+              </div>
+
+              <article class="reveal mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-base">Testcondities</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">Wat deze meting aannam</h3>
+                <p id="calibration-summary" class="mt-4 font-mono text-base sm:text-lg">—</p>
+                <p class="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                  Acuïteitscijfers zijn slechts zo goed als de kalibratie en de afstand waarop ze zijn gemeten. Als de kaartovereenkomst bij benadering was, of u zat dichterbij of verder dan de geselecteerde afstand, zal de ware waarde verschillen van wat hier wordt gerapporteerd.
+                </p>
+              </article>
+
+              <div class="reveal mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="rounded-2xl bg-zinc-950 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] dark:bg-white dark:text-zinc-950 sm:rounded-full">Print klinische samenvatting</button>
+                <button id="share-result" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Deel samenvatting</button>
+                <button id="retake-result" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Test opnieuw doen</button>
+              </div>
+
+              <div class="reveal mt-8 rounded-3xl border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900/50 dark:bg-emerald-950/30">
+                <h3 class="text-xl font-bold sm:text-2xl">Lees het resultaat in context</h3>
+                <p class="mt-3 text-base leading-relaxed text-emerald-950 dark:text-emerald-100 sm:text-lg">
+                  Een screeningresultaat is een reden om een onderzoek te boeken, geen vervanging ervan. Een optometrist meet refractie, binoculaire coördinatie, oogdruk en de gezondheid van het netvlies — niets hiervan kan door een browser worden beoordeeld. Als uw resultaat is verminderd, als de twee ogen verschillen, of als er recent iets is veranderd, maak dan een afspraak.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <p id="eye-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+        <section>
+          <p class="eyebrow">Optometrische gids</p>
+          <h2 class="mt-3 section-title">Hoe visietesten daadwerkelijk werken</h2>
+          <p class="mt-6">Het gezichtsvermogen voelt als één enkel zintuig, maar wat een oogkaart meet is slechts een smal deel ervan: het vermogen om fijne details bij hoog contrast op te lossen, op een specifieke afstand en onder specifieke verlichting. Begrijpen wat de meting wel en niet vastlegt, is het verschil tussen een bruikbaar screeningresultaat en een misleidend getal.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">1. De anatomie en optica van het zien</h2>
+          <p class="mt-5">Licht dat het oog binnenkomt, wordt tweemaal gebroken voordat het het netvlies bereikt. Het <strong>hoornvlies (cornea)</strong> doet het meeste werk — ruwweg tweederde van de totale refractieve kracht van het oog, ongeveer 43 dioptrieën — omdat de overgang van lucht naar weefsel de grootste verandering in brekingsindex oplevert. De <strong>ooglens</strong> draagt het resterende derde deel bij, ongeveer 19 dioptrieën in rust, en de zachte, gelaagde structuur zorgt ervoor dat de kromming ervan kan veranderen.</p>
+          <p class="mt-5">Die verandering heet <strong>accommodatie</strong>. De ciliaire spier trekt samen, waardoor de zonulaire vezels die de lens onder spanning houden ontspannen en de lens ronder en optisch sterker wordt. Hierdoor kan een gezond jong oog de focus verleggen van oneindig naar ongeveer 10 centimeter. De accommodatie-amplitude neemt gestaag af met de leeftijd doordat de lenskern verstijft en het lenskapsel elasticiteit verliest — van circa 14 dioptrieën in de kindertijd tot minder dan 2 dioptrieën rond het vijftigste levensjaar. Deze afname is presbyopie (ouderdomsverziendheid), een normaal mechanisch gevolg van het ouder worden en geen ziekte.</p>
+          <p class="mt-5">Voor een scherp beeld moet de optische sterkte van het hoornvlies en de lens samen het brandpunt precies op de fotoreceptorlaag van het netvlies leggen. De <strong>brekingsindex</strong> van de media is hierbij bepalend: het hoornvlies ligt rond 1,376, het oogvocht en glasvocht rond 1,336, en de lens varieert van ongeveer 1,386 in de cortex tot 1,406 in de kern. Deze gradiënt is functioneel — het zorgt ervoor dat de lens licht geleidelijk in plaats van abrupt breekt, wat sferische aberratie vermindert. Wanneer de aslengte van het oog en de optische sterkte niet synchroon lopen, valt het brandpunt vóór of achter het netvlies, resulterend in een refractieafwijking.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">2. Hoe visuele acuïteit (gezichtsscherpte) wordt gemeten</h2>
+          <p class="mt-5">Visuele acuïteit wordt niet gemeten in millimeters, maar in <strong>gezichtshoek</strong> — hoeveel van uw gezichtsveld een doel inneemt. De standaard, in 1862 vastgesteld door Herman Snellen en nog steeds in gebruik, stelt dat een normaal oog een optotype net kan onderscheiden dat <strong>5 boogminuten</strong> beslaat op de kijkafstand. Elke lijn van dat optotype en elke tussenruimte beslaat 1 boogminuut. Deze streep van 1 boogminuut is de feitelijke drempelwaarde die wordt getest.</p>
+          <p class="mt-5">Daarom wordt de Snellen-fractie genoteerd als 20/20 (of 6/6 in het metrieke stelsel), en niet als een vaste grootte. De teller is de testafstand (in voet of meter); de noemer is de afstand waarop iemand met standaard gezichtsscherpte dezelfde letter kan lezen. Een 20/40 letter op 20 voet beslaat dezelfde hoek als een 20/20 letter op 40 voet. Op 6 meter is het 20/20 optotype 8,73 mm hoog — een handige fysieke maat en de reden waarom 6 meter (20 voet) de standaard testafstand werd. Op 1 meter zou hetzelfde optotype slechts 1,45 mm meten, wat precies verklaart waarom beeldschermtests op korte afstand tegen fysieke schermbeperkingen aanlopen.</p>
+          <p class="mt-5">Een gezichtsscherpte beter dan 20/20 is gebruikelijk, vooral bij jongeren. Ongeveer een derde van de gezonde jongvolwassenen behaalt <strong>20/15</strong>, en sommigen zelfs 20/10. Dit weerspiegelt de kegeltjesdichtheid in de fovea, waar fotoreceptoren het dichtst opeengepakt zitten en elk kegeltje een vrijwel directe verbinding met de visuele cortex heeft. Boven circa 20/10 worden de optische eigenschappen van het oog zelf — niet het netvlies — de beperkende factor, omdat aberraties van het hoornvlies en de lens het beeld vervagen voordat het de fotoreceptoren bereikt.</p>
+          <p class="mt-5">De <strong>Tumbling E</strong> die in deze test wordt gebruikt, is een Snellen E die in een van de vier windrichtingen is gedraaid. Omdat de gebruiker de richting aangeeft in plaats van een letter te benoemen, is de meting onafhankelijk van geletterdheid, taal of bekendheid met het Latijnse alfabet. Het is de internationale standaard voor jonge kinderen en iedereen die het schrift van de kaart niet leest — en maakt een zuivere, eerlijke vergelijking mogelijk over alle talen op deze site.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">3. Refractieafwijkingen begrijpen</h2>
+          <p class="mt-5"><strong>Myopie (bijziendheid)</strong> treedt op wanneer de brekende kracht van het oog te sterk is ten opzichte van de aslengte, waardoor het brandpunt vóór het netvlies valt. Voorwerpen in de verte zijn wazig; voorwerpen dichtbij blijven scherp omdat er minder optische breking nodig is om te focussen. Het treft ongeveer 30% van de wereldbevolking en stijgt snel in verstedelijkte gebieden. Tijd buiten doorbrengen tijdens de kindertijd werkt beschermend, terwijl langdurig dichtbijwerk samenhangt met progressie. Myopie wordt gecorrigeerd met minlenzen (hol/concaaf), die het licht divergeren voordat het het hoornvlies bereikt, zodat het brandpunt naar achteren op het netvlies verschuift.</p>
+          <p class="mt-5"><strong>Hypermetropie (verziendheid)</strong> is het omgekeerde: het brandpunt valt achter het netvlies. Jonge verzienden compenseren dit vaak continu door te accommoderen, waardoor verziendheid decennialang onopgemerkt kan blijven en pas rond het veertigste levensjaar aan het licht komt als oogvermoeidheid, hoofdpijn en moeite met lezen wanneer de accommodatiereserve afneemt. Dit wordt gecorrigeerd met pluslenzen (bol/convex).</p>
+          <p class="mt-5"><strong>Astigmatisme (cilindrische afwijking)</strong> is een verschil in optische sterkte tussen twee loodrechte meridianen. Een perfect sferisch hoornvlies heeft in alle richtingen dezelfde kromming; een astigmatisch hoornvlies lijkt meer op de vorm van een rugbybal. Licht in de ene meridiaan focust daardoor op een ander punt dan licht in de meridiaan die er loodrecht op staat. Geen enkele sferische lens kan dit beeld volledig scherp maken — lijnen in één richting blijven wazig terwijl loodrechte lijnen scherp ogen. Astigmatisme wordt gecorrigeerd met een cilindrische lenscomponent, en de <strong>as (axis)</strong> geeft aan onder welke hoek deze meridiaan ligt. De straalfiguur (astigmatismewijzer) in deze test brengt precies deze asymmetrie in kaart.</p>
+          <p class="mt-5"><strong>Presbyopie (ouderdomsverziendheid)</strong> is in wezen geen refractieve fout van de oogbol — de basisoptica is ongewijzigd, maar de ooglens kan niet meer voldoende van vorm veranderen om op nabije voorwerpen scherp te stellen. Dit wordt merkbaar tussen de 40 en 45 jaar en stabiliseert rond het 60e levensjaar. Dit wordt gecorrigeerd met een leesbril, bifocale, multifocale glazen of multifocale contactlenzen.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">4. De optica achter de straalfiguur en de duochroomtest</h2>
+          <p class="mt-5"><strong>De astigmatisme-straalfiguur (klok).</strong> Een straalfiguur toont uitstralende lijnen in twaalf meridianen. Als het oog geen cilindrische afwijking heeft, focust elke meridiaan op hetzelfde punt en lijken alle twaalf lijnen even scherp en zwart. Bij een cilindrische fout produceert de meridiaan waarvan de focus het dichtst bij het netvlies ligt een scherpe lijn, terwijl de loodrechte meridiaan — waar de focus het verst van het netvlies afligt — een wazigere lijn geeft. De gebruiker geeft aan welke lijnen het duidelijkst opvallen. De geschatte as is de meridiaan van die lijnen, gemeten in graden van 0 tot 180. Omdat twee tegenovergestelde richtingen optisch dezelfde meridiaan vormen, wordt de as gerapporteerd tussen 0° en 180°.</p>
+          <p class="mt-5"><strong>De duochroomtest</strong> maakt gebruik van <em>longitudinale chromatische aberratie</em>. De brekingsindex van een optisch medium varieert per golflengte, en het menselijk oog vormt daarop geen uitzondering: kortere golflengten worden sterker gebroken dan langere golflengten. Groen licht (circa 535 nm) focust daardoor ongeveer 0,50 dioptrie vóór rood licht (circa 650 nm). Dit is een fysieke eigenschap van het menselijk oog en geen afwijking van het beeldscherm.</p>
+          <p class="mt-5">De klinische werking vloeit hier rechtstreeks uit voort: bij een emmetroop (optisch neutraal) oog liggen het rode en groene brandpunt symmetrisch vóór en achter het netvlies, waardoor beide helften even scherp ogen. Bij bijziendheid verschuift het hele brandpuntvlak naar voren en komt het rode brandpunt dichter op het netvlies te liggen, waardoor <strong>rood scherper oogt</strong>. Bij verziendheid verschuift het vlak naar achteren en ligt het groene brandpunt dichter bij het netvlies, waardoor <strong>groen scherper oogt</strong>. Een optometrist gebruikt dit principe om de sferische sterkte op een kwart dioptrie nauwkeurig af te stemmen.</p>
+          <p class="mt-5">Een belangrijke kanttekening bij beeldschermen: een klinische duochroomtest gebruikt gecertificeerde optische filters met een nauwkeurig emissiespectrum. Een digitaal RGB-scherm zendt bredere, overlappende pieken uit en het exacte spectrum verschilt per monitor. De beeldschermversie toont betrouwbaar de richting van het effect aan, maar kan niet de exacte dioptriewaarde bepalen. Daarom wordt het resultaat aangeduid als een indicatieve verschuiving in plaats van een harde meting.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">5. Digitale oogvermoeidheid en de 20-20-20 regel</h2>
+          <p class="mt-5">Langdurig beeldschermwerk veroorzaakt een kenmerkend patroon van klachten — branderige ogen, droogheid, wazig zicht in de verte na langdurig focussen op korte afstand en spanningshoofdpijn. De oorzaak is geen structurele schade, maar spier- en traanfilmvermoeidheid. Tijdens beeldschermwerk houdt de ciliaire spier de accommodatie op een vaste korte afstand veel langer vast dan waarvoor het oog evolutionair is gebouwd, terwijl het convergentiesysteem continu aangespannen blijft.</p>
+          <p class="mt-5">De meest meetbare verandering is de <strong>knipperfrequentie</strong>. Normaal knippert iemand 15 tot 20 keer per minuut. Tijdens geconcentreerd schermkijken daalt dit met meer dan de helft, en de knipperbewegingen zijn vaak onvolledig: het bovenste ooglid raakt het onderste niet volledig, waardoor de traanfilm aan de onderzijde niet wordt ververst. De traanfilm breekt tussen knipperbeurten op, waardoor het hoornvliesepitheel bloot komt te liggen. Dit veroorzaakt de branderigheid en paradoxale reflextranen die mensen omschrijven als "droge maar toch tranende" ogen.</p>
+          <p class="mt-5">De <strong>20-20-20 regel</strong> is de beproefde ergonomische richtlijn: kijk elke 20 minuten minstens 20 seconden naar een punt op minimaal 20 voet (ongeveer 6 meter) afstand. De afstand is essentieel omdat kijken in de verte de ciliaire spier volledig laat ontspannen; de duur is cruciaal omdat de traanfilm enkele seconden ononderbroken herstel nodig heeft om zich te herstellen. Deze pauze herinnert u er tevens aan om bewust volledig te knipperen.</p>
+          <p class="mt-5">Aanvullende wetenschappelijk onderbouwde maatregelen zijn: plaats het scherm op 50 tot 70 centimeter afstand en net iets onder ooghoogte, zodat de oogspleet kleiner is en er minder traanvocht verdampt; stem de helderheid van het scherm af op het omgevingslicht; gebruik een luchtbevochtiger in ruimtes met airconditioning of centrale verwarming; en gebruik eventueel conserveermiddelvrije kunsttranen bij aanhoudende droogte. Zorg er ook voor dat uw eventuele beeldschermbrilvoorschrift up-to-date is.</p>
+          <p class="mt-5">Houd ten slotte rekening met wat een zelftest niet kan waarnemen. Gezichtsscherpte en refractie zijn slechts een fractie van de totale ooggezondheid. Glaucoom (verhoogde oogdruk) kan een groot deel van het perifere gezichtsveld beschadigen voordat de centrale gezichtsscherpte achteruitgaat, en diabetische retinopathie of maculadegeneratie zijn in vroege stadia onzichtbaar op een letterkaart. Dat is het belangrijkste argument voor periodiek uitgebreid oogonderzoek bij een optometrist of oogarts, ongeacht hoe scherp u de test vandaag heeft afgerond.</p>
+        </section>
+
+        <section id="faq" class="guide-section">
+          <p class="eyebrow">FAQ</p>
+          <h2 class="section-title mt-3">Veelgestelde vragen over de online ogentest</h2>
+          <div class="mt-7 space-y-3">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white px-5 py-5 dark:border-zinc-800 dark:bg-zinc-950">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition group-open:rotate-45">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-200 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300 sm:text-lg">{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9">
+          <h2 class="text-2xl font-bold sm:text-3xl">Klinische disclaimer</h2>
+          <p class="mt-4">Deze digitale visietest is uitsluitend bedoeld voor informatieve en indicatieve screeningdoeleinden. Het vervangt op geen enkele wijze een uitgebreid oogonderzoek door een gediplomeerd optometrist of oogarts, en levert geen officieel brilvoorschrift op. Schermkalibratie, kijkafstand, omgevingslicht en beeldschermkarakteristieken kunnen meetvariaties veroorzaken.</p>
+          <p class="mt-4">Raadpleeg met spoed medische hulp bij plotseling verlies van het gezichtsvermogen, lichtflitsen, een plotselinge toename van zwevende vlekjes (mouches volantes), een donkere schaduw of gordijn in het gezichtsveld, dubbelzien of acute oogpijn. Als u diabetes heeft, glaucoom of een familiegeschiedenis van oogaandoeningen, volg dan altijd het periodieke controleschema van uw oogspecialist.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h2 class="text-3xl font-extrabold">VISIESCREENING SAMENVATTING</h2>
+      <p class="mt-2 text-sm uppercase tracking-wider">Screen-calibrated Snellen Tumbling E · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm">
+        <p><strong>Datum:</strong> <span id="report-date">—</span></p>
+        <p><strong>Sessie:</strong> <span id="report-session">—</span></p>
+        <p><strong>Testcondities:</strong> <span id="print-calibration">—</span></p>
+        <p><strong>Rechteroog acuity:</strong> <span id="print-right">—</span></p>
+        <p><strong>Linkeroog acuity:</strong> <span id="print-left">—</span></p>
+        <p><strong>Beide ogen acuity:</strong> <span id="print-both">—</span></p>
+        <p><strong>Astigmatisme wijzerplaat:</strong> <span id="print-astig">—</span></p>
+        <p><strong>Duochroom balans:</strong> <span id="print-duo">—</span></p>
+      </div>
+      <h2 class="mt-8 text-xl font-bold">Meetbeperkingen</h2>
+      <p class="mt-3 text-sm leading-relaxed"><span id="print-notes">—</span></p>
+      <p class="mt-6 text-sm leading-relaxed">Dit is een zelf-afgenomen screeningsamenvatting. Het is geen refractie, geen diagnose en geen recept. Visuele acuïteit gemeten op een display wordt beïnvloed door de nauwkeurigheid van de schermkalibratie, werkelijke kijkafstand, omgevingsverlichting en schermkarakteristieken. Een uitgebreid oogonderzoek is vereist om refractieve fouten, binoculaire coördinatie, intraoculaire druk en de gezondheid van het netvlies te beoordelen.</p>
+    </div>
+  </div>
+
+  <div id="share-toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-full border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm font-semibold text-white opacity-0 transition-all dark:border-zinc-200 dark:bg-white dark:text-zinc-950">Screeningsamenvatting gekopieerd.</div>
+
+  <style is:global>
+    .stage-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0;
+      list-style: none;
+    }
+    .stage-chip {
+      border: 1px solid rgb(228 228 231);
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: rgb(113 113 122);
+      background: #ffffff;
+    }
+    .stage-chip.active { border-color: rgb(5 150 105); background: rgb(236 253 245); color: rgb(4 120 87); }
+    .stage-chip.done { color: rgb(4 120 87); border-color: rgb(167 243 208); }
+
+    .intro-bullet { position: relative; padding-left: 1.75rem; }
+    .intro-bullet::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.6rem;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: rgb(5 150 105);
+    }
+
+    /* Calibration: the card preview must be a physically accurate outline. */
+    .calibration-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border: 1px dashed rgb(212 212 216);
+      border-radius: 1.5rem;
+      background: #ffffff;
+      overflow-x: auto;
+    }
+    .card-preview {
+      width: 260px;
+      height: 164px;
+      border: 2px solid rgb(5 150 105);
+      border-radius: 0.75rem;
+      background: rgb(236 253 245);
+      flex: 0 0 auto;
+    }
+    .calibration-slider { width: 100%; margin-top: 0.75rem; accent-color: rgb(5 150 105); }
+
+    .distance-button {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.85rem 1.25rem;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .distance-button:hover { border-color: rgb(110 231 183); transform: translateY(-1px); }
+    .distance-button:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; }
+    .distance-button.selected { border-color: rgb(5 150 105); background: rgb(236 253 245); }
+    .distance-label { font-size: 1rem; font-weight: 800; font-family: ui-monospace, monospace; }
+    .distance-hint { font-size: 0.75rem; color: rgb(113 113 122); }
+
+    /* Optotype stage is always white-on-black regardless of theme: a
+       dark-mode chart would change contrast and invalidate the measure. */
+    .optotype-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      border-radius: 1.25rem;
+      background: #ffffff;
+    }
+    .optotype-placeholder {
+      padding: 3rem 1rem;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgb(82 82 91);
+    }
+
+    .direction-pad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      max-width: 20rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .direction-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .direction-button:hover { border-color: rgb(5 150 105); background: rgb(236 253 245); transform: translateY(-2px); }
+    .direction-button:active { transform: scale(0.96); }
+    .direction-button:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; }
+    .direction-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      border-radius: 1.25rem;
+      background: rgb(244 244 245);
+      color: rgb(161 161 170);
+      font-weight: 800;
+      font-family: ui-monospace, monospace;
+    }
+
+    /* ---------- Motion ---------- */
+    @keyframes stageEnter {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    /* Kept short: the optotype scales up as it fades, so the response gate in
+       the engine stays closed until this settles and the strokes are only
+       ever judged at their true size. */
+    @keyframes optotypeEnter {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes keyPulse {
+      0% { transform: scale(1); }
+      45% { transform: scale(0.93); }
+      100% { transform: scale(1); }
+    }
+    @keyframes dotPop {
+      from { transform: scale(0.55); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .stage-enter { animation: stageEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    /* Animate the optotype itself, not its stage — scaling the wrapper would
+       scale the white panel behind it and read as the whole chart pulsing. */
+    .optotype-stage.optotype-enter > svg { animation: optotypeEnter 0.19s ease-out both; }
+
+    .direction-button.is-pressed {
+      animation: keyPulse 0.22s ease;
+      border-color: rgb(5 150 105);
+      background: rgb(236 253 245);
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.22);
+    }
+    .dark .direction-button.is-pressed {
+      border-color: rgb(5 150 105);
+      background: rgba(6, 78, 59, 0.4);
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.28);
+    }
+
+    #results-section .reveal.is-revealed { animation: revealUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+    .acuity-feedback { margin-top: 1.5rem; min-height: 1.6rem; text-align: center; font-size: 1rem; font-weight: 700; }
+    .acuity-feedback.good { color: rgb(4 120 87); }
+    .acuity-feedback.bad { color: rgb(185 28 28); }
+
+    /* Dial and duochrome are also fixed light-ground optical targets. */
+    .dial-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 1.5rem;
+      background: #ffffff;
+    }
+    .dial-svg { width: 100%; max-width: 26rem; height: auto; }
+    .dial-ray { cursor: pointer; }
+    .dial-ray:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; border-radius: 0.5rem; }
+    .dial-ray-line {
+      stroke: #000000;
+      transition: stroke-width 0.18s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.18s ease;
+    }
+    .dial-ray:hover .dial-ray-line { stroke: rgb(5 150 105); stroke-width: 6; }
+    .dial-ray.selected .dial-ray-line {
+      stroke: rgb(5 150 105);
+      stroke-width: 7;
+      filter: drop-shadow(0 0 5px rgba(5, 150, 105, 0.75));
+    }
+    .dial-label {
+      fill: rgb(82 82 91);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: ui-monospace, monospace;
+      transition: fill 0.18s ease;
+    }
+    .dial-ray:hover .dial-label { fill: rgb(4 120 87); }
+    .dial-ray.selected .dial-label { fill: rgb(4 120 87); }
+    /* Decorative only — must never swallow a ray's pointer target. */
+    .dial-hub { pointer-events: none; }
+
+    /* Per-tier trial dots */
+    .tier-dots { display: flex; align-items: center; gap: 0.5rem; min-height: 1.25rem; }
+    .trial-dot {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 999px;
+      border: 2px solid rgb(212 212 216);
+      background: transparent;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .trial-dot.hit { border-color: rgb(5 150 105); background: rgb(5 150 105); animation: dotPop 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
+    .trial-dot.miss { border-color: rgb(220 38 38); background: rgb(220 38 38); animation: dotPop 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
+    .dark .trial-dot { border-color: rgb(63 63 70); }
+    .dark .trial-dot.hit { border-color: rgb(16 185 129); background: rgb(16 185 129); }
+    .dark .trial-dot.miss { border-color: rgb(248 113 113); background: rgb(248 113 113); }
+
+    .duochrome-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .duochrome-grid { grid-template-columns: 1fr 1fr; } }
+    .duochrome-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 2rem 1rem;
+      border-radius: 1.5rem;
+    }
+    .duo-red { background: rgb(204 0 0); }
+    .duo-green { background: rgb(0 153 51); }
+    .duochrome-target { display: flex; align-items: center; justify-content: center; }
+    .duochrome-caption {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .duo-choice.selected { box-shadow: 0 0 0 3px rgb(5 150 105); }
+
+    /* Toggle state for "Alle lijnen zien er gelijk uit". An id selector is used so it
+       outranks the Tailwind border utilities on the same element. */
+    #dial-none.selected { border-color: rgb(5 150 105); background: rgb(236 253 245); color: rgb(4 120 87); }
+    .dark #dial-none.selected { border-color: rgb(5 150 105); background: rgba(6, 78, 59, 0.4); color: rgb(110 231 183); }
+
+    /* Calibration failure severe enough that no tier can be measured. The
+       engine toggles this class, so it must exist here or the worst case
+       renders identically to a mild one. */
+    #resolution-warning.is-blocking { border-color: rgb(252 165 165); background: rgb(254 242 242); color: rgb(153 27 27); font-weight: 600; }
+    .dark #resolution-warning.is-blocking { border-color: rgb(153 27 27); background: rgba(69, 10, 10, 0.45); color: rgb(252 165 165); }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .55rem 1.1rem; font-size: .95rem; font-weight: 700; }
+    .result-badge.neutral { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.good { color: rgb(22 101 52); background: rgb(240 253 244); border-color: rgb(187 247 208); }
+    .result-badge.moderate { color: rgb(146 64 14); background: rgb(255 247 237); border-color: rgb(254 215 170); }
+    .result-badge.bad { color: rgb(153 27 27); background: rgb(254 242 242); border-color: rgb(254 202 202); }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.35rem; }
+    .score-label { font-size: .9rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .acuity-fraction { margin-top: .75rem; font-size: 1.875rem; font-weight: 800; font-family: ui-monospace, monospace; letter-spacing: -.02em; }
+    .score-status { margin-top: .5rem; color: rgb(4 120 87); font-size: .95rem; font-weight: 600; }
+    .stat-card { display: flex; flex-direction: column; gap: .5rem; padding: 1.25rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    .stat-card span { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.1rem; line-height: 1.35; }
+    .stat-note { font-size: .95rem; line-height: 1.55; color: rgb(82 82 91); }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(4 120 87); }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.025em; color: rgb(24 24 27); }
+    .guide-section { margin-top: 3.5rem; }
+
+    .dark .stage-chip { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(161 161 170); }
+    .dark .stage-chip.active { background: rgba(6, 78, 59, 0.5); border-color: rgb(6 95 70); color: rgb(110 231 183); }
+    .dark .stage-chip.done { color: rgb(110 231 183); border-color: rgb(6 95 70); }
+    .dark .calibration-stage { border-color: rgb(39 39 42); }
+    .dark .distance-button { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .distance-button.selected { background: rgba(6, 78, 59, 0.4); border-color: rgb(5 150 105); }
+    .dark .distance-hint { color: rgb(161 161 170); }
+    .dark .direction-button { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .direction-button:hover { background: rgba(6, 78, 59, 0.4); border-color: rgb(5 150 105); }
+    .dark .direction-center { background: rgb(24 24 27); color: rgb(113 113 122); }
+    .dark .optotype-placeholder { color: rgb(161 161 170); }
+    .dark .acuity-feedback.good { color: rgb(110 231 183); }
+    .dark .acuity-feedback.bad { color: rgb(252 165 165); }
+    .dark .result-badge.neutral { color: rgb(212 212 216); background: rgb(24 24 27); border-color: rgb(63 63 70); }
+    .dark .result-badge.good { color: rgb(134 239 172); background: rgba(5, 46, 22, 0.55); border-color: rgb(22 101 52); }
+    .dark .result-badge.moderate { color: rgb(252 211 77); background: rgba(69, 26, 3, 0.5); border-color: rgb(146 64 14); }
+    .dark .result-badge.bad { color: rgb(252 165 165); background: rgba(69, 10, 10, 0.55); border-color: rgb(153 27 27); }
+    .dark .score-card, .dark .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .score-status { color: rgb(110 231 183); }
+    .dark .stat-note { color: rgb(161 161 170); }
+    .dark .eyebrow { color: rgb(110 231 183); }
+    .dark .section-title { color: rgb(250 250 250); }
+
+    .print-only { display: none; }
+    @media print {
+      #main-content > header,
+      #main-content > footer,
+      #main-content > #assessment-page-content,
+      #share-toast { display: none !important; }
+      #main-content > #printable-report { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+
+    /* Motion is decorative here. It must never gate comprehension, and it must
+       never obscure an optotype — so it is fully removable on request. */
+    @media (prefers-reduced-motion: reduce) {
+      .stage-enter,
+      .optotype-stage.optotype-enter > svg,
+      #results-section .reveal.is-revealed,
+      .direction-button.is-pressed,
+      .trial-dot.hit,
+      .trial-dot.miss { animation: none !important; }
+      .dial-ray-line,
+      .dial-label,
+      .trial-dot { transition: none !important; }
+      .dial-ray.selected .dial-ray-line { filter: none; }
+      .stage-enter { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 640px) {
+      .section-title { font-size: 1.75rem; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../../scripts/tools/eye-tester.js"></script>
+</Layout>

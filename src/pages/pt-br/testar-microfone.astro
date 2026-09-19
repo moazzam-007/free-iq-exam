@@ -1,0 +1,925 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Testar Microfone Online: Teste de Microfone & Gravador de Áudio | FreeIQExam";
+const description = "Teste seu microfone online gratuitamente no navegador. Verifique volume em decibéis (dB), resposta de frequência e gravação com reprodução instantânea.";
+const canonicalUrl = "https://freeiqexam.com/pt-br/testar-microfone";
+
+const alternates = {
+  en: "https://freeiqexam.com/mic-test",
+  ru: "https://freeiqexam.com/ru/mic-test",
+  id: "https://freeiqexam.com/id/tes-mikrofon",
+  'pt-BR': "https://freeiqexam.com/pt-br/testar-microfone"
+};
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Teste de Microfone Online & Analisador de Áudio',
+    url: canonicalUrl,
+    applicationCategory: 'MultimediaApplication',
+    operatingSystem: 'All',
+    inLanguage: 'pt-BR',
+    browserRequirements: 'Requer suporte a JavaScript e Web Audio API (getUserMedia)',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'BRL'
+    },
+    featureList: [
+      'Visualizador de espectro FFT em tempo real (20 Hz a 20 kHz)',
+      'Medidor de volume em dBFS calibrado com RMS e retenção de pico',
+      'Detector de distorção de áudio e clipping digital',
+      'Calculadora de relação sinal-ruído (SNR) e nível de ruído ambiente',
+      'Gravação em buffer contínuo de 5 segundos com reprodução instantânea',
+      'Processamento 100% local no navegador com privacidade total de dados'
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Início',
+        item: 'https://freeiqexam.com/pt-br'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Ferramentas',
+        item: 'https://freeiqexam.com/pt-br'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Testar Microfone',
+        item: canonicalUrl
+      }
+    ]
+  }
+];
+
+const faqItems = [
+  {
+    q: 'Por que meu microfone não exibe sinal de áudio ou som neste teste?',
+    a: 'As causas mais frequentes são: 1) A permissão do microfone foi bloqueada no navegador (verifique o ícone de cadeado ou câmera na barra de endereço); 2) O dispositivo de entrada incorreto está selecionado no menu de opções; ou 3) Outro aplicativo está com acesso exclusivo ao microfone (como Zoom, Teams, Discord, Skype ou OBS). Feche os outros aplicativos e recarregue a página.'
+  },
+  {
+    q: 'Qual é o nível ideal de volume em dBFS para chamadas e gravações de voz?',
+    a: 'Para voz falada, o ideal é que os picos fiquem entre -12 dBFS e -6 dBFS, com uma média RMS em torno de -18 dBFS. Essa faixa garante volume nítido e headroom suficiente para risadas ou consoantes oclusivas sem encostar em 0 dBFS (ponto em que ocorre clipping digital e distorção áspera).'
+  },
+  {
+    q: 'O que significa SNR (Relação Sinal-Ruído) e qual é uma boa pontuação?',
+    a: 'SNR (Signal-to-Noise Ratio) mede a diferença em decibéis entre a sua voz e o ruído de fundo do ambiente. Acima de 35 dB é considerado Excelente (voz cristalina sem ruído audível); entre 25 e 35 dB é Bom (ótimo para reuniões e transmissões); entre 15 e 25 dB é Regular (chiado de fundo perceptível); e abaixo de 15 dB indica Ruído Excessivo no ambiente.'
+  },
+  {
+    q: 'Por que o teste recomenda desativar a supressão de ruído na medição inicial?',
+    a: 'Filtros como supressão de ruído, cancelamento de eco e controle automático de ganho (AGC) alteram artificialmente o sinal. Ao desativá-los na medição inicial, você descobre a qualidade acústica real do seu microfone e do seu ambiente. Após verificar o sinal puro, você pode reativá-los se preferir o som processado.'
+  },
+  {
+    q: 'Como identificar se o meu microfone está sofrendo distorção ou clipping?',
+    a: 'Clipping ocorre quando o sinal de áudio ultrapassa o limite máximo que o conversor digital suporta, achatando os picos da onda sonora. O resultado sonoro é um estalo áspero ou chiado metálico. Nosso teste aciona o indicador vermelho "CLIP" sempre que três ou mais amostras consecutivas tocam 99% da escala máxima.'
+  },
+  {
+    q: 'Minha voz ou gravação de áudio é enviada para algum servidor?',
+    a: 'Não. Todo o processamento de áudio, cálculo de espectro FFT, medição de decibéis e o buffer de reprodução de 5 segundos são executados estritamente na memória RAM local do seu navegador através da Web Audio API. Nenhum dado de áudio é transmitido ou gravado externamente.'
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schemas}
+  lang="pt-BR"
+>
+  <Header currentPath="/pt-br/testar-microfone" />
+
+  <main id="mic-test-page" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+
+      <!-- Breadcrumb -->
+      <nav aria-label="Navegação Estrutural" class="mb-8 flex flex-wrap items-center gap-2 text-[13px] font-mono text-zinc-500 dark:text-zinc-400">
+        <a href="/pt-br" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Início</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-zinc-500">Ferramentas</span>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white font-semibold">Testar Microfone</span>
+      </nav>
+
+      <!-- Hero Header (Pure Flat Luxury Canvas) -->
+      <header class="mx-auto max-w-4xl text-center mb-12">
+        <div class="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-1.5 text-[13px] font-mono font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 shadow-xs mb-4">
+          <svg class="w-4 h-4 text-[#0066cc] dark:text-[#2997ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+          <span>Análise de Espectro FFT em Tempo Real · Medidor dBFS Calibrado</span>
+        </div>
+        <h1 class="text-4xl font-extrabold tracking-[-0.025em] leading-[1.1] sm:text-5xl md:text-6xl text-zinc-950 dark:text-white">
+          Testar Microfone Online &amp; Gravador de Áudio
+        </h1>
+        <p class="mx-auto mt-4 max-w-3xl text-[17px] leading-[1.62] text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Teste o funcionamento do seu microfone gratuitamente no navegador. Monitore o volume em decibéis (dBFS), visualize o espectro de frequências da sua voz, detecte ruídos e distorções, e escute a reprodução instantânea com privacidade absoluta.
+        </p>
+      </header>
+
+      <!-- Interactive Tool Container -->
+      <div id="mic-app" class="mic-shell mx-auto max-w-4xl">
+        <!-- Unsupported notice -->
+        <div id="mic-unsupported" class="notice notice-bad mb-6" hidden>
+          <h2 class="notice-title font-bold text-red-900 dark:text-red-200 text-lg mb-2">Este navegador não suporta captura de áudio</h2>
+          <p id="mic-unsupported-reason" class="notice-body text-red-800 dark:text-red-300 text-sm leading-relaxed"></p>
+        </div>
+
+        <div id="mic-controls">
+          <!-- Error banner -->
+          <div id="mic-error" class="notice notice-bad mb-6" hidden>
+            <h2 class="notice-title font-bold text-red-900 dark:text-red-200 text-lg mb-2">Não foi possível acessar o microfone</h2>
+            <p id="mic-error-message" class="notice-body text-red-800 dark:text-red-300 text-sm leading-relaxed"></p>
+          </div>
+
+          <div id="mic-mount" class="space-y-6">
+
+            <!-- Step 1: Transport & DSP -->
+            <section class="mic-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 p-6 sm:p-8" aria-labelledby="mic-transport-title">
+              <div class="flex items-center justify-between gap-4 mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+                <div>
+                  <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff]">Passo 1</p>
+                  <h2 id="mic-transport-title" class="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">Ativar o Microfone</h2>
+                </div>
+                <span id="clip-indicator" class="clip-indicator font-mono text-xs font-bold px-3 py-1 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-400 dark:text-zinc-600 bg-zinc-100 dark:bg-zinc-800 transition-colors">CLIP</span>
+              </div>
+
+              <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+                Clique no botão abaixo para permitir o acesso. O processamento de áudio é feito 100% na memória local do navegador e nunca é gravado em servidores.
+              </p>
+
+              <div class="flex flex-wrap items-center gap-3 mb-6">
+                <button id="mic-start" type="button" class="btn-primary min-h-[44px] px-6 py-2.5 rounded-xl font-semibold text-sm bg-[#0066cc] hover:bg-[#0052a3] dark:bg-[#2997ff] dark:hover:bg-[#1a85f0] text-white shadow-sm transition-all duration-150 active:scale-[0.97] cursor-pointer inline-flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                  </svg>
+                  <span>Iniciar Teste de Microfone</span>
+                </button>
+                <button id="mic-stop" type="button" class="btn-ghost min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                  <span>Interromper</span>
+                </button>
+              </div>
+
+              <div class="space-y-4">
+                <label class="block text-sm" for="mic-device">
+                  <span class="block font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Selecionar Dispositivo de Entrada</span>
+                  <select id="mic-device" class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0066cc] dark:focus:ring-[#2997ff]">
+                    <option value="">Inicie o teste para carregar os microfones disponíveis</option>
+                  </select>
+                </label>
+
+                <fieldset class="rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 bg-white dark:bg-zinc-950/60">
+                  <legend class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 px-1">Filtros de Processamento (Desativados por padrão para medição pura)</legend>
+                  <div class="mt-2 flex flex-wrap gap-4 text-sm">
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300" for="dsp-echoCancellation">
+                      <input id="dsp-echoCancellation" type="checkbox" class="rounded border-zinc-300 text-[#0066cc] focus:ring-[#0066cc]" />
+                      <span>Cancelamento de Eco</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300" for="dsp-noiseSuppression">
+                      <input id="dsp-noiseSuppression" type="checkbox" class="rounded border-zinc-300 text-[#0066cc] focus:ring-[#0066cc]" />
+                      <span>Supressão de Ruído</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300" for="dsp-autoGainControl">
+                      <input id="dsp-autoGainControl" type="checkbox" class="rounded border-zinc-300 text-[#0066cc] focus:ring-[#0066cc]" />
+                      <span>Controle Automático de Ganho (AGC)</span>
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+            </section>
+
+            <!-- Step 2: Volume Meter (dBFS) -->
+            <section class="mic-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 p-6 sm:p-8" aria-labelledby="mic-meter-title">
+              <div class="flex items-center justify-between gap-4 mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+                <div>
+                  <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff]">Passo 2</p>
+                  <h2 id="mic-meter-title" class="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">Medidor de Volume em Decibéis (dBFS)</h2>
+                </div>
+                <div class="flex items-center gap-4 text-right">
+                  <div>
+                    <span class="block text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Média RMS</span>
+                    <span class="font-mono text-lg font-bold tabular-nums text-zinc-900 dark:text-white"><span id="meter-rms">--</span> <span class="text-xs text-zinc-500">dBFS</span></span>
+                  </div>
+                  <div>
+                    <span class="block text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Pico Máx</span>
+                    <span class="font-mono text-lg font-bold tabular-nums text-zinc-900 dark:text-white"><span id="meter-peak">--</span> <span class="text-xs text-zinc-500">dBFS</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Meter Track -->
+              <div class="relative h-6 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 my-4" role="img" aria-label="Medidor de volume em decibéis de -60 a 0 dBFS">
+                <div id="meter-fill" class="h-full w-0 bg-gradient-to-r from-emerald-500 via-blue-500 to-red-500 transition-all duration-75"></div>
+                <div id="meter-peak-marker" class="absolute top-0 bottom-0 w-[3px] bg-white shadow-xs left-0 transition-all duration-150"></div>
+              </div>
+              <div class="flex justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400 px-1" aria-hidden="true">
+                <span>&minus;60</span>
+                <span>&minus;48</span>
+                <span>&minus;36</span>
+                <span>&minus;24</span>
+                <span>&minus;12</span>
+                <span>0 dBFS</span>
+              </div>
+
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-4 leading-relaxed">
+                Recomendação: mantenha os picos da fala entre &minus;12 e &minus;6 dBFS. O marcador branco memoriza o pico momentâneo para facilitar a calibragem visual de ganho.
+              </p>
+            </section>
+
+            <!-- Step 3: Frequency Spectrum (FFT Canvas) -->
+            <section class="mic-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 p-6 sm:p-8" aria-labelledby="mic-spectrum-title">
+              <div class="flex items-center justify-between gap-4 mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+                <div>
+                  <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff]">Passo 3</p>
+                  <h2 id="mic-spectrum-title" class="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">Espectro de Frequências em Tempo Real</h2>
+                </div>
+              </div>
+
+              <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+                Distribuição logarítmica de 20&nbsp;Hz a 20&nbsp;kHz. Graves e vibrações ficam à esquerda, o corpo da voz ao centro e as consoantes sibilantes à direita.
+              </p>
+
+              <div class="w-full h-[200px] rounded-2xl bg-zinc-950 border border-zinc-800 overflow-hidden my-3">
+                <canvas id="spectrum-canvas" class="w-full h-full block" role="img" aria-label="Visualizador espectral de áudio de 20Hz a 20kHz"></canvas>
+              </div>
+
+              <!-- Frequency Legend -->
+              <ul class="flex flex-wrap items-center gap-3 text-xs font-mono text-zinc-600 dark:text-zinc-400 mt-3 list-none p-0">
+                <li class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>Graves 20–150 Hz</li>
+                <li class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>Fundamentais 150–500 Hz</li>
+                <li class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>Corpo da Voz 500 Hz–2 kHz</li>
+                <li class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Clareza 2–6 kHz</li>
+                <li class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>Ar &amp; Brilho 6–16 kHz</li>
+              </ul>
+            </section>
+
+            <!-- Step 4: SNR & Noise Floor -->
+            <section class="mic-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 p-6 sm:p-8" aria-labelledby="mic-snr-title">
+              <div class="flex items-center justify-between gap-4 mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+                <div>
+                  <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff]">Passo 4</p>
+                  <h2 id="mic-snr-title" class="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">Ruído de Fundo &amp; Relação Sinal-Ruído (SNR)</h2>
+                </div>
+                <span id="snr-badge" class="font-mono text-xs font-bold px-3 py-1 rounded-full border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">Aguardando</span>
+              </div>
+
+              <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+                Fique em silêncio por 3 segundos para medir o chiado do seu quarto ou escritório, depois fale normalmente. A relação entre a voz e o silêncio define a nitidez da sua chamada.
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
+                <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 text-center">
+                  <span class="block text-xs font-mono uppercase text-zinc-500">Ruído do Ambiente</span>
+                  <span id="analysis-floor" class="font-mono text-2xl font-extrabold text-zinc-900 dark:text-white tabular-nums">--</span>
+                </div>
+                <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 text-center">
+                  <span class="block text-xs font-mono uppercase text-zinc-500">Pico da Voz</span>
+                  <span id="analysis-speech" class="font-mono text-2xl font-extrabold text-zinc-900 dark:text-white tabular-nums">--</span>
+                </div>
+                <div class="rounded-xl border border-blue-300 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20 p-4 text-center">
+                  <span class="block text-xs font-mono uppercase text-[#0066cc] dark:text-[#2997ff] font-bold">Relação SNR</span>
+                  <span id="analysis-snr" class="font-mono text-2xl font-extrabold text-[#0066cc] dark:text-[#2997ff] tabular-nums">--</span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3 mt-4">
+                <button id="noise-capture" type="button" class="btn-ghost min-h-[44px] px-4 py-2 rounded-xl text-sm font-semibold border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">
+                  Medir Silêncio do Ambiente (3s)
+                </button>
+                <span id="noise-status" class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Ainda não medido.</span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 mt-3">
+                <div id="noise-progress" class="h-full w-0 bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-100"></div>
+              </div>
+            </section>
+
+            <!-- Step 5: 5-Second Loopback Playback -->
+            <section class="mic-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 p-6 sm:p-8" aria-labelledby="mic-loop-title">
+              <div class="flex items-center justify-between gap-4 mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+                <div>
+                  <p class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff]">Passo 5</p>
+                  <h2 id="mic-loop-title" class="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">Ouvir Sua Gravação Instantânea</h2>
+                </div>
+              </div>
+
+              <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+                O navegador mantém um buffer circular dos últimos 5 segundos de áudio capturado. Clique para escutar sua voz exatamente como os outros a recebem em chamadas e gravações.
+              </p>
+
+              <div class="flex flex-wrap items-center gap-3 mb-3">
+                <button id="mic-playback" type="button" class="min-h-[44px] px-6 py-2.5 rounded-xl font-semibold text-sm bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center gap-2" disabled>
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Ouvir Últimos 5 Segundos</span>
+                </button>
+                <button id="mic-clear" type="button" class="min-h-[44px] px-4 py-2.5 rounded-xl font-semibold text-sm border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">
+                  Limpar Gravação
+                </button>
+              </div>
+              <p id="playback-status" class="text-xs font-mono text-zinc-500 dark:text-zinc-400">Microfone não iniciado.</p>
+            </section>
+
+            <!-- Hardware Capabilities -->
+            <section class="mic-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 p-6 sm:p-8" aria-labelledby="mic-hw-title">
+              <div class="flex items-center justify-between gap-4 mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+                <div>
+                  <p class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500">Hardware &amp; Sistema</p>
+                  <h2 id="mic-hw-title" class="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white">Especificações da Entrada</h2>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 text-center">
+                  <span class="block text-[11px] font-mono text-zinc-500 uppercase">Dispositivo Ativo</span>
+                  <span id="hw-device" class="font-mono text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate block">--</span>
+                </div>
+                <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 text-center">
+                  <span class="block text-[11px] font-mono text-zinc-500 uppercase">Taxa de Amostragem</span>
+                  <span id="hw-rate" class="font-mono text-sm font-bold text-zinc-800 dark:text-zinc-200 block">--</span>
+                </div>
+                <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 text-center">
+                  <span class="block text-[11px] font-mono text-zinc-500 uppercase">Canais de Áudio</span>
+                  <span id="hw-channels" class="font-mono text-sm font-bold text-zinc-800 dark:text-zinc-200 block">--</span>
+                </div>
+                <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 text-center">
+                  <span class="block text-[11px] font-mono text-zinc-500 uppercase">Latência Estimada</span>
+                  <span id="hw-latency" class="font-mono text-sm font-bold text-zinc-800 dark:text-zinc-200 block">--</span>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Educational Content (6 Comprehensive H2 Guides) -->
+      <article class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto space-y-12">
+        <header>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] text-xs font-mono font-semibold uppercase tracking-wider mb-3">
+            Guia Técnico &amp; Acústica
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+            Como Avaliar a Qualidade do seu Microfone: Guia Completo
+          </h2>
+          <p class="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
+            Entenda como funcionam os transdutores, o que revelam os decibéis em escala completa (dBFS) e como configurar seu microfone para gravações, reuniões e streaming sem ruídos.
+          </p>
+        </header>
+
+        <section class="space-y-4">
+          <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+            1. Como Funciona o Teste de Microfone no Navegador
+          </h3>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            Ao clicar em Iniciar, seu navegador aciona a interface nativa <code>navigator.mediaDevices.getUserMedia</code>. O fluxo contínuo de áudio entra em um nó de processamento da Web Audio API (<code>AudioContext</code>), onde um analisador FFT (Fast Fourier Transform) decompõe a onda sonora em 2.048 frequências discretas a cada quadro de animação (60 quadros por segundo).
+          </p>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            Como toda a matemática é processada pelo motor de JavaScript local da sua máquina, não há compressão com perdas, codecs de transmissão ou atraso de rede. O que você visualiza e ouve no teste de reprodução reflete fielmente a voltagem bruta captada pela sua cápsula de microfone.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+            2. Níveis Ideais de Volume: Compreendendo a Escala dBFS
+          </h3>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            No áudio digital, a intensidade é medida em <strong>dBFS</strong> (decibels relative to full scale). Ao contrário da escala acústica comum em que números maiores indicam som mais alto, a escala digital opera apenas com números negativos: <strong>0 dBFS</strong> representa o teto absoluto do conversor analógico-digital. Se a onda sonora ultrapassar esse limite, ocorre o truncamento das cristas (clipping), gerando ruído de clique e distorção severa.
+          </p>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            O padrão da indústria para podcasts, videochamadas e transmissões é calibrar o ganho de entrada de modo que as sílabas normais fiquem entre <strong>-18 dBFS e -12 dBFS</strong>, permitindo que exclamações animadas atinjam picos de até <strong>-6 dBFS</strong> sem perigo de saturação.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+            3. Relação Sinal-Ruído (SNR) e Acústica do Ambiente
+          </h3>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            A <strong>Relação Sinal-Ruído</strong> (Signal-to-Noise Ratio) indica a margem de separação entre o som que você deseja gravar (sua voz) e o ruído de fundo que você gostaria de eliminar (ventiladores, tráfego da rua, ar-condicionado ou ruído térmico da placa de som).
+          </p>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            A forma mais eficaz de elevar o SNR não é comprar um microfone mais caro, mas sim aproximar a cápsula da sua boca (obedecendo a distância de 10 a 15 cm com filtro pop) e diminuir o ganho eletrônico. Pela lei do inverso do quadrado da distância, falar duas vezes mais perto quadruplica a pressão sonora sobre a membrana sem aumentar o ruído da sala.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+            4. Frequências da Voz Humana e Resposta do Microfone
+          </h3>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            O espectro de frequências da fala divide-se em zonas funcionais:
+          </p>
+          <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+            <li><strong>Subgraves e Vibrações (20–100 Hz):</strong> Geralmente ruído indesejado transmitido pela mesa ao bater no teclado ou pelo trânsito pesado. Use um suporte articulado com shock mount para isolar.</li>
+            <li><strong>Frequências Fundamentais (100–300 Hz):</strong> A base do tom vocal (voz masculina em torno de 100–150 Hz e voz feminina em 180–250 Hz). Proporciona calor e peso à fala.</li>
+            <li><strong>Corpo e Formantes (500 Hz–2 kHz):</strong> A faixa de maior energia acústica vocal onde se concentram as vogais.</li>
+            <li><strong>Clareza e Inteligibilidade (2–6 kHz):</strong> Onde ocorrem as consoantes plosivas e fricativas (t, d, k, p). Vital para a compreensão da fala em ambientes barulhentos.</li>
+            <li><strong>Sibilância e Ar (6–16 kHz):</strong> Os sons de "s", "c" e "z". Excesso nessa faixa causa aspereza; falta torna o áudio abafado.</li>
+          </ul>
+        </section>
+
+        <section class="space-y-4">
+          <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+            5. Processamento Digital (DSP): Eco, Supressão e Ganho Automático
+          </h3>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            Aplicativos de chamada como Discord, Microsoft Teams, Google Meet e Zoom contam com circuitos de DSP para facilitar a comunicação:
+          </p>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            <strong>Cancelamento de Eco:</strong> Evita que o som dos seus alto-falantes retorne ao microfone. Se você usa fones de ouvido fechados, o eco acústico é nulo e esse filtro pode ser desativado para manter a pureza do timbre.
+          </p>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            <strong>Supressão de Ruído:</strong> Algoritmos (como Krisp no Discord) removem barulho de digitação e trânsito por subtração espectral. Em conexões lentas ou com configurações agressivas, eles podem deixar a voz robótica ou "aquática".
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+            6. Guia de Solução de Problemas: Permissões e Conflitos de Hardware
+          </h3>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            Se o seu microfone não emitir som ou parecer muito baixo, verifique:
+          </p>
+          <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+            <li><strong>Permissões do Sistema Operacional:</strong> No Windows 10/11, vá em <em>Configurações > Privacidade e Segurança > Microfone</em> e garanta que "Permitir que os aplicativos acessem seu microfone" esteja ativado. No macOS, verifique em <em>Ajustes do Sistema > Privacidade e Segurança > Microfone</em>.</li>
+            <li><strong>Modo Exclusivo no Windows:</strong> Nas configurações de som do Windows (Painel de Controle Clássico > Som > Gravação > Propriedades > Avançado), desmarque "Permitir que aplicativos assumam controle exclusivo deste dispositivo" se o áudio falhar ao alternar entre o jogo e o navegador.</li>
+            <li><strong>Ruído de Zumbido Elétrico (Hum 60 Hz):</strong> Se ouvir um zumbido contínuo grave, troque a porta USB (dê preferência às portas traseiras ligadas diretamente à placa-mãe) para evitar laços de terra (ground loops).</li>
+          </ul>
+        </section>
+      </article>
+
+      <!-- FAQ Accordions (Accessible HTML details/summary with pure SVG chevrons) -->
+      <section class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto" aria-labelledby="faq-title">
+        <h2 id="faq-title" class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white mb-8">
+          Perguntas Frequentes sobre Teste de Microfone
+        </h2>
+
+        <div class="space-y-4">
+          {faqItems.map((item, index) => (
+            <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-900">
+              <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none gap-4">
+                <span class="text-base sm:text-lg">{item.q}</span>
+                <span class="p-1 rounded-lg text-zinc-400 group-open:rotate-180 transition-transform duration-200" aria-hidden="true">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </summary>
+              <p class="mt-4 text-[16px] leading-relaxed text-zinc-600 dark:text-zinc-300 border-t border-zinc-100 dark:border-zinc-800 pt-3">
+                {item.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <Footer />
+
+  <!-- Self-Contained Web Audio API Engine Script -->
+  <script is:inline>
+    (function () {
+      'use strict';
+
+      const FFT_SIZE = 2048;
+      const ANALYSER_SMOOTHING = 0.8;
+      const METER_FLOOR_DB = -60;
+      const METER_CEIL_DB = 0;
+      const DB_FLOOR = -100;
+      const RING_SECONDS = 5;
+
+      let audioCtx = null;
+      let mediaStream = null;
+      let sourceNode = null;
+      let analyserNode = null;
+      let scriptNode = null;
+
+      let ringBuffer = null;
+      let ringWrite = 0;
+      let ringFilled = 0;
+      let ringCapacity = 0;
+
+      let animFrameId = null;
+      let peakDbfs = -100;
+      let peakHoldDbfs = -100;
+      let peakHoldTime = 0;
+      let consecutiveClips = 0;
+      let clipTimer = null;
+
+      // Noise floor state
+      let noiseMeasuring = false;
+      let noiseSamples = [];
+      let measuredFloor = null;
+      let speechPeak = null;
+
+      // DOM elements
+      const btnStart = document.getElementById('mic-start');
+      const btnStop = document.getElementById('mic-stop');
+      const deviceSelect = document.getElementById('mic-device');
+      const clipIndicator = document.getElementById('clip-indicator');
+      const meterFill = document.getElementById('meter-fill');
+      const meterPeakMarker = document.getElementById('meter-peak-marker');
+      const meterRms = document.getElementById('meter-rms');
+      const meterPeak = document.getElementById('meter-peak');
+      const spectrumCanvas = document.getElementById('spectrum-canvas');
+      const snrBadge = document.getElementById('snr-badge');
+      const analysisFloor = document.getElementById('analysis-floor');
+      const analysisSpeech = document.getElementById('analysis-speech');
+      const analysisSnr = document.getElementById('analysis-snr');
+      const btnNoiseCapture = document.getElementById('noise-capture');
+      const noiseStatus = document.getElementById('noise-status');
+      const noiseProgress = document.getElementById('noise-progress');
+      const btnPlayback = document.getElementById('mic-playback');
+      const btnClear = document.getElementById('mic-clear');
+      const playbackStatus = document.getElementById('playback-status');
+      const micError = document.getElementById('mic-error');
+      const micErrorMessage = document.getElementById('mic-error-message');
+      const micUnsupported = document.getElementById('mic-unsupported');
+      const micUnsupportedReason = document.getElementById('mic-unsupported-reason');
+
+      const hwDevice = document.getElementById('hw-device');
+      const hwRate = document.getElementById('hw-rate');
+      const hwChannels = document.getElementById('hw-channels');
+      const hwLatency = document.getElementById('hw-latency');
+
+      const dspEcho = document.getElementById('dsp-echoCancellation');
+      const dspNoise = document.getElementById('dsp-noiseSuppression');
+      const dspAgc = document.getElementById('dsp-autoGainControl');
+
+      function toDb(linear) {
+        if (linear <= 0.000001) return DB_FLOOR;
+        return 20 * Math.log10(linear);
+      }
+
+      function updateDevices() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+          const audioInputs = devices.filter(d => d.kind === 'audioinput');
+          const currentVal = deviceSelect.value;
+          deviceSelect.innerHTML = '';
+          if (audioInputs.length === 0) {
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = 'Nenhum microfone detectado';
+            deviceSelect.appendChild(opt);
+            return;
+          }
+          audioInputs.forEach((dev, idx) => {
+            const opt = document.createElement('option');
+            opt.value = dev.deviceId;
+            opt.textContent = dev.label || `Microfone ${idx + 1}`;
+            deviceSelect.appendChild(opt);
+          });
+          if (currentVal) deviceSelect.value = currentVal;
+        }).catch(() => {});
+      }
+
+      async function startMic() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          micUnsupported.hidden = false;
+          micUnsupportedReason.textContent = 'Seu navegador não oferece suporte à captura via getUserMedia. Utilize o Chrome, Firefox, Edge ou Safari atualizados.';
+          return;
+        }
+
+        micError.hidden = true;
+
+        const constraints = {
+          audio: {
+            deviceId: deviceSelect.value ? { exact: deviceSelect.value } : undefined,
+            echoCancellation: dspEcho.checked,
+            noiseSuppression: dspNoise.checked,
+            autoGainControl: dspAgc.checked
+          }
+        };
+
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+          }
+
+          sourceNode = audioCtx.createMediaStreamSource(mediaStream);
+          analyserNode = audioCtx.createAnalyser();
+          analyserNode.fftSize = FFT_SIZE;
+          analyserNode.smoothingTimeConstant = ANALYSER_SMOOTHING;
+
+          ringCapacity = Math.ceil(audioCtx.sampleRate * RING_SECONDS);
+          ringBuffer = new Float32Array(ringCapacity);
+          ringWrite = 0;
+          ringFilled = 0;
+
+          // ScriptProcessor for ring buffer capture & clipping detection
+          scriptNode = audioCtx.createScriptProcessor(2048, 1, 1);
+          scriptNode.onaudioprocess = function (e) {
+            const input = e.inputBuffer.getChannelData(0);
+            const len = input.length;
+            for (let i = 0; i < len; i++) {
+              const sample = input[i];
+              ringBuffer[ringWrite] = sample;
+              ringWrite = (ringWrite + 1) % ringCapacity;
+              if (ringFilled < ringCapacity) ringFilled++;
+
+              const abs = Math.abs(sample);
+              if (abs >= 0.99) {
+                consecutiveClips++;
+                if (consecutiveClips >= 3) {
+                  triggerClip();
+                }
+              } else {
+                consecutiveClips = 0;
+              }
+            }
+          };
+
+          sourceNode.connect(analyserNode);
+          sourceNode.connect(scriptNode);
+          scriptNode.connect(audioCtx.destination);
+
+          // Update Hardware stats
+          const track = mediaStream.getAudioTracks()[0];
+          const settings = track.getSettings ? track.getSettings() : {};
+          hwDevice.textContent = track.label || 'Microfone Padrão';
+          hwRate.textContent = `${audioCtx.sampleRate.toLocaleString('pt-BR')} Hz`;
+          hwChannels.textContent = settings.channelCount ? `${settings.channelCount} canais` : '1 (Mono)';
+          hwLatency.textContent = settings.latency ? `${Math.round(settings.latency * 1000)} ms` : '< 20 ms';
+
+          btnStart.disabled = true;
+          btnStop.disabled = false;
+          btnPlayback.disabled = false;
+          playbackStatus.textContent = 'Gravando em buffer contínuo (5 segundos)...';
+
+          updateDevices();
+          renderLoop();
+        } catch (err) {
+          micError.hidden = false;
+          if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            micErrorMessage.textContent = 'Permissão negada. Clique no ícone de cadeado ou câmera na barra do navegador para autorizar o microfone.';
+          } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+            micErrorMessage.textContent = 'Nenhum microfone foi detectado conectado ao seu computador.';
+          } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+            micErrorMessage.textContent = 'O microfone já está em uso exclusivo por outro aplicativo (como Discord, Teams, Zoom ou OBS).';
+          } else {
+            micErrorMessage.textContent = 'Erro ao acessar o microfone: ' + (err.message || err.name);
+          }
+        }
+      }
+
+      function triggerClip() {
+        clipIndicator.classList.add('bg-red-600', 'text-white', 'border-red-700');
+        clipIndicator.classList.remove('text-zinc-400', 'dark:text-zinc-600');
+        clearTimeout(clipTimer);
+        clipTimer = setTimeout(() => {
+          clipIndicator.classList.remove('bg-red-600', 'text-white', 'border-red-700');
+          clipIndicator.classList.add('text-zinc-400', 'dark:text-zinc-600');
+        }, 1500);
+      }
+
+      function stopMic() {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(t => t.stop());
+          mediaStream = null;
+        }
+        if (sourceNode) {
+          sourceNode.disconnect();
+          sourceNode = null;
+        }
+        if (scriptNode) {
+          scriptNode.disconnect();
+          scriptNode = null;
+        }
+        if (audioCtx && audioCtx.state !== 'closed') {
+          audioCtx.close();
+          audioCtx = null;
+        }
+
+        btnStart.disabled = false;
+        btnStop.disabled = true;
+        playbackStatus.textContent = ringFilled > 0 ? 'Gravação retida no buffer pronta para reproduzir.' : 'Microfone parado.';
+        meterFill.style.width = '0%';
+        meterPeakMarker.style.left = '0%';
+        meterRms.textContent = '--';
+        meterPeak.textContent = '--';
+      }
+
+      function renderLoop() {
+        if (!analyserNode) return;
+
+        const timeData = new Float32Array(analyserNode.fftSize);
+        analyserNode.getFloatTimeDomainData(timeData);
+
+        let sumSquares = 0;
+        let peak = 0;
+        for (let i = 0; i < timeData.length; i++) {
+          const val = timeData[i];
+          const abs = Math.abs(val);
+          if (abs > peak) peak = abs;
+          sumSquares += val * val;
+        }
+        const rms = Math.sqrt(sumSquares / timeData.length);
+        const currentRmsDbfs = Math.max(toDb(rms), METER_FLOOR_DB);
+        const currentPeakDbfs = Math.max(toDb(peak), METER_FLOOR_DB);
+
+        // Peak Hold computation
+        const now = performance.now();
+        if (currentPeakDbfs > peakHoldDbfs || (now - peakHoldTime > 1200)) {
+          peakHoldDbfs = currentPeakDbfs;
+          peakHoldTime = now;
+        }
+
+        // Meter UI update
+        const fillPct = Math.max(0, Math.min(100, ((currentRmsDbfs - METER_FLOOR_DB) / (METER_CEIL_DB - METER_FLOOR_DB)) * 100));
+        const peakPct = Math.max(0, Math.min(100, ((peakHoldDbfs - METER_FLOOR_DB) / (METER_CEIL_DB - METER_FLOOR_DB)) * 100));
+
+        meterFill.style.width = `${fillPct}%`;
+        meterPeakMarker.style.left = `${peakPct}%`;
+        meterRms.textContent = currentRmsDbfs > -59 ? currentRmsDbfs.toFixed(1) : '--';
+        meterPeak.textContent = currentPeakDbfs > -59 ? currentPeakDbfs.toFixed(1) : '--';
+
+        // Track speech peak for SNR
+        if (currentPeakDbfs > -45) {
+          if (speechPeak === null || currentPeakDbfs > speechPeak) {
+            speechPeak = currentPeakDbfs;
+            analysisSpeech.textContent = `${speechPeak.toFixed(1)} dBFS`;
+            updateSnr();
+          }
+        }
+
+        // Noise measurement collection
+        if (noiseMeasuring) {
+          noiseSamples.push(currentRmsDbfs);
+        }
+
+        // Canvas FFT Spectrum Render
+        drawSpectrum();
+
+        animFrameId = requestAnimationFrame(renderLoop);
+      }
+
+      function drawSpectrum() {
+        if (!spectrumCanvas || !analyserNode) return;
+        const ctx = spectrumCanvas.getContext('2d');
+        const width = spectrumCanvas.width = spectrumCanvas.offsetWidth;
+        const height = spectrumCanvas.height = spectrumCanvas.offsetHeight;
+
+        const freqData = new Uint8Array(analyserNode.frequencyBinCount);
+        analyserNode.getByteFrequencyData(freqData);
+
+        ctx.fillStyle = '#09090b';
+        ctx.fillRect(0, 0, width, height);
+
+        const barCount = 72;
+        const barWidth = (width / barCount) - 1.5;
+        const binCount = analyserNode.frequencyBinCount;
+
+        for (let i = 0; i < barCount; i++) {
+          // Logarithmic bin distribution
+          const logIdx = Math.floor(Math.pow(binCount, i / barCount));
+          const val = freqData[logIdx] || 0;
+          const barHeight = (val / 255) * (height - 8);
+
+          // Hue gradient: violet (270) to cyan/green (160)
+          const hue = 260 - ((i / barCount) * 120);
+          ctx.fillStyle = `hsl(${hue}, 85%, 60%)`;
+
+          const x = i * (barWidth + 1.5);
+          const y = height - barHeight;
+          ctx.beginPath();
+          ctx.roundRect(x, y, barWidth, barHeight, [2, 2, 0, 0]);
+          ctx.fill();
+        }
+      }
+
+      // Noise floor sampling
+      btnNoiseCapture.addEventListener('click', () => {
+        if (!mediaStream) {
+          alert('Por favor, inicie o microfone primeiro antes de medir o ruído.');
+          return;
+        }
+        noiseMeasuring = true;
+        noiseSamples = [];
+        btnNoiseCapture.disabled = true;
+        noiseStatus.textContent = 'Medindo silêncio do quarto... permaneça calado (3s)';
+        noiseProgress.style.width = '0%';
+
+        const startTime = performance.now();
+        const interval = setInterval(() => {
+          const elapsed = performance.now() - startTime;
+          const pct = Math.min(100, (elapsed / 3000) * 100);
+          noiseProgress.style.width = `${pct}%`;
+          if (elapsed >= 3000) {
+            clearInterval(interval);
+            noiseMeasuring = false;
+            btnNoiseCapture.disabled = false;
+            if (noiseSamples.length > 0) {
+              // average of samples
+              const sum = noiseSamples.reduce((a, b) => a + b, 0);
+              measuredFloor = sum / noiseSamples.length;
+              analysisFloor.textContent = `${measuredFloor.toFixed(1)} dBFS`;
+              noiseStatus.textContent = 'Calibrado com sucesso!';
+              updateSnr();
+            }
+          }
+        }, 50);
+      });
+
+      function updateSnr() {
+        if (measuredFloor !== null && speechPeak !== null) {
+          const snr = Math.max(0, speechPeak - measuredFloor);
+          analysisSnr.textContent = `${snr.toFixed(1)} dB`;
+
+          if (snr >= 35) {
+            snrBadge.textContent = 'Excelente (>35 dB)';
+            snrBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+          } else if (snr >= 25) {
+            snrBadge.textContent = 'Bom (25–35 dB)';
+            snrBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400';
+          } else if (snr >= 15) {
+            snrBadge.textContent = 'Regular (15–25 dB)';
+            snrBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400';
+          } else {
+            snrBadge.textContent = 'Ruído Excessivo (<15 dB)';
+            snrBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded-full border border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400';
+          }
+        }
+      }
+
+      // Loopback instant playback
+      btnPlayback.addEventListener('click', () => {
+        if (!ringBuffer || ringFilled === 0 || !audioCtx) return;
+        playbackStatus.textContent = 'Reproduzindo gravação de 5 segundos...';
+        btnPlayback.disabled = true;
+
+        const playbackCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = playbackCtx.createBuffer(1, ringFilled, audioCtx.sampleRate);
+        const channelData = audioBuffer.getChannelData(0);
+
+        const start = ringFilled < ringCapacity ? 0 : ringWrite;
+        for (let i = 0; i < ringFilled; i++) {
+          channelData[i] = ringBuffer[(start + i) % ringCapacity];
+        }
+
+        const playSource = playbackCtx.createBufferSource();
+        playSource.buffer = audioBuffer;
+        playSource.connect(playbackCtx.destination);
+        playSource.onended = () => {
+          playbackStatus.textContent = 'Reprodução finalizada.';
+          btnPlayback.disabled = false;
+          playbackCtx.close();
+        };
+        playSource.start();
+      });
+
+      btnClear.addEventListener('click', () => {
+        if (ringBuffer) {
+          ringBuffer.fill(0);
+          ringFilled = 0;
+          ringWrite = 0;
+          playbackStatus.textContent = 'Gravação apagada da memória.';
+          btnPlayback.disabled = true;
+        }
+      });
+
+      btnStart.addEventListener('click', startMic);
+      btnStop.addEventListener('click', stopMic);
+      deviceSelect.addEventListener('change', () => {
+        if (mediaStream) {
+          stopMic();
+          startMic();
+        }
+      });
+
+      [dspEcho, dspNoise, dspAgc].forEach(el => {
+        el.addEventListener('change', () => {
+          if (mediaStream) {
+            stopMic();
+            startMic();
+          }
+        });
+      });
+
+      // Populate devices on load if available
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        updateDevices();
+      }
+    })();
+  </script>
+</Layout>

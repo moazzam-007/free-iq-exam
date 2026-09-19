@@ -1,0 +1,734 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "CPS Test: Teste de Velocidade de Clique (Cliques por Segundo) | FreeIQExam";
+const description = "Teste sua velocidade de cliques no CPS Test grátis. Meça cliques por segundo em 5s, 10s e 30s com gráfico em tempo real e classificação de velocidade.";
+const canonicalUrl = "https://freeiqexam.com/pt-br/cps-test";
+
+const alternates = {
+  en: "https://freeiqexam.com/games/click-speed-test",
+  ru: "https://freeiqexam.com/ru/games/click-speed-test",
+  id: "https://freeiqexam.com/id/permainan/click-speed-test",
+  fi: "https://freeiqexam.com/fi/permainan/click-speed-test",
+  de: "https://freeiqexam.com/de/spiele/klick-test",
+  'pt-BR': "https://freeiqexam.com/pt-br/cps-test"
+};
+
+const DURATIONS = [5, 10, 30];
+const DEFAULT_DURATION = 10;
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "CPS Test: Teste de Velocidade de Cliques por Segundo",
+    "url": canonicalUrl,
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "pt-BR",
+    "browserRequirements": "Requer suporte a JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    },
+    "description": "Teste gratuito de velocidade de cliques medindo cliques por segundo (CPS), taxa de explosão (burst rate) e consistência rítmica motora em intervalos de 5, 10 e 30 segundos."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://freeiqexam.com/pt-br"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Jogos",
+        "item": "https://freeiqexam.com/pt-br"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "CPS Test",
+        "item": canonicalUrl
+      }
+    ]
+  }
+];
+
+const faqItems = [
+  {
+    q: "O que é CPS e qual é uma média normal de cliques por segundo?",
+    a: "CPS significa Clicks Per Second (Cliques por Segundo). Em média, a maioria dos usuários casuais atinge entre 5,5 e 6,8 CPS utilizando um clique padrão com um único dedo. Jogadores experientes de games competitivos (como Minecraft PVP e MOBAs) alcançam com frequência entre 8 e 10 CPS em testes de 5 ou 10 segundos."
+  },
+  {
+    q: "Qual é a diferença entre os testes de 5s, 10s e 30s?",
+    a: "O teste de 5 segundos mede sua velocidade explosiva pura (burst speed), onde a fadiga muscular quase não atua. O modo de 10 segundos é o padrão de equilíbrio competitivo global. Já o modo de 30 segundos avalia sua resistência neuromuscular e a capacidade de sustentar o ritmo sem perda de cadência por fadiga."
+  },
+  {
+    q: "Quais são as principais técnicas de clique (Jitter, Butterfly, Drag Click)?",
+    a: "No Butterfly Clicking, o jogador alterna o dedo indicador e o médio sobre o mesmo botão do mouse, alcançando facilmente de 12 a 18 CPS. No Jitter Clicking, o braço vibra voluntariamente em espasmo controlado (10 a 14 CPS). No Drag Clicking, o atrito da pele deslizando sobre a superfície do mouse aciona micro-interruptores sucessivos (podendo passar de 20 CPS)."
+  },
+  {
+    q: "A barra de espaço do teclado também conta como clique?",
+    a: "Sim. Nossa arena é sensível a toques de mouse, trackpad, telas touchscreen e também às teclas Espaço e Enter, permitindo que você avalie sua velocidade motora no dispositivo que preferir."
+  },
+  {
+    q: "Como é calculada a Consistência de Ritmo?",
+    a: "A consistência rítmica é calculada através do coeficiente de variação temporal entre cada par de cliques consecutivos. Quanto mais homogêneo for o intervalo entre os toques (como o tique-taque de um metrônomo), mais próximo de 100% será o seu índice de consistência."
+  },
+  {
+    q: "O CPS Test funciona em celulares e tablets?",
+    a: "Sim! A arena de clique foi projetada com suporte total a telas de toque capacitivas em smartphones e tablets, garantindo resposta tátil imediata e sem latência."
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="pt-BR"
+>
+  <Header currentPath="/pt-br/cps-test" />
+
+  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Navegação Estrutural">
+      <a href="/pt-br" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Início</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Jogos</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">CPS Test</span>
+    </nav>
+
+    <!-- Header / HUD Section -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider bg-blue-50 dark:bg-blue-950/40 text-[#0066cc] dark:text-[#2997ff] border border-blue-200 dark:border-blue-800/80 mb-1.5">
+          Gs · Velocidade Motora &amp; Reflexo
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+            CPS Test: Velocidade de Clique
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            aria-haspopup="dialog"
+          >
+            Instruções
+          </button>
+        </div>
+      </div>
+
+      <!-- Live HUD -->
+      <div class="flex items-center gap-2 font-mono">
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Tempo</div>
+          <div id="hud-time" class="text-lg tabular-nums font-extrabold text-zinc-900 dark:text-white leading-tight">10.0s</div>
+        </div>
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Cliques</div>
+          <div id="hud-clicks" class="text-lg tabular-nums font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight">0</div>
+        </div>
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Live CPS</div>
+          <div id="hud-cps" class="text-lg tabular-nums font-extrabold text-[#0066cc] dark:text-[#2997ff] leading-tight">0.0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Duration selector chips -->
+    <div class="mb-6 flex flex-wrap items-center justify-center gap-2.5" role="group" aria-label="Duração do Teste">
+      {DURATIONS.map((d) => (
+        <button
+          type="button"
+          data-duration={d}
+          class={`duration-chip min-h-[44px] px-5 py-2 rounded-xl text-xs sm:text-sm font-bold font-mono transition-all border cursor-pointer ${d === DEFAULT_DURATION ? 'bg-[#0066cc] dark:bg-[#2997ff] text-white border-[#0066cc] dark:border-[#2997ff]' : 'bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc]'}`}
+          aria-pressed={d === DEFAULT_DURATION ? 'true' : 'false'}
+        >
+          {d} Segundos
+        </button>
+      ))}
+    </div>
+
+    <!-- Arena Container -->
+    <section class="mb-6" aria-label="Arena de Teste de Clique">
+      <button
+        id="cps-arena"
+        type="button"
+        class="relative w-full rounded-3xl p-8 sm:p-14 min-h-[260px] sm:min-h-[320px] bg-zinc-50 dark:bg-zinc-900/70 border-2 border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center gap-3 select-none cursor-pointer transition-all duration-150 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066cc]"
+      >
+        <!-- Layer: Ready to start -->
+        <div id="arena-ready" class="flex flex-col items-center gap-3 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center border border-blue-500/20">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
+            </svg>
+          </div>
+          <div class="text-xl sm:text-2xl font-extrabold text-zinc-950 dark:text-white">
+            Clique aqui para começar
+          </div>
+          <p class="text-zinc-600 dark:text-zinc-400 text-[16px] max-w-sm">
+            O cronômetro inicia no primeiro clique. Clique o mais rápido que puder até o tempo acabar!
+          </p>
+        </div>
+
+        <!-- Layer: Running -->
+        <div id="arena-running" class="hidden flex-col items-center gap-2 text-center">
+          <div id="arena-click-count" class="text-6xl sm:text-7xl font-mono tabular-nums font-black text-zinc-950 dark:text-white leading-none">
+            0
+          </div>
+          <div class="text-xs font-mono font-bold uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff] animate-pulse">
+            Mais rápido! Não pare!
+          </div>
+        </div>
+
+        <!-- Layer: Finished -->
+        <div id="arena-done" class="hidden flex-col items-center gap-3 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-emerald-500/20">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="text-xl sm:text-2xl font-extrabold text-zinc-950 dark:text-white">
+            Tempo Esgotado!
+          </div>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">Veja seu resultado detalhado abaixo ou reinicie para um novo teste.</p>
+        </div>
+      </button>
+    </section>
+
+    <!-- Controls Toolbar -->
+    <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+      <button
+        id="btn-start"
+        type="button"
+        class="min-h-[44px] px-6 py-2.5 rounded-xl font-bold text-sm bg-[#0066cc] hover:bg-[#0052a3] dark:bg-[#2997ff] dark:hover:bg-[#1a85f0] text-white transition-all duration-150 active:scale-[0.97] cursor-pointer inline-flex items-center gap-2"
+      >
+        <span id="btn-start-label">Iniciar Teste</span>
+      </button>
+      <button
+        id="btn-reset"
+        type="button"
+        class="min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+      >
+        Redefinir
+      </button>
+    </div>
+
+    <!-- Results Panel -->
+    <section id="results-panel" class="hidden mb-12" aria-live="polite" aria-label="Resultados do Teste">
+      <div class="rounded-3xl p-6 sm:p-8 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-zinc-200 dark:border-zinc-800 pb-6">
+          <div>
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] mb-1">Resultado Final</div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-zinc-950 dark:text-white">
+              <span id="res-cps" class="font-mono tabular-nums text-[#0066cc] dark:text-[#2997ff]">0.0</span>
+              <span class="text-lg font-semibold text-zinc-500 dark:text-zinc-400">CPS (Cliques/s)</span>
+            </h2>
+          </div>
+          <div id="res-tier" class="px-5 py-2.5 rounded-2xl border text-sm font-bold text-center">--</div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="block text-xs font-mono text-zinc-500 uppercase">Total de Cliques</span>
+            <strong id="res-total" class="text-2xl font-mono tabular-nums font-extrabold text-zinc-900 dark:text-white">0</strong>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="block text-xs font-mono text-zinc-500 uppercase">Pico em 1s (Burst)</span>
+            <strong id="res-peak" class="text-2xl font-mono tabular-nums font-extrabold text-emerald-600 dark:text-emerald-400">0</strong>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="block text-xs font-mono text-zinc-500 uppercase">Intervalo Mediano</span>
+            <strong id="res-median" class="text-2xl font-mono tabular-nums font-extrabold text-zinc-800 dark:text-zinc-200">--</strong>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="block text-xs font-mono text-zinc-500 uppercase">Consistência de Ritmo</span>
+            <strong id="res-rhythm" class="text-2xl font-mono tabular-nums font-extrabold text-zinc-800 dark:text-zinc-200">--</strong>
+          </div>
+        </div>
+
+        <p id="res-description" class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 font-mono"></p>
+
+        <div class="pt-5 border-t border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+            Recorde Pessoal: <strong id="res-best" class="text-zinc-900 dark:text-zinc-100">--</strong>
+          </span>
+          <div class="flex flex-wrap gap-3">
+            <button
+              id="btn-copy-cps"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer inline-flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+              <span>Copiar Resultado</span>
+            </button>
+            <button
+              id="btn-retake"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl font-bold text-sm bg-[#0066cc] hover:bg-[#0052a3] dark:bg-[#2997ff] dark:hover:bg-[#1a85f0] text-white transition-all duration-150 active:scale-[0.97] cursor-pointer"
+            >
+              Tentar Novamente
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Content (6 Comprehensive Guides) -->
+    <article class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto space-y-12">
+      <header>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] text-xs font-mono font-semibold uppercase tracking-wider mb-3">
+          Biomecânica &amp; Velocidade Motora
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          O Guia Definitivo do Teste de CPS: Técnicas e Biomecânica
+        </h2>
+        <p class="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
+          Entenda os limites da velocidade neuromuscular dos dedos, conheça as técnicas utilizadas por jogadores profissionais e descubra como aumentar seus cliques por segundo.
+        </p>
+      </header>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          1. O que é CPS e o que Mede o Teste de Velocidade de Clique
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          <strong>CPS (Clicks Per Second)</strong> é a quantidade exata de ativações mecânicas ou digitais de um botão de mouse registradas no intervalo de um segundo. Na psicologia cognitiva, o teste reflete a <em>Velocidade de Processamento Psicomotor (Gs)</em> e a rapidez da alça de feedback sensório-motor entre o córtex motor cerebral e os tendões flexores dos dedos.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          2. Classificação Oficial de Patamares no Brasil
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Nossa classificação compara sua pontuação com milhões de medições de jogadores ao redor do mundo:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <span class="text-xs font-mono text-zinc-500 uppercase font-bold block">Tartaruga (&lt; 5 CPS)</span>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Clique pausado e casual do uso comum de computadores.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <span class="text-xs font-mono text-blue-600 dark:text-blue-400 uppercase font-bold block">Lebre (5 – 8 CPS)</span>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Média padrão de adultos com boa coordenação motora.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 uppercase font-bold block">Guepardo (8 – 11 CPS)</span>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Velocidade avançada, típica de jogadores regulares de FPS e MOBA.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <span class="text-xs font-mono text-purple-600 dark:text-purple-400 uppercase font-bold block">Falcão (11 – 14 CPS)</span>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Nível de mestre com técnicas ativas como Jitter ou Butterfly.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 sm:col-span-2">
+            <span class="text-xs font-mono text-amber-500 uppercase font-bold block">Raio (&gt; 14 CPS)</span>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Top 1% mundial. Velocidade extrema com mouses gamers de baixo debounce time.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          3. Técnicas Avançadas de Clique: Butterfly, Jitter e Drag Click
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Para ultrapassar a barreira biológica dos 8 CPS do clique convencional com um só dedo, a comunidade de gamers desenvolveu técnicas específicas:
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li><strong>Butterfly Clicking:</strong> O método mais popular e consistente. Consiste em posicionar o indicador e o dedo médio lado a lado sobre o botão principal esquerdo do mouse, alternando os toques em ritmo rápido como as asas de uma borboleta. Pode atingir entre 12 e 20 CPS.</li>
+          <li><strong>Jitter Clicking:</strong> O jogador tensiona deliberadamente os músculos do antebraço e do pulso, gerando um tremor controlado de alta frequência transmitido à ponta do dedo. Permite alcançar de 10 a 14 CPS, porém causa fadiga muscular mais rápida.</li>
+          <li><strong>Drag Clicking:</strong> Consiste em arrastar o dedo pela superfície texturizada do botão do mouse em um ângulo inclinado. O atrito microscópico faz a pele pular em sucessão contínua sobre a chave mecânica, produzindo rajadas instantâneas de até 25 a 30 CPS.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          4. O Papel do Equipamento: Mouses Gamers e Debounce Time
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          O hardware utilizado exerce influência direta nos seus resultados de CPS. Os mouses de escritório convencionais contam com um atraso de debounce programado no firmware (cerca de 10 a 20 milissegundos) para evitar cliques duplos acidentais ao navegar na internet.
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Mouses gamers profissionais permitem reduzir o tempo de debounce para 2 a 4 milissegundos ou utilizam <em>switches ópticos</em> acionados por feixes de luz infravermelha, permitindo registrar múltiplos cliques por milissegundo sem perda de sinal.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          5. Por que a Consistência de Ritmo é Vital em Jogos Competitivos
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Em jogos competitivos como Minecraft (PVP combos), shooters táticos (CS2, Valorant para armas semi-automáticas) e jogos de ritmo (osu!), um pico isolado de 15 CPS é inútil se for seguido por hesitações e congelamentos musculares. A métrica de <strong>Consistência de Ritmo</strong> mede se os intervalos entre os cliques são perfeitamente espaçados, garantindo precisão de mira simultânea.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          6. Dicas de Ergonomia e Prevenção de Lesões nas Mãos
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Praticar testes de CPS com intensidade excessiva pode sobrecarregar os tendões extensores dos dedos e o túnel do carpo:
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li>Não realize sessões de Jitter Clicking por mais de 5 a 10 minutos seguidos sem pausas.</li>
+          <li>Faça alongamentos de extensão e flexão de punho antes e depois dos treinos.</li>
+          <li>Se sentir dor aguda ou dormência na ponta dos dedos, pare imediatamente e repouse a mão.</li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- FAQ Accordions -->
+    <section class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto" aria-labelledby="faq-title">
+      <h2 id="faq-title" class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white mb-8">
+        Perguntas Frequentes sobre o CPS Test
+      </h2>
+
+      <div class="space-y-4">
+        {faqItems.map((item) => (
+          <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-900">
+            <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none gap-4">
+              <span class="text-base sm:text-lg">{item.q}</span>
+              <span class="p-1 rounded-lg text-zinc-400 group-open:rotate-180 transition-transform duration-200" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </span>
+            </summary>
+            <p class="mt-4 text-[16px] leading-relaxed text-zinc-600 dark:text-zinc-300 border-t border-zinc-100 dark:border-zinc-800 pt-3">
+              {item.a}
+            </p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+  </main>
+
+  <!-- How-To-Play Modal -->
+  <div
+    id="how-to-play-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="how-to-play-title"
+  >
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 mb-4">
+        <h2 id="how-to-play-title" class="text-xl font-bold text-zinc-950 dark:text-white">
+          Como Funciona o Teste de CPS
+        </h2>
+        <button
+          id="btn-close-how-to-play"
+          type="button"
+          class="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          aria-label="Fechar instruções"
+        >
+          &times;
+        </button>
+      </div>
+      <ol class="list-decimal list-inside space-y-3 text-zinc-700 dark:text-zinc-300 text-[16px] leading-relaxed">
+        <li>Selecione a duração do teste: <strong>5, 10 ou 30 segundos</strong>.</li>
+        <li>Clique na grande área de teste ou pressione a tecla <strong>Espaço</strong>. O cronômetro inicia automaticamente com o seu primeiro toque.</li>
+        <li>Clique o mais rápido que puder até o cronômetro zerar.</li>
+        <li>Seus dados de CPS, pico de explosão e consistência de ritmo serão calculados instantaneamente na tela.</li>
+      </ol>
+      <div class="mt-5 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-mono">
+        Dica: Apoie confortavelmente o punho na mesa para evitar tensão excessiva nos tendões durante testes de maior duração.
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+
+  <!-- Self-Contained CPS Test Engine Script -->
+  <script is:inline>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'pt_br_cps_test_best';
+
+      let durationSeconds = 10;
+      let phase = 'ready'; // ready, running, done
+      let clickTimes = [];
+      let trialStart = 0;
+      let rafId = 0;
+      let endTimerId = 0;
+
+      const arena = document.getElementById('cps-arena');
+      const arenaReady = document.getElementById('arena-ready');
+      const arenaRunning = document.getElementById('arena-running');
+      const arenaDone = document.getElementById('arena-done');
+      const arenaClickCount = document.getElementById('arena-click-count');
+
+      const hudTime = document.getElementById('hud-time');
+      const hudClicks = document.getElementById('hud-clicks');
+      const hudCps = document.getElementById('hud-cps');
+
+      const btnStart = document.getElementById('btn-start');
+      const btnReset = document.getElementById('btn-reset');
+      const btnRetake = document.getElementById('btn-retake');
+      const resultsPanel = document.getElementById('results-panel');
+      const btnCopyCps = document.getElementById('btn-copy-cps');
+
+      const resCps = document.getElementById('res-cps');
+      const resTier = document.getElementById('res-tier');
+      const resTotal = document.getElementById('res-total');
+      const resPeak = document.getElementById('res-peak');
+      const resMedian = document.getElementById('res-median');
+      const resRhythm = document.getElementById('res-rhythm');
+      const resDescription = document.getElementById('res-description');
+      const resBest = document.getElementById('res-best');
+
+      const modalHow = document.getElementById('how-to-play-modal');
+      const btnHow = document.getElementById('btn-how-to-play');
+      const btnCloseHow = document.getElementById('btn-close-how-to-play');
+
+      function loadBest() {
+        try {
+          const val = localStorage.getItem(STORAGE_KEY);
+          resBest.textContent = val ? `${Number(val).toFixed(1)} CPS` : '--';
+        } catch (e) {
+          resBest.textContent = '--';
+        }
+      }
+
+      function setPhase(newPhase) {
+        phase = newPhase;
+        arenaReady.classList.toggle('hidden', phase !== 'ready');
+        arenaRunning.classList.toggle('hidden', phase !== 'running');
+        arenaRunning.classList.toggle('flex', phase === 'running');
+        arenaDone.classList.toggle('hidden', phase !== 'done');
+        arenaDone.classList.toggle('flex', phase === 'done');
+
+        if (phase === 'ready') {
+          hudTime.textContent = `${durationSeconds}.0s`;
+          hudClicks.textContent = '0';
+          hudCps.textContent = '0.0';
+          btnStart.disabled = false;
+        } else if (phase === 'running') {
+          btnStart.disabled = true;
+        }
+      }
+
+      function startTest() {
+        clickTimes = [];
+        trialStart = performance.now();
+        setPhase('running');
+        registerClick();
+        tick();
+
+        endTimerId = setTimeout(() => {
+          finishTest();
+        }, durationSeconds * 1000);
+      }
+
+      function registerClick() {
+        const now = performance.now();
+        clickTimes.push(now);
+
+        arenaClickCount.textContent = String(clickTimes.length);
+        hudClicks.textContent = String(clickTimes.length);
+
+        const elapsed = (now - trialStart) / 1000;
+        if (elapsed > 0.1) {
+          const liveCps = clickTimes.length / elapsed;
+          hudCps.textContent = liveCps.toFixed(1);
+        }
+      }
+
+      function tick() {
+        if (phase !== 'running') return;
+        const now = performance.now();
+        const elapsed = now - trialStart;
+        const remainMs = Math.max(0, (durationSeconds * 1000) - elapsed);
+        hudTime.textContent = `${(remainMs / 1000).toFixed(1)}s`;
+
+        rafId = requestAnimationFrame(tick);
+      }
+
+      function finishTest() {
+        cancelAnimationFrame(rafId);
+        clearTimeout(endTimerId);
+        setPhase('done');
+
+        const totalClicks = clickTimes.length;
+        const finalCps = totalClicks / durationSeconds;
+
+        // Compute 1-second sliding window peak burst rate
+        let peakBurst = 0;
+        for (let i = 0; i < clickTimes.length; i++) {
+          const t0 = clickTimes[i];
+          let inWindow = 0;
+          for (let j = i; j < clickTimes.length; j++) {
+            if (clickTimes[j] - t0 <= 1000) inWindow++;
+            else break;
+          }
+          if (inWindow > peakBurst) peakBurst = inWindow;
+        }
+
+        // Inter-click intervals (rhythm consistency)
+        let intervals = [];
+        for (let i = 1; i < clickTimes.length; i++) {
+          intervals.push(clickTimes[i] - clickTimes[i - 1]);
+        }
+
+        let medianInterval = '--';
+        let rhythmScore = '--';
+
+        if (intervals.length > 0) {
+          intervals.sort((a, b) => a - b);
+          const mid = Math.floor(intervals.length / 2);
+          const med = intervals.length % 2 === 0 ? (intervals[mid - 1] + intervals[mid]) / 2 : intervals[mid];
+          medianInterval = `${Math.round(med)} ms`;
+
+          const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+          const variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
+          const sd = Math.sqrt(variance);
+          const cv = mean > 0 ? (sd / mean) : 1;
+          const rhythmPct = Math.max(0, Math.min(100, Math.round((1 - Math.min(cv, 1)) * 100)));
+          rhythmScore = `${rhythmPct}%`;
+        }
+
+        // Tiers
+        let tierName = '';
+        let tierBadgeClass = '';
+        let tierDesc = '';
+
+        if (finalCps >= 14) {
+          tierName = 'Raio (>14 CPS)';
+          tierBadgeClass = 'border-amber-500 bg-amber-500/10 text-amber-600 dark:text-amber-400';
+          tierDesc = 'Velocidade sobre-humana (Top 1%). Domínio absoluto de técnicas de clique de alto desempenho.';
+        } else if (finalCps >= 11) {
+          tierName = 'Falcão (11–14 CPS)';
+          tierBadgeClass = 'border-purple-500 bg-purple-500/10 text-purple-600 dark:text-purple-400';
+          tierDesc = 'Nível de mestre em Butterfly/Jitter Clicking. Grande vantagem competitiva em partidas online.';
+        } else if (finalCps >= 8) {
+          tierName = 'Guepardo (8–11 CPS)';
+          tierBadgeClass = 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+          tierDesc = 'Excelente coordenação motora e velocidade acima da média de jogadores casuais.';
+        } else if (finalCps >= 5) {
+          tierName = 'Lebre (5–8 CPS)';
+          tierBadgeClass = 'border-blue-500 bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff]';
+          tierDesc = 'Velocidade motora padrão de um adulto com clique regular de um único dedo.';
+        } else {
+          tierName = 'Tartaruga (<5 CPS)';
+          tierBadgeClass = 'border-zinc-500 bg-zinc-500/10 text-zinc-600 dark:text-zinc-400';
+          tierDesc = 'Clique cadenciado e calmo. Pratique técnicas de apoio dos dedos para ganhar velocidade.';
+        }
+
+        resCps.textContent = finalCps.toFixed(1);
+        resTotal.textContent = String(totalClicks);
+        resPeak.textContent = String(peakBurst);
+        resMedian.textContent = medianInterval;
+        resRhythm.textContent = rhythmScore;
+        resTier.textContent = tierName;
+        resTier.className = `px-5 py-2.5 rounded-2xl border text-sm font-bold text-center ${tierBadgeClass}`;
+        resDescription.textContent = tierDesc;
+
+        // Check best
+        let savedBest = 0;
+        try {
+          savedBest = parseFloat(localStorage.getItem(STORAGE_KEY) || '0');
+          if (finalCps > savedBest) {
+            localStorage.setItem(STORAGE_KEY, finalCps.toFixed(1));
+            loadBest();
+          }
+        } catch (e) {}
+
+        resultsPanel.classList.remove('hidden');
+        resultsPanel.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function resetTest() {
+        cancelAnimationFrame(rafId);
+        clearTimeout(endTimerId);
+        resultsPanel.classList.add('hidden');
+        setPhase('ready');
+      }
+
+      // Event Listeners
+      arena.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        if (phase === 'ready') startTest();
+        else if (phase === 'running') registerClick();
+      });
+
+      arena.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (phase === 'ready') startTest();
+        else if (phase === 'running') registerClick();
+      }, { passive: false });
+
+      btnStart.addEventListener('click', () => {
+        if (phase === 'ready') startTest();
+      });
+
+      btnReset.addEventListener('click', resetTest);
+      btnRetake.addEventListener('click', resetTest);
+
+      document.querySelectorAll('.duration-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.duration-chip').forEach(c => {
+            c.classList.remove('bg-[#0066cc]', 'dark:bg-[#2997ff]', 'text-white', 'border-[#0066cc]', 'dark:border-[#2997ff]');
+            c.classList.add('bg-zinc-50', 'dark:bg-zinc-900', 'text-zinc-700', 'dark:text-zinc-300');
+            c.setAttribute('aria-pressed', 'false');
+          });
+          chip.classList.add('bg-[#0066cc]', 'dark:bg-[#2997ff]', 'text-white', 'border-[#0066cc]', 'dark:border-[#2997ff]');
+          chip.classList.remove('bg-zinc-50', 'dark:bg-zinc-900', 'text-zinc-700', 'dark:text-zinc-300');
+          chip.setAttribute('aria-pressed', 'true');
+
+          durationSeconds = parseInt(chip.dataset.duration, 10);
+          resetTest();
+        });
+      });
+
+      // Spacebar click support
+      window.addEventListener('keydown', (e) => {
+        if (e.key === ' ' && !modalHow.classList.contains('flex')) {
+          if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+            e.preventDefault();
+            if (phase === 'ready') startTest();
+            else if (phase === 'running') registerClick();
+          }
+        }
+      });
+
+      // Share result
+      btnCopyCps.addEventListener('click', () => {
+        const text = `⚡ Fiz ${resCps.textContent} CPS (${resTier.textContent}) no CPS Test do FreeIQExam!\nTeste sua velocidade de cliques grátis: https://freeiqexam.com/pt-br/cps-test`;
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btnCopyCps.textContent;
+          btnCopyCps.textContent = 'Copiado para a Área de Transferência!';
+          setTimeout(() => { btnCopyCps.textContent = orig; }, 2000);
+        });
+      });
+
+      // How to play modal
+      btnHow.addEventListener('click', () => {
+        modalHow.classList.remove('hidden');
+        modalHow.classList.add('flex');
+      });
+      btnCloseHow.addEventListener('click', () => {
+        modalHow.classList.add('hidden');
+        modalHow.classList.remove('flex');
+      });
+
+      loadBest();
+      setPhase('ready');
+    })();
+  </script>
+</Layout>

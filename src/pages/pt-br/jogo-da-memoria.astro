@@ -1,0 +1,876 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const alternates = {
+  en: "https://freeiqexam.com/games/memory-matrix",
+  ru: "https://freeiqexam.com/ru/games/memory-matrix",
+  id: "https://freeiqexam.com/id/permainan/memory-matrix",
+  'pt-BR': "https://freeiqexam.com/pt-br/jogo-da-memoria"
+};
+
+const title = "Jogo da Memória Online: Teste de Memória Espacial & Retenção Visual | FreeIQExam";
+const description = "Desafie sua memória de trabalho com nossa matriz de memória espacial interativa. Níveis progressivos com pontuação de retenção e ranking.";
+const canonicalUrl = "https://freeiqexam.com/pt-br/jogo-da-memoria";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Jogo da Memória: Matriz de Retenção Espacial e Memória de Trabalho",
+    "url": canonicalUrl,
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "pt-BR",
+    "browserRequirements": "Requer suporte a JavaScript e Web Audio API",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    },
+    "featureList": [
+      "Treinamento cognitivo de memória de trabalho visuoespacial (Gwm / Gv)",
+      "Grade dinâmica adaptativa de 3x3 a 6x6 com complexidade progressiva",
+      "Feedback acústico tátil gerado localmente com Web Audio API",
+      "Rastreamento de amplitude máxima de retenção (Peak Span) e multiplicadores de sequência",
+      "Classificação por níveis de maestria cognitiva com histórico de recordes"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://freeiqexam.com/pt-br"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Jogos Cognitivos",
+        "item": "https://freeiqexam.com/pt-br"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Jogo da Memória",
+        "item": canonicalUrl
+      }
+    ]
+  }
+];
+
+const faqItems = [
+  {
+    q: "Como funciona a pontuação no Jogo da Memória Espacial?",
+    a: "Sua pontuação cresce a cada padrão reproduzido corretamente. O cálculo multiplica o nível da grade pelo número de peças memorizadas e aplica um multiplicador de sequência contínua (streak). Acertos consecutivos sem erros concedem bônus substanciais."
+  },
+  {
+    q: "Qual é a amplitude média de blocos (Span) em adultos?",
+    a: "Em testes padronizados (como o Corsi Block-Tapping Test), adultos saudáveis retêm confortavelmente entre 5 e 7 blocos espaciais. Alcançar 8 a 9 blocos indica excelente capacidade de memória de trabalho visual, e 10 ou mais situa-se no percentil superior de agilidade cognitiva."
+  },
+  {
+    q: "O que significam as siglas Gwm e Gv do modelo CHC?",
+    a: "No modelo Cattell-Horn-Carroll (a teoria psicométrica de inteligência mais validada cientificamente), Gwm representa a Memória de Trabalho Geral (capacidade de reter e manipular dados temporariamente na mente) e Gv representa o Processamento Visual (habilidade de gerar, reter e transformar imagens espaciais)."
+  },
+  {
+    q: "Praticar este jogo melhora a memória na vida cotidiana?",
+    a: "Sim. O treino de retenção visuoespacial estimula as redes neurais do córtex pré-frontal dorsolateral e do córtex parietal posterior. Essa plasticidade auxilia no foco mental, leitura rápida, orientação espacial e resistência a distrações do ambiente."
+  },
+  {
+    q: "Por que a grade aumenta de 3x3 para 4x4 e 5x5?",
+    a: "O aumento dimensional exige que o cérebro reorganize a estratégia de codificação. Em uma grade 3x3, a retenção pode ser feita por coordenadas isoladas; em grades maiores (4x4 ou 5x5), você é estimulado a agrupar peças em formas geométricas conhecidas (técnica de chunking), ampliando sua capacidade funcional."
+  },
+  {
+    q: "Meus recordes ficam salvos para as próximas partidas?",
+    a: "Sim. Sua maior pontuação (Recorde) e sua amplitude máxima de blocos (Peak Span) são gravadas automaticamente no armazenamento local seguro (localStorage) do seu navegador, permitindo acompanhar sua evolução a cada nova sessão."
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="pt-BR"
+>
+  <Header currentPath="/pt-br/jogo-da-memoria" />
+
+  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Navegação Estrutural">
+      <a href="/pt-br" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Início</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Jogos Cognitivos</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Jogo da Memória</span>
+    </nav>
+
+    <!-- Header / HUD Section -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider bg-blue-50 dark:bg-blue-950/40 text-[#0066cc] dark:text-[#2997ff] border border-blue-200 dark:border-blue-800/80 mb-1.5">
+          Gwm / Gv · Memória de Trabalho Visuoespacial
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+            Jogo da Memória: Matriz Espacial
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066cc] text-xs font-mono font-medium gap-1.5 cursor-pointer"
+            aria-label="Instruções de como jogar"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+            </svg>
+            <span>Como Jogar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat HUD (4 cards) -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-3 font-mono text-xs sm:text-sm">
+        <div class="flex-1 sm:flex-initial px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">Nível</div>
+          <div id="hud-level" class="font-extrabold tabular-nums text-zinc-800 dark:text-zinc-200 text-sm sm:text-base">1</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center min-w-[76px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">Pontos</div>
+          <div id="hud-score" class="font-extrabold tabular-nums text-[#0066cc] dark:text-[#2997ff] text-sm sm:text-base">0</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center min-w-[80px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">Amplitude</div>
+          <div id="hud-span" class="font-extrabold tabular-nums text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">0 Peças</div>
+        </div>
+        <div class="flex-1 sm:flex-initial px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center min-w-[70px]">
+          <div class="text-zinc-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">Recorde</div>
+          <div id="hud-best" class="font-extrabold tabular-nums text-zinc-700 dark:text-zinc-300 text-sm sm:text-base">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Game Arena -->
+    <div class="relative rounded-3xl p-6 sm:p-10 bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col items-center min-h-[460px] justify-center">
+      <!-- Start Screen Overlay -->
+      <div id="start-overlay" class="absolute inset-0 z-20 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/20 flex items-center justify-center mb-5 shadow-xs">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white mb-3">
+          Matriz de Memória Espacial
+        </h2>
+        <div class="max-w-md text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 space-y-2">
+          <p>
+            Observe os blocos iluminados em azul durante a <strong>fase de memorização (1,2s)</strong>.
+          </p>
+          <p>
+            Quando os blocos voltarem ao estado neutro, clique em todas as posições memorizadas.
+          </p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 pt-2 font-mono">
+            A grade escala de 3x3 para 4x4 e 5x5 conforme você progride. Você tem 3 vidas.
+          </p>
+        </div>
+        <button
+          id="btn-start-game"
+          type="button"
+          class="min-h-[44px] px-8 py-3.5 rounded-2xl bg-[#0066cc] hover:bg-[#0052a3] dark:bg-[#2997ff] dark:hover:bg-[#1a85f0] text-white font-bold text-base shadow-sm transition-all duration-150 active:scale-[0.97] flex items-center gap-2 cursor-pointer"
+        >
+          <span>Iniciar Partida (Espaço)</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Interactive Game Content -->
+      <div id="game-arena-content" inert class="w-full flex flex-col items-center">
+        <!-- Top Status: Lives and Phase Indicator -->
+        <div class="w-full max-w-md flex items-center justify-between gap-4 mb-4 font-mono text-xs">
+          <!-- Lives remaining -->
+          <div class="flex items-center gap-1.5" aria-label="Vidas restantes">
+            <span class="text-zinc-500 uppercase font-medium">Vidas:</span>
+            <div id="lives-indicator" class="flex items-center gap-1 text-rose-500">
+              <svg class="w-4 h-4 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <svg class="w-4 h-4 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <svg class="w-4 h-4 fill-rose-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+          </div>
+
+          <!-- Phase badge -->
+          <div id="phase-badge" class="px-2.5 py-0.5 rounded-full font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+            Fase: Pronto
+          </div>
+        </div>
+
+        <!-- Encoding Countdown Bar -->
+        <div class="w-full max-w-md mb-6">
+          <div class="w-full h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+            <div id="encoding-progress-bar" class="h-full bg-[#0066cc] dark:bg-[#2997ff] rounded-full transition-all duration-75 ease-linear" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Matrix Grid Container -->
+        <div class="w-full max-w-[360px] sm:max-w-[400px] aspect-square flex items-center justify-center mb-4">
+          <div
+            id="matrix-grid"
+            class="grid grid-cols-3 gap-2.5 sm:gap-3.5 w-full h-full p-3.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-3xl border border-zinc-200 dark:border-zinc-700 shadow-inner transition-all duration-200"
+          >
+            <!-- Programmatic tiles rendered here -->
+          </div>
+        </div>
+
+        <!-- Remaining Targets Info & Toast -->
+        <div class="flex flex-col items-center gap-1 min-h-[48px]">
+          <div id="target-remainder-text" class="text-xs font-mono font-bold text-zinc-500 dark:text-zinc-400">
+            Blocos a recordar: -
+          </div>
+          <div id="feedback-toast" role="status" aria-live="polite" class="h-5 text-xs font-mono font-semibold transition-opacity opacity-0 text-zinc-500">
+            Status
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div
+      id="modal-how-to-play"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-how-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4"
+    >
+      <div class="relative rounded-3xl p-6 sm:p-8 max-w-lg w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+        <button
+          id="btn-close-how-modal"
+          type="button"
+          class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+          aria-label="Fechar instruções"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="modal-how-title" class="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white mb-1.5">
+          Como Jogar a Matriz de Memória
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mb-5 font-mono">
+          Treinamento de Memória Visuoespacial &amp; Retenção de Padrões
+        </p>
+
+        <div class="space-y-3.5 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed mb-6">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+            <h4 class="font-bold text-zinc-950 dark:text-white mb-1">1. Fase de Memorização (1,2s)</h4>
+            <p>
+              Um grupo de peças acende em azul. Memorize suas posições e a forma geométrica que elas desenham na grade.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+            <h4 class="font-bold text-zinc-950 dark:text-white mb-1">2. Fase de Retenção (400ms)</h4>
+            <p>
+              As peças retornam ao tom neutro. Mantenha a imagem mental gravada na sua memória de trabalho.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+            <h4 class="font-bold text-zinc-950 dark:text-white mb-1">3. Fase de Recordação</h4>
+            <p>
+              Toque nos blocos correspondentes. Ao acertar todos, você avança de nível. Cada erro consome 1 vida. Você tem 3 vidas no total.
+            </p>
+          </div>
+        </div>
+
+        <button
+          id="btn-confirm-how"
+          type="button"
+          class="w-full min-h-[44px] py-2.5 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer"
+        >
+          Entendi, vamos jogar
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div
+      id="modal-end-round"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-score-title"
+      tabindex="-1"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4"
+    >
+      <div class="relative rounded-3xl p-6 sm:p-8 max-w-lg w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl text-center">
+        <div id="modal-best-alert" class="hidden mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+          ★ Novo Recorde Pessoal!
+        </div>
+
+        <h2 id="modal-score-title" class="text-3xl sm:text-4xl font-extrabold text-zinc-950 dark:text-white tracking-tight mb-2">
+          Partida Finalizada
+        </h2>
+
+        <!-- Tier Badge -->
+        <div class="my-4">
+          <span id="modal-tier-badge" class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold border border-blue-500/30 bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff]">
+            Estrategista Espacial
+          </span>
+          <p id="modal-tier-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 font-mono">
+            Excelente controle atencional e retenção visual acima da média.
+          </p>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 gap-3 my-6 text-left">
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+            <span class="block text-[11px] font-mono text-zinc-500 uppercase">Pontuação Final</span>
+            <span id="modal-score" class="text-2xl font-mono font-extrabold text-[#0066cc] dark:text-[#2997ff] tabular-nums">0</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+            <span class="block text-[11px] font-mono text-zinc-500 uppercase">Amplitude Máxima</span>
+            <span id="modal-max-span" class="text-2xl font-mono font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">0 Peças</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+            <span class="block text-[11px] font-mono text-zinc-500 uppercase">Taxa de Precisão</span>
+            <span id="modal-acc" class="text-2xl font-mono font-extrabold text-zinc-800 dark:text-zinc-200 tabular-nums">0%</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700">
+            <span class="block text-[11px] font-mono text-zinc-500 uppercase">Maior Sequência</span>
+            <span id="modal-streak" class="text-2xl font-mono font-extrabold text-zinc-800 dark:text-zinc-200 tabular-nums">0</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button
+            id="btn-modal-restart"
+            type="button"
+            class="flex-1 min-h-[44px] py-2.5 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white font-bold text-sm hover:opacity-90 transition-opacity cursor-pointer"
+          >
+            Jogar Novamente
+          </button>
+          <button
+            id="btn-close-end-modal"
+            type="button"
+            class="min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm font-semibold cursor-pointer"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Content (6 Comprehensive Guides) -->
+    <article class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto space-y-12">
+      <header>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] text-xs font-mono font-semibold uppercase tracking-wider mb-3">
+          Neurociência &amp; Cognição
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          A Ciência da Memória Visuoespacial e Retenção de Padrões
+        </h2>
+        <p class="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
+          Entenda os fundamentos psicométricos da matriz de memória, o modelo CHC e como o agrupamento espacial (chunking) expande os limites do cérebro humano.
+        </p>
+      </header>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          1. O que é a Memória de Trabalho Visuoespacial (Gwm / Gv)
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Na teoria psicométrica Cattell-Horn-Carroll (CHC), a inteligência é decomposta em domínios cognitivos especializados. A <strong>Memória de Trabalho (Gwm)</strong> é o espaço de trabalho mental em que dados temporários são mantidos ativos durante a resolução de problemas complexos.
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          O componente visuoespacial — tradicionalmente chamado de <em>esboço visuoespacial</em> no modelo de Alan Baddeley — cuida especificamente da retenção de coordenadas espaciais, trajetórias e formas geométricas. Ao contrário da memória verbal que utiliza repetição fonológica interna ("subvocalização"), a memória visual depende da ativação topográfica no córtex parietal e occipital.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          2. Como Funciona a Matriz de Retenção Espacial
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Inspirada no clássico <strong>Corsi Block-Tapping Test</strong> desenvolvido em 1972 pelo Dr. Philip Corsi na Universidade McGill, nossa matriz desafia três etapas cognitivas distintas:
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li><strong>Codificação (Encoding):</strong> Nos 1,2 segundos em que as peças ficam iluminadas, os fotorreceptores da retina transferem o mapa luminoso para o cérebro, onde o padrão geométrico é codificado em memória sensorial imediata.</li>
+          <li><strong>Retenção (Storage):</strong> Durante os 400 milissegundos em que a grade se apaga, neurônios do córtex pré-frontal mantêm disparos sincronizados para sustentar a representação interna sem estímulo externo.</li>
+          <li><strong>Recuperação (Retrieval):</strong> Ao clicar nas peças vazias, o usuário reconstrói ativamente as coordenadas armazenadas.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          3. A Capacidade Limitada da Memória e a Técnica de Chunking
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          O psicólogo George Miller formulou a célebre "Lei de Miller", estabelecendo que a memória de trabalho imediata comporta cerca de <strong>7 ± 2 itens</strong>. Em domínios espaciais mais densos, esse limite é ainda mais restrito (frequentemente 4 ± 1 peças isoladas).
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Como os mestres conseguem lembrar 9 ou 10 blocos? Através do <strong>Chunking (agrupamento cognitivo)</strong>. Em vez de memorizar 7 posições individuais (ex: "linha 1 coluna 2, linha 2 coluna 3..."), o cérebro identifica relações morfológicas: "um triângulo no canto superior esquerdo conectado a uma linha diagonal". Ao converter múltiplos pontos em uma única gestalt geométrica, a capacidade de retenção é multiplicada.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          4. Estratégias Mentais para Atingir Pontuações Altas
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Para alcançar os rankings de Mestre Cognitivo e Grande Mestre Visual:
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li><strong>Foco Central Relaxado:</strong> Não olhe freneticamente para cada bloco iluminado. Fixe o olhar no centro da grade e use a visão periférica para apreender a forma global de uma só vez.</li>
+          <li><strong>Identificação de Simetrias:</strong> Procure linhas retas, ângulos de 90 graus ou blocos vizinhos adjacentes.</li>
+          <li><strong>Respire antes de Clicar:</strong> Clicar por impulso antes de consolidar o mapa mental é o erro mais comum. Use os primeiros segundos da fase de recordação para confirmar mentalmente as peças antes do primeiro toque.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          5. A Importância da Memória Espacial no Cotidiano Profissional
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          A habilidade visuoespacial é preditora de sucesso em carreiras nas áreas STEM (Ciência, Tecnologia, Engenharia e Matemática), bem como em cirurgia, aviação, arquitetura e esportes de alta velocidade. Quem possui memória espacial aguçada consegue manipular mentalmente modelos 3D, prever trajetórias no trânsito e ler gráficos de dados complexos com menor esforço mental.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          6. Idade, Plasticidade Neural e Longevidade Cognitiva
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          A memória de trabalho atinge seu pico biológico por volta dos 20 a 25 anos de idade e tende a declinar gradualmente a partir da quarta década. No entanto, estudos de neuroimagem comprovam que o cérebro mantém a neuroplasticidade ao longo de toda a vida adulta.
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Treinar regularmente com exercícios de matriz espacial ajuda a construir uma sólida <em>reserva cognitiva</em>, blindando os circuitos corticais contra a fadiga atencional e retardando os impactos do envelhecimento neurológico.
+        </p>
+      </section>
+    </article>
+
+    <!-- FAQ Accordions -->
+    <section class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto" aria-labelledby="faq-title">
+      <h2 id="faq-title" class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white mb-8">
+        Perguntas Frequentes sobre o Jogo da Memória
+      </h2>
+
+      <div class="space-y-4">
+        {faqItems.map((item) => (
+          <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-900">
+            <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none gap-4">
+              <span class="text-base sm:text-lg">{item.q}</span>
+              <span class="p-1 rounded-lg text-zinc-400 group-open:rotate-180 transition-transform duration-200" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </span>
+            </summary>
+            <p class="mt-4 text-[16px] leading-relaxed text-zinc-600 dark:text-zinc-300 border-t border-zinc-100 dark:border-zinc-800 pt-3">
+              {item.a}
+            </p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <!-- Self-Contained Memory Matrix Engine Script -->
+  <script is:inline>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'pt_br_memory_matrix_best';
+      const ENCODING_MS = 1200;
+      const RETENTION_MS = 400;
+
+      // Audio Synthesizer
+      let audioCtx = null;
+      function playTone(freq, type = 'sine', duration = 0.08) {
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const now = audioCtx.currentTime;
+
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        } catch (e) {}
+      }
+
+      // State
+      let isRunning = false;
+      let level = 1;
+      let score = 0;
+      let lives = 3;
+      let longestStreak = 0;
+      let currentStreak = 0;
+      let maxSpan = 0;
+      let trialsCompleted = 0;
+      let correctCount = 0;
+
+      let currentGridSize = 3;
+      let currentTargetIndices = [];
+      let recalledIndices = new Set();
+      let gamePhase = 'ready'; // ready, encoding, retention, recall, round_over
+
+      // DOM Elements
+      const startOverlay = document.getElementById('start-overlay');
+      const gameArenaContent = document.getElementById('game-arena-content');
+      const btnStartGame = document.getElementById('btn-start-game');
+      const matrixGrid = document.getElementById('matrix-grid');
+      const hudLevel = document.getElementById('hud-level');
+      const hudScore = document.getElementById('hudScore') || document.getElementById('hud-score');
+      const hudSpan = document.getElementById('hud-span');
+      const hudBest = document.getElementById('hud-best');
+      const livesIndicator = document.getElementById('lives-indicator');
+      const phaseBadge = document.getElementById('phase-badge');
+      const encodingProgressBar = document.getElementById('encoding-progress-bar');
+      const targetRemainderText = document.getElementById('target-remainder-text');
+      const feedbackToast = document.getElementById('feedback-toast');
+
+      const modalHowToPlay = document.getElementById('modal-how-to-play');
+      const btnHowToPlay = document.getElementById('btn-how-to-play');
+      const btnCloseHowModal = document.getElementById('btn-close-how-modal');
+      const btnConfirmHow = document.getElementById('btn-confirm-how');
+
+      const modalEndRound = document.getElementById('modal-end-round');
+      const btnModalRestart = document.getElementById('btn-modal-restart');
+      const btnCloseEndModal = document.getElementById('btn-close-end-modal');
+      const modalScore = document.getElementById('modal-score');
+      const modalMaxSpan = document.getElementById('modal-max-span');
+      const modalAcc = document.getElementById('modal-acc');
+      const modalStreak = document.getElementById('modal-streak');
+      const modalTierBadge = document.getElementById('modal-tier-badge');
+      const modalTierDesc = document.getElementById('modal-tier-desc');
+      const modalBestAlert = document.getElementById('modal-best-alert');
+
+      function loadBestScore() {
+        try {
+          const val = localStorage.getItem(STORAGE_KEY);
+          hudBest.textContent = val ? Number(val).toLocaleString('pt-BR') : '--';
+        } catch (e) {
+          hudBest.textContent = '--';
+        }
+      }
+
+      function updateLivesUI() {
+        livesIndicator.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('class', `w-4 h-4 ${i < lives ? 'fill-rose-500' : 'fill-zinc-300 dark:fill-zinc-700'}`);
+          svg.setAttribute('viewBox', '0 0 24 24');
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+          svg.appendChild(path);
+          livesIndicator.appendChild(svg);
+        }
+      }
+
+      function getGridConfig(lvl) {
+        let size = 3;
+        let targets = 3;
+
+        if (lvl <= 2) {
+          size = 3;
+          targets = 2 + lvl; // 3, 4
+        } else if (lvl <= 5) {
+          size = 4;
+          targets = lvl + 1; // 4, 5, 6
+        } else if (lvl <= 9) {
+          size = 5;
+          targets = lvl - 1; // 5, 6, 7, 8
+        } else {
+          size = 6;
+          targets = Math.min(15, 8 + (lvl - 9));
+        }
+
+        return { size, targets };
+      }
+
+      function startSession() {
+        isRunning = true;
+        level = 1;
+        score = 0;
+        lives = 3;
+        longestStreak = 0;
+        currentStreak = 0;
+        maxSpan = 0;
+        trialsCompleted = 0;
+        correctCount = 0;
+
+        hudLevel.textContent = '1';
+        hudScore.textContent = '0';
+        hudSpan.textContent = '0 Peças';
+        updateLivesUI();
+
+        startOverlay.classList.add('hidden');
+        gameArenaContent.removeAttribute('inert');
+
+        loadRound();
+      }
+
+      function loadRound() {
+        gamePhase = 'encoding';
+        phaseBadge.textContent = 'Memorize os Blocos';
+        phaseBadge.className = 'px-2.5 py-0.5 rounded-full font-semibold bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/30';
+
+        const config = getGridConfig(level);
+        currentGridSize = config.size;
+        recalledIndices.clear();
+
+        // Generate target indices
+        const totalTiles = currentGridSize * currentGridSize;
+        const pool = Array.from({ length: totalTiles }, (_, i) => i);
+        pool.sort(() => Math.random() - 0.5);
+        currentTargetIndices = pool.slice(0, config.targets);
+
+        if (config.targets > maxSpan) {
+          maxSpan = config.targets;
+          hudSpan.textContent = `${maxSpan} Peças`;
+        }
+
+        targetRemainderText.textContent = `Blocos a recordar: ${config.targets}`;
+
+        // Render Grid
+        matrixGrid.innerHTML = '';
+        matrixGrid.style.gridTemplateColumns = `repeat(${currentGridSize}, minmax(0, 1fr))`;
+
+        for (let i = 0; i < totalTiles; i++) {
+          const tile = document.createElement('button');
+          tile.type = 'button';
+          tile.dataset.index = i;
+          tile.className = 'tile-btn aspect-square rounded-2xl bg-zinc-200 dark:bg-zinc-700 transition-all duration-150 transform cursor-pointer border border-zinc-300 dark:border-zinc-600 focus:outline-none';
+
+          if (currentTargetIndices.includes(i)) {
+            // Target during encoding
+            tile.classList.remove('bg-zinc-200', 'dark:bg-zinc-700');
+            tile.classList.add('bg-[#0066cc]', 'dark:bg-[#2997ff]', 'scale-95', 'shadow-sm');
+          }
+
+          matrixGrid.appendChild(tile);
+        }
+
+        playTone(520, 'sine', 0.15);
+
+        // Encoding Countdown
+        encodingProgressBar.style.transitionDuration = `${ENCODING_MS}ms`;
+        encodingProgressBar.style.width = '0%';
+
+        setTimeout(() => {
+          // Retention phase
+          gamePhase = 'retention';
+          phaseBadge.textContent = 'Retenção Mental...';
+          phaseBadge.className = 'px-2.5 py-0.5 rounded-full font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-300 dark:border-zinc-700';
+
+          const allTiles = matrixGrid.querySelectorAll('.tile-btn');
+          allTiles.forEach(t => {
+            t.className = 'tile-btn aspect-square rounded-2xl bg-zinc-200 dark:bg-zinc-700 transition-all duration-150 border border-zinc-300 dark:border-zinc-600 focus:outline-none';
+          });
+
+          setTimeout(() => {
+            // Recall Phase
+            gamePhase = 'recall';
+            phaseBadge.textContent = 'Sua Vez: Toque nos Blocos';
+            phaseBadge.className = 'px-2.5 py-0.5 rounded-full font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30';
+
+            encodingProgressBar.style.transitionDuration = '0ms';
+            encodingProgressBar.style.width = '100%';
+
+            bindTileClicks();
+          }, RETENTION_MS);
+
+        }, ENCODING_MS);
+      }
+
+      function bindTileClicks() {
+        const allTiles = matrixGrid.querySelectorAll('.tile-btn');
+        allTiles.forEach(tile => {
+          tile.addEventListener('click', onTileClick);
+        });
+      }
+
+      function onTileClick(e) {
+        if (gamePhase !== 'recall') return;
+        const tile = e.currentTarget;
+        const index = parseInt(tile.dataset.index, 10);
+
+        if (recalledIndices.has(index)) return;
+        recalledIndices.add(index);
+
+        if (currentTargetIndices.includes(index)) {
+          // Correct Hit
+          playTone(660 + (recalledIndices.size * 40), 'sine', 0.08);
+          tile.classList.remove('bg-zinc-200', 'dark:bg-zinc-700');
+          tile.classList.add('bg-emerald-500', 'text-white', 'scale-95');
+
+          const remaining = currentTargetIndices.length - Array.from(recalledIndices).filter(idx => currentTargetIndices.includes(idx)).length;
+          targetRemainderText.textContent = `Blocos a recordar: ${remaining}`;
+
+          // Check if round won
+          if (remaining === 0) {
+            roundSuccess();
+          }
+        } else {
+          // Mistake
+          playTone(220, 'triangle', 0.2);
+          tile.classList.remove('bg-zinc-200', 'dark:bg-zinc-700');
+          tile.classList.add('bg-rose-500', 'animate-shake');
+
+          lives--;
+          updateLivesUI();
+          currentStreak = 0;
+
+          if (lives <= 0) {
+            gameOver();
+          }
+        }
+      }
+
+      function roundSuccess() {
+        gamePhase = 'round_over';
+        currentStreak++;
+        if (currentStreak > longestStreak) longestStreak = currentStreak;
+        correctCount++;
+        trialsCompleted++;
+
+        const pts = (currentGridSize * 100) + (currentTargetIndices.length * 50) + (currentStreak * 25);
+        score += pts;
+        hudScore.textContent = score.toLocaleString('pt-BR');
+
+        phaseBadge.textContent = '✓ Excelente! Padrão Correto';
+        phaseBadge.className = 'px-2.5 py-0.5 rounded-full font-semibold bg-emerald-500 text-white';
+
+        setTimeout(() => {
+          level++;
+          hudLevel.textContent = String(level);
+          loadRound();
+        }, 800);
+      }
+
+      function gameOver() {
+        gamePhase = 'round_over';
+        trialsCompleted++;
+
+        // Reveal missed targets in amber
+        currentTargetIndices.forEach(idx => {
+          if (!recalledIndices.has(idx)) {
+            const missedTile = matrixGrid.querySelector(`[data-index="${idx}"]`);
+            if (missedTile) {
+              missedTile.classList.add('bg-amber-400');
+            }
+          }
+        });
+
+        setTimeout(() => {
+          showResultsModal();
+        }, 1000);
+      }
+
+      function showResultsModal() {
+        let savedBest = 0;
+        try {
+          savedBest = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+        } catch (e) {}
+
+        const isNewBest = score > savedBest;
+        if (isNewBest) {
+          try {
+            localStorage.setItem(STORAGE_KEY, score.toString());
+            loadBestScore();
+          } catch (e) {}
+          modalBestAlert.classList.remove('hidden');
+        } else {
+          modalBestAlert.classList.add('hidden');
+        }
+
+        modalScore.textContent = score.toLocaleString('pt-BR');
+        modalMaxSpan.textContent = `${maxSpan} Peças`;
+        const acc = trialsCompleted > 0 ? Math.round((correctCount / trialsCompleted) * 100) : 0;
+        modalAcc.textContent = `${acc}%`;
+        modalStreak.textContent = String(longestStreak);
+
+        // Tier evaluation
+        let tier = 'Iniciante em Treinamento';
+        let desc = 'Sua memória de trabalho espacial está em desenvolvimento inicial.';
+        if (score >= 5000) {
+          tier = 'Grande Mestre Visual';
+          desc = 'Capacidade de retenção topográfica de elite (Top 1%). Perfeita visualização de chunks complexos.';
+        } else if (score >= 3500) {
+          tier = 'Mestre Cognitivo';
+          desc = 'Retenção excelente (Top 5%). Excelente agrupamento de formas geométricas.';
+        } else if (score >= 2000) {
+          tier = 'Estrategista Espacial';
+          desc = 'Memória de trabalho acima da média. Ótimo controle do foco atencional.';
+        } else if (score >= 1000) {
+          tier = 'Praticante Focado';
+          desc = 'Boa capacidade básica de retenção de blocos em matrizes médias.';
+        }
+
+        modalTierBadge.textContent = tier;
+        modalTierDesc.textContent = desc;
+
+        modalEndRound.classList.remove('hidden');
+        modalEndRound.classList.add('flex');
+      }
+
+      btnStartGame.addEventListener('click', startSession);
+      btnModalRestart.addEventListener('click', () => {
+        modalEndRound.classList.add('hidden');
+        modalEndRound.classList.remove('flex');
+        startSession();
+      });
+
+      btnHowToPlay.addEventListener('click', () => {
+        modalHowToPlay.classList.remove('hidden');
+        modalHowToPlay.classList.add('flex');
+      });
+
+      function closeHowModal() {
+        modalHowToPlay.classList.add('hidden');
+        modalHowToPlay.classList.remove('flex');
+      }
+
+      btnCloseHowModal.addEventListener('click', closeHowModal);
+      btnConfirmHow.addEventListener('click', closeHowModal);
+
+      btnCloseEndModal.addEventListener('click', () => {
+        modalEndRound.classList.add('hidden');
+        modalEndRound.classList.remove('flex');
+        startOverlay.classList.remove('hidden');
+      });
+
+      // Keyboard shortcuts
+      window.addEventListener('keydown', (e) => {
+        if (e.key === ' ' && !isRunning && !startOverlay.classList.contains('hidden')) {
+          e.preventDefault();
+          startSession();
+        } else if (e.key === 'Escape') {
+          closeHowModal();
+          modalEndRound.classList.add('hidden');
+          modalEndRound.classList.remove('flex');
+        }
+      });
+
+      loadBestScore();
+    })();
+  </script>
+</Layout>

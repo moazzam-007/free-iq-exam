@@ -1,0 +1,846 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const alternates = {
+  en: "https://freeiqexam.com/memento-mori",
+  ru: "https://freeiqexam.com/ru/memento-mori",
+  id: "https://freeiqexam.com/id/memento-mori",
+  'pt-BR': "https://freeiqexam.com/pt-br/memento-mori"
+};
+
+const title = "Memento Mori Calendário da Vida: Visualize Suas Semanas de Vida | FreeIQExam";
+const description = "Crie seu calendário de vida interativo Memento Mori. Visualize suas semanas vividas e restantes com base na expectativa de vida e reflexões estoicas.";
+const canonicalUrl = "https://freeiqexam.com/pt-br/memento-mori";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Calendário de Vida Memento Mori: Suas Semanas em Perspectiva",
+    "url": canonicalUrl,
+    "applicationCategory": "LifestyleApplication",
+    "operatingSystem": "All",
+    "inLanguage": "pt-BR",
+    "browserRequirements": "Requer suporte a JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    },
+    "featureList": [
+      "Grade interativa de 4.000 semanas de vida humana (80 a 90+ anos semana a semana)",
+      "4 eras cronológicas codificadas por cor: Formativa, Ascensão, Maestria e Legado",
+      "Calculadora atuarial de expectativa com modificadores de estilo de vida",
+      "Inspeção interativa de semana com cálculo de idade exata e datas",
+      "Reflexões diárias selecionadas dos filósofos estoicos Marco Aurélio, Sêneca e Epicteto",
+      "Download gratuito do pôster em alta resolução PNG (1200x675)",
+      "Privacidade total com processamento 100% local no navegador"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://freeiqexam.com/pt-br"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Ferramentas",
+        "item": "https://freeiqexam.com/pt-br"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Memento Mori",
+        "item": canonicalUrl
+      }
+    ]
+  }
+];
+
+const faqItems = [
+  {
+    q: "O que significa Memento Mori e por que os filósofos estoicos o praticavam?",
+    a: "Memento Mori é uma locução em latim que significa 'Lembre-se de que você é mortal' ou 'Lembre-se de que vai morrer'. Para os estoicos (como Sêneca, Marco Aurélio e Epicteto), meditar sobre a brevidade da vida não é um ato de morbidez ou desespero, mas sim a ferramenta cognitiva suprema para eliminar ansiedades banais, vencer a procrastinação e viver cada dia com propósito, gratidão e virtude."
+  },
+  {
+    q: "Quantas semanas tem a vida média de um ser humano?",
+    a: "Uma vida média de 80 anos possui aproximadamente 4.160 semanas (80 × 52,18 semanas por ano). Aos 30 anos, você já viveu cerca de 1.560 semanas (37,5% do total). Aos 50 anos, já se passaram 2.600 semanas (62,5%). Visualizar a existência em uma grade concreta de 4.000 semanas transforma o tempo abstrato em um patrimônio visível e precioso."
+  },
+  {
+    q: "Por que o tempo parece passar muito mais rápido conforme envelhecemos?",
+    a: "A neurociência explica isso através da Teoria Proporcional de Paul Janet: aos 10 anos de idade, 1 ano equivale a 10% de toda a sua existência consciente; aos 50 anos, o mesmo ano representa apenas 2% da sua vida vivida, dando a sensação de correr cinco vezes mais depressa. Além disso, a rotina adulta carece de memórias inéditas e estímulos sensoriais novos, comprimindo retrospectivamente os meses na memória."
+  },
+  {
+    q: "Qual é a diferença entre Lifespan (tempo de vida) e Healthspan (tempo de saúde)?",
+    a: "Lifespan é o número total de anos biológicos que uma pessoa permanece viva. Healthspan é o período vivido com vigor físico pleno, lucidez mental e livre de dores ou doenças crônicas incapacitantes. O objetivo da medicina preventiva moderna e da filosofia prática é comprimir a morbidade: garantir que o seu tempo de saúde coincida com o seu tempo total de vida."
+  },
+  {
+    q: "O que é Amor Fati na filosofia estoica?",
+    a: "Amor Fati é uma expressão latina que se traduz como 'Amor ao Destino'. Popularizada por Nietzsche e fundamentada em Marco Aurélio e Epicteto, consiste em não apenas tolerar os reveses e sofrimentos inevitáveis da vida, mas acolhê-los de bom grado como matéria-prima indispensável para forjar caráter, resiliência e maturidade."
+  },
+  {
+    q: "Minha data de nascimento ou dados de saúde são armazenados em servidores?",
+    a: "Não. O gerador Memento Mori opera de maneira 100% local e confidencial dentro da memória volátil do seu navegador web. Nenhuma data, idade ou resposta sobre seus hábitos é transmitida ou gravada externamente."
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="pt-BR"
+>
+  <Header currentPath="/pt-br/memento-mori" />
+
+  <main class="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+    
+    <!-- Hero Header (Pure Flat Luxury Canvas) -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/20 text-xs font-mono font-semibold uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Observatório de Mortalidade Estoica · Calendário de 4.000 Semanas</span>
+      </div>
+
+      <h1 class="font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+        Memento Mori: Sua Vida em Semanas
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+        “Não é que tenhamos pouco tempo para viver, mas que desperdiçamos muito dele.” Visualize suas 4.000 semanas finitas na Terra, calcule sua expectativa de vida atuarial e alinhe suas decisões diárias com a clareza do estoicismo clássico.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+      
+      <!-- Biometric & Lifestyle Input Deck -->
+      <div class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-8 mb-8 shadow-xl">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-800/80">
+          
+          <!-- Date of Birth Input -->
+          <div>
+            <label for="mementoDob" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">
+              <span class="inline-flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-[#0066cc] dark:text-[#2997ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                Data de Nascimento
+              </span>
+            </label>
+            <input
+              type="date"
+              id="mementoDob"
+              class="w-full bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc] dark:focus:ring-[#2997ff] cursor-pointer"
+            />
+          </div>
+
+          <!-- Biological Sex Selector -->
+          <div>
+            <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">
+              <span class="inline-flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-[#0066cc] dark:text-[#2997ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 4v2" /><path d="M20 12h-2" /><path d="M12 20v-2" /><path d="M4 12h2" /></svg>
+                Sexo Biológico
+              </span>
+            </label>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                class="memento-gender-btn active flex-1 py-2.5 rounded-2xl text-xs font-bold border border-blue-500/40 bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] transition-all cursor-pointer"
+                data-gender="male"
+              >
+                ♂ Masculino
+              </button>
+              <button
+                type="button"
+                class="memento-gender-btn flex-1 py-2.5 rounded-2xl text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer"
+                data-gender="female"
+              >
+                ♀ Feminino
+              </button>
+            </div>
+          </div>
+
+          <!-- Poster Download Action Button -->
+          <div class="flex flex-col justify-end">
+            <button
+              type="button"
+              id="downloadMementoPosterBtn"
+              class="w-full py-2.5 rounded-2xl bg-[#0066cc] hover:bg-[#0052a3] dark:bg-[#2997ff] dark:hover:bg-[#1a85f0] text-white font-extrabold text-xs sm:text-sm shadow-sm transition-all duration-150 active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>
+              <span>Baixar Pôster da Vida (PNG)</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Longevity & Lifestyle Modifiers Toggle -->
+        <div class="pt-6">
+          <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+            <span class="inline-flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-[#0066cc] dark:text-[#2997ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8" /><path d="M3 22h18" /><path d="M14 22a7 7 0 1 0-7-7h1" /><path d="M9 14h2" /><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" /></svg>
+              Fatores Atuariais de Longevidade e Estilo de Vida
+            </span>
+          </label>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-xs">
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 cursor-pointer hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-colors">
+              <input type="checkbox" id="modExercise" checked class="rounded accent-[#0066cc] w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">150m+ Exercício</span>
+                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">+3,8 anos</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 cursor-pointer hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-colors">
+              <input type="checkbox" id="modSleep" checked class="rounded accent-[#0066cc] w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">7-8h de Sono</span>
+                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">+2,4 anos</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 cursor-pointer hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-colors">
+              <input type="checkbox" id="modDiet" checked class="rounded accent-[#0066cc] w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">Dieta Limpa</span>
+                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">+2,8 anos</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 cursor-pointer hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-colors">
+              <input type="checkbox" id="modSmoking" class="rounded accent-[#0066cc] w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">Fumo / Vape</span>
+                <span class="text-[10px] text-rose-500 font-mono">-8,5 anos</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-2.5 p-3 rounded-2xl bg-white dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 cursor-pointer hover:border-[#0066cc] dark:hover:border-[#2997ff] transition-colors">
+              <input type="checkbox" id="modStress" class="rounded accent-[#0066cc] w-4 h-4 cursor-pointer" />
+              <div>
+                <span class="font-bold block text-zinc-900 dark:text-zinc-100">Estresse Crônico</span>
+                <span class="text-[10px] text-rose-500 font-mono">-2,5 anos</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Life Metrics Scorecard (Obsidian Luxury Surface) -->
+      <div class="bg-zinc-950 text-white border border-zinc-800 rounded-3xl p-6 sm:p-8 mb-8 shadow-2xl relative overflow-hidden">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Semanas Vividas</span>
+            <span id="statLivedWeeks" class="text-3xl sm:text-4xl font-extrabold font-mono text-[#2997ff] tabular-nums">1.460</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Jornada Percorrida</span>
+          </div>
+
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Semanas Restantes</span>
+            <span id="statRemainingWeeks" class="text-3xl sm:text-4xl font-extrabold font-mono text-white tabular-nums">2.700</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Potencial Futuro</span>
+          </div>
+
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Vida Consumida</span>
+            <span id="statPercentSpent" class="text-3xl sm:text-4xl font-extrabold font-mono text-amber-400 tabular-nums">35,1%</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Tempo Decorrido</span>
+          </div>
+
+          <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800 text-center">
+            <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-1">Expectativa Atuarial</span>
+            <span id="statLifeExpectancy" class="text-3xl sm:text-4xl font-extrabold font-mono text-emerald-400 tabular-nums">87,2 anos</span>
+            <span class="text-[10px] text-zinc-400 block mt-1">Previsão Estatística</span>
+          </div>
+        </div>
+
+        <!-- Life Progress Bar -->
+        <div class="space-y-1.5 mb-6">
+          <div class="flex justify-between text-xs font-mono text-zinc-400">
+            <span>Idade 0</span>
+            <span id="statAgeYears" class="text-[#2997ff] font-bold">28,0 anos</span>
+            <span>Horizonte de Vida</span>
+          </div>
+          <div class="w-full h-3 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-0.5">
+            <div id="lifeProgressBar" class="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500" style="width: 35.1%;"></div>
+          </div>
+        </div>
+
+        <!-- Time Breakdown -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-zinc-800 text-center font-mono text-xs text-zinc-400">
+          <div>
+            <span class="text-[10px] text-zinc-500 uppercase block">Dias Restantes Estimados</span>
+            <span id="statRemainingDays" class="font-bold text-white text-sm tabular-nums">18.900</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-zinc-500 uppercase block">Horas Restantes Estimadas</span>
+            <span id="statRemainingHours" class="font-bold text-white text-sm tabular-nums">453.600</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-zinc-500 uppercase block">Batimentos Cardíacos Restantes</span>
+            <span id="statRemainingHeartbeats" class="font-bold text-[#2997ff] text-sm tabular-nums">1.959.552.000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4,000 Weeks Interactive Grid Arena -->
+      <div class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4 sm:p-8 shadow-sm">
+        
+        <!-- Legend & Eras Header -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800/80">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-zinc-950 dark:text-white">
+              Grade de Vida: 4.000 Semanas
+            </h2>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400">
+              Cada quadrado representa 1 semana de vida (52 semanas por linha = 1 ano completo).
+            </p>
+          </div>
+
+          <!-- Eras Legend -->
+          <div class="flex flex-wrap items-center gap-3 text-[11px] font-mono">
+            <span class="inline-flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+              <span class="w-3 h-3 rounded-xs bg-indigo-500 inline-block"></span> 0–18 (Formativo)
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+              <span class="w-3 h-3 rounded-xs bg-cyan-500 inline-block"></span> 18–35 (Ascensão)
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+              <span class="w-3 h-3 rounded-xs bg-amber-500 inline-block"></span> 35–60 (Maestria)
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+              <span class="w-3 h-3 rounded-xs bg-rose-500 inline-block"></span> 60+ (Legado)
+            </span>
+          </div>
+        </div>
+
+        <!-- The Interactive Grid Render Target -->
+        <div class="overflow-x-auto">
+          <div id="mementoGrid" class="min-w-[620px] flex flex-col gap-[3px] select-none py-2">
+            <!-- Dynamically populated year rows -->
+          </div>
+        </div>
+
+        <!-- Week Inspection Tooltip Float Card -->
+        <div id="mementoTooltip" class="hidden fixed z-50 bg-zinc-950 text-white border border-zinc-700 rounded-xl p-3 shadow-2xl pointer-events-none text-xs font-mono max-w-xs transition-opacity duration-150">
+          <div id="tipWeekAge" class="font-bold text-[#2997ff] text-sm">--</div>
+          <div id="tipWeekDates" class="text-zinc-400 text-[11px] mt-0.5">--</div>
+          <div id="tipWeekEra" class="text-zinc-300 mt-1">--</div>
+          <div id="tipMilestone" class="text-amber-400 font-bold mt-1 hidden">--</div>
+        </div>
+
+      </div>
+
+      <!-- Curated Stoic Quote Card -->
+      <div class="mt-8 p-6 sm:p-8 rounded-3xl bg-zinc-950 border border-zinc-800 text-center relative overflow-hidden">
+        <div class="text-xs font-mono uppercase tracking-widest text-[#2997ff] mb-2 font-semibold">Reflexão Estoica do Dia</div>
+        <blockquote id="quoteText" class="text-base sm:text-xl font-serif italic text-zinc-200 max-w-2xl mx-auto leading-relaxed">
+          “Não é que tenhamos pouco tempo para viver, mas que desperdiçamos muito dele. A vida é longa o suficiente se soubermos como aproveitá-la.”
+        </blockquote>
+        <div id="quoteAuthor" class="mt-3 text-xs font-mono text-zinc-400 font-bold tracking-wider">
+          — Sêneca, Sobre a Brevidade da Vida
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Educational Content (6 Comprehensive Guides) -->
+    <article class="mt-12 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto px-4 sm:px-6 space-y-12">
+      <header>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] text-xs font-mono font-semibold uppercase tracking-wider mb-3">
+          Filosofia &amp; Longevidade
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          A Sabedoria do Memento Mori: Viver com Intenção e Urgência
+        </h2>
+        <p class="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
+          Como o confronto consciente com a finitude da existência humana liberta a mente de preocupações vazias e transforma a gestão do tempo em um exercício de virtude.
+        </p>
+      </header>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          1. A Origem Histórica do Memento Mori
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Na Roma Antiga, quando um general vitorioso desfilava pelas ruas da cidade em triunfo sob aplausos e aclamação da multidão, um servo era posicionado logo atrás de sua carruagem segurando uma coroa de louros e sussurrando repetidamente em seu ouvido: <em>“Respice post te! Hominem te esse memento!”</em> (“Olha para trás de ti! Lembra-te de que és apenas um homem!”).
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Essa tradição lembrava o líder de que a glória mundana é passageira e que a mortalidade atinge reis e soldados com a mesma equidade. Os filósofos estoicos adotaram essa prática não para inspirar medo, mas para ancorar o discernimento moral.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          2. Sobre a Brevidade da Vida de Sêneca
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          No seu clássico tratado <em>De Brevitate Vitae</em>, escrito por volta de 49 d.C., Sêneca responde à queixa universal de que a natureza foi mesquinha com o tempo concedido aos seres humanos:
+        </p>
+        <blockquote class="p-4 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-serif italic text-base my-4 border-l-4 border-[#0066cc] dark:border-[#2997ff]">
+          “Não recebemos uma vida curta, mas fomos nós que a tornamos assim; não somos dela necessitados, mas sim pródigos com ela.”
+        </blockquote>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Sêneca notava que as pessoas defendem ferozmente seu dinheiro e suas propriedades contra ladrões, mas entregam seu tempo — o único bem impossível de repor — a qualquer futilidade diária, brigas tolas e obrigações sociais insignificantes.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          3. A Psicologia da Percepção Temporal: Por que os Anos Voam
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Todo adulto compartilha a sensação desconcertante de que o tempo corre mais rápido a cada ano. A neurociência cognitiva explica esse fenômeno por dois fatores:
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li><strong>Teoria Proporcional de Janet:</strong> Para uma criança de 5 anos, um ano representa 20% de toda a sua vida consciente. Para um adulto de 50 anos, o mesmo ano representa apenas 2% do total vivido, parecendo dez vezes menor.</li>
+          <li><strong>Automação Neurológica da Rotina:</strong> O cérebro humano grava memórias detalhadas apenas diante do desconhecido e da novidade. Quando os dias se tornam previsíveis e repetitivos no trabalho e em casa, o hipocampo compacta meses inteiros em blocos indistintos de memória.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          4. Ciência Atuarial e Longevidade: Expandindo o Healthspan
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Embora o estoicismo ensine a serenidade perante os limites biológicos da vida, a ciência da longevidade demonstra que hábitos diários têm impacto decisivo sobre a qualidade desses anos. O conceito moderno central é a separação entre <strong>Lifespan</strong> (anos totais de vida) e <strong>Healthspan</strong> (anos vividos com plena autonomia física e mental):
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li><strong>Exercício Físico Regular (+3,8 anos):</strong> O treinamento aeróbico combinado com musculação preserva a massa muscular e reduz a mortalidade cardiovascular pela metade.</li>
+          <li><strong>Sono Noturno de 7 a 8 Horas (+2,4 anos):</strong> Ativa o sistema glinfático, responsável por limpar os resíduos metabólicos cerebrais e prevenir declínios cognitivos.</li>
+          <li><strong>Alimentação Natural (+2,8 anos):</strong> Rica em vegetais, fibras e gorduras saudáveis, combate a inflamação celular crônica.</li>
+          <li><strong>Abstenção de Fumo e Álcool Excessivo:</strong> Evita a perda estatística de até 8 a 10 anos de saúde ativa.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          5. Exercícios Práticos Estoicos para o Dia a Dia
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Para transformar a filosofia em hábito prático, os mestres estoicos utilizavam exercícios mentais diários:
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li><strong>Premeditatio Malorum:</strong> Visualizar brevemente pela manhã possíveis imprevistos e desafios do dia. Isso vacina a mente contra o choque emocional diante de crises.</li>
+          <li><strong>A Vista de Cima (The View from Above):</strong> Imaginar sua vida a partir da órbita terrestre, observando as montanhas, cidades e eras históricas. As pequenas ofensas diárias perdem imediatamente a importância.</li>
+          <li><strong>O Exame da Noite:</strong> Antes de dormir, revisar os atos do dia: Onde agi com coragem e generosidade? Onde fui negligente? O que posso fazer melhor amanhã?</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          6. Como Utilizar o Calendário de 4.000 Semanas
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Ao olhar para os quadrados preenchidos na grade, sinta gratidão pelas experiências acumuladas até o momento. Ao contemplar os quadrados que restam, pergunte-se com honestidade: <em>"Quais projetos, relacionamentos e causas merecem ocupar as semanas que ainda tenho?"</em>
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Baixe o pôster de alta resolução, imprima-o e coloque-o em um local visível. Ele servirá como bússola para lembrar você de focar no essencial todos os dias.
+        </p>
+      </section>
+    </article>
+
+    <!-- FAQ Accordions -->
+    <section class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto px-4 sm:px-6" aria-labelledby="faq-title">
+      <h2 id="faq-title" class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white mb-8">
+        Perguntas Frequentes sobre o Memento Mori
+      </h2>
+
+      <div class="space-y-4">
+        {faqItems.map((item) => (
+          <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-900">
+            <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none gap-4">
+              <span class="text-base sm:text-lg">{item.q}</span>
+              <span class="p-1 rounded-lg text-zinc-400 group-open:rotate-180 transition-transform duration-200" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </span>
+            </summary>
+            <p class="mt-4 text-[16px] leading-relaxed text-zinc-600 dark:text-zinc-300 border-t border-zinc-100 dark:border-zinc-800 pt-3">
+              {item.a}
+            </p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+
+  <!-- Self-Contained Memento Mori Engine Script -->
+  <script is:inline>
+    (function () {
+      'use strict';
+
+      const STOIC_QUOTES = [
+        {
+          author: 'Sêneca',
+          source: 'Sobre a Brevidade da Vida',
+          text: 'Não é que tenhamos pouco tempo para viver, mas que desperdiçamos muito dele. A vida é longa o suficiente se soubermos como aproveitá-la.'
+        },
+        {
+          author: 'Marco Aurélio',
+          source: 'Meditações, Livro II',
+          text: 'Você poderia deixar a vida neste exato momento. Que isso determine tudo o que você faz, diz e pensa.'
+        },
+        {
+          author: 'Sêneca',
+          source: 'Cartas de um Estoico, Carta I',
+          text: 'Apegue-se a cada hora em suas mãos. Domine a tarefa de hoje e você não precisará depender tanto do amanhã. Enquanto adiamos, a vida passa correndo.'
+        },
+        {
+          author: 'Epicteto',
+          source: 'Manual (Enchiridion)',
+          text: 'Mantenha a morte diariamente diante dos seus olhos, e você nunca terá pensamentos vis nem cobiçará nada com desespero.'
+        },
+        {
+          author: 'Marco Aurélio',
+          source: 'Meditações, Livro IV',
+          text: 'O tempo é um rio, uma correnteza violenta de acontecimentos. Mal algo é avistado, já é arrastado para longe, e outra coisa toma o seu lugar.'
+        },
+        {
+          author: 'Sêneca',
+          source: 'Sobre a Brevidade da Vida',
+          text: 'Vocês agem como mortais em tudo o que temem, e como imortais em tudo o que desejam.'
+        },
+        {
+          author: 'Marco Aurélio',
+          source: 'Meditações, Livro VII',
+          text: 'Pense em si mesmo como morto. Você já viveu sua vida. Agora, pegue o que resta e viva-a dignamente.'
+        }
+      ];
+
+      class MementoEngine {
+        constructor() {
+          const now = new Date();
+          const defaultBirth = new Date(now.getFullYear() - 28, now.getMonth(), now.getDate());
+          this.birthDate = defaultBirth;
+          this.gender = 'male';
+          this.countryBase = 77.5; // Base IBGE Brasil
+
+          this.modifiers = {
+            exercise: 3.8,
+            sleep: 2.4,
+            diet: 2.8,
+            smoking: 0,
+            stress: 0
+          };
+        }
+
+        setBirthDate(dateStr) {
+          if (!dateStr) return;
+          const parsed = new Date(dateStr);
+          if (!isNaN(parsed.getTime())) {
+            this.birthDate = parsed;
+          }
+        }
+
+        getStats() {
+          const now = new Date();
+          const diffMs = Math.max(0, now.getTime() - this.birthDate.getTime());
+          const msPerWeek = 7 * 24 * 3600 * 1000;
+          const livedWeeks = Math.floor(diffMs / msPerWeek);
+          const ageYears = (diffMs / (365.2425 * 24 * 3600 * 1000)).toFixed(1);
+
+          let totalYears = this.countryBase;
+          if (this.gender === 'female') totalYears += 5.5;
+          totalYears += this.modifiers.exercise;
+          totalYears += this.modifiers.sleep;
+          totalYears += this.modifiers.diet;
+          totalYears += this.modifiers.smoking;
+          totalYears += this.modifiers.stress;
+          totalYears = Math.max(50, Math.min(105, totalYears));
+
+          const totalWeeks = Math.round(totalYears * 52.1775);
+          const remainingWeeks = Math.max(0, totalWeeks - livedWeeks);
+          const percentSpent = Math.min(100, Math.round((livedWeeks / totalWeeks) * 1000) / 10);
+          const remainingDays = remainingWeeks * 7;
+          const remainingHours = remainingDays * 24;
+          const remainingHeartbeats = Math.round(remainingHours * 60 * 72);
+
+          return {
+            livedWeeks,
+            totalWeeks,
+            remainingWeeks,
+            ageYears,
+            lifeExpectancyYears: totalYears.toFixed(1),
+            percentSpent,
+            remainingDays,
+            remainingHours,
+            remainingHeartbeats
+          };
+        }
+
+        getWeekInfo(weekIndex) {
+          const msPerWeek = 7 * 24 * 3600 * 1000;
+          const weekStartMs = this.birthDate.getTime() + weekIndex * msPerWeek;
+          const weekEndMs = weekStartMs + msPerWeek - 1000;
+
+          const startDate = new Date(weekStartMs);
+          const endDate = new Date(weekEndMs);
+          const ageAtWeek = (weekIndex / 52.1775).toFixed(1);
+
+          let era = 'Infância & Anos Formativos';
+          let eraColor = '#6366f1';
+          if (weekIndex >= 936 && weekIndex < 1820) {
+            era = 'Ascensão & Independência';
+            eraColor = '#06b6d4';
+          } else if (weekIndex >= 1820 && weekIndex < 3120) {
+            era = 'Maestria, Carreira & Maturidade';
+            eraColor = '#f59e0b';
+          } else if (weekIndex >= 3120) {
+            era = 'Legado & Sabedoria';
+            eraColor = '#f43f5e';
+          }
+
+          return {
+            weekIndex,
+            ageAtWeek,
+            startDate: startDate.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', year: 'numeric' }),
+            endDate: endDate.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', year: 'numeric' }),
+            era,
+            eraColor
+          };
+        }
+      }
+
+      function downloadLifePoster(engine) {
+        const stats = engine.getStats();
+        const canvas = document.createElement('canvas');
+        canvas.width = 1200;
+        canvas.height = 675;
+        const ctx = canvas.getContext('2d');
+
+        // Background Obsidian
+        ctx.fillStyle = '#09090b';
+        ctx.fillRect(0, 0, 1200, 675);
+
+        // Subtle Border
+        ctx.strokeStyle = '#27272a';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(30, 30, 1140, 615);
+
+        // Header Title
+        ctx.fillStyle = '#2997ff';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('MEMENTO MORI', 60, 75);
+
+        ctx.fillStyle = '#71717a';
+        ctx.font = '600 12px monospace';
+        ctx.fillText(`SUA VIDA EM SEMANAS · NASCIMENTO: ${engine.birthDate.toLocaleDateString('pt-BR')}`, 60, 98);
+
+        // Right Header Metrics
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 18px monospace';
+        ctx.fillText(`${stats.livedWeeks.toLocaleString('pt-BR')} / ${stats.totalWeeks.toLocaleString('pt-BR')} SEMANAS`, 1140, 75);
+        ctx.fillStyle = '#2997ff';
+        ctx.font = '600 12px monospace';
+        ctx.fillText(`${stats.percentSpent}% VIVIDOS · ${stats.remainingWeeks.toLocaleString('pt-BR')} RESTANTES`, 1140, 98);
+
+        // Grid dots (80 years x 52 cols)
+        const cols = 52;
+        const rows = 80;
+        const gridStartX = 60;
+        const gridStartY = 130;
+        const dotW = 19.5;
+        const dotH = 5.6;
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const index = r * cols + c;
+            const x = gridStartX + c * dotW;
+            const y = gridStartY + r * dotH;
+
+            if (index < stats.livedWeeks) {
+              ctx.fillStyle = '#0066cc';
+              ctx.fillRect(x, y, 13, 3.8);
+            } else if (index === stats.livedWeeks) {
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(x, y, 13, 3.8);
+            } else if (index < stats.totalWeeks) {
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+              ctx.fillRect(x, y, 13, 3.8);
+            } else {
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+              ctx.fillRect(x, y, 13, 3.8);
+            }
+          }
+        }
+
+        // Footer Quote
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#a1a1aa';
+        ctx.font = 'italic 13px Georgia, serif';
+        ctx.fillText('“Não é que tenhamos pouco tempo para viver, mas que desperdiçamos muito dele.” — Sêneca', 600, 605);
+
+        ctx.fillStyle = '#52525b';
+        ctx.font = '10px monospace';
+        ctx.fillText(`Gerado em https://freeiqexam.com/pt-br/memento-mori · ${new Date().toLocaleDateString('pt-BR')}`, 600, 628);
+
+        canvas.toBlob((blob) => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `memento-mori-vida-em-semanas-${stats.livedWeeks}sem.png`;
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      // App Controller
+      const app = {
+        engine: new MementoEngine(),
+
+        init() {
+          this.bindDOM();
+          this.render();
+        },
+
+        bindDOM() {
+          const dobInput = document.getElementById('mementoDob');
+          if (dobInput) {
+            const d = this.engine.birthDate;
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            dobInput.value = `${y}-${m}-${day}`;
+
+            dobInput.addEventListener('change', (e) => {
+              this.engine.setBirthDate(e.target.value);
+              this.render();
+            });
+          }
+
+          document.querySelectorAll('.memento-gender-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              document.querySelectorAll('.memento-gender-btn').forEach((b) => b.classList.remove('active', 'bg-blue-500/10', 'text-[#0066cc]', 'dark:text-[#2997ff]', 'border-blue-500/40'));
+              btn.classList.add('active', 'bg-blue-500/10', 'text-[#0066cc]', 'dark:text-[#2997ff]', 'border-blue-500/40');
+              this.engine.gender = btn.dataset.gender;
+              this.render();
+            });
+          });
+
+          const bindCheck = (id, key, val) => {
+            const el = document.getElementById(id);
+            if (el) {
+              el.addEventListener('change', (e) => {
+                this.engine.modifiers[key] = e.target.checked ? val : 0;
+                this.render();
+              });
+            }
+          };
+
+          bindCheck('modExercise', 'exercise', 3.8);
+          bindCheck('modSleep', 'sleep', 2.4);
+          bindCheck('modDiet', 'diet', 2.8);
+          bindCheck('modSmoking', 'smoking', -8.5);
+          bindCheck('modStress', 'stress', -2.5);
+
+          const dlBtn = document.getElementById('downloadMementoPosterBtn');
+          if (dlBtn) {
+            dlBtn.addEventListener('click', () => downloadLifePoster(this.engine));
+          }
+        },
+
+        render() {
+          const stats = this.engine.getStats();
+
+          document.getElementById('statLivedWeeks').textContent = stats.livedWeeks.toLocaleString('pt-BR');
+          document.getElementById('statRemainingWeeks').textContent = stats.remainingWeeks.toLocaleString('pt-BR');
+          document.getElementById('statPercentSpent').textContent = `${stats.percentSpent.toLocaleString('pt-BR')}%`;
+          document.getElementById('statLifeExpectancy').textContent = `${Number(stats.lifeExpectancyYears).toLocaleString('pt-BR')} anos`;
+          document.getElementById('statAgeYears').textContent = `${Number(stats.ageYears).toLocaleString('pt-BR')} anos`;
+          document.getElementById('statRemainingDays').textContent = stats.remainingDays.toLocaleString('pt-BR');
+          document.getElementById('statRemainingHours').textContent = stats.remainingHours.toLocaleString('pt-BR');
+          document.getElementById('statRemainingHeartbeats').textContent = stats.remainingHeartbeats.toLocaleString('pt-BR');
+
+          document.getElementById('lifeProgressBar').style.width = `${stats.percentSpent}%`;
+
+          this.renderGrid(stats);
+        },
+
+        renderGrid(stats) {
+          const grid = document.getElementById('mementoGrid');
+          if (!grid) return;
+          grid.innerHTML = '';
+
+          const totalRows = Math.max(80, Math.ceil(stats.totalWeeks / 52) + 5);
+          const tooltip = document.getElementById('mementoTooltip');
+
+          for (let year = 0; year < totalRows; year++) {
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-[3px]';
+
+            // Age marker on left
+            const ageLabel = document.createElement('span');
+            ageLabel.className = 'w-6 text-[10px] font-mono text-zinc-400 dark:text-zinc-600 text-right pr-1 select-none';
+            ageLabel.textContent = year % 5 === 0 ? year : '';
+            row.appendChild(ageLabel);
+
+            for (let week = 0; week < 52; week++) {
+              const weekIdx = year * 52 + week;
+              const square = document.createElement('div');
+              square.className = 'w-[8px] h-[8px] sm:w-[9px] sm:h-[9px] rounded-[1.5px] transition-transform hover:scale-150 cursor-pointer';
+
+              if (weekIdx < stats.livedWeeks) {
+                // Color based on era
+                if (weekIdx < 936) square.classList.add('bg-indigo-500');
+                else if (weekIdx < 1820) square.classList.add('bg-cyan-500');
+                else if (weekIdx < 3120) square.classList.add('bg-amber-500');
+                else square.classList.add('bg-rose-500');
+              } else if (weekIdx === stats.livedWeeks) {
+                square.className += ' bg-white ring-2 ring-[#2997ff] animate-pulse';
+              } else if (weekIdx < stats.totalWeeks) {
+                square.classList.add('bg-zinc-200', 'dark:bg-zinc-800');
+              } else {
+                square.classList.add('bg-zinc-100', 'dark:bg-zinc-950', 'border', 'border-zinc-200', 'dark:border-zinc-900');
+              }
+
+              // Tooltip events
+              square.addEventListener('mouseenter', (e) => {
+                const info = this.engine.getWeekInfo(weekIdx);
+                document.getElementById('tipWeekAge').textContent = `Semana ${info.weekIndex} · Idade: ${info.ageAtWeek} anos`;
+                document.getElementById('tipWeekDates').textContent = `${info.startDate} – ${info.endDate}`;
+                document.getElementById('tipWeekEra').textContent = info.era;
+
+                tooltip.classList.remove('hidden');
+                tooltip.style.left = `${e.clientX + 12}px`;
+                tooltip.style.top = `${e.clientY + 12}px`;
+              });
+
+              square.addEventListener('mousemove', (e) => {
+                tooltip.style.left = `${e.clientX + 12}px`;
+                tooltip.style.top = `${e.clientY + 12}px`;
+              });
+
+              square.addEventListener('mouseleave', () => {
+                tooltip.classList.add('hidden');
+              });
+
+              row.appendChild(square);
+            }
+
+            grid.appendChild(row);
+          }
+        }
+      };
+
+      app.init();
+    })();
+  </script>
+</Layout>

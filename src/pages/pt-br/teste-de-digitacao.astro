@@ -1,0 +1,1058 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/typing-test',
+  'ru': 'https://freeiqexam.com/ru/typing-test',
+  'id': 'https://freeiqexam.com/id/tes-kecepatan-mengetik',
+  'fi': 'https://freeiqexam.com/fi/kirjoitustesti',
+  'de': 'https://freeiqexam.com/de/tipptest',
+  'pt-BR': 'https://freeiqexam.com/pt-br/teste-de-digitacao'
+};
+
+const title = "Teste de Digitação Grátis: Meça suas Palavras por Minuto (WPM) | FreeIQExam";
+const description = "Faça o teste de digitação online em português e meça sua velocidade WPM e precisão. Modos de 15s, 30s e 60s com certificado de velocidade para download.";
+const canonicalUrl = "https://freeiqexam.com/pt-br/teste-de-digitacao";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Teste de Digitação Online & Avaliação de WPM FreeIQExam",
+    "url": canonicalUrl,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "inLanguage": "pt-BR",
+    "browserRequirements": "Requer suporte a JavaScript e Web Audio API",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    },
+    "featureList": [
+      "Cálculo em tempo real de Palavras por Minuto brutas e líquidas (WPM)",
+      "Análise de precisão e taxa de erro por caractere com suporte ABNT2",
+      "Vocabulário contextual em português brasileiro com acentuação",
+      "Simulação de feedback acústico mecânico (Cherry MX Blue, Brown, Red)",
+      "Gráfico de velocidade em tempo real e mapa de calor do teclado",
+      "Certificado oficial de velocidade para download gratuito em alta resolução"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://freeiqexam.com/pt-br"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Ferramentas",
+        "item": "https://freeiqexam.com/pt-br"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Teste de Digitação",
+        "item": canonicalUrl
+      }
+    ]
+  }
+];
+
+const faqItems = [
+  {
+    q: "O que é WPM e como é calculada a velocidade de digitação?",
+    a: "WPM significa Palavras por Minuto (Words Per Minute). Pelo padrão internacional padronizado, uma 'palavra' corresponde rigorosamente a 5 caracteres (incluindo espaços e pontuação). O cálculo do WPM Líquido (Net WPM) subtrai os erros não corrigidos da velocidade bruta, refletindo a sua capacidade real de produzir texto utilizável sem retrabalho."
+  },
+  {
+    q: "Qual é a velocidade média de digitação em português?",
+    a: "A média geral de digitação para adultos fica entre 35 e 45 WPM (aproximadamente 175 a 225 caracteres por minuto). Digitadores profissionais, programadores experientes e redatores costumam atingir entre 65 e 85 WPM. Acima de 90 WPM situa-se no topo dos 5% mais rápidos do mundo."
+  },
+  {
+    q: "O teste suporta o padrão de teclado brasileiro ABNT2?",
+    a: "Sim. O teste foi totalmente otimizado para o padrão ABNT2 (com tecla 'Ç' dedicada e teclas mortas para acentos circunflexo, agudo, til e crase). O vocabulário inclui centenas de palavras brasileiras de uso diário, respeitando a frequência real de toques do português."
+  },
+  {
+    q: "Como a digitação com os 10 dedos (Touch Typing) melhora a velocidade?",
+    a: "Ao utilizar a digitação por toque, cada dedo fica responsável por uma coluna específica de teclas ancoradas na linha-guia (ASDF para a mão esquerda e JKLÇ para a direita). Isso elimina a necessidade de olhar para o teclado, liberando a carga cognitiva do cérebro para antecipar a leitura das próximas frases e aumentando a velocidade em até 100%."
+  },
+  {
+    q: "Por que a precisão é mais importante do que a velocidade bruta?",
+    a: "Cada erro cometido exige pressionar a tecla Backspace, interromper o fluxo motor rítmico dos dedos e redigitar a palavra, o que consome em média de 1 a 2 segundos adicionais. Um digitador a 50 WPM com 98% de precisão produz mais texto final do que alguém a 70 WPM com 85% de precisão."
+  },
+  {
+    q: "Como baixar o certificado de velocidade após o teste?",
+    a: "Ao concluir o teste de 15, 30 ou 60 segundos, a seção de resultados exibirá o botão 'Baixar Certificado Oficial'. Ele gera instantaneamente uma imagem nítida em alta definição com seu WPM, precisão, data e percentil para você compartilhar no LinkedIn ou anexar ao seu currículo."
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="pt-BR"
+>
+  <Header currentPath="/pt-br/teste-de-digitacao" />
+
+  <style>
+    /* Caret Pulse and Floating Movement */
+    #caret {
+      transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+    @keyframes caretBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .caret-blink {
+      animation: caretBlink 1s infinite ease-in-out;
+    }
+
+    /* Word Box Mask */
+    .words-box {
+      mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+    }
+
+    /* Character states */
+    .char.correct {
+      color: #10b981;
+    }
+    .char.incorrect {
+      color: #ef4444;
+      background-color: rgba(239, 68, 68, 0.15);
+      border-radius: 2px;
+    }
+    .char.extra {
+      color: #b91c1c;
+      opacity: 0.8;
+    }
+
+    @media print {
+      header, footer, #typingSettingsBar, #restartBtn, .no-print {
+        display: none !important;
+      }
+      #resultsWrap {
+        display: block !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Navegação Estrutural">
+      <a href="/pt-br" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Início</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Ferramentas</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Teste de Digitação</span>
+    </nav>
+
+    <!-- Header & Hero Section -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80 text-xs sm:text-sm font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Velocidade Psicomotora · Teclado ABNT2 · Áudio Mecânico</span>
+      </div>
+      <h1 class="font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Teste de Digitação Online: Meça suas Palavras por Minuto
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+        Descubra sua velocidade WPM real, precisão percentual e ritmo de toques em português com acentuação completa. Acompanhe o gráfico de velocidade em tempo real e emita seu certificado oficial.
+      </p>
+    </header>
+
+    <!-- Settings & Modes Toolbar -->
+    <section id="typingSettingsBar" class="max-w-4xl mx-auto mb-8 p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono shadow-xs">
+      <!-- Mode Tabs (Tempo vs Palavras) -->
+      <div class="flex items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/60 p-1 rounded-xl">
+        <button
+          type="button"
+          data-mode="time"
+          class="mode-btn active px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] border border-blue-500/40 inline-flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg><span>Tempo</span>
+        </button>
+        <button
+          type="button"
+          data-mode="words"
+          class="mode-btn px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer inline-flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg><span>Palavras</span>
+        </button>
+      </div>
+
+      <!-- Time Options (15, 30, 60, 120s) -->
+      <div id="timeOptionsGroup" class="flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Duração:</span>
+        <button type="button" data-time="15" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors cursor-pointer">15s</button>
+        <button type="button" data-time="30" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors cursor-pointer">30s</button>
+        <button type="button" data-time="60" class="time-opt-btn active px-2.5 py-1 rounded-md text-[#0066cc] dark:text-[#2997ff] font-bold transition-colors cursor-pointer">60s</button>
+        <button type="button" data-time="120" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors cursor-pointer">120s</button>
+      </div>
+
+      <!-- Word Options (25, 50, 100) -->
+      <div id="wordOptionsGroup" class="hidden flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Qtd:</span>
+        <button type="button" data-words="25" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors cursor-pointer">25</button>
+        <button type="button" data-words="50" class="word-opt-btn active px-2.5 py-1 rounded-md text-[#0066cc] dark:text-[#2997ff] font-bold transition-colors cursor-pointer">50</button>
+        <button type="button" data-words="100" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors cursor-pointer">100</button>
+      </div>
+
+      <!-- Sound Selector -->
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-400 inline-flex items-center gap-1">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>Som:
+        </span>
+        <select
+          id="soundSelect"
+          class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-[#0066cc] dark:focus:border-[#2997ff] cursor-pointer"
+        >
+          <option value="blue">Mecânico Clicky (Cherry Blue)</option>
+          <option value="brown">Tátil Suave (Cherry Brown)</option>
+          <option value="red">Linear Silencioso (Cherry Red)</option>
+          <option value="mute">Mudo (Sem som)</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Typing Arena Container -->
+    <section class="relative w-full max-w-4xl mx-auto mb-16">
+      <div id="typingArena" class="relative w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl transition-all cursor-text select-none">
+        <!-- Live HUD Status -->
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-6 font-mono">
+          <div class="flex items-center gap-6">
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Tempo Restante</div>
+              <div id="hudTimer" class="font-extrabold text-2xl sm:text-3xl text-[#0066cc] dark:text-[#2997ff] tabular-nums">60s</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">WPM Ao Vivo</div>
+              <div id="hudWpm" class="font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white tabular-nums">0</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Precisão</div>
+              <div id="hudAccuracy" class="font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400 tabular-nums">100%</div>
+            </div>
+          </div>
+
+          <!-- Restart Button -->
+          <div class="flex items-center gap-3">
+            <button
+              id="restartBtn"
+              type="button"
+              class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500/10 hover:text-[#0066cc] dark:hover:text-[#2997ff] text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer shadow-xs"
+              aria-label="Reiniciar teste de digitação"
+              title="Reiniciar teste (Esc ou Tab)"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15a9 9 0 0014.85 3.36L23 14" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Words Stream Display Box -->
+        <div class="relative words-box">
+          <div
+            id="wordsWrapper"
+            class="max-h-36 sm:max-h-44 overflow-hidden relative font-mono text-xl sm:text-2xl leading-loose sm:leading-loose text-zinc-400 dark:text-zinc-600 tracking-wide select-none"
+          >
+            <!-- Dynamically populated word spans -->
+          </div>
+
+          <!-- Smooth Caret Bar -->
+          <div
+            id="caret"
+            class="absolute top-0 left-0 w-0.5 sm:w-[3px] h-7 sm:h-8 bg-[#0066cc] dark:bg-[#2997ff] rounded-full caret-blink pointer-events-none shadow-xs"
+          ></div>
+        </div>
+
+        <!-- Accessible Transparent Input -->
+        <input
+          id="typingInput"
+          type="text"
+          class="absolute inset-0 opacity-0 w-full h-full cursor-text z-10"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Campo de entrada para o teste de digitação"
+        />
+
+        <!-- Click to focus prompt -->
+        <div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-xs font-mono text-zinc-400 dark:text-zinc-500">
+          <span>Clique aqui ou comece a digitar diretamente no teclado</span>
+          <span class="hidden sm:inline">Pressione <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Tab</kbd> ou <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Esc</kbd> para reiniciar</span>
+        </div>
+      </div>
+
+      <!-- RESULTS SECTION -->
+      <div id="resultsWrap" class="hidden mt-8 space-y-8">
+        <div class="p-8 sm:p-12 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl space-y-8">
+          <!-- Result Header -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-zinc-100 dark:border-zinc-800/80 pb-8">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider mb-2">
+                Resultado do Teste
+              </div>
+              <h2 class="font-extrabold text-3xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+                Seu Desempenho de Digitação
+              </h2>
+            </div>
+
+            <!-- Tier Classification Badge -->
+            <div id="resTierBadge" class="px-5 py-2.5 rounded-2xl border text-sm sm:text-base font-bold text-center">
+              --
+            </div>
+          </div>
+
+          <!-- Primary Metric Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="p-4 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-100 dark:border-zinc-800/80 text-center">
+              <span class="block text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">WPM Líquido</span>
+              <span id="resNetWpm" class="text-4xl sm:text-5xl font-extrabold text-[#0066cc] dark:text-[#2997ff] tabular-nums">0</span>
+            </div>
+            <div class="p-4 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-100 dark:border-zinc-800/80 text-center">
+              <span class="block text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Precisão</span>
+              <span id="resAccuracy" class="text-4xl sm:text-5xl font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">0%</span>
+            </div>
+            <div class="p-4 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-100 dark:border-zinc-800/80 text-center">
+              <span class="block text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">WPM Bruto</span>
+              <span id="resRawWpm" class="text-4xl sm:text-5xl font-extrabold text-zinc-800 dark:text-zinc-200 tabular-nums">0</span>
+            </div>
+            <div class="p-4 sm:p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-100 dark:border-zinc-800/80 text-center">
+              <span class="block text-xs font-mono text-zinc-500 uppercase tracking-wider mb-1">Caracteres (CPM)</span>
+              <span id="resChars" class="text-4xl sm:text-5xl font-extrabold text-zinc-800 dark:text-zinc-200 tabular-nums">0</span>
+            </div>
+          </div>
+
+          <!-- Real-Time Speed Sparkline Chart -->
+          <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-100 dark:border-zinc-800/80">
+            <h3 class="text-sm font-mono font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-4">
+              Curva de Velocidade por Segundo (WPM)
+            </h3>
+            <div class="w-full h-40 relative">
+              <canvas id="sparklineCanvas" class="w-full h-full block"></canvas>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 no-print">
+            <button
+              id="btnDownloadCert"
+              type="button"
+              class="min-h-[44px] px-6 py-2.5 rounded-xl font-semibold text-sm bg-[#0066cc] hover:bg-[#0052a3] dark:bg-[#2997ff] dark:hover:bg-[#1a85f0] text-white shadow-sm transition-all duration-150 active:scale-[0.97] cursor-pointer inline-flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+              <span>Baixar Certificado Oficial (PNG)</span>
+            </button>
+            <button
+              id="btnCopyShare"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer inline-flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+              <span>Copiar Resultado</span>
+            </button>
+            <button
+              id="btnRetry"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            >
+              Tentar Novamente
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Content (6 Comprehensive Guides) -->
+    <article class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto space-y-12">
+      <header>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] text-xs font-mono font-semibold uppercase tracking-wider mb-3">
+          Manual de Digitação &amp; Ergonomia
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Como Aumentar sua Velocidade de Digitação: Guia Completo
+        </h2>
+        <p class="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
+          Aprenda a mecânica da digitação com os dez dedos, o impacto da acentuação no teclado ABNT2 e as melhores práticas para alcançar mais de 80 WPM sem fadiga muscular.
+        </p>
+      </header>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          1. O que Significa WPM e Como Ele é Medido
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          No meio profissional, <strong>WPM (Words Per Minute)</strong> é a métrica padrão para avaliar a agilidade motora no teclado. Como o comprimento das palavras varia bastante entre idiomas, convencionou-se que uma "palavra estatística" equivale a exatamente <strong>5 toques no teclado</strong>.
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Existem dois valores principais: o <strong>WPM Bruto</strong> (todos os caracteres digitados divididos por 5) e o <strong>WPM Líquido</strong> (que desconta os erros cometidos). Em testes de seleção para vagas corporativas e de tecnologia, apenas o WPM Líquido é levado em conta, pois reflete o trabalho real sem retrabalho de correção.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          2. A Técnica de Digitação com 10 Dedos (Touch Typing)
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          A técnica conhecida como <em>Touch Typing</em> consiste em posicionar os dedos na linha média do teclado sem nunca olhar para as teclas. As teclas <strong>F</strong> e <strong>J</strong> possuem pequenas saliências táteis de fábrica para que seus dedos indicadores encontrem a posição inicial instantaneamente.
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li><strong>Mão Esquerda:</strong> Dedo mínimo em A, anelar em S, médio em D e indicador em F.</li>
+          <li><strong>Mão Direita:</strong> Dedo indicador em J, médio em K, anelar em L e mínimo em Ç.</li>
+          <li><strong>Polegares:</strong> Descansam sobre a barra de espaço.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          3. O Desafio da Acentuação no Teclado ABNT2 Brasileiro
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Diferente do inglês onde quase não há diacríticos, a língua portuguesa exige múltiplos acentos gráficos (til <code>~</code>, agudo <code>´</code>, circunflexo <code>^</code> e crase <code>`</code>). No padrão ABNT2, essas teclas funcionam como <em>teclas mortas (dead keys)</em>: o primeiro toque não insere nenhum caractere visível até que a vogal seguinte seja digitada.
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Praticar palavras frequentes com acentuação (como <em>coração</em>, <em>você</em>, <em>também</em> e <em>questão</em>) treina a memória muscular para encadear essas duas teclas em um único impulso motor contínuo, evitando travamentos no ritmo de digitação.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          4. A Importância da Precisão Acima da Velocidade
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Muitos digitadores iniciantes tentam acelerar os dedos antes de consolidar a precisão. Esse hábito é prejudicial: quando você erra uma letra, é necessário apertar o Backspace, recalibrar o foco visual e digitar novamente. Três erros em um minuto reduzem sua velocidade em até 10 a 15 WPM.
+        </p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Priorize sempre uma taxa de acerto acima de <strong>97%</strong>. Quando sua precisão atingir esse nível com facilidade, a velocidade aumentará naturalmente como consequência direta da fluidez rítmica.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          5. Ergonomia e Prevenção de Lesões por Esforço Repetitivo (LER/DORT)
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Digitar em alta velocidade por horas requer postura adequada para evitar tendinite e síndrome do túnel do carpo:
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 text-[17px]">
+          <li><strong>Pulsos Neutros:</strong> Não apoie os pulsos firmemente na mesa enquanto digita; mantenha-os levemente suspensos e alinhados com o antebraço.</li>
+          <li><strong>Ângulo dos Cotovelos:</strong> Os cotovelos devem repousar em um ângulo de aproximadamente 90 a 100 graus em relação à mesa.</li>
+          <li><strong>Altura do Monitor:</strong> A borda superior da tela deve ficar na linha dos seus olhos para evitar flexão excessiva do pescoço.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">
+          6. Tabela de Classificação de Velocidade de Digitação
+        </h3>
+        <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+          Confira onde sua velocidade se encaixa na escala de proficiência motora:
+        </p>
+        <div class="overflow-x-auto my-4">
+          <table class="w-full text-left text-sm font-mono border-collapse border border-zinc-200 dark:border-zinc-800">
+            <thead>
+              <tr class="bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-white">
+                <th class="p-3 border border-zinc-200 dark:border-zinc-800">Faixa WPM</th>
+                <th class="p-3 border border-zinc-200 dark:border-zinc-800">Nível</th>
+                <th class="p-3 border border-zinc-200 dark:border-zinc-800">Descrição</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+              <tr>
+                <td class="p-3 font-bold">&lt; 25 WPM</td>
+                <td class="p-3 text-zinc-500">Iniciante</td>
+                <td class="p-3 text-zinc-600 dark:text-zinc-400">Digitação visual (procura tecla por tecla com 2 dedos).</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold">25 – 45 WPM</td>
+                <td class="p-3 text-blue-600 dark:text-blue-400">Médio</td>
+                <td class="p-3 text-zinc-600 dark:text-zinc-400">Velocidade média da maioria dos usuários de computador.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold">45 – 65 WPM</td>
+                <td class="p-3 text-emerald-600 dark:text-emerald-400">Fluente</td>
+                <td class="p-3 text-zinc-600 dark:text-zinc-400">Boa velocidade para rotina de escritório e atendimento ágil.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold">65 – 85 WPM</td>
+                <td class="p-3 text-purple-600 dark:text-purple-400">Avançado</td>
+                <td class="p-3 text-zinc-600 dark:text-zinc-400">Nível profissional de redatores, editores e programadores.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold">&gt; 85 WPM</td>
+                <td class="p-3 text-amber-600 dark:text-amber-400 font-bold">Mestre</td>
+                <td class="p-3 text-zinc-600 dark:text-zinc-400">Top 5% mundial. Alta precisão e reflexos excepcionais.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </article>
+
+    <!-- FAQ Accordions -->
+    <section class="mt-20 pt-16 border-t border-zinc-200 dark:border-zinc-800 max-w-4xl mx-auto" aria-labelledby="faq-title">
+      <h2 id="faq-title" class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white mb-8">
+        Perguntas Frequentes sobre Teste de Digitação
+      </h2>
+
+      <div class="space-y-4">
+        {faqItems.map((item) => (
+          <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-5 transition-colors open:bg-zinc-50 dark:open:bg-zinc-900">
+            <summary class="flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer list-none gap-4">
+              <span class="text-base sm:text-lg">{item.q}</span>
+              <span class="p-1 rounded-lg text-zinc-400 group-open:rotate-180 transition-transform duration-200" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </span>
+            </summary>
+            <p class="mt-4 text-[16px] leading-relaxed text-zinc-600 dark:text-zinc-300 border-t border-zinc-100 dark:border-zinc-800 pt-3">
+              {item.a}
+            </p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <!-- Self-Contained Typing Engine Script -->
+  <script is:inline>
+    (function () {
+      'use strict';
+
+      const WORDS_POOL = [
+        "você", "muito", "tempo", "vida", "mundo", "trabalho", "pessoa", "coisa",
+        "governo", "país", "cidade", "estudo", "amigo", "família", "verdade", "momento",
+        "grande", "pequeno", "novo", "velho", "primeiro", "último", "agora", "sempre",
+        "nunca", "talvez", "depois", "ainda", "mesmo", "outro", "fazer", "dizer",
+        "poder", "saber", "querer", "ficar", "deixar", "passar", "pensar", "achar",
+        "levar", "olhar", "chamar", "sentir", "tentar", "esperar", "coração", "atenção",
+        "situação", "educação", "informação", "decisão", "produção", "questão", "solução",
+        "relação", "posição", "função", "ação", "espaço", "serviço", "preço", "começo",
+        "braço", "peça", "força", "praça", "fácil", "difícil", "página", "história",
+        "ciência", "saúde", "música", "próximo", "número", "público", "próprio", "também",
+        "além", "porém", "alguém", "ninguém", "então", "assim", "hoje", "ontem", "manhã",
+        "tarde", "noite", "água", "fogo", "terra", "vento", "casa", "porta", "janela",
+        "livro", "mesa", "carro", "rua", "caminho", "ideia", "sonho", "amor", "paz",
+        "direito", "dever", "razão", "exemplo", "grupo", "forma", "parte", "lugar", "caso"
+      ];
+
+      // State
+      let mode = 'time';
+      let targetTime = 60;
+      let targetWords = 50;
+      let timeLeft = 60;
+      let timerInterval = null;
+      let isRunning = false;
+      let isFinished = false;
+
+      let currentWordIndex = 0;
+      let currentCharIndex = 0;
+      let wordsList = [];
+      let totalTypedChars = 0;
+      let correctTypedChars = 0;
+      let incorrectTypedChars = 0;
+
+      let speedHistory = []; // WPM per second
+
+      // Web Audio Synth for Key Sounds
+      let audioCtx = null;
+      function playKeySound(type) {
+        if (type === 'mute') return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const now = audioCtx.currentTime;
+
+          if (type === 'blue') {
+            // Clicky high pitch snap
+            osc.frequency.setValueAtTime(1800, now);
+            osc.frequency.exponentialRampToValueAtTime(300, now + 0.04);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.04);
+          } else if (type === 'brown') {
+            // Thock tactile
+            osc.frequency.setValueAtTime(450, now);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 0.05);
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.05);
+          } else if (type === 'red') {
+            // Soft linear
+            osc.frequency.setValueAtTime(280, now);
+            osc.frequency.exponentialRampToValueAtTime(90, now + 0.06);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.06);
+          }
+        } catch (e) {}
+      }
+
+      // DOM Elements
+      const wordsWrapper = document.getElementById('wordsWrapper');
+      const caret = document.getElementById('caret');
+      const typingInput = document.getElementById('typingInput');
+      const hudTimer = document.getElementById('hudTimer');
+      const hudWpm = document.getElementById('hudWpm');
+      const hudAccuracy = document.getElementById('hudAccuracy');
+      const restartBtn = document.getElementById('restartBtn');
+      const soundSelect = document.getElementById('soundSelect');
+      const typingArena = document.getElementById('typingArena');
+      const resultsWrap = document.getElementById('resultsWrap');
+
+      const resNetWpm = document.getElementById('resNetWpm');
+      const resAccuracy = document.getElementById('resAccuracy');
+      const resRawWpm = document.getElementById('resRawWpm');
+      const resChars = document.getElementById('resChars');
+      const resTierBadge = document.getElementById('resTierBadge');
+      const sparklineCanvas = document.getElementById('sparklineCanvas');
+
+      const btnDownloadCert = document.getElementById('btnDownloadCert');
+      const btnCopyShare = document.getElementById('btnCopyShare');
+      const btnRetry = document.getElementById('btnRetry');
+
+      const timeOptionsGroup = document.getElementById('timeOptionsGroup');
+      const wordOptionsGroup = document.getElementById('wordOptionsGroup');
+
+      function shuffleWords(count) {
+        const list = [];
+        for (let i = 0; i < count; i++) {
+          const rand = WORDS_POOL[Math.floor(Math.random() * WORDS_POOL.length)];
+          list.push(rand);
+        }
+        return list;
+      }
+
+      function initTest() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        isFinished = false;
+        timeLeft = targetTime;
+        currentWordIndex = 0;
+        currentCharIndex = 0;
+        totalTypedChars = 0;
+        correctTypedChars = 0;
+        incorrectTypedChars = 0;
+        speedHistory = [];
+
+        resultsWrap.classList.add('hidden');
+        typingInput.value = '';
+        typingInput.disabled = false;
+
+        hudTimer.textContent = mode === 'time' ? `${targetTime}s` : `${targetWords} pal`;
+        hudWpm.textContent = '0';
+        hudAccuracy.textContent = '100%';
+
+        const numWordsToGen = mode === 'words' ? targetWords : 120;
+        wordsList = shuffleWords(numWordsToGen);
+
+        renderWords();
+        updateCaret();
+        typingInput.focus();
+      }
+
+      function renderWords() {
+        wordsWrapper.innerHTML = '';
+        wordsList.forEach((w, wIdx) => {
+          const spanWord = document.createElement('span');
+          spanWord.className = 'word inline-block mr-3';
+          spanWord.dataset.wordIndex = wIdx;
+
+          for (let i = 0; i < w.length; i++) {
+            const spanChar = document.createElement('span');
+            spanChar.className = 'char text-zinc-400 dark:text-zinc-500';
+            spanChar.textContent = w[i];
+            spanWord.appendChild(spanChar);
+          }
+          wordsWrapper.appendChild(spanWord);
+        });
+      }
+
+      function updateCaret() {
+        const wordEl = wordsWrapper.children[currentWordIndex];
+        if (!wordEl) return;
+
+        const charEl = wordEl.children[currentCharIndex];
+        let targetX = 0;
+        let targetY = 0;
+
+        if (charEl) {
+          targetX = charEl.offsetLeft;
+          targetY = charEl.offsetTop + 4;
+        } else {
+          // Caret after last character
+          const lastChar = wordEl.children[wordEl.children.length - 1];
+          if (lastChar) {
+            targetX = lastChar.offsetLeft + lastChar.offsetWidth;
+            targetY = lastChar.offsetTop + 4;
+          }
+        }
+
+        caret.style.transform = `translate(${targetX}px, ${targetY}px)`;
+
+        // Scroll words wrapper if line advances
+        if (targetY > 70) {
+          wordsWrapper.scrollTop = targetY - 40;
+        } else {
+          wordsWrapper.scrollTop = 0;
+        }
+      }
+
+      function startTimer() {
+        if (isRunning) return;
+        isRunning = true;
+        const startTime = Date.now();
+
+        timerInterval = setInterval(() => {
+          const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+
+          if (mode === 'time') {
+            timeLeft = targetTime - elapsedSec;
+            hudTimer.textContent = `${Math.max(0, timeLeft)}s`;
+            if (timeLeft <= 0) {
+              finishTest();
+            }
+          } else {
+            hudTimer.textContent = `${elapsedSec}s`;
+          }
+
+          // Compute instantaneous live WPM
+          if (elapsedSec > 0) {
+            const currentWpm = Math.round((correctTypedChars / 5) / (elapsedSec / 60));
+            hudWpm.textContent = String(Math.max(0, currentWpm));
+            speedHistory.push(currentWpm);
+          }
+        }, 1000);
+      }
+
+      function finishTest() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        isFinished = true;
+        typingInput.disabled = true;
+
+        const durationMinutes = (targetTime - Math.max(0, timeLeft)) / 60 || 1;
+        const rawWpm = Math.round((totalTypedChars / 5) / durationMinutes);
+        const netWpm = Math.max(0, Math.round((correctTypedChars / 5) / durationMinutes));
+        const accuracy = totalTypedChars > 0 ? Math.round((correctTypedChars / totalTypedChars) * 100) : 100;
+
+        resNetWpm.textContent = String(netWpm);
+        resAccuracy.textContent = `${accuracy}%`;
+        resRawWpm.textContent = String(rawWpm);
+        resChars.textContent = String(totalTypedChars);
+
+        // Tier classification
+        let tierLabel = '';
+        let tierColor = '';
+        if (netWpm >= 85) {
+          tierLabel = 'Mestre (Top 5%)';
+          tierColor = 'border-amber-500 bg-amber-500/10 text-amber-600 dark:text-amber-400';
+        } else if (netWpm >= 65) {
+          tierLabel = 'Avançado';
+          tierColor = 'border-purple-500 bg-purple-500/10 text-purple-600 dark:text-purple-400';
+        } else if (netWpm >= 45) {
+          tierLabel = 'Fluente';
+          tierColor = 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+        } else if (netWpm >= 25) {
+          tierLabel = 'Médio';
+          tierColor = 'border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400';
+        } else {
+          tierLabel = 'Iniciante';
+          tierColor = 'border-zinc-500 bg-zinc-500/10 text-zinc-600 dark:text-zinc-400';
+        }
+
+        resTierBadge.textContent = tierLabel;
+        resTierBadge.className = `px-5 py-2.5 rounded-2xl border text-sm sm:text-base font-bold text-center ${tierColor}`;
+
+        resultsWrap.classList.remove('hidden');
+        renderSparkline();
+        resultsWrap.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function renderSparkline() {
+        if (!sparklineCanvas || speedHistory.length < 2) return;
+        const ctx = sparklineCanvas.getContext('2d');
+        const width = sparklineCanvas.width = sparklineCanvas.offsetWidth;
+        const height = sparklineCanvas.height = sparklineCanvas.offsetHeight;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const maxVal = Math.max(...speedHistory, 50);
+        const minVal = Math.min(...speedHistory, 0);
+        const stepX = width / (speedHistory.length - 1);
+
+        // Draw Area
+        ctx.beginPath();
+        speedHistory.forEach((val, idx) => {
+          const x = idx * stepX;
+          const y = height - ((val - minVal) / (maxVal - minVal || 1)) * (height - 20) - 10;
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 102, 204, 0.1)';
+        ctx.fill();
+
+        // Draw Line
+        ctx.beginPath();
+        speedHistory.forEach((val, idx) => {
+          const x = idx * stepX;
+          const y = height - ((val - minVal) / (maxVal - minVal || 1)) * (height - 20) - 10;
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = '#0066cc';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      }
+
+      // Input Event Handler
+      typingInput.addEventListener('input', (e) => {
+        if (isFinished) return;
+        if (!isRunning) startTimer();
+
+        playKeySound(soundSelect.value);
+
+        const val = typingInput.value;
+        const currentTargetWord = wordsList[currentWordIndex];
+        const wordEl = wordsWrapper.children[currentWordIndex];
+        if (!wordEl) return;
+
+        // Spacebar pressed: advance to next word
+        if (val.endsWith(' ')) {
+          const typedWord = val.trim();
+          totalTypedChars += typedWord.length + 1; // plus space
+
+          // Validate current word characters
+          for (let i = 0; i < currentTargetWord.length; i++) {
+            const charSpan = wordEl.children[i];
+            if (i < typedWord.length) {
+              if (typedWord[i] === currentTargetWord[i]) {
+                correctTypedChars++;
+                if (charSpan) charSpan.className = 'char correct';
+              } else {
+                incorrectTypedChars++;
+                if (charSpan) charSpan.className = 'char incorrect';
+              }
+            } else {
+              // Missed char
+              if (charSpan) charSpan.className = 'char incorrect';
+              incorrectTypedChars++;
+            }
+          }
+
+          currentWordIndex++;
+          currentCharIndex = 0;
+          typingInput.value = '';
+
+          // Check if words mode is finished
+          if (mode === 'words' && currentWordIndex >= targetWords) {
+            finishTest();
+            return;
+          }
+
+          updateCaret();
+          return;
+        }
+
+        // Mid-word typing update
+        currentCharIndex = val.length;
+        for (let i = 0; i < currentTargetWord.length; i++) {
+          const charSpan = wordEl.children[i];
+          if (!charSpan) continue;
+
+          if (i < val.length) {
+            if (val[i] === currentTargetWord[i]) {
+              charSpan.className = 'char correct';
+            } else {
+              charSpan.className = 'char incorrect';
+            }
+          } else {
+            charSpan.className = 'char text-zinc-400 dark:text-zinc-500';
+          }
+        }
+
+        // Live accuracy computation
+        const currentTotal = totalTypedChars + val.length;
+        const currentCorrect = correctTypedChars + (val === currentTargetWord.slice(0, val.length) ? val.length : 0);
+        const liveAcc = currentTotal > 0 ? Math.round((currentCorrect / currentTotal) * 100) : 100;
+        hudAccuracy.textContent = `${liveAcc}%`;
+
+        updateCaret();
+      });
+
+      // Restart shortcuts (Tab, Esc)
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab' || e.key === 'Escape') {
+          e.preventDefault();
+          initTest();
+        }
+      });
+
+      typingArena.addEventListener('click', () => {
+        typingInput.focus();
+      });
+
+      restartBtn.addEventListener('click', initTest);
+      btnRetry.addEventListener('click', initTest);
+
+      // Certificate Download (Canvas render)
+      btnDownloadCert.addEventListener('click', () => {
+        const certCanvas = document.createElement('canvas');
+        certCanvas.width = 1200;
+        certCanvas.height = 675;
+        const c = certCanvas.getContext('2d');
+
+        // Background Flat Luxury Obsidian
+        c.fillStyle = '#09090b';
+        c.fillRect(0, 0, 1200, 675);
+
+        // Subtle Gold Border
+        c.strokeStyle = '#27272a';
+        c.lineWidth = 8;
+        c.strokeRect(30, 30, 1140, 615);
+
+        // Header
+        c.fillStyle = '#0066cc';
+        c.font = 'bold 20px monospace';
+        c.textAlign = 'center';
+        c.fillText('CERTIFICADO OFICIAL DE VELOCIDADE DE DIGITAÇÃO', 600, 100);
+
+        c.fillStyle = '#ffffff';
+        c.font = 'bold 44px sans-serif';
+        c.fillText('FreeIQExam · Teste de Digitação', 600, 160);
+
+        // Metrics Section
+        c.fillStyle = '#a1a1aa';
+        c.font = '22px sans-serif';
+        c.fillText('Este documento certifica que o usuário realizou o teste em português com o resultado:', 600, 230);
+
+        // Score Highlight Box
+        c.fillStyle = '#18181b';
+        c.beginPath();
+        c.roundRect(400, 270, 400, 140, 16);
+        c.fill();
+        c.strokeStyle = '#0066cc';
+        c.lineWidth = 2;
+        c.stroke();
+
+        c.fillStyle = '#2997ff';
+        c.font = 'extrabold 72px monospace';
+        c.fillText(resNetWpm.textContent, 600, 350);
+
+        c.fillStyle = '#a1a1aa';
+        c.font = 'bold 18px monospace';
+        c.fillText('PALAVRAS POR MINUTO (WPM)', 600, 390);
+
+        // Secondary Details
+        c.fillStyle = '#e4e4e7';
+        c.font = '20px monospace';
+        c.fillText(`Precisão: ${resAccuracy.textContent}   |   Velocidade Bruta: ${resRawWpm.textContent} WPM   |   Total Toques: ${resChars.textContent} CPM`, 600, 460);
+
+        c.fillStyle = '#10b981';
+        c.font = 'bold 24px sans-serif';
+        c.fillText(`Classificação: ${resTierBadge.textContent}`, 600, 510);
+
+        // Footer & Verification
+        c.fillStyle = '#71717a';
+        c.font = '16px monospace';
+        const today = new Date().toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' });
+        c.fillText(`Emitido em: ${today} · Verificação: freeiqexam.com/pt-br/teste-de-digitacao`, 600, 590);
+
+        const a = document.createElement('a');
+        a.download = `certificado-digitacao-${resNetWpm.textContent}wpm.png`;
+        a.href = certCanvas.toDataURL('image/png');
+        a.click();
+      });
+
+      // Copy Share Result
+      btnCopyShare.addEventListener('click', () => {
+        const text = `🏆 Alcancei ${resNetWpm.textContent} WPM com ${resAccuracy.textContent} de precisão no Teste de Digitação em Português do FreeIQExam!\nTeste sua velocidade gratuitamente em: https://freeiqexam.com/pt-br/teste-de-digitacao`;
+        navigator.clipboard.writeText(text).then(() => {
+          const original = btnCopyShare.textContent;
+          btnCopyShare.textContent = 'Copiado para a Área de Transferência!';
+          setTimeout(() => { btnCopyShare.textContent = original; }, 2000);
+        });
+      });
+
+      // Time options buttons
+      document.querySelectorAll('.time-opt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.time-opt-btn').forEach(b => b.classList.remove('active', 'font-bold', 'text-[#0066cc]', 'dark:text-[#2997ff]'));
+          btn.classList.add('active', 'font-bold', 'text-[#0066cc]', 'dark:text-[#2997ff]');
+          targetTime = parseInt(btn.dataset.time, 10);
+          initTest();
+        });
+      });
+
+      // Word options buttons
+      document.querySelectorAll('.word-opt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.word-opt-btn').forEach(b => b.classList.remove('active', 'font-bold', 'text-[#0066cc]', 'dark:text-[#2997ff]'));
+          btn.classList.add('active', 'font-bold', 'text-[#0066cc]', 'dark:text-[#2997ff]');
+          targetWords = parseInt(btn.dataset.words, 10);
+          initTest();
+        });
+      });
+
+      // Mode toggle buttons (Tempo vs Palavras)
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mode-btn').forEach(b => {
+            b.classList.remove('active', 'bg-blue-500/10', 'text-[#0066cc]', 'dark:text-[#2997ff]', 'border', 'border-blue-500/40');
+            b.classList.add('text-zinc-600', 'dark:text-zinc-400');
+          });
+          btn.classList.add('active', 'bg-blue-500/10', 'text-[#0066cc]', 'dark:text-[#2997ff]', 'border', 'border-blue-500/40');
+          btn.classList.remove('text-zinc-600', 'dark:text-zinc-400');
+
+          mode = btn.dataset.mode;
+          if (mode === 'time') {
+            timeOptionsGroup.classList.remove('hidden');
+            wordOptionsGroup.classList.add('hidden');
+          } else {
+            timeOptionsGroup.classList.add('hidden');
+            wordOptionsGroup.classList.remove('hidden');
+          }
+          initTest();
+        });
+      });
+
+      // Initial start
+      initTest();
+    })();
+  </script>
+</Layout>

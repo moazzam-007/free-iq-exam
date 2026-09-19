@@ -1,0 +1,745 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "ADHS-Test Erwachsene: Online-Selbsttest (WHO ASRS v1.1) | FreeIQExam";
+const description = "Machen Sie den orientierenden ADHS-Selbsttest für Erwachsene nach WHO ASRS v1.1. Überprüfen Sie Symptome von Unaufmerksamkeit und Impulsivität ohne Anmeldung.";
+const canonicalUrl = "https://freeiqexam.com/nl/adhs-test";
+
+const alternates = {
+  en: "https://freeiqexam.com/adhd-test",
+  ru: "https://freeiqexam.com/ru/adhd-test",
+  id: "https://freeiqexam.com/id/tes-adhd",
+  fi: "https://freeiqexam.com/fi/adhd-testi",
+  de: "https://freeiqexam.com/nl/adhs-test"
+};
+
+const faqItems = [
+  [
+    'Wie aussagekräftig ist ein Online-ADHS-Selbsttest für Erwachsene?',
+    'Ein Online-Selbsttest kann orientierende Hinweise auf Symptommuster liefern, die Anlass für eine ausführliche fachärztliche Untersuchung sein können. Eine medizinische Diagnose kann ein Online-Test jedoch nicht stellen. Fachärzte und psychologische Psychotherapeuten berücksichtigen stets den Entwicklungsverlauf seit der Kindheit, den Schweregrad im Alltag sowie alternative Erklärungen.'
+  ],
+  [
+    'Was ist der Unterschied zwischen ADS und ADHS?',
+    'ADS (Aufmerksamkeitsdefizitsyndrom ohne Hyperaktivität) ist ein historischer Begriff. Die moderne Diagnostik nach ICD-11 und DSM-5 spricht einheitlich von ADHS und unterscheidet drei Erscheinungsformen: vorwiegend unaufmerksam, vorwiegend hyperaktiv-impulsiv oder kombiniert. Umgangssprachlich bezieht sich ADS meist auf das vorwiegend unaufmerksame Erscheinungsbild.'
+  ],
+  [
+    'Warum äußert sich ADHS bei Frauen im Erwachsenenalter oft anders?',
+    'Frauen mit ADHS zeigen häufiger unaufmerksame Symptome, innere Unruhe und kompensatorische Strategien wie Perfektionismus oder starkes Masking. Dadurch bleibt die Störung in Kindheit und Jugend oft unerkannt und wird erst im Erwachsenenalter – häufig im Zuge von Überlastung oder hormonellen Umstellungen – diagnostiziert.'
+  ],
+  [
+    'Welche sechs Kernfragen umfasst der WHO ASRS Teil A?',
+    'Teil A erfasst die sechs prädiktivsten Kernsymptome: Schwierigkeiten beim Fertigstellen der letzten Projektdetails, Probleme bei der Aufgabenorganisation, Vergessen von Terminen, Aufschieben mental fordernder Aufgaben, motorische Unruhe (Zappeln) sowie das Gefühl, wie von einem Motor angetrieben zu sein.'
+  ],
+  [
+    'Kann ADHS erst im Erwachsenenalter entstehen?',
+    'ADHS ist eine neurobiologische Entwicklungsstörung, deren Grundlagen in der Kindheit liegen. Treten Konzentrationsprobleme oder Impulsivität erst im späteren Erwachsenenleben neu auf, müssen organische, schlafmedizinische oder stressbedingte Ursachen (wie Depression, Burnout oder Schilddrüsenerkrankungen) differentialdiagnostisch abgeklärt werden.'
+  ],
+  [
+    'Wie unterscheidet sich ADHS von Depressionen oder Angststörungen?',
+    'Depressionen und Angststörungen können Konzentration und Exekutivfunktionen ebenfalls stark beeinträchtigen. Allerdings treten sie häufiger episodisch auf, während ADHS ein stabiles, lebenslanges Muster darstellt. Zudem können ADHS und affektive Störungen auch gemeinsam (komorbid) vorliegen.'
+  ],
+  [
+    'Was sollte ich tun, wenn mein Testergebnis erhöht ausfällt?',
+    'Nutzen Sie das Ergebnis als strukturierte Vorbereitung für ein Erstgespräch bei Ihrem Hausarzt, einer psychiatrischen Fachpraxis oder einer ADHS-Spezialambulanz. Notieren Sie konkrete Beispiele aus Beruf, Alltag und Beziehungen, die Ihre Beeinträchtigungen verdeutlichen.'
+  ],
+  [
+    'Ersetzt der optionale Go/No-Go-Test eine neuropsychologische Untersuchung?',
+    'Nein. Die 20-Durchgänge-Benchmark dient lediglich als spielerische Veranschaulichung motorischer Reaktionszeiten und Impulsinhibition im Browser. Sie besitzt keinen eigenständigen diagnostischen Wert.'
+  ]
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'ADHS-Test Erwachsene (WHO ASRS v1.1 Selbstbeurteilung)',
+    url: canonicalUrl,
+    inLanguage: 'nl',
+    medicalAudience: 'Patient',
+    aspect: 'Screening',
+    isAccessibleForFree: true
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Online-ADHS-Selbsttest Erwachsene (WHO ASRS v1.1)',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'All',
+    inLanguage: 'nl',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    accessibilitySummary: 'Tastaturbedienung mit Ziffern 1–5, Pfeiltasten zur Navigation, Screenreader-Live-Region und druckbare Befundzusammenfassung.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Startseite', item: 'https://freeiqexam.com/nl/' },
+      { '@type': 'ListItem', position: 2, name: 'Selbsttests', item: 'https://freeiqexam.com/nl/#tests' },
+      { '@type': 'ListItem', position: 3, name: 'ADHS-Test Erwachsene', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'WHO ASRS v1.1 ADHS-Fragebogen für Erwachsene — 18 Fragen',
+    url: canonicalUrl,
+    inLanguage: 'nl',
+    numberOfQuestions: 18,
+    isAccessibleForFree: true
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="nl"
+>
+  <Header currentPath="/nl/adhs-test" />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-[#000000] dark:text-white transition-colors duration-200">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+
+      <!-- Breadcrumb Navigation -->
+      <nav aria-label="Breadcrumb" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/nl/" class="hover:text-zinc-950 dark:hover:text-white transition-colors">Startseite</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-zinc-600 dark:text-zinc-300">Selbsttests</span>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white font-semibold">ADHS-Test Erwachsene</span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="mx-auto max-w-4xl text-center">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-[#2997ff] sm:text-sm">
+          <svg class="w-4 h-4 text-[#0066cc] dark:text-[#2997ff]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          WHO ASRS v1.1 Screening-Instrument
+        </div>
+
+        <h1 class="mt-6 font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em]">
+          ADHS-Test Erwachsene: Online-Selbsttest (WHO ASRS v1.1)
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Überprüfen Sie Anzeichen von Unaufmerksamkeit, Desorganisation, Impulsivität und innerer Unruhe nach dem standardisierten WHO ASRS v1.1-Framework. Kostenlos, anonym, ohne Registrierung und direkt im Browser auswertbar.
+        </p>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['WHO ASRS v1.1 Fragebogen', 'Teil A (6 Kernfragen) + Teil B', 'Optionale Reaktionszeit-Benchmark', 'Sofortige Auswertung', '100 % anonym im Browser'].map((item) => (
+            <span class="rounded-full border border-zinc-200 bg-zinc-50/80 px-4 py-2 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/80 dark:text-zinc-300 shadow-sm">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <!-- Main Application Container -->
+      <section id="adhd-app" class="mx-auto mt-12 max-w-4xl">
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/90 p-5 dark:border-zinc-800 dark:bg-zinc-950 p-6 sm:p-9 shadow-sm">
+
+          <!-- Intro Panel -->
+          <div id="assessment-intro" class="rounded-[1.5rem] border border-blue-200 bg-blue-50/70 p-6 dark:border-blue-900/50 dark:bg-blue-950/20 sm:p-8">
+            <p class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Hinweis vor Beginn</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Orientierender Selbsttest — keine Diagnose</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Beantworten Sie die 18 Fragen danach, wie Sie sich in den vergangenen 6 Monaten im Alltag und Beruf typischerweise erlebt haben. Dieser Selbsttest dient der psychoedukativen Orientierung und ersetzt keine fachärztliche Untersuchung.
+            </p>
+            <div class="mt-7 flex flex-wrap items-center gap-4">
+              <button
+                id="begin-assessment"
+                type="button"
+                class="rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white px-8 py-4 text-base font-semibold shadow-sm transition-all duration-150 hover:scale-[1.02] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              >
+                Selbsttest jetzt starten
+              </button>
+              <span class="text-sm text-zinc-500 dark:text-zinc-400">Tastatur: 1–5 zum Antworten · Pfeiltasten zum Navigieren</span>
+            </div>
+          </div>
+
+          <!-- Questionnaire Section -->
+          <section id="questionnaire-section" class="hidden" aria-labelledby="question-heading">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p id="question-part" class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Teil A · Orientierendes Kernscreening</p>
+                <p id="question-domain" class="mt-2 text-base font-semibold text-zinc-800 dark:text-zinc-200">Unaufmerksamkeit</p>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="question-number" class="text-base font-semibold text-zinc-900 dark:text-white sm:text-lg">Frage 1 von 18</div>
+                <div id="progress-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">0 % beantwortet</div>
+              </div>
+            </div>
+
+            <div class="mt-5 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+              <div id="progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-300" style="width:4%"></div>
+            </div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <div class="flex flex-wrap gap-2 text-xs sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+                <span class="rounded-full border border-zinc-200 px-3 py-1 dark:border-zinc-700">Eine Antwort auswählen</span>
+                <span class="rounded-full border border-zinc-200 px-3 py-1 dark:border-zinc-700">Nie → Sehr oft</span>
+              </div>
+
+              <h2 id="question-heading" class="mt-6 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white"></h2>
+              <p id="question-context" class="mt-3 text-sm sm:text-base text-zinc-500 dark:text-zinc-400"></p>
+
+              <div id="likert-options" class="mt-8 grid gap-3 sm:grid-cols-5" role="group" aria-label="Antwortoptionen Häufigkeit"></div>
+
+              <p class="mt-6 rounded-2xl border border-blue-200 bg-blue-50/70 px-5 py-4 text-xs sm:text-sm text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-200">
+                Hervorgehobene Optionen kennzeichnen Antworten, die für dieses Item im klinischen Schwellenwertbereich der WHO liegen.
+              </p>
+
+              <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+                <button
+                  id="back-button"
+                  type="button"
+                  class="rounded-full border border-zinc-300 bg-white px-6 py-3.5 text-base font-semibold text-zinc-800 hover:bg-zinc-50 transition active:scale-[0.97] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+                >
+                  Zurück
+                </button>
+                <button
+                  id="next-button"
+                  type="button"
+                  class="rounded-full bg-zinc-900 px-7 py-3.5 text-base font-semibold text-white transition hover:bg-black active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-zinc-900"
+                >
+                  Nächste Frage
+                </button>
+              </div>
+            </article>
+          </section>
+
+          <!-- Cognitive Go/No-Go Section -->
+          <section id="cognitive-section" class="hidden" aria-labelledby="cognitive-title">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Optionaler Leistungstest</p>
+                <h2 id="cognitive-title" class="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">20-Durchgänge Go/No-Go Impuls-Benchmark</h2>
+              </div>
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">Sitzung: <span id="cognitive-session-id" class="font-mono">—</span></div>
+            </div>
+
+            <div class="mt-6 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <div id="cognitive-start-panel">
+                <p class="text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                  Grün bedeutet: <strong>Leertaste drücken oder tippen</strong>. Rot bedeutet: <strong>Reaktion unterdrücken (nicht tippen)</strong>. Die Benchmark erfasst Reaktionszeiten und Impulsfehler. Es handelt sich um eine spielerische Referenz, nicht um einen diagnostischen Test.
+                </p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                  <button
+                    id="begin-cognitive"
+                    type="button"
+                    class="rounded-full bg-[#0066cc] hover:bg-[#0055b3] px-7 py-4 text-base font-semibold text-white transition hover:scale-[1.02] active:scale-[0.97]"
+                  >
+                    20-Durchgänge-Test starten
+                  </button>
+                  <button
+                    id="skip-cognitive"
+                    type="button"
+                    class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-800 transition active:scale-[0.97]"
+                  >
+                    Überspringen &amp; Auswertung anzeigen
+                  </button>
+                </div>
+              </div>
+
+              <div id="cognitive-countdown" class="hidden py-6 text-center text-5xl font-extrabold tracking-tight text-[#0066cc] dark:text-[#2997ff]" aria-live="polite">3</div>
+
+              <div class="mt-7 flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                <span>Durchgang</span>
+                <span id="cognitive-trial" class="font-bold">0 / 20</span>
+              </div>
+              <div class="mt-2 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                <div id="cognitive-progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff]" style="width:0%"></div>
+              </div>
+
+              <button
+                id="cognitive-target"
+                type="button"
+                class="mx-auto mt-10 flex aspect-square w-full max-w-[22rem] items-center justify-center rounded-full border-2 border-zinc-300 bg-zinc-100 opacity-0 transition-transform duration-75 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-900"
+                aria-label="Go/No-Go Zielbereich"
+              >
+                <span id="cognitive-target-label" class="text-2xl font-extrabold tracking-tight sm:text-3xl">Warten…</span>
+              </button>
+
+              <p class="mt-5 text-center text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                Drücken Sie die <kbd class="rounded border border-zinc-300 bg-zinc-100 px-2 py-1 font-mono dark:border-zinc-700 dark:bg-zinc-800">Leertaste</kbd> oder tippen Sie auf den Kreis.
+              </p>
+            </div>
+          </section>
+
+          <!-- Results Section -->
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge low">Geringe Wahrscheinlichkeit</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">Ihre orientierende Auswertung</h2>
+                  <p id="result-classification" class="mt-2 text-xl font-bold text-[#0066cc] dark:text-[#2997ff]">Subklinisches Muster</p>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-xs sm:text-sm font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-300">
+                  Keine medizinische Diagnose
+                </div>
+              </div>
+
+              <p id="result-narrative" class="mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card">
+                  <div class="score-label">Teil A (Kernsymptome)</div>
+                  <div id="part-a-score" class="mt-3 text-3xl font-extrabold text-zinc-900 dark:text-white">0 / 6</div>
+                  <div id="part-a-status" class="score-status">Unter Schwellenwert</div>
+                  <div class="meter"><span id="part-a-bar"></span></div>
+                </article>
+                <article class="score-card">
+                  <div class="score-label">Unaufmerksamkeit</div>
+                  <div id="inattention-score" class="mt-3 text-3xl font-extrabold text-zinc-900 dark:text-white">0 / 36</div>
+                  <div id="inattention-status" class="score-status">0 von 9 im Schwellenwert</div>
+                  <div class="meter"><span id="inattention-bar"></span></div>
+                </article>
+                <article class="score-card">
+                  <div class="score-label">Hyperaktivität / Impulsivität</div>
+                  <div id="hyperactivity-score" class="mt-3 text-3xl font-extrabold text-zinc-900 dark:text-white">0 / 36</div>
+                  <div id="hyperactivity-status" class="score-status">0 von 9 im Schwellenwert</div>
+                  <div class="meter"><span id="hyperactivity-bar"></span></div>
+                </article>
+              </div>
+
+              <!-- Cognitive Result Card -->
+              <article id="cognitive-result-card" class="mt-4 hidden rounded-3xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-800/60">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Go / No-Go Reaktions-Benchmark</p>
+                <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <div class="stat-card"><span>Mittlere RT</span><strong id="cognitive-rt">—</strong></div>
+                  <div class="stat-card"><span>RT-Variabilität</span><strong id="cognitive-rtv">—</strong></div>
+                  <div class="stat-card"><span>Fehler bei Stopp</span><strong id="cognitive-errors">—</strong></div>
+                  <div class="stat-card"><span>Auslassungen</span><strong id="cognitive-omissions">—</strong></div>
+                </div>
+              </article>
+
+              <!-- Matrix Card -->
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Exekutivfunktions-Matrix</p>
+                <h3 class="mt-2 text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Symptombereiche im Detail</h3>
+                <div id="profile-matrix" class="mt-6 space-y-5"></div>
+              </article>
+
+              <!-- Action Buttons -->
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button
+                  id="print-result"
+                  type="button"
+                  class="rounded-full bg-zinc-950 px-7 py-4 text-base font-semibold text-white dark:bg-white dark:text-zinc-950 hover:opacity-90 transition active:scale-[0.97]"
+                >
+                  Ärztlichen Vorab-Befund drucken
+                </button>
+                <button
+                  id="share-result"
+                  type="button"
+                  class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 transition active:scale-[0.97]"
+                >
+                  Ergebnis kopieren
+                </button>
+                <button
+                  id="retake-result"
+                  type="button"
+                  class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 transition active:scale-[0.97]"
+                >
+                  Selbsttest wiederholen
+                </button>
+              </div>
+
+              <!-- Context Box -->
+              <div class="mt-8 rounded-3xl border border-blue-200 bg-blue-50/70 p-6 dark:border-blue-900/50 dark:bg-blue-950/20">
+                <h3 class="text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Ergebnis im Kontext betrachten</h3>
+                <p class="mt-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+                  Ein auffälliges Screening bedeutet, dass Ihr Antwortmuster die WHO-Schwelle für Teil A überschritten hat. Dies begründet einen fachlichen Abklärungsbedarf, stellt jedoch keine gesicherte Diagnose dar. Schlafstörungen, chronischer Stress, Schilddrüsenerkrankungen oder depressive Verstimmungen können ähnliche Konzentrationsdefizite hervorrufen.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <p id="adhd-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- Toast -->
+      <div id="share-toast" class="fixed bottom-6 right-6 z-50 rounded-2xl bg-zinc-950 px-5 py-3 text-sm font-semibold text-white shadow-xl opacity-0 translate-y-3 transition-all duration-300 dark:bg-white dark:text-zinc-950">
+        Ergebniszusammenfassung kopiert.
+      </div>
+
+      <!-- Educational Content Section (YMYL Compliant & SEO Hardened) -->
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+
+        <section>
+          <p class="eyebrow">Psychoedukativer Leitfaden</p>
+          <h2 class="mt-3 section-title">ADHS im Erwachsenenalter verstehen</h2>
+          <p class="mt-6">
+            Die Aufmerksamkeitsdefizit-/Hyperaktivitätsstörung (ADHS) bei Erwachsenen ist keine vorübergehende Laune oder Willensschwäche, sondern ein persistierendes neurobiologisches Muster veränderter Aufmerksamkeitssteuerung, Impulskontrolle und exekutiver Funktionen. Während in der Kindheit oft motorische Hyperaktivität im Vordergrund steht, verlagert sich das Bild im Erwachsenenalter häufig nach innen: Betroffene erleben chronische Desorganisation, Prokrastination, innere Getriebenheit und emotionale Dysregulation.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">1. Neurobiologische Grundlagen: Dopamin und Frontostriatale Netzwerke</h2>
+          <p class="mt-5">
+            ADHS basiert auf neurobiologischen Besonderheiten in kortiko-striato-thalamo-kortikalen Regelkreisen. Diese neuronalen Schleifen verbinden den präfrontalen Kortex – die Steuerungszentrale für Handlungsplanung, Arbeitsgedächtnis und Impulshemmung – mit den Basalganglien (Striatum). Bei ADHS besteht eine veränderte Signalübertragung der Neurotransmitter Dopamin und Noradrenalin.
+          </p>
+          <p class="mt-5">
+            Dopamin reguliert im Gehirn die Reizfilterung sowie die Motivation („Reward Prediction Error“). Ist die Dopaminverfügbarkeit in synaptischen Spalten vermindert, fällt es Betroffenen schwer, mentale Energie für Tätigkeiten aufzubringen, die keine sofortige Belohnung versprechen. Dies erklärt, warum Menschen mit ADHS bei hohem persönlichem Interesse Höchstleistungen erbringen („Hyperfokus“), bei alltäglichen Routineaufgaben jedoch an scheinbar banalen Hürden scheitern.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">2. Die drei Erscheinungsformen von ADHS bei Erwachsenen</h2>
+          
+          <h3 class="mt-8 text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Vorwiegend unaufmerksames Erscheinungsbild</h3>
+          <p class="mt-4">
+            Dieser Subtyp ist gekennzeichnet durch leichte Ablenkbarkeit, Vergesslichkeit im Alltag, häufiges Verlegen von Schlüsseln oder Dokumenten und große Hürden beim Beginn langwieriger Aufgaben. Betroffene wirken oft ruhig oder verträumt, weshalb dieser Phänotyp – insbesondere bei Frauen – im Kindesalter häufig übersehen wird.
+          </p>
+
+          <h3 class="mt-8 text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Vorwiegend hyperaktiv-impulsives Erscheinungsbild</h3>
+          <p class="mt-4">
+            Hyperaktivität äußert sich bei Erwachsenen selten im Herumlaufen. Vielmehr beschreiben Betroffene eine konstante innere Unruhe, Unfähigkeit zur Entspannung, übermäßiges Reden, Unterbrechen anderer im Gespräch sowie impulsive Kauf- oder Lebensentscheidungen.
+          </p>
+
+          <h3 class="mt-8 text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Kombiniertes Erscheinungsbild</h3>
+          <p class="mt-4">
+            Das kombinierte Bild vereint signifikante Symptome beider Bereiche. Es stellt im klinischen Alltag die häufigste vorgestellte Form dar und geht typischerweise mit spürbarem Leidensdruck im Berufs- und Beziehungsleben einher.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">3. ADHS bei Frauen: Masking, Perfektionismus und späte Diagnose</h2>
+          <p class="mt-5">
+            Frauen mit ADHS entwickeln häufig ausgeprägte Kompensationsmechanismen („Masking“). Durch enormen Energieaufwand, übertriebenen Perfektionismus, rigide Kalenderführung und ständiges Nacharbeiten in der Nacht wird das äußere Bild eines funktionierenden Alltags aufrechterhalten. Der innere Preis hierfür ist oft chronische Erschöpfung, Angst und das Gefühl des Hochstapler-Syndroms („Imposter-Syndrom“).
+          </p>
+          <p class="mt-5">
+            Zudem beeinflussen hormonelle Schwankungen (Östrogenspiegel in der Lutealphase, Schwangerschaft, Perimenopause) die Dopaminsynthese. Viele Frauen suchen erst mit Mitte 30 oder 40 Hilfe, wenn gewohnte Kompensationsstrategien unter Doppelbelastung zusammenbrechen.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">4. Differenzialdiagnostik und Komorbiditäten</h2>
+          <p class="mt-5">
+            Aufmerksamkeitsprobleme sind kein Alleinstellungsmerkmal von ADHS. Eine gewissenhafte Differenzialdiagnose durch Fachärzte grenzt folgende Faktoren ab:
+          </p>
+          <ul class="mt-4 list-disc pl-6 space-y-2">
+            <li><strong>Depressionen:</strong> Konzentrationsschwächen und Antriebslosigkeit treten bei Depressionen typischerweise im Rahmen von Episoden auf und normalisieren sich nach Abklingen der Phase.</li>
+            <li><strong>Generalisierte Angststörung:</strong> Dauerhaft kreisende Sorgen binden Arbeitsgedächtniskapazität und imitieren Unaufmerksamkeit.</li>
+            <li><strong>Autismus-Spektrum (AuDHD):</strong> Beide Neurodivergenzen weisen Überlappungen bei sensorischer Empfindlichkeit und exekutiven Funktionen auf.</li>
+            <li><strong>Schlafapnoe &amp; Schilddrüsenerkrankungen:</strong> Chronische Schlafunterbrechungen oder Hypothyreose führen zu ausgeprägtem „Brain Fog“.</li>
+          </ul>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">5. Evidenzbasierte Behandlungsansätze</h2>
+          <p class="mt-5">
+            Die S3-Leitlinie zur Behandlung von ADHS empfiehlt ein multimodales Therapiekonzept:
+          </p>
+          <ul class="mt-4 list-disc pl-6 space-y-2">
+            <li><strong>Psychoedukation:</strong> Das Verständnis der eigenen Neurobiologie entlastet von Schuldgefühlen und schafft Akzeptanz.</li>
+            <li><strong>Pharmakotherapie:</strong> Stimulanzien (z. B. Methylphenidat, Lisdexamfetamin) sowie Nicht-Stimulanzien (z. B. Atomoxetin) erhöhen die Signalübertragung im synaptischen Spalt und verbessern die Reizfilterung spürbar.</li>
+            <li><strong>Kognitive Verhaltenstherapie:</strong> Spezifisch adaptierte Psychotherapie vermittelt Strategien zur Alltagsorganisation, Emotionsregulation und Prokrastinationsbewältigung.</li>
+          </ul>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">6. Wissenschaftliche Herkunft des WHO ASRS v1.1</h2>
+          <p class="mt-5">
+            Die <em>Adult ADHD Self-Report Scale (ASRS v1.1)</em> wurde von der Weltgesundheitsorganisation (WHO) in Kooperation mit der Arbeitsgruppe für ADHS bei Erwachsenen (unter Beteiligung der Harvard Medical School und der New York University Medical School, u. a. Prof. Ronald C. Kessler) entwickelt. Das Instrument basiert auf den Kriterien des DSM-IV bzw. DSM-5 und gilt weltweit als Goldstandard für das orientierende Screening im Erwachsenenalter.
+          </p>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="guide-section">
+          <p class="eyebrow">Häufige Fragen</p>
+          <h2 class="section-title mt-3">FAQ zum ADHS-Selbsttest für Erwachsene</h2>
+          <div class="mt-7 space-y-4">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 transition-colors shadow-sm">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-zinc-900 dark:text-white sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition-transform duration-200 group-open:rotate-45 text-[#0066cc] dark:text-[#2997ff]">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-100 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+                  {answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Verbatim Medical Disclaimer Section -->
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9 shadow-sm">
+          <h2 class="text-2xl font-bold text-zinc-900 dark:text-white sm:text-3xl">Medizinischer Haftungsausschluss</h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 font-medium">
+            Dieser Online-Selbsttest dient ausschließlich der Orientierung und psychoedukativen Information. Er ersetzt keine professionelle medizinische, psychiatrische oder psychotherapeutische Untersuchung oder Diagnose. Ändern oder beenden Sie keine ärztlich verordneten Behandlungen eigenständig.
+          </p>
+          
+          <!-- DACH Crisis Hotlines -->
+          <div class="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-700">
+            <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Krisen- und Notfallkontakte (DACH-Region)</h3>
+            <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm text-zinc-700 dark:text-zinc-300">
+              <li class="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <strong class="text-zinc-900 dark:text-white block">Deutschland: TelefonSeelsorge</strong>
+                <span class="font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">0800 111 0 111</span> / <span class="font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">0800 111 0 222</span>
+                <span class="block text-xs text-zinc-500 mt-0.5">Kostenfrei, anonym, 24/7 | Ärztlicher Bereitschaftsdienst: 116 117 | Notruf: 112</span>
+              </li>
+              <li class="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <strong class="text-zinc-900 dark:text-white block">Österreich: Telefonseelsorge</strong>
+                <span class="font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">142</span>
+                <span class="block text-xs text-zinc-500 mt-0.5">Kostenfrei, rund um die Uhr | Euronotruf: 112</span>
+              </li>
+              <li class="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <strong class="text-zinc-900 dark:text-white block">Schweiz: Die Dargebotene Hand</strong>
+                <span class="font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">143</span>
+                <span class="block text-xs text-zinc-500 mt-0.5">Kostenfrei, anonym, 24/7 | Notruf: 112</span>
+              </li>
+              <li class="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <strong class="text-zinc-900 dark:text-white block">International: findahelpline.com</strong>
+                <span class="text-zinc-600 dark:text-zinc-400">findahelpline.com</span>
+                <span class="block text-xs text-zinc-500 mt-0.5">Kostenfreie Notfall-Hotlines weltweit in über 130 Ländern</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Printable Report for Clinician Consultation -->
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h2 class="text-3xl font-extrabold">ADHS-SCREENING ZUSAMMENFASSUNG (ERWACHSENE)</h2>
+      <p class="mt-2 text-sm uppercase tracking-wider">WHO ASRS v1.1 Framework · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm">
+        <p><strong>Datum:</strong> <span id="report-date">—</span></p>
+        <p><strong>Sitzungs-ID:</strong> <span id="report-session">—</span></p>
+        <p><strong>Teil A (Kernsymptome):</strong> <span id="print-part-a">—</span></p>
+        <p><strong>Unaufmerksamkeit:</strong> <span id="print-inattention">—</span></p>
+        <p><strong>Hyperaktivität / Impulsivität:</strong> <span id="print-hyperactivity">—</span></p>
+        <p><strong>Reaktions-Benchmark:</strong> <span id="print-cognitive">Übersprungen</span></p>
+      </div>
+
+      <h3 class="mt-8 text-xl font-bold">18-Fragen Antwortübersicht</h3>
+      <table class="mt-4 w-full border-collapse text-xs">
+        <thead>
+          <tr class="bg-zinc-100 text-left">
+            <th class="border border-zinc-300 p-2">#</th>
+            <th class="border border-zinc-300 p-2">Teil</th>
+            <th class="border border-zinc-300 p-2">Bereich</th>
+            <th class="border border-zinc-300 p-2">Gewählte Antwort</th>
+          </tr>
+        </thead>
+        <tbody id="print-answer-body"></tbody>
+      </table>
+
+      <div class="mt-8 border-t border-zinc-300 pt-4 text-xs text-zinc-600 leading-relaxed">
+        <strong>Hinweis für Behandler:</strong> Dieser Selbstbeurteilungsbogen basiert auf der WHO ASRS v1.1 Checklist. Er dient als Gesprächsgrundlage für die diagnostische Exploration und stellt keine eigenständige Diagnose dar.
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .likert-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1.15rem 0.75rem;
+      border-radius: 1.25rem;
+      border: 1.5px solid rgb(228 228 231);
+      background: #ffffff;
+      color: rgb(24 24 27);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+    .likert-option:hover {
+      border-color: #0066cc;
+      background: rgb(248 250 252);
+      transform: translateY(-2px);
+    }
+    .likert-option:active {
+      transform: scale(0.97);
+    }
+    .likert-option.clinical-zone {
+      border-color: rgba(0, 102, 204, 0.4);
+      background: rgba(0, 102, 204, 0.04);
+    }
+    .likert-option.selected {
+      background: #0066cc !important;
+      border-color: #0066cc !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(0, 102, 204, 0.35);
+    }
+    .likert-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border: 1px solid rgb(212 212 216);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      font-family: ui-monospace, monospace;
+      background: rgb(244 244 245);
+      color: rgb(113 113 122);
+      transition: all 0.15s ease;
+    }
+    .likert-option:hover .likert-key {
+      border-color: #0066cc;
+      color: #0066cc;
+      background: #ffffff;
+    }
+    .likert-option.selected .likert-key {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+    .likert-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-align: center;
+    }
+    .likert-clinical-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0066cc;
+      background: rgba(0, 102, 204, 0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      margin-top: 0.15rem;
+    }
+    .likert-option.selected .likert-clinical-badge {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .matrix-row { display: grid; gap: 0.55rem; }
+    .matrix-label { display: flex; justify-content: space-between; gap: 1rem; font-weight: 600; font-size: 0.95rem; }
+    .matrix-track { height: 0.65rem; overflow: hidden; border-radius: 999px; background: rgb(228 228 231); }
+    .matrix-track span { display: block; height: 100%; border-radius: inherit; background: #0066cc; transition: width 0.4s ease; }
+
+    /* Dark Mode */
+    :global(.dark) .likert-option {
+      border-color: rgb(39 39 42);
+      background: rgb(18 18 21);
+      color: rgb(244 244 245);
+    }
+    :global(.dark) .likert-option:hover {
+      border-color: #2997ff;
+      background: rgb(24 24 27);
+    }
+    :global(.dark) .likert-option.clinical-zone {
+      background: rgba(41, 151, 255, 0.08);
+      border-color: rgba(41, 151, 255, 0.4);
+    }
+    :global(.dark) .likert-option.selected {
+      background: #0066cc !important;
+      border-color: #2997ff !important;
+      color: #ffffff !important;
+    }
+    :global(.dark) .likert-key {
+      border-color: rgb(63 63 70);
+      background: rgb(24 24 27);
+      color: rgb(161 161 170);
+    }
+    :global(.dark) .likert-clinical-badge {
+      color: #2997ff;
+      background: rgba(41, 151, 255, 0.15);
+    }
+    :global(.dark) .matrix-track { background: rgb(39 39 42); }
+    :global(.dark) .matrix-track span { background: #2997ff; }
+
+    #print-answer-body td {
+      border: 1px solid rgb(208 208 212);
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+    }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #0066cc; }
+    :global(.dark) .eyebrow { color: #2997ff; }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.025em; color: rgb(24 24 27); }
+    :global(.dark) .section-title { color: rgb(250 250 250); }
+    .guide-section { margin-top: 3.5rem; }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.35rem; }
+    :global(.dark) .score-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .score-label { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .score-status { margin-top: .5rem; color: #0066cc; font-size: .95rem; font-weight: 600; }
+    :global(.dark) .score-status { color: #2997ff; }
+    .meter { margin-top: 1rem; height: .55rem; overflow: hidden; border-radius: 999px; background: rgb(228 228 231); }
+    :global(.dark) .meter { background: rgb(39 39 42); }
+    .meter span { display: block; width: 0; height: 100%; border-radius: inherit; background: #0066cc; transition: width .35s ease; }
+    :global(.dark) .meter span { background: #2997ff; }
+
+    .stat-card { display: flex; flex-direction: column; gap: .35rem; padding: 1rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    :global(.dark) .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .stat-card span { font-size: .85rem; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.2rem; }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .5rem 1rem; font-size: .95rem; font-weight: 700; }
+    .result-badge.low { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.moderate { color: rgb(146 64 14); background: rgb(255 247 237); border-color: rgb(254 215 170); }
+    .result-badge.high { color: #0066cc; background: rgb(239 246 255); border-color: rgb(191 219 254); }
+    :global(.dark) .result-badge.high { color: #2997ff; background: rgba(41, 151, 255, 0.15); border-color: rgba(41, 151, 255, 0.4); }
+
+    /* Go/No-Go Target */
+    #cognitive-target {
+      transition: transform 0.08s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
+      touch-action: manipulation;
+    }
+    #cognitive-target.idle {
+      background: rgb(244 244 245);
+      border-color: rgb(212 212 216);
+      color: rgb(82 82 91);
+    }
+    #cognitive-target.target-go {
+      background: rgb(22 163 74) !important;
+      border-color: rgb(21 128 61) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 40px rgba(34, 197, 94, 0.45);
+      transform: scale(1.03);
+    }
+    #cognitive-target.target-nogo {
+      background: rgb(220 38 38) !important;
+      border-color: rgb(185 28 28) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 40px rgba(220, 38, 38, 0.45);
+      transform: scale(1.03);
+    }
+    #cognitive-target.responded {
+      transform: scale(0.95);
+    }
+    :global(.dark) #cognitive-target.idle {
+      background: rgb(24 24 27);
+      border-color: rgb(39 39 42);
+      color: rgb(161 161 170);
+    }
+
+    .print-only { display: none; }
+    @media print {
+      header, footer, nav, #adhd-app, article, #share-toast { display: none !important; }
+      #printable-report { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../../scripts/tools/adhd-screener-nl.js"></script>
+</Layout>

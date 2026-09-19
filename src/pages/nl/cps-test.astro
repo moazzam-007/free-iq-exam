@@ -1,0 +1,927 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "CPS Test: Gratis Klik Test & Kliksnelheid Test (Clicks Per Second) | FreeIQExam";
+const description = "Test je kliksnelheid met de gratis online CPS test. Meet je clicks per second in 1s, 5s, 10s, 30s of 60s met live grafiek, burst-animaties en officiële ranglijst.";
+const canonicalUrl = "https://freeiqexam.com/nl/cps-test";
+
+const alternates = {
+  'en': 'https://freeiqexam.com/games/click-speed-test',
+  'de': 'https://freeiqexam.com/de/spiele/klick-test',
+  'pt-BR': 'https://freeiqexam.com/pt-br/cps-test',
+  'nl': 'https://freeiqexam.com/nl/cps-test'
+};
+
+const DURATIONS = [1, 5, 10, 30, 60];
+const DEFAULT_DURATION = 10;
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "CPS Test: Kliksnelheid Test (Clicks Per Second)",
+    "url": "https://freeiqexam.com/nl/cps-test",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "nl",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "description": "Gratis online kliksnelheidstest (CPS test) om je clicks per seconde, piekburstsnelheid en ritmische consistentie te meten in 1, 5, 10, 30 of 60 seconden."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/nl"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "CPS Test",
+        "item": "https://freeiqexam.com/nl/cps-test"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} alternates={alternates} lang="nl">
+  <Header currentPath="/nl/cps-test" />
+
+  <main class="flex-1 py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Kruimelpad">
+      <a href="/nl" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">Home</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">CPS Test</span>
+    </nav>
+
+    <!-- Header / HUD Section -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider bg-blue-50 dark:bg-blue-950/40 text-[#0066cc] dark:text-[#2997ff] border border-blue-200 dark:border-blue-800/80 mb-1.5">
+          Gs &bull; Motorische Snelheid &amp; Reflex
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-extrabold text-zinc-950 dark:text-white tracking-tight">
+            CPS Test: Kliksnelheid Test
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            aria-haspopup="dialog"
+          >
+            Instructies
+          </button>
+        </div>
+      </div>
+
+      <!-- Live HUD -->
+      <div class="flex items-center gap-2 font-mono">
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Tijd</div>
+          <div id="hud-time" class="text-lg tabular-nums font-extrabold text-zinc-900 dark:text-white leading-tight">10.0s</div>
+        </div>
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Kliks</div>
+          <div id="hud-clicks" class="text-lg tabular-nums font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight">0</div>
+        </div>
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Live CPS</div>
+          <div id="hud-cps" class="text-lg tabular-nums font-extrabold text-[#0066cc] dark:text-[#2997ff] leading-tight">0.0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Duration selector chips -->
+    <div class="mb-6 flex flex-wrap items-center justify-center gap-2.5" role="group" aria-label="Testduur">
+      {DURATIONS.map((d) => (
+        <button
+          type="button"
+          data-duration={d}
+          class={`duration-chip min-h-[44px] px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold font-mono transition-all border cursor-pointer ${d === DEFAULT_DURATION ? 'bg-[#0066cc] dark:bg-[#2997ff] text-white border-[#0066cc] dark:border-[#2997ff]' : 'bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-[#0066cc] dark:hover:border-[#2997ff]'}`}
+          aria-pressed={d === DEFAULT_DURATION ? 'true' : 'false'}
+        >
+          {d} {d === 1 ? 'Seconde' : 'Seconden'}
+        </button>
+      ))}
+    </div>
+
+    <!-- Arena Container with ripple canvas support -->
+    <section class="mb-6" aria-label="Klik Test Arena">
+      <div class="relative w-full rounded-3xl overflow-hidden border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/70">
+        <button
+          id="cps-arena"
+          type="button"
+          class="relative w-full p-8 sm:p-14 min-h-[260px] sm:min-h-[320px] flex flex-col items-center justify-center gap-3 select-none cursor-pointer transition-transform duration-100 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066cc] overflow-hidden"
+        >
+          <!-- Burst ripple container -->
+          <div id="ripple-container" class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true"></div>
+
+          <!-- Layer: Ready to start -->
+          <div id="arena-ready" class="flex flex-col items-center gap-3 text-center pointer-events-none">
+            <div class="w-16 h-16 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center border border-blue-500/20">
+              <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
+              </svg>
+            </div>
+            <div class="text-xl sm:text-2xl font-heading font-extrabold text-zinc-950 dark:text-white">
+              Klik hier om te starten
+            </div>
+            <p class="text-zinc-600 dark:text-zinc-400 text-[15px] sm:text-[16px] max-w-sm">
+              De timer start automatisch bij je eerste klik. Klik zo snel mogelijk tot de tijd afloopt!
+            </p>
+          </div>
+
+          <!-- Layer: Running -->
+          <div id="arena-running" class="hidden flex-col items-center gap-2 text-center pointer-events-none">
+            <div id="arena-click-count" class="text-6xl sm:text-7xl font-mono tabular-nums font-black text-zinc-950 dark:text-white leading-none">
+              0
+            </div>
+            <div class="text-xs font-mono font-bold uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff] animate-pulse">
+              Sneller! Blijf klikken!
+            </div>
+          </div>
+
+          <!-- Layer: Finished -->
+          <div id="arena-done" class="hidden flex-col items-center gap-3 text-center pointer-events-none">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-emerald-500/20">
+              <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="text-xl sm:text-2xl font-heading font-extrabold text-zinc-950 dark:text-white">
+              Tijd voorbij!
+            </div>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Bekijk hieronder je uitslag of herstart voor een nieuwe poging.</p>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Controls Toolbar -->
+    <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+      <button
+        id="btn-start"
+        type="button"
+        class="min-h-[44px] px-6 py-2.5 rounded-xl font-bold text-sm bg-[#0066cc] hover:bg-[#0052a3] dark:bg-[#2997ff] dark:hover:bg-[#1a85f0] text-white transition-all duration-150 active:scale-[0.97] cursor-pointer inline-flex items-center gap-2"
+      >
+        <span id="btn-start-label">Test Starten</span>
+      </button>
+      <button
+        id="btn-reset"
+        type="button"
+        class="min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+      >
+        Opnieuw Instellen
+      </button>
+    </div>
+
+    <!-- Results Panel -->
+    <section id="results-panel" class="hidden mb-12" aria-live="polite" aria-label="Testresultaten">
+      <div class="rounded-3xl p-6 sm:p-8 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-zinc-200 dark:border-zinc-800 pb-6">
+          <div>
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] mb-1">Eindresultaat</div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-zinc-950 dark:text-white">
+              <span id="res-cps" class="font-mono tabular-nums text-[#0066cc] dark:text-[#2997ff]">0.0</span>
+              <span class="text-lg font-semibold text-zinc-500 dark:text-zinc-400">CPS (Kliks/sec)</span>
+            </h2>
+          </div>
+          <div id="res-tier" class="px-5 py-2.5 rounded-2xl border text-sm font-bold text-center">--</div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="block text-xs font-mono text-zinc-500 uppercase">Totaal Kliks</span>
+            <strong id="res-total" class="text-2xl font-mono tabular-nums font-extrabold text-zinc-900 dark:text-white">0</strong>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="block text-xs font-mono text-zinc-500 uppercase">Piek in 1s (Burst)</span>
+            <strong id="res-peak" class="text-2xl font-mono tabular-nums font-extrabold text-emerald-600 dark:text-emerald-400">0</strong>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="block text-xs font-mono text-zinc-500 uppercase">Mediaan Interval</span>
+            <strong id="res-median" class="text-2xl font-mono tabular-nums font-extrabold text-zinc-900 dark:text-white">--</strong>
+          </div>
+          <div class="p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-center">
+            <span class="block text-xs font-mono text-zinc-500 uppercase">Ritme-Consistentie</span>
+            <strong id="res-rhythm" class="text-2xl font-mono tabular-nums font-extrabold text-indigo-600 dark:text-indigo-400">--</strong>
+          </div>
+        </div>
+
+        <!-- Live CPS Speed Graph Canvas -->
+        <div class="mb-6 p-4 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-mono uppercase tracking-wider text-zinc-500 font-bold">Kliksnelheid Verloop (CPS over tijd)</span>
+            <span class="text-[11px] font-mono text-zinc-400">Snelheidscurve</span>
+          </div>
+          <div class="w-full h-32 relative">
+            <canvas id="cps-graph-canvas" class="w-full h-full block"></canvas>
+          </div>
+        </div>
+
+        <p id="res-description" class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6"></p>
+
+        <!-- Actions -->
+        <div class="pt-5 border-t border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+            Persoonlijk Record: <strong id="res-best" class="text-zinc-800 dark:text-zinc-200">--</strong>
+          </span>
+          <div class="flex flex-wrap gap-3">
+            <button
+              id="btn-copy-cps"
+              type="button"
+              class="min-h-[44px] px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            >
+              Uitslag Kopiëren
+            </button>
+            <button
+              id="btn-retake"
+              type="button"
+              class="min-h-[44px] px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-[#0066cc] hover:bg-[#0052a3] dark:bg-[#2997ff] dark:hover:bg-[#1a85f0] text-white transition-all duration-150 active:scale-[0.97] cursor-pointer"
+            >
+              Opnieuw Proberen
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Section (6 Dutch H2s) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-12 space-y-12 text-zinc-700 dark:text-zinc-300">
+      
+      <section class="space-y-3">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+          1. Wat is CPS en hoe meet deze klik test je snelheid?
+        </h2>
+        <p class="leading-relaxed">
+          CPS staat voor <strong>Clicks Per Second</strong> (kliks per seconde). Deze test kwantificeert hoe vaak je binnen een afgebakend tijdsinterval (zoals 1, 5, 10, 30 of 60 seconden) een muisknop of touchscreen kunt activeren. In de kognitieve psychologie valt deze vaardigheid onder de CHC-brede domeincategorie <em>motorische snelheid (Gs)</em> en <em>reactietijd (Gt)</em>, waarbij neuromusculaire impulsen vanuit de motorische cortex via de armzenuwen worden omgezet in snelle vingerflexies.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+          2. Officiële CPS Ranglijst &amp; Normering
+        </h2>
+        <p class="leading-relaxed">
+          Op basis van geaggregeerde data van duizenden spelers en kantoorwerkers hanteren we de volgende Nederlandse prestatieniveaus:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 not-prose my-4">
+          <div class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+            <span class="text-xs font-mono text-zinc-500 uppercase font-bold">&lt; 4 CPS</span>
+            <div class="font-bold text-zinc-900 dark:text-white text-base">Slak</div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Rustig basistempo voor algemene computertaken.</p>
+          </div>
+          <div class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+            <span class="text-xs font-mono text-zinc-500 uppercase font-bold">4 – 6 CPS</span>
+            <div class="font-bold text-zinc-900 dark:text-white text-base">Schildpad</div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Normaal gemiddelde bij regulier dagelijks muisgebruik.</p>
+          </div>
+          <div class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+            <span class="text-xs font-mono text-zinc-500 uppercase font-bold">6 – 8 CPS</span>
+            <div class="font-bold text-zinc-900 dark:text-white text-base">Kat</div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Bovengemiddelde vingersnelheid en vlotte reflexen.</p>
+          </div>
+          <div class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+            <span class="text-xs font-mono text-zinc-500 uppercase font-bold">8 – 10 CPS</span>
+            <div class="font-bold text-zinc-900 dark:text-white text-base">Haas</div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Ervaren pc-gamer met snelle enkelvoudige vingerkliks.</p>
+          </div>
+          <div class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+            <span class="text-xs font-mono text-zinc-500 uppercase font-bold">10 – 12 CPS</span>
+            <div class="font-bold text-zinc-900 dark:text-white text-base">Cheetah</div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Lichte Jitter- of Butterfly-techniek in competitief spel.</p>
+          </div>
+          <div class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+            <span class="text-xs font-mono text-zinc-500 uppercase font-bold">12 – 14 CPS</span>
+            <div class="font-bold text-zinc-900 dark:text-white text-base">Luipaard</div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Hoogste niveau vingercontrole en ritmische consistentie.</p>
+          </div>
+          <div class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 sm:col-span-2">
+            <span class="text-xs font-mono text-amber-500 uppercase font-bold">14+ CPS</span>
+            <div class="font-bold text-amber-500 text-base">Goddelijk</div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Wereldklasse Drag-click of geavanceerde Butterfly-techniek met dubbele registratie.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+          3. Geavanceerde Kliktechnieken (Jitter, Butterfly &amp; Drag Clicking)
+        </h2>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>Regulier klikken (Single Clicking):</strong> Eén vinger drukt de knop in. Maximale snelheid ligt doorgaans tussen 5 en 8 CPS.</li>
+          <li><strong>Butterfly Clicking:</strong> Wijsvinger en middelvinger wisselen elkaar in hoog tempo af op dezelfde knop. Met een muis met lage debounce-tijd kan dit 12 tot 20 CPS opleveren.</li>
+          <li><strong>Jitter Clicking:</strong> Gecontroleerde spiertrilling (tremor) in de onderarm en pols gericht op de vinger. Snelheden bereiken 10 tot 14 CPS, maar vereist pauzes tegen spiervermoeidheid.</li>
+          <li><strong>Drag Clicking:</strong> De vinger wrijft over het oppervlak van de muisknop waardoor wrijving vele snelle micro-kliks veroorzaakt (tot 25+ CPS in games zoals Minecraft PvP).</li>
+        </ul>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+          4. Verschil tussen Burst-Snelheid en Uithoudingsvermogen
+        </h2>
+        <p class="leading-relaxed">
+          Een test van 1 of 5 seconden meet explosieve burst-snelheid: hoeveel kliks kan je motorische cortex in één reflexmatige ontlading produceren? Een test van 30 of 60 seconden test daarentegen spieruithoudingsvermogen en de opbouw van melkzuur in de vingerflexoren. Veel gamers behalen 12 CPS in 5 seconden, maar zakken naar 7,5 CPS over 60 seconden.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+          5. Ergonomie en Preventie van Repetitive Strain Injury (RSI)
+        </h2>
+        <p class="leading-relaxed">
+          Langdurig geforceerd klikken zonder pauzes kan leiden tot overbelasting van de pezen in de pols en vingers (carpaal-tunnelsyndroom of peesontstekingen). Houd de onderarm ontspannen op het bureau, zorg dat de pols niet in een knik ligt en neem elke 10 tot 15 minuten een korte rustperiode om de hand los te schudden.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+          6. Hardware Factoren: Muizen, Sensoren &amp; Debounce-Instellingen
+        </h2>
+        <p class="leading-relaxed">
+          Gamingmuizen met optische switches of instelbare debounce-vertraging (zoals van Glorious, Razer of Logitech) registreren schakelmomenten milliseconden sneller dan standaard kantoormuizen. Ook de mechanische veerspanning onder de knop beïnvloedt de retoursnelheid van de switch direct.
+        </p>
+      </section>
+
+    </article>
+
+    <!-- FAQ Accordion Section (Visible HTML Accordions only, no schema) -->
+    <section class="mt-16 pt-12 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">
+          Veelgestelde Vragen
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+          Vragen en antwoorden over de CPS Klik Test
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Wat is een gemiddelde CPS-score voor een volwassene?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            De meeste mensen behalen tussen de 5,5 en 6,8 CPS met een reguliere enkele vinger. Getrainde gamers halen gemiddeld 8 tot 10 CPS, en beoefenaars van speciale technieken passeren gemakkelijk de 12 CPS.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Kan ik ook met de spatiebalk klikken?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Ja. De test ondersteunt zowel muisklikken, touchpad-aanslagen, touchscreens als de spatiebalk op uw fysieke toetsenbord.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Wat is het verschil tussen 5s, 10s en 60s tests?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            De kortere tests (1s en 5s) meten puur explosieve pieksnelheid (burst-rate). Langere tests (30s en 60s) meten het vasthouden van het ritme en uithoudingsvermogen tegen spiervermoeidheid.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Hoe wordt de ritme-consistentie berekend?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            De consistentiescore is gebaseerd op de variatiecoëfficiënt (CV) van de milliseconden tussen opeenvolgende kliks. Een metronoom-achtige regelmaat resulteert in een score nabij 100%.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Wat is het wereldrecord CPS?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            In de officiële 5-seconden categorie ligt het wereldrecord rond de 14 tot 16 CPS bij regulier vingerklikken, en ruim boven de 25 CPS bij geavanceerde drag-click technieken.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Wordt mijn persoonlijke record opgeslagen?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Ja. Uw hoogste CPS-score wordt automatisch lokaal in uw browser bewaard onder `nl_cps_best_score`, zodat u uw vooruitgang bij herhaalde sessies direct ziet.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- How-To-Play Modal -->
+  <div
+    id="how-to-play-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="how-to-play-title"
+  >
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 mb-4">
+        <h2 id="how-to-play-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+          Instructies voor de CPS Klik Test
+        </h2>
+        <button
+          id="btn-close-how-to-play"
+          type="button"
+          class="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+          aria-label="Sluiten"
+        >
+          &times;
+        </button>
+      </div>
+      <ol class="list-decimal list-inside space-y-3 text-zinc-700 dark:text-zinc-300 text-[15px] sm:text-[16px] leading-relaxed">
+        <li>Kies de gewenste testduur: <strong class="text-zinc-900 dark:text-zinc-100">1s, 5s, 10s, 30s of 60s</strong>.</li>
+        <li>Klik binnen het testveld of druk op <strong class="text-zinc-900 dark:text-zinc-100">Test Starten</strong>. De timer start direct bij je eerste klik.</li>
+        <li>Blijf zo snel mogelijk achter elkaar klikken tot de tijd afloopt.</li>
+        <li>Je exacte CPS, pieksnelheid, ritmeconsistentie en rangorde worden direct berekend.</li>
+      </ol>
+      <div class="mt-5 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Tip: Zorg dat je arm comfortabel rust op het bureaublad en klik vanuit de vingergewrichten om overmatige spierspanning te voorkomen.
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
+
+<style>
+  @keyframes rippleBurst {
+    0% {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(4);
+      opacity: 0;
+    }
+  }
+  .click-ripple {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(41, 151, 255, 0.45) 0%, rgba(0, 102, 204, 0.15) 70%, transparent 100%);
+    pointer-events: none;
+    animation: rippleBurst 0.45s ease-out forwards;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    'use strict';
+
+    var STORAGE_KEY = 'nl_cps_best_score';
+    var durationSeconds = 10;
+    var phase = 'ready'; // 'ready' | 'running' | 'done'
+    var clickOffsets = [];
+    var trialStart = 0;
+    var rafId = 0;
+    var endTimerId = 0;
+    var graphSamples = []; // Array of { timeSec, cps }
+
+    var arena = document.getElementById('cps-arena');
+    var rippleContainer = document.getElementById('ripple-container');
+    var arenaReady = document.getElementById('arena-ready');
+    var arenaRunning = document.getElementById('arena-running');
+    var arenaDone = document.getElementById('arena-done');
+    var arenaClickCount = document.getElementById('arena-click-count');
+
+    var hudTime = document.getElementById('hud-time');
+    var hudClicks = document.getElementById('hud-clicks');
+    var hudCps = document.getElementById('hud-cps');
+
+    var btnStart = document.getElementById('btn-start');
+    var btnStartLabel = document.getElementById('btn-start-label');
+    var btnReset = document.getElementById('btn-reset');
+    var btnRetake = document.getElementById('btn-retake');
+    var btnCopyCps = document.getElementById('btn-copy-cps');
+
+    var resultsPanel = document.getElementById('results-panel');
+    var resCps = document.getElementById('res-cps');
+    var resTotal = document.getElementById('res-total');
+    var resPeak = document.getElementById('res-peak');
+    var resMedian = document.getElementById('res-median');
+    var resRhythm = document.getElementById('res-rhythm');
+    var resTier = document.getElementById('res-tier');
+    var resDescription = document.getElementById('res-description');
+    var resBest = document.getElementById('res-best');
+
+    var graphCanvas = document.getElementById('cps-graph-canvas');
+
+    var modalHow = document.getElementById('how-to-play-modal');
+    var btnHow = document.getElementById('btn-how-to-play');
+    var btnCloseHow = document.getElementById('btn-close-how-to-play');
+
+    function createRipple(clientX, clientY) {
+      if (!arena || !rippleContainer) return;
+      var rect = arena.getBoundingClientRect();
+      var x = clientX ? (clientX - rect.left) : (rect.width / 2);
+      var y = clientY ? (clientY - rect.top) : (rect.height / 2);
+
+      var el = document.createElement('div');
+      el.className = 'click-ripple';
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      rippleContainer.appendChild(el);
+      setTimeout(function () {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 500);
+    }
+
+    function setPhase(next) {
+      phase = next;
+      if (arenaReady) arenaReady.classList.toggle('hidden', next !== 'ready');
+      if (arenaRunning) arenaRunning.classList.toggle('hidden', next !== 'running');
+      if (arenaDone) arenaDone.classList.toggle('hidden', next !== 'done');
+
+      if (btnStartLabel) {
+        btnStartLabel.textContent = next === 'running' ? 'Bezig…' : next === 'done' ? 'Herstarten' : 'Test Starten';
+      }
+      if (btnStart) btnStart.disabled = next === 'running';
+      if (arena) arena.disabled = next === 'done';
+    }
+
+    function loadBest() {
+      if (!resBest) return;
+      try {
+        var val = localStorage.getItem(STORAGE_KEY);
+        resBest.textContent = val ? (val + ' CPS') : '--';
+      } catch (e) {
+        resBest.textContent = '--';
+      }
+    }
+
+    function resetTest() {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(endTimerId);
+      clickOffsets = [];
+      graphSamples = [];
+      if (hudTime) hudTime.textContent = durationSeconds.toFixed(1) + 's';
+      if (hudClicks) hudClicks.textContent = '0';
+      if (hudCps) hudCps.textContent = '0.0';
+      if (arenaClickCount) arenaClickCount.textContent = '0';
+      if (resultsPanel) resultsPanel.classList.add('hidden');
+      if (rippleContainer) rippleContainer.innerHTML = '';
+      setPhase('ready');
+    }
+
+    function startTest(e) {
+      trialStart = performance.now();
+      clickOffsets = [0];
+      graphSamples = [{ timeSec: 0, cps: 0 }];
+      setPhase('running');
+
+      if (e && e.clientX && e.clientY) {
+        createRipple(e.clientX, e.clientY);
+      } else {
+        createRipple();
+      }
+
+      if (hudClicks) hudClicks.textContent = '1';
+      if (arenaClickCount) arenaClickCount.textContent = '1';
+      if (hudCps) hudCps.textContent = (1 / (durationSeconds > 1 ? 1 : durationSeconds)).toFixed(1);
+
+      rafId = window.requestAnimationFrame(tick);
+      endTimerId = window.setTimeout(finishTest, durationSeconds * 1000);
+    }
+
+    function registerClick(e) {
+      if (phase !== 'running') return;
+      var offset = performance.now() - trialStart;
+      if (offset >= durationSeconds * 1000) return;
+
+      clickOffsets.push(offset);
+      var total = clickOffsets.length;
+      if (hudClicks) hudClicks.textContent = String(total);
+      if (arenaClickCount) arenaClickCount.textContent = String(total);
+
+      var elapsedSec = offset / 1000;
+      var currentCps = elapsedSec > 0 ? (total / elapsedSec) : 0;
+      if (hudCps) hudCps.textContent = currentCps.toFixed(1);
+
+      if (e && e.clientX && e.clientY) {
+        createRipple(e.clientX, e.clientY);
+      } else {
+        createRipple();
+      }
+    }
+
+    function tick() {
+      if (phase !== 'running') return;
+      var elapsedMs = performance.now() - trialStart;
+      var remainingMs = Math.max(0, durationSeconds * 1000 - elapsedMs);
+
+      if (hudTime) hudTime.textContent = (remainingMs / 1000).toFixed(1) + 's';
+
+      var elapsedSec = elapsedMs / 1000;
+      if (elapsedSec > 0) {
+        // Calculate rolling 500ms CPS
+        var recentClicks = 0;
+        for (var i = clickOffsets.length - 1; i >= 0; i--) {
+          if (elapsedMs - clickOffsets[i] <= 1000) recentClicks++;
+          else break;
+        }
+        var rollingCps = recentClicks;
+        graphSamples.push({ timeSec: elapsedSec, cps: rollingCps });
+      }
+
+      if (remainingMs > 0) {
+        rafId = window.requestAnimationFrame(tick);
+      }
+    }
+
+    function drawGraph() {
+      if (!graphCanvas) return;
+      var ctx = graphCanvas.getContext('2d');
+      if (!ctx) return;
+
+      var rect = graphCanvas.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      graphCanvas.width = rect.width * dpr;
+      graphCanvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      var w = rect.width;
+      var h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      if (graphSamples.length < 2) return;
+
+      var maxCps = 5;
+      for (var i = 0; i < graphSamples.length; i++) {
+        if (graphSamples[i].cps > maxCps) maxCps = graphSamples[i].cps;
+      }
+      maxCps = Math.ceil(maxCps * 1.2);
+
+      // Grid lines
+      ctx.strokeStyle = document.documentElement.classList.contains('dark') ? '#27272a' : '#e4e4e7';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.25); ctx.lineTo(w, h * 0.25);
+      ctx.moveTo(0, h * 0.5);  ctx.lineTo(w, h * 0.5);
+      ctx.moveTo(0, h * 0.75); ctx.lineTo(w, h * 0.75);
+      ctx.stroke();
+
+      // Sparkline
+      ctx.beginPath();
+      var maxTime = durationSeconds;
+      for (var j = 0; j < graphSamples.length; j++) {
+        var s = graphSamples[j];
+        var x = (s.timeSec / maxTime) * w;
+        var y = h - (s.cps / maxCps) * (h - 16) - 8;
+        if (j === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = '#0066cc';
+      if (document.documentElement.classList.contains('dark')) ctx.strokeStyle = '#2997ff';
+      ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // Gradient Fill
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      var grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, 'rgba(41, 151, 255, 0.25)');
+      grad.addColorStop(1, 'rgba(41, 151, 255, 0.0)');
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+
+    function finishTest() {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(endTimerId);
+      setPhase('done');
+
+      var total = clickOffsets.length;
+      var finalCps = total / durationSeconds;
+
+      // Peak burst in any 1-second rolling window
+      var peakBurst = 0;
+      var left = 0;
+      for (var right = 0; right < clickOffsets.length; right++) {
+        while (clickOffsets[right] - clickOffsets[left] >= 1000) left++;
+        var count = right - left + 1;
+        if (count > peakBurst) peakBurst = count;
+      }
+
+      // Median Interval
+      var intervals = [];
+      for (var k = 1; k < clickOffsets.length; k++) {
+        intervals.push(clickOffsets[k] - clickOffsets[k - 1]);
+      }
+      var medianStr = '--';
+      if (intervals.length > 0) {
+        var sorted = intervals.slice().sort(function (a, b) { return a - b; });
+        var mid = Math.floor(sorted.length / 2);
+        var med = sorted.length % 2 === 0 ? ((sorted[mid - 1] + sorted[mid]) / 2) : sorted[mid];
+        medianStr = Math.round(med) + 'ms';
+      }
+
+      // Rhythm consistency
+      var rhythmStr = '--';
+      if (intervals.length >= 2) {
+        var sum = 0;
+        for (var m = 0; m < intervals.length; m++) sum += intervals[m];
+        var mean = sum / intervals.length;
+        if (mean > 0) {
+          var varianceSum = 0;
+          for (var n = 0; n < intervals.length; n++) varianceSum += Math.pow(intervals[n] - mean, 2);
+          var sd = Math.sqrt(varianceSum / intervals.length);
+          var cv = Math.min(1, sd / mean);
+          var rhythmPct = Math.round((1 - cv) * 100);
+          rhythmStr = Math.max(0, rhythmPct) + '%';
+        }
+      }
+
+      // Dutch Rank Tiering
+      var tierName = '';
+      var tierBadgeClass = '';
+      var tierDesc = '';
+
+      if (finalCps >= 14) {
+        tierName = 'Goddelijk (14+ CPS)';
+        tierBadgeClass = 'border-amber-500 bg-amber-500/10 text-amber-600 dark:text-amber-400';
+        tierDesc = 'Onwerkelijke snelheid van wereldklasse. Je beheerst geavanceerde Butterfly- of Drag-Click technieken tot in de perfectie.';
+      } else if (finalCps >= 12) {
+        tierName = 'Luipaard (12–14 CPS)';
+        tierBadgeClass = 'border-purple-500 bg-purple-500/10 text-purple-600 dark:text-purple-400';
+        tierDesc = 'Uitzonderlijke competitieve snelheid. Je hebt een gigantisch reactievoordeel in snelle multiplayer games.';
+      } else if (finalCps >= 10) {
+        tierName = 'Cheetah (10–12 CPS)';
+        tierBadgeClass = 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+        tierDesc = 'Zeer snelle klikker met uitstekende coördinatie. Ideaal voor veeleisende PvP-wedstrijden.';
+      } else if (finalCps >= 8) {
+        tierName = 'Haas (8–10 CPS)';
+        tierBadgeClass = 'border-blue-500 bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff]';
+        tierDesc = 'Ervaren gamersnelheid met enkelvoudige vingerkliks of lichte jitter. Ruim boven de norm.';
+      } else if (finalCps >= 6) {
+        tierName = 'Kat (6–8 CPS)';
+        tierBadgeClass = 'border-cyan-500 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400';
+        tierDesc = 'Vlotte en behendige vingermotoriek, duidelijk sneller dan de gemiddelde computergebruiker.';
+      } else if (finalCps >= 4) {
+        tierName = 'Schildpad (4–6 CPS)';
+        tierBadgeClass = 'border-zinc-400 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300';
+        tierDesc = 'Het standaard gemiddelde voor dagelijks computer- en kantoorwerk met één vinger.';
+      } else {
+        tierName = 'Slak (<4 CPS)';
+        tierBadgeClass = 'border-zinc-300 bg-zinc-50 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400';
+        tierDesc = 'Rustig en bedachtzaam tempo. Oefen met ontspannen vingers om je reactiesnelheid te verhogen.';
+      }
+
+      if (resCps) resCps.textContent = finalCps.toFixed(1);
+      if (resTotal) resTotal.textContent = String(total);
+      if (resPeak) resPeak.textContent = String(peakBurst);
+      if (resMedian) resMedian.textContent = medianStr;
+      if (resRhythm) resRhythm.textContent = rhythmStr;
+
+      if (resTier) {
+        resTier.textContent = tierName;
+        resTier.className = 'px-5 py-2.5 rounded-2xl border text-sm font-bold text-center ' + tierBadgeClass;
+      }
+      if (resDescription) resDescription.textContent = tierDesc;
+
+      // Save Best
+      try {
+        var prevBest = parseFloat(localStorage.getItem(STORAGE_KEY) || '0');
+        if (finalCps > prevBest) {
+          localStorage.setItem(STORAGE_KEY, finalCps.toFixed(1));
+          loadBest();
+        }
+      } catch (e) {}
+
+      if (resultsPanel) {
+        resultsPanel.classList.remove('hidden');
+        resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // Draw graph
+      setTimeout(drawGraph, 50);
+    }
+
+    // Event Handlers
+    if (arena) {
+      arena.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+        if (phase === 'ready') startTest(e);
+        else if (phase === 'running') registerClick(e);
+      });
+
+      arena.addEventListener('touchstart', function (e) {
+        e.preventDefault();
+        var touch = e.touches[0];
+        if (phase === 'ready') startTest(touch);
+        else if (phase === 'running') registerClick(touch);
+      }, { passive: false });
+    }
+
+    if (btnStart) {
+      btnStart.addEventListener('click', function () {
+        if (phase === 'ready') startTest();
+      });
+    }
+
+    if (btnReset) btnReset.addEventListener('click', resetTest);
+    if (btnRetake) btnRetake.addEventListener('click', resetTest);
+
+    // Duration Chips
+    var chips = document.querySelectorAll('.duration-chip');
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        if (phase === 'running') return;
+        var dur = parseInt(chip.getAttribute('data-duration') || '10', 10);
+        if (isNaN(dur)) return;
+        durationSeconds = dur;
+
+        chips.forEach(function (c) {
+          c.classList.remove('bg-[#0066cc]', 'dark:bg-[#2997ff]', 'text-white', 'border-[#0066cc]', 'dark:border-[#2997ff]');
+          c.classList.add('bg-zinc-50', 'dark:bg-zinc-900', 'text-zinc-700', 'dark:text-zinc-300', 'border-zinc-200', 'dark:border-zinc-800');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        chip.classList.add('bg-[#0066cc]', 'dark:bg-[#2997ff]', 'text-white', 'border-[#0066cc]', 'dark:border-[#2997ff]');
+        chip.classList.remove('bg-zinc-50', 'dark:bg-zinc-900', 'text-zinc-700', 'dark:text-zinc-300');
+        chip.setAttribute('aria-pressed', 'true');
+
+        resetTest();
+      });
+    });
+
+    // Spacebar Support
+    window.addEventListener('keydown', function (e) {
+      if (e.key === ' ' && (!modalHow || modalHow.classList.contains('hidden'))) {
+        if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+          return;
+        }
+        e.preventDefault();
+        if (phase === 'ready') startTest();
+        else if (phase === 'running') registerClick();
+      }
+    });
+
+    // Copy Result
+    if (btnCopyCps) {
+      btnCopyCps.addEventListener('click', function () {
+        var scoreText = resCps ? resCps.textContent : '0.0';
+        var rankText = resTier ? resTier.textContent : '';
+        var text = '⚡ Ik behaalde ' + scoreText + ' CPS (' + rankText + ') op de CPS Test van FreeIQExam!\nTest gratis je kliksnelheid: https://freeiqexam.com/nl/cps-test';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            var orig = btnCopyCps.textContent;
+            btnCopyCps.textContent = 'Gekopieerd!';
+            setTimeout(function () { btnCopyCps.textContent = orig; }, 2000);
+          });
+        }
+      });
+    }
+
+    // Modal Handlers
+    if (btnHow && modalHow) {
+      btnHow.addEventListener('click', function () {
+        modalHow.classList.remove('hidden');
+        modalHow.classList.add('flex');
+      });
+    }
+    if (btnCloseHow && modalHow) {
+      btnCloseHow.addEventListener('click', function () {
+        modalHow.classList.add('hidden');
+        modalHow.classList.remove('flex');
+      });
+    }
+
+    window.addEventListener('resize', function () {
+      if (phase === 'done') drawGraph();
+    });
+
+    loadBest();
+    resetTest();
+  })();
+</script>

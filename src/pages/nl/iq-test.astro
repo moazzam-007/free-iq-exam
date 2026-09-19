@@ -1,0 +1,1155 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getStandardTestSet } from '../../data/questions';
+
+const title = "Gratis IQ Test Online: 24 Vragen met Directe Uitslag | FreeIQExam";
+const description = "Doe de officiële 24-delige matrix intelligentietest online. Wetenschappelijk genormeerd via Item Response Theory (IRT) in 20 minuten zonder registratie.";
+const canonicalUrl = "https://freeiqexam.com/nl/iq-test";
+
+const alternates = {
+  'en': 'https://freeiqexam.com/test',
+  'de': 'https://freeiqexam.com/de/iq-test',
+  'pt-BR': 'https://freeiqexam.com/pt-br/teste-de-qi',
+  'nl': 'https://freeiqexam.com/nl/iq-test'
+};
+
+// Selecteer 24 opgaven (6 per CHC-domein) op de server
+const selectedItems = getStandardTestSet();
+
+const sanitizedBank = selectedItems.map((q) => ({
+  id: q.id,
+  domain: q.domain,
+  subType: q.subType,
+  domainLabel: q.domainLabel,
+  promptType: q.promptType,
+  promptText: q.promptText,
+  promptSvg: q.promptSvg ?? null,
+  a: q.a,
+  b: q.b,
+  options: q.options.map((opt) => ({
+    id: opt.id,
+    text: opt.text ?? '',
+    svgContent: opt.svgContent ?? null,
+  })),
+}));
+
+const bankJson = JSON.stringify(sanitizedBank);
+
+// Obfuscated scoring answer key token: questionId -> { c: correctOptionId, exp: explanation }
+const answerKeyToken = Buffer.from(
+  JSON.stringify(
+    selectedItems.reduce((acc, q) => {
+      const correctOpt = q.options.find((o) => o.isCorrect);
+      acc[q.id] = {
+        c: correctOpt ? correctOpt.id : 1,
+        exp: q.explanation || '',
+      };
+      return acc;
+    }, {} as Record<number, { c: number; exp: string }>)
+  )
+).toString('base64');
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    "name": "Gratis Online IQ Test: 24 Vragen, 20 Minuten",
+    "description": "Gestandaardiseerde 24-delige cognitieve test gebaseerd op het 2-Parameter Logistische (2PL) model van de Item Response Theory. Meet fluïde intelligentie (Gf), visueel-ruimtelijk inzicht (Gv), kwantitatief redeneren (Gq) en werkgeheugen.",
+    "url": "https://freeiqexam.com/nl/iq-test",
+    "inLanguage": "nl",
+    "educationalLevel": "General Population",
+    "typicalAgeRange": "16-",
+    "about": {
+      "@type": "Thing",
+      "name": "Intelligentiequotiënt (IQ)"
+    },
+    "timeRequired": "PT20M",
+    "numberOfQuestions": 24
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Gratis Online IQ Test",
+    "url": "https://freeiqexam.com/nl/iq-test",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "nl",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://freeiqexam.com/nl"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Gratis IQ Test",
+        "item": "https://freeiqexam.com/nl/iq-test"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="nl">
+  <!-- Distraction-Free Top Navigation Bar -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+
+      <!-- Brand / Exit Trigger -->
+      <button
+        id="btn-exit"
+        type="button"
+        class="flex items-center gap-2.5 group text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black rounded-xl p-1.5 -ml-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors cursor-pointer"
+        aria-label="Test verlaten en terugkeren"
+      >
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] flex items-center justify-center text-white font-bold text-base shadow-xs transition-opacity group-hover:opacity-90">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-heading font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
+            FreeIQ<span class="text-[#0066cc] dark:text-[#2997ff]">Exam</span>
+          </span>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Test verlaten</span>
+        </div>
+      </button>
+
+      <!-- Center: Live Countdown Timer and Item Counter -->
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div
+          id="timer-container"
+          class="flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors duration-300"
+          role="timer"
+          aria-live="polite"
+        >
+          <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="timer-display" class="font-mono text-sm sm:text-base font-medium tracking-tight text-zinc-800 dark:text-zinc-200">
+            20:00
+          </span>
+        </div>
+
+        <!-- Question Counter Badge -->
+        <div class="hidden sm:flex items-center gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          <span>Vraag</span>
+          <span id="stat-current" class="font-bold text-zinc-900 dark:text-white">1</span>
+          <span>/</span>
+          <span class="font-semibold text-zinc-900 dark:text-white">24</span>
+        </div>
+      </div>
+
+      <!-- Right: Finish Action -->
+      <div class="flex items-center gap-2">
+        <button
+          id="btn-top-submit"
+          type="button"
+          class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black min-h-[44px] flex items-center cursor-pointer"
+        >
+          Test afronden
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+
+      <!-- Storage warning banner (hidden by default) -->
+      <div id="storage-warning-banner" class="hidden mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-200 text-xs sm:text-sm">
+        <strong>Opmerking:</strong> Lokale opslag is uitgeschakeld in uw browser. Uw voortgang kan niet worden hersteld bij een herlaadbeurt.
+      </div>
+
+      <!-- Live Assessment Card -->
+      <div class="rounded-3xl bg-zinc-50/90 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden p-6 sm:p-10 mb-10">
+
+        <!-- Header of Card: Category Badge & Mobile Counter -->
+        <div class="flex items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200/80 dark:border-zinc-800">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="domain-badge" class="px-3 py-1 rounded-full bg-[#0066cc]/10 dark:bg-[#2997ff]/10 text-[#0066cc] dark:text-[#2997ff] text-xs font-mono font-bold tracking-wide uppercase">
+              Fluïde Intelligentie
+            </span>
+            <span id="domain-category" class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              Abstracte Inductie (Gf)
+            </span>
+          </div>
+
+          <div class="sm:hidden text-xs font-mono font-bold text-zinc-600 dark:text-zinc-400">
+            Vraag <span id="mobile-q-num">1</span> / 24
+          </div>
+        </div>
+
+        <!-- Question Prompt Heading -->
+        <div class="mb-6 text-center sm:text-left">
+          <h1 id="question-prompt-text" class="text-lg sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+            Kies de optie die het logische patroon op de juiste wijze voltooit:
+          </h1>
+        </div>
+
+        <!-- Stimulus Container (Matrix SVG or Diagram) -->
+        <div id="stimulus-card" class="mb-8 p-4 sm:p-8 rounded-2xl bg-white dark:bg-[#0a0a0c] border border-zinc-200/80 dark:border-zinc-800/80 flex items-center justify-center min-h-[220px] sm:min-h-[280px]">
+          <div id="stimulus-container" class="w-full flex items-center justify-center">
+            <!-- Rendered SVG stimulus injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Multiple Choice Options Grid -->
+        <div class="mb-8">
+          <div id="options-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+            <!-- Option buttons injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Keyboard hint & Answered tally -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-zinc-500 dark:text-zinc-400 pt-4 border-t border-zinc-200/80 dark:border-zinc-800">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+            <span>Toetsen 1–<span id="opt-count-hint">6</span> voor selectie &bull; Pijltoetsen voor navigatie</span>
+          </div>
+          <div>
+            Beantwoord: <span id="answered-count" class="font-bold text-zinc-900 dark:text-white">0</span> / 24
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-zinc-200 dark:bg-zinc-800 rounded-full h-1.5 mt-6 overflow-hidden">
+          <div id="progress-bar" class="bg-[#0066cc] dark:bg-[#2997ff] h-1.5 rounded-full transition-all duration-300" style="width: 4.16%;"></div>
+        </div>
+
+        <!-- Item Navigator Strip -->
+        <div class="mt-6 pt-6 border-t border-zinc-200/80 dark:border-zinc-800">
+          <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-3 text-center sm:text-left">
+            Opgavenoverzicht:
+          </div>
+          <div id="navigator-strip" class="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-thin">
+            <!-- 24 numbered pills injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-zinc-200/80 dark:border-zinc-800">
+          <button
+            id="btn-prev"
+            type="button"
+            disabled
+            class="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-40 disabled:pointer-events-none min-h-[44px] flex items-center gap-2 active:scale-[0.97] cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            Vorige
+          </button>
+
+          <button
+            id="btn-next"
+            type="button"
+            class="px-6 py-2.5 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white font-semibold text-sm transition-all hover:opacity-95 active:scale-[0.97] min-h-[44px] flex items-center gap-2 shadow-xs cursor-pointer"
+          >
+            <span id="btn-next-text">Volgende</span>
+            <svg id="btn-next-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Screen reader announcer -->
+      <div id="sr-announcer" class="sr-only" aria-live="polite"></div>
+
+      <!-- Educational Content Section (6 H2s) -->
+      <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Deel 1 &bull; Psychometrische Fundering
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Het Cattell-Horn-Carroll (CHC) Model van Cognitieve Vermogens
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            De moderne psychometrie baseert zich op het empirisch gevalideerde Cattell-Horn-Carroll (CHC) model. Dit model classificeert de menselijke intelligentie hiërarchisch: een overkoepelende algemene intelligentiefactor (de algemene <em>g</em>-factor), onderverdeeld in brede cognitieve domeinen en specifieke denkvaardigheden. Onze 24-delige test meet vier van de meest voorspellende domeinen:
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose mt-4">
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
+              <div class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Fluïde Intelligentie (Gf)</div>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Het vermogen om geheel nieuwe, abstracte problemen op te lossen via inductief en deductief redeneren, zonder afhankelijk te zijn van schoolse voorkennis.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
+              <div class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Visueel-Ruimtelijke Verwerking (Gv)</div>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Mentale rotatie, ruimtelijk inzicht en het manipuleren en transformeren van complexe tweedimensionale geometrische patronen.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
+              <div class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Kwantitatief Redeneren (Gq)</div>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Het detecteren van formele rekenkundige patronen, numerieke evenredigheden en wiskundige relaties.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
+              <div class="font-bold text-sm text-zinc-950 dark:text-white mb-1">Verbaal Redeneren &amp; Begrip (Gc/Gwm)</div>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">Logische deductie, semantische analogieën en het structureel analyseren van abstracte verbale concepten.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Deel 2 &bull; Statistische Methodologie
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Item-Response-Theorie (2PL IRT): Wetenschappelijke Kalibratie
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Klassieke testtheorie telt louter ruwe scores (het aantal correcte antwoorden). Dit creëert ernstige meetfouten, omdat een triviale opgave even zwaar weegt als een wiskundig meesterstuk. FreeIQExam implementeert het geavanceerde 2-Parameter Logistische (2PL) model:
+          </p>
+          <div class="p-5 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 font-mono text-sm text-zinc-800 dark:text-zinc-200 not-prose text-center">
+            P(&theta;) = 1 / (1 + e<sup>-a(&theta; - b)</sup>)
+          </div>
+          <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            In deze formule staat <em>b</em> voor de moeilijkheidsgraad van de opgave, <em>a</em> voor het discriminerend vermogen van het item en <em>&theta;</em> voor uw latente cognitieve vaardigheid. Hierdoor berekent het algoritme een individuele meetfout (SEM) en een betrouwbaar 95%-betrouwbaarheidsinterval.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Deel 3 &bull; Normering &amp; Schaal
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            De Standaard IQ-Schaal: Normaalverdeling &amp; Standaarddeviatie (SD 15)
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Het intelligentiequotiënt is een relatieve standaardscore. Conform de wereldwijd gehanteerde Wechsler-standaard is het bevolkingsgemiddelde vastgesteld op 100 met een standaarddeviatie (&sigma;) van 15:
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-sm sm:text-base text-zinc-600 dark:text-zinc-300">
+            <li><strong>IQ 70–84:</strong> Benedengemiddeld bereik (~14% van de bevolking)</li>
+            <li><strong>IQ 85–114:</strong> Gemiddeld bereik (~68% van de bevolking)</li>
+            <li><strong>IQ 115–129:</strong> Bovengemiddelde intelligentie (~14% van de bevolking)</li>
+            <li><strong>IQ 130+:</strong> Hoogbegaafdheid &ndash; toelatingsdrempel voor Mensa (bovenste 2%, 98e percentiel)</li>
+          </ul>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Deel 4 &bull; Eerlijkheid &amp; Validiteit
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Non-verbale Matrixtesten &amp; Cultuuronafhankelijke Validiteit
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Om taalbarrières, sociaaleconomische achtergronden en schoolse privileges te elimineren, steunt de kern van deze test op progressieve matrices (geïnspireerd op de klassieke principes van Raven en Cattell Culture Fair). Deze zuiver visuele patronen meten het zuivere abstractievermogen van de hersenen zonder culturele vertekening.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Deel 5 &bull; Testomstandigheden
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Testomstandigheden: Tijdsdruk &amp; Concentratiefactoren
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            De tijdslimiet van 20 minuten (gemiddeld 50 seconden per vraag) daagt de cognitieve verwerkingssnelheid onder lichte tijdsdruk uit. Dankzij de interactieve opgavenbalk kunt u lastige vragen overslaan en hier later naar terugkeren voordat u de test definitief afrondt.
+          </p>
+        </section>
+
+        <section class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono font-semibold text-[#0066cc] dark:text-[#2997ff] uppercase tracking-wider">
+            Deel 6 &bull; Interpretatie
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Score-interpretatie &amp; Cognitieve Profielanalyse
+          </h2>
+          <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Direct na afronding ontvangt u een complete kwantitatieve analyse met uw geschatte IQ, percentielrangschikking, 95%-betrouwbaarheidsinterval en een domeinspecifieke uitsplitsing van uw cognitieve sterke punten.
+          </p>
+        </section>
+
+      </article>
+
+      <!-- FAQ Accordion Section (Visible HTML Accordions only, no schema) -->
+      <section class="mt-16 pt-12 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="mb-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">
+            Veelgestelde Vragen
+          </div>
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            Vragen en antwoorden over de gratis online IQ test
+          </h2>
+        </div>
+
+        <div class="space-y-3">
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Hoe lang duurt deze gratis online IQ test?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              De test bevat 24 vragen en hanteert een vaste tijdslimiet van 20 minuten. Gemiddeld besteedt u circa 50 seconden per vraag. U kunt de test altijd eerder inleveren zodra u klaar bent.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Is het resultaat van deze test wetenschappelijk betrouwbaar?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Onze test is gekalibreerd met het 2PL Item Response Theory (IRT) model en het CHC-kader. De test biedt een zeer nauwkeurige cognitieve indicatie en percentielscore voor zelfevaluatie.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Wat betekent een IQ-score van 100, 115 of 130?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Een score van 100 vertegenwoordigt exact het bevolkingsgemiddelde (50e percentiel). Een IQ van 115 ligt één standaarddeviatie boven het gemiddelde (circa 84e percentiel). Een IQ van 130 markeert de officiële grens van hoogbegaafdheid (98e percentiel).
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Worden mijn antwoorden of persoonsgegevens opgeslagen?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Nee. De berekening en scorebepaling vinden 100% lokaal in uw webbrowser plaats. Er is geen registratie, account of e-mailadres vereist.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Waarom bestaat de test uit exact 24 vragen?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              In de psychometrie biedt een batterij van 24 zorgvuldig gekalibreerde IRT-items de ideale balans tussen hoge meetbetrouwbaarheid (&alpha; &gt; 0,85) en testefficiëntie zonder cognitieve vermoeidheid.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Hoe verschilt deze online test van een officiële klinische test zoals de WAIS-IV?</span>
+              <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Klinische tests zoals de WAIS-IV worden fysiek afgenomen door een erkend psycholoog en duren meerdere uren. Onze online test biedt een snelle, gevalideerde indicatie van uw algemene cognitieve capaciteiten.
+            </p>
+          </details>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Exit Modal -->
+  <div
+    id="modal-exit"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-exit-title"
+  >
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+        </svg>
+      </div>
+      <h3 id="modal-exit-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white mb-2">
+        Test verlaten?
+      </h3>
+      <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
+        Uw voortgang en antwoorden blijven tijdelijk bewaard in uw browser. Weet u zeker dat u de test wilt onderbreken?
+      </p>
+      <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
+        <a
+          href="/nl"
+          class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-center transition-colors"
+        >
+          Ja, verlaten
+        </a>
+        <button
+          id="btn-modal-resume"
+          type="button"
+          class="w-full sm:w-auto px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-[#0066cc] dark:bg-[#2997ff] hover:opacity-95 transition-opacity cursor-pointer"
+        >
+          Verdergaan met test
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Confirmation Modal -->
+  <div
+    id="modal-submit"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-submit-title"
+  >
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-[#0066cc] dark:text-[#2997ff] flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 id="modal-submit-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white mb-2">
+        Test definitief inleveren?
+      </h3>
+      <p id="submit-modal-summary" class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
+        Alle vragen worden geanalyseerd volgens het 2PL IRT-algoritme.
+      </p>
+      <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
+        <button
+          id="btn-cancel-submit"
+          type="button"
+          class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+        >
+          Vragen controleren
+        </button>
+        <button
+          id="btn-confirm-submit"
+          type="button"
+          class="w-full sm:w-auto px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-[#0066cc] dark:bg-[#2997ff] hover:opacity-95 transition-opacity cursor-pointer"
+        >
+          Uitslag berekenen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded Client Logic -->
+  <script is:inline define:vars={{ bankJson, answerKeyToken }}>
+    (function () {
+      var FULL_BANK = JSON.parse(bankJson);
+      var TOTAL_QUESTIONS = 24;
+      var TOTAL_TIME_SECONDS = 20 * 60; // 1200 seconds
+
+      var STORAGE_KEY_SESSION   = 'nl_iq_session';
+      var STORAGE_KEY_ANSWERS   = 'nl_iq_answers';
+      var STORAGE_KEY_QUESTIONS = 'nl_iq_active_questions';
+      var STORAGE_KEY_TYPE      = 'nl_iq_test_type';
+
+      // CHC domain display labels (Dutch)
+      var DOMAIN_LABELS = {
+        fluid:        { label: 'Fluïde Intelligentie', cat: 'Abstracte Inductie (Gf)' },
+        spatial:      { label: 'Visueel-Ruimtelijk', cat: 'Mentale Rotatie & Transformatie (Gv)' },
+        quantitative: { label: 'Kwantitatief Redeneren', cat: 'Numerieke Logica (Gq)' },
+        verbal:       { label: 'Verbaal Begrip', cat: 'Taalbegrip & Deductie (Gc/Gwm)' }
+      };
+
+      // Seeded RNG (Mulberry32)
+      function createRng(seed) {
+        var s = seed >>> 0;
+        return function () {
+          s += 0x6d2b79f5;
+          var t = s;
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function shuffle(arr, rng) {
+        var out = arr.slice();
+        for (var i = out.length - 1; i > 0; i--) {
+          var j = Math.floor(rng() * (i + 1));
+          var tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+        }
+        return out;
+      }
+
+      function sampleDomain(domain, count, rng) {
+        var pool = FULL_BANK.filter(function (item) { return item.domain === domain; });
+        return shuffle(pool, rng).slice(0, count);
+      }
+
+      function buildStandardSet(seed) {
+        var rng = createRng(seed);
+        var domains = ['fluid', 'spatial', 'quantitative', 'verbal'];
+        var result = [];
+        domains.forEach(function (d) {
+          sampleDomain(d, 6, rng).forEach(function (item) { result.push(item); });
+        });
+        return result;
+      }
+
+      // State
+      var questions = [];
+      var currentIndex = 0;
+      var userAnswers = {};
+      var timeRemaining = TOTAL_TIME_SECONDS;
+      var timerInterval = null;
+      var autoAdvanceTimer = null;
+      var targetEndTime = null;
+      var sessionSeed = null;
+      var startTimeMs = Date.now();
+      var sessionExpired = false;
+
+      // Restore or init session
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY_SESSION);
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            var now = Date.now();
+            var isFresh = !parsed.savedAt || (now - parsed.savedAt) < 7200000;
+            if (isFresh) {
+              if (typeof parsed.startTimeMs === 'number') startTimeMs = parsed.startTimeMs;
+              if (typeof parsed.seed === 'number') sessionSeed = parsed.seed;
+              if (parsed.answers && typeof parsed.answers === 'object') userAnswers = parsed.answers;
+              if (typeof parsed.timeRemaining === 'number' && parsed.timeRemaining > 0) timeRemaining = parsed.timeRemaining;
+              if (typeof parsed.currentQuestionIndex === 'number' && parsed.currentQuestionIndex >= 0) {
+                currentIndex = parsed.currentQuestionIndex;
+              }
+              if (typeof parsed.targetEndTime === 'number') {
+                if (parsed.targetEndTime <= now) {
+                  timeRemaining = 0;
+                  sessionExpired = true;
+                } else {
+                  targetEndTime = parsed.targetEndTime;
+                  timeRemaining = Math.max(0, Math.round((targetEndTime - now) / 1000));
+                }
+              } else {
+                targetEndTime = now + timeRemaining * 1000;
+              }
+            } else {
+              localStorage.removeItem(STORAGE_KEY_SESSION);
+              targetEndTime = now + timeRemaining * 1000;
+            }
+          }
+        } else {
+          targetEndTime = Date.now() + timeRemaining * 1000;
+        }
+      } catch (err) {
+        targetEndTime = Date.now() + timeRemaining * 1000;
+      }
+
+      if (!sessionSeed) sessionSeed = Math.floor(Math.random() * 0xffffffff);
+      questions = buildStandardSet(sessionSeed);
+      if (currentIndex >= questions.length) currentIndex = 0;
+
+      if (sessionExpired) {
+        localStorage.removeItem(STORAGE_KEY_SESSION);
+        submitTestImmediately();
+        return;
+      }
+
+      function shuffleOptions(opts) {
+        var copy = opts.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = temp;
+        }
+        return copy;
+      }
+
+      // DOM Elements
+      var timerDisplay    = document.getElementById('timer-display');
+      var timerContainer  = document.getElementById('timer-container');
+      var statCurrent     = document.getElementById('stat-current');
+      var mobileQNum      = document.getElementById('mobile-q-num');
+      var progressBar     = document.getElementById('progress-bar');
+      var domainBadge     = document.getElementById('domain-badge');
+      var domainCategory  = document.getElementById('domain-category');
+      var promptText      = document.getElementById('question-prompt-text');
+      var stimulusCard    = document.getElementById('stimulus-card');
+      var stimulusContainer = document.getElementById('stimulus-container');
+      var optionsGrid     = document.getElementById('options-grid');
+      var answeredCountEl = document.getElementById('answered-count');
+      var optCountHint    = document.getElementById('opt-count-hint');
+      var btnPrev         = document.getElementById('btn-prev');
+      var btnNext         = document.getElementById('btn-next');
+      var btnNextText     = document.getElementById('btn-next-text');
+      var btnNextIcon     = document.getElementById('btn-next-icon');
+      var navigatorStrip  = document.getElementById('navigator-strip');
+      var btnTopSubmit    = document.getElementById('btn-top-submit');
+      var modalExit       = document.getElementById('modal-exit');
+      var btnExit         = document.getElementById('btn-exit');
+      var btnModalResume  = document.getElementById('btn-modal-resume');
+      var modalSubmit     = document.getElementById('modal-submit');
+      var submitModalSummary = document.getElementById('submit-modal-summary');
+      var btnConfirmSubmit   = document.getElementById('btn-confirm-submit');
+      var btnCancelSubmit    = document.getElementById('btn-cancel-submit');
+      var srAnnouncer     = document.getElementById('sr-announcer');
+
+      var testSubmitted = false;
+
+      function saveSession() {
+        if (testSubmitted) return;
+        try {
+          localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({
+            startTimeMs: startTimeMs,
+            seed: sessionSeed,
+            answers: userAnswers,
+            timeRemaining: timeRemaining,
+            currentQuestionIndex: currentIndex,
+            targetEndTime: targetEndTime,
+            savedAt: Date.now()
+          }));
+        } catch (e) {}
+      }
+
+      function updateTimerDisplay() {
+        var mins = Math.floor(timeRemaining / 60);
+        var secs = timeRemaining % 60;
+        var formatted = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        if (timerDisplay) timerDisplay.textContent = formatted;
+
+        if (timeRemaining <= 60) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold animate-pulse';
+        } else if (timeRemaining <= 300) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 font-semibold';
+        } else {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium';
+        }
+      }
+
+      function syncTimerFromWallClock() {
+        if (!targetEndTime || testSubmitted) return;
+        var secondsLeft = Math.max(0, Math.round((targetEndTime - Date.now()) / 1000));
+        timeRemaining = secondsLeft;
+        updateTimerDisplay();
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          submitTestImmediately();
+        }
+      }
+
+      function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(function () {
+          syncTimerFromWallClock();
+          saveSession();
+        }, 1000);
+      }
+
+      window.addEventListener('beforeunload', function (e) {
+        if (!testSubmitted && Object.keys(userAnswers).length > 0) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+
+      function submitTestImmediately() {
+        testSubmitted = true;
+        try {
+          var answerKeyMap = {};
+          try {
+            var decoded = atob(answerKeyToken);
+            answerKeyMap = JSON.parse(decoded);
+          } catch (e) {}
+          var timeElapsedSec = Math.max(1, Math.round((Date.now() - startTimeMs) / 1000));
+          var scoredQuestions = questions.map(function (q) {
+            var key = answerKeyMap[q.id];
+            var correctId = key ? key.c : 0;
+            return {
+              id: q.id,
+              domain: q.domain,
+              subType: q.subType,
+              domainLabel: q.domainLabel,
+              promptType: q.promptType,
+              promptText: q.promptText,
+              promptSvg: q.promptSvg,
+              a: q.a,
+              b: q.b,
+              explanation: key ? key.exp : '',
+              options: q.options.map(function (opt) {
+                return {
+                  id: opt.id,
+                  text: opt.text,
+                  svgContent: opt.svgContent,
+                  isCorrect: opt.id === correctId,
+                };
+              }),
+            };
+          });
+
+          localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify(userAnswers));
+          localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(questions.map(function (q) { return q.id; })));
+          localStorage.setItem(STORAGE_KEY_TYPE, 'standard');
+
+          if (typeof window.__fiqSaveSessionResult === 'function') {
+            window.__fiqSaveSessionResult(userAnswers, scoredQuestions, 'standard', timeElapsedSec);
+          }
+          localStorage.removeItem(STORAGE_KEY_SESSION);
+        } catch (e) {}
+        window.location.href = '/results';
+      }
+
+      function openSubmitModal() {
+        var count = Object.keys(userAnswers).length;
+        var unanswered = TOTAL_QUESTIONS - count;
+        if (count === TOTAL_QUESTIONS) {
+          submitModalSummary.textContent = 'Alle 24 opgaven beantwoord! Uw antwoordprofiel is gereed voor de 2PL IRT-normering.';
+        } else {
+          submitModalSummary.textContent = 'U heeft ' + count + ' van de 24 opgaven beantwoord (' + unanswered + ' nog open). Niet-beantwoorde vragen worden als onjuist gerekend. Weet u zeker dat u de test nu wilt afronden?';
+        }
+        modalSubmit.classList.remove('hidden');
+        modalSubmit.classList.add('flex');
+        requestAnimationFrame(function () { if (btnConfirmSubmit) btnConfirmSubmit.focus(); });
+      }
+
+      function closeSubmitModal() {
+        modalSubmit.classList.add('hidden');
+        modalSubmit.classList.remove('flex');
+      }
+
+      function openExitModal() {
+        modalExit.classList.remove('hidden');
+        modalExit.classList.add('flex');
+        requestAnimationFrame(function () { if (btnModalResume) btnModalResume.focus(); });
+      }
+
+      function closeExitModal() {
+        modalExit.classList.add('hidden');
+        modalExit.classList.remove('flex');
+      }
+
+      function sanitizeSvg(raw) {
+        if (!raw || typeof raw !== 'string') return '';
+        return raw
+          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+          .replace(/\bon\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '')
+          .replace(/javascript:/gi, '');
+      }
+
+      function renderCurrentQuestion() {
+        var q = questions[currentIndex];
+        if (!q) return;
+
+        var qNum = currentIndex + 1;
+        if (statCurrent) statCurrent.textContent = String(qNum);
+        if (mobileQNum) mobileQNum.textContent = String(qNum);
+        if (progressBar) progressBar.style.width = ((qNum / TOTAL_QUESTIONS) * 100) + '%';
+
+        var answeredCount = Object.keys(userAnswers).length;
+        if (answeredCountEl) answeredCountEl.textContent = String(answeredCount);
+
+        var domInfo = DOMAIN_LABELS[q.domain] || { label: 'Cognitieve Test', cat: 'CHC-Model' };
+        if (domainBadge) domainBadge.textContent = domInfo.label;
+        if (domainCategory) domainCategory.textContent = domInfo.cat;
+
+        var optCount = q.options.length;
+        if (optCountHint) optCountHint.textContent = String(optCount);
+
+        if (stimulusContainer) {
+          stimulusContainer.innerHTML = '';
+        }
+
+        if (q.promptType === 'text') {
+          if (stimulusCard) stimulusCard.style.display = 'none';
+          if (promptText) {
+            promptText.textContent = q.promptText;
+            promptText.className = 'text-lg sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        } else if (q.promptType === 'svg' && q.promptSvg) {
+          if (stimulusCard) stimulusCard.style.display = '';
+          if (stimulusContainer) stimulusContainer.innerHTML = sanitizeSvg(q.promptSvg);
+          if (promptText) {
+            promptText.textContent = (q.promptText && q.promptText.trim().length > 0)
+              ? q.promptText
+              : 'Kies de optie die het logische patroon op de juiste wijze voltooit:';
+            promptText.className = 'text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        } else {
+          if (stimulusCard) stimulusCard.style.display = '';
+          if (stimulusContainer && q.promptSvg) {
+            var hybridText = document.createElement('p');
+            hybridText.className = 'text-sm text-zinc-700 dark:text-zinc-300 mb-3 leading-relaxed';
+            hybridText.textContent = q.promptText;
+            stimulusContainer.appendChild(hybridText);
+            var svgWrap = document.createElement('div');
+            svgWrap.innerHTML = sanitizeSvg(q.promptSvg);
+            stimulusContainer.appendChild(svgWrap);
+          }
+          if (promptText) {
+            promptText.textContent = 'Analyseer de gegevens en selecteer het juiste antwoord:';
+            promptText.className = 'text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
+          }
+        }
+
+        if (optionsGrid) {
+          optionsGrid.innerHTML = '';
+          var selectedOptionId = userAnswers[q.id];
+          if (!q._shuffledOptions) {
+            q._shuffledOptions = shuffleOptions(q.options);
+          }
+          var displayedOptions = q._shuffledOptions;
+          var hasSvgOptions = displayedOptions.some(function (o) { return o.svgContent; });
+          optionsGrid.className = hasSvgOptions
+            ? 'grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4'
+            : 'grid grid-cols-1 gap-3';
+
+          displayedOptions.forEach(function (opt, optIdx) {
+            var isSelected = selectedOptionId === opt.id;
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('data-option-id', String(opt.id));
+            btn.setAttribute('aria-label', 'Optie ' + (optIdx + 1));
+
+            var baseClass = 'relative p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 active:scale-[0.98] cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black min-h-[44px] ';
+            var stateClass = isSelected
+              ? 'bg-blue-50/70 dark:bg-blue-950/40 border-2 border-[#0066cc] dark:border-[#2997ff] ring-2 ring-blue-600/20 shadow-md'
+              : 'bg-white/80 dark:bg-[#0f1016]/90 border border-zinc-200/80 dark:border-white/10 hover:border-zinc-300 dark:hover:border-white/20 hover:shadow-xs';
+            if (opt.svgContent) stateClass += ' min-h-[90px] sm:min-h-[110px]';
+            btn.className = baseClass + stateClass;
+
+            var badge = document.createElement('span');
+            badge.className = isSelected
+              ? 'absolute top-2 left-2 w-5 h-5 rounded-full bg-[#0066cc] dark:bg-[#2997ff] text-white font-mono text-xs font-bold flex items-center justify-center'
+              : 'absolute top-2 left-2 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs font-semibold flex items-center justify-center border border-zinc-200 dark:border-zinc-700';
+            badge.textContent = String(optIdx + 1);
+            btn.appendChild(badge);
+
+            if (opt.svgContent) {
+              var svgWrap = document.createElement('div');
+              svgWrap.className = 'w-full flex items-center justify-center pointer-events-none mt-2';
+              svgWrap.innerHTML = sanitizeSvg(opt.svgContent);
+              btn.appendChild(svgWrap);
+            }
+            if (opt.text) {
+              var textWrap = document.createElement('div');
+              textWrap.className = 'w-full px-6 py-1 text-sm sm:text-base text-zinc-800 dark:text-zinc-200 leading-snug pointer-events-none';
+              textWrap.textContent = opt.text;
+              btn.appendChild(textWrap);
+            }
+
+            btn.addEventListener('click', function () { selectOption(q.id, opt.id); });
+            optionsGrid.appendChild(btn);
+          });
+        }
+
+        if (btnPrev) btnPrev.disabled = currentIndex === 0;
+        if (btnNextText && btnNextIcon) {
+          if (currentIndex === TOTAL_QUESTIONS - 1) {
+            btnNextText.textContent = 'Test afronden';
+            btnNextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />';
+          } else {
+            btnNextText.textContent = 'Volgende';
+            btnNextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />';
+          }
+        }
+
+        renderNavigatorStrip();
+        saveSession();
+
+        if (srAnnouncer) {
+          srAnnouncer.textContent = 'Vraag ' + (currentIndex + 1) + ' van ' + TOTAL_QUESTIONS + ': ' + (q.promptText || 'Patroon voltooien');
+        }
+      }
+
+      function renderNavigatorStrip() {
+        if (!navigatorStrip) return;
+        navigatorStrip.innerHTML = '';
+        for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+          var qId = questions[i].id;
+          var isCurrent = i === currentIndex;
+          var isAnswered = typeof userAnswers[qId] === 'number';
+          var pill = document.createElement('button');
+          pill.type = 'button';
+          pill.setAttribute('aria-label', 'Ga naar vraag ' + (i + 1));
+          var pillClass = 'min-w-[44px] min-h-[44px] shrink-0 px-2 rounded-xl font-mono text-xs font-semibold flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer ';
+          if (isCurrent) {
+            pillClass += 'bg-[#0066cc] dark:bg-[#2997ff] text-white ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-black shadow-xs font-bold scale-105';
+          } else if (isAnswered) {
+            pillClass += 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-2xs';
+          } else {
+            pillClass += 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800/80 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/60 hover:bg-zinc-200 dark:hover:bg-zinc-700';
+          }
+          pill.className = pillClass;
+          pill.textContent = String(i + 1);
+          pill.addEventListener('click', (function (idx) {
+            return function () {
+              clearTimeout(autoAdvanceTimer);
+              currentIndex = idx;
+              renderCurrentQuestion();
+            };
+          })(i));
+          navigatorStrip.appendChild(pill);
+        }
+      }
+
+      function selectOption(questionId, optionId) {
+        userAnswers[questionId] = optionId;
+        renderCurrentQuestion();
+        clearTimeout(autoAdvanceTimer);
+        var answeredIdx = currentIndex;
+        autoAdvanceTimer = setTimeout(function () {
+          if (currentIndex === answeredIdx && currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          }
+        }, 400);
+      }
+
+      // Button Listeners
+      if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex > 0) { currentIndex -= 1; renderCurrentQuestion(); }
+        });
+      }
+      if (btnNext) {
+        btnNext.addEventListener('click', function () {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderCurrentQuestion();
+          } else {
+            openSubmitModal();
+          }
+        });
+      }
+      if (btnTopSubmit) btnTopSubmit.addEventListener('click', openSubmitModal);
+      if (btnExit) btnExit.addEventListener('click', openExitModal);
+      if (btnModalResume) btnModalResume.addEventListener('click', closeExitModal);
+
+      modalExit.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab') return;
+        var focusable = Array.from(modalExit.querySelectorAll('button, a, [tabindex]:not([tabindex="-1"])'));
+        var first = focusable[0]; var last = focusable[focusable.length - 1];
+        if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
+        else { if (document.activeElement === last) { e.preventDefault(); first.focus(); } }
+      });
+      modalSubmit.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab') return;
+        var focusable = Array.from(modalSubmit.querySelectorAll('button, a, [tabindex]:not([tabindex="-1"])'));
+        var first = focusable[0]; var last = focusable[focusable.length - 1];
+        if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
+        else { if (document.activeElement === last) { e.preventDefault(); first.focus(); } }
+      });
+
+      if (modalExit) {
+        modalExit.addEventListener('click', function (e) {
+          if (e.target === modalExit) closeExitModal();
+        });
+      }
+      if (modalSubmit) {
+        modalSubmit.addEventListener('click', function (e) {
+          if (e.target === modalSubmit) closeSubmitModal();
+        });
+      }
+
+      if (btnCancelSubmit) btnCancelSubmit.addEventListener('click', closeSubmitModal);
+      if (btnConfirmSubmit) btnConfirmSubmit.addEventListener('click', submitTestImmediately);
+
+      // Keyboard navigation
+      window.addEventListener('keydown', function (e) {
+        if (!modalExit.classList.contains('hidden') || !modalSubmit.classList.contains('hidden')) {
+          if (e.key === 'Escape') { closeExitModal(); closeSubmitModal(); }
+          return;
+        }
+
+        var currentQ = questions[currentIndex];
+        var optionCount = currentQ ? currentQ.options.length : 0;
+
+        if (e.key >= '1' && parseInt(e.key, 10) <= optionCount) {
+          var keyIdx = parseInt(e.key, 10) - 1;
+          var opts = currentQ._shuffledOptions || currentQ.options;
+          if (currentQ && opts[keyIdx]) selectOption(currentQ.id, opts[keyIdx].id);
+          return;
+        }
+
+        if (e.key === 'ArrowLeft' || e.key === 'p' || e.key === 'P') {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex > 0) { currentIndex -= 1; renderCurrentQuestion(); }
+          return;
+        }
+        if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
+          clearTimeout(autoAdvanceTimer);
+          if (currentIndex < TOTAL_QUESTIONS - 1) { currentIndex += 1; renderCurrentQuestion(); }
+          return;
+        }
+        if (e.key === 'Enter') {
+          if (currentIndex === TOTAL_QUESTIONS - 1) openSubmitModal();
+        }
+      });
+
+      // Initialize
+      startTimer();
+      renderCurrentQuestion();
+    })();
+  </script>
+
+  <script>
+    import { calculateScore } from '../../utils/scoring';
+    import { saveAssessmentRecord } from '../../utils/profileStore';
+    import type { QuestionItem } from '../../data/questions';
+
+    declare global {
+      interface Window {
+        __fiqSaveSessionResult?: (
+          userAnswers: Record<number, number>,
+          scoredQuestions: QuestionItem[],
+          testType: 'standard' | 'quick',
+          durationSeconds?: number
+        ) => void;
+      }
+    }
+
+    window.__fiqSaveSessionResult = function (userAnswers, scoredQuestions, testType, durationSeconds) {
+      try {
+        const scoreResult = calculateScore(userAnswers, scoredQuestions, testType);
+        localStorage.setItem('iq_assessment_result', JSON.stringify(scoreResult));
+
+        const reviewData = scoredQuestions.map((q) => {
+          const selectedId = userAnswers[q.id];
+          const selectedOpt = q.options.find((o) => o.id === selectedId);
+          return {
+            id: q.id,
+            domain: q.domain,
+            subType: q.subType,
+            promptType: q.promptType,
+            promptText: q.promptText,
+            promptSvg: q.promptSvg ?? null,
+            a: q.a,
+            b: q.b,
+            explanation: q.explanation,
+            options: q.options,
+            selectedOptionId: selectedId,
+            isCorrect: selectedOpt ? selectedOpt.isCorrect : false,
+          };
+        });
+        localStorage.setItem('iq_review_data', JSON.stringify(reviewData));
+
+        const defaultDuration = testType === 'quick' ? 600 : 1200;
+        const actualDuration = typeof durationSeconds === 'number' && durationSeconds > 0 ? durationSeconds : defaultDuration;
+
+        saveAssessmentRecord({
+          assessmentType: testType === 'quick' ? 'quick-12' : 'flagship-24',
+          assessmentVersion: '1.0.0',
+          completedAt: new Date().toISOString(),
+          durationSeconds: actualDuration,
+          rawScore: scoreResult.rawScore,
+          totalQuestions: scoredQuestions.length,
+          theta: scoreResult.theta,
+          sem: scoreResult.sem,
+          iqEstimate: scoreResult.iqEstimate,
+          confidenceInterval: scoreResult.confidenceInterval,
+          percentile: scoreResult.percentile,
+          domainBreakdown: scoreResult.domainBreakdown,
+        });
+      } catch (err) {
+        console.warn('[Test] Failed to persist scored assessment:', err);
+      }
+    };
+  </script>
+</Layout>

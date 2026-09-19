@@ -1,0 +1,732 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Autismus-Test Erwachsene: AQ-10 Spektrum-Selbsttest | FreeIQExam";
+const description = "Online Autism-Spectrum Quotient (AQ-10) Selbsttest für Erwachsene. Erkennen Sie autistische Züge und Kommunikationsmuster zur persönlichen Orientierung.";
+const canonicalUrl = "https://freeiqexam.com/de/autismus-test";
+
+const alternates = {
+  en: "https://freeiqexam.com/autism-test",
+  ru: "https://freeiqexam.com/ru/autism-test",
+  id: "https://freeiqexam.com/id/tes-autisme",
+  de: "https://freeiqexam.com/de/autismus-test"
+};
+
+const faqItems = [
+  [
+    'Kann ein Online-Autismus-Selbsttest eine formale Diagnose stellen?',
+    'Nein. Ein Online-Screening wie der AQ-10 kann orientierende Hinweise auf autistische Wesenszüge und Kommunikationsmuster geben, ersetzt jedoch keinesfalls eine fachärztliche oder neuropsychologische Diagnostik. Eine fundierte Diagnose erfordert eine mehrstündige klinische Untersuchung, Entwicklungsanamnese (häufig unter Einbezug von Bezugspersonen) sowie den Ausschluss anderer Ursachen.'
+  ],
+  [
+    'Was bedeutet ein AQ-10 Gesamtwert von 6 oder mehr Punkten?',
+    'Ein Wert ab 6 von 10 Punkten gilt nach den evidenzbasierten Richtlinien des britischen National Institute for Health and Care Excellence (NICE) als Schwellenwert für eine weiterführende diagnostische Überweisung. Es bedeutet, dass signifikante autistische Eigenschaften vorliegen, beweist jedoch für sich genommen noch keinen Autismus.'
+  ],
+  [
+    'Warum erhalten viele Erwachsene — besonders Frauen — ihre Diagnose erst spät?',
+    'Viele autistische Erwachsene, insbesondere Frauen, eignen sich über Jahre hinweg ausgeprägte Kompensationsstrategien („Camouflaging“ oder „Masking“) an: Sie lernen Blickkontakt zu erzwingen, imitieren Mimik, skripten Konversationen und unterdrücken selbstregulierendes Verhalten (Stimming). Dadurch wird Autismus in der Kindheit oft übersehen und erst im Erwachsenenalter – häufig nach autistischem Burnout – erkannt.'
+  ],
+  [
+    'Wie hängen Autismus und ADHS zusammen? Was bedeutet AuDHD?',
+    'Autismus und ADHS treten überdurchschnittlich häufig gemeinsam auf (komorbid); in Fachkreisen und Communities wird dies oft als „AuDHD“ bezeichnet. Beide Neurodivergenzen teilen Besonderheiten in der exekutiven Funktionsfähigkeit, Reizfilterung und Aufmerksamkeitslenkung, weshalb eine differenzierte Abklärung besonders wichtig ist.'
+  ],
+  [
+    'Kann man hochsensibel sein, ohne im Autismus-Spektrum zu liegen?',
+    'Ja. Eine sensorische Überempfindlichkeit gegenüber Geräuschen, Licht oder Texturen kommt auch bei Hochsensibilität, ADHS, Traumafolgestörungen oder Angststörungen vor. Autismus zeichnet sich durch das gemeinsame Auftreten sensorischer Besonderheiten mit spezifischen Mustern in der sozialen Kommunikation und Vorlieben für Routinen oder fokussierte Interessen seit früher Kindheit aus.'
+  ],
+  [
+    'Was versteht man unter Stimming und sollte man es unterdrücken?',
+    'Stimming bezeichnet sich wiederholende Bewegungen oder Lautäußerungen (z. B. Händeflackern, Summen, Fußwippen, Fidgeting), die der Reizregulation, dem Abbau von Übererregung oder der Fokussierung dienen. In der modernen Neurodiversitäts-Psychologie wird harmloses Stimming als nützliche Selbstregulation anerkannt und nicht unterdrückt.'
+  ],
+  [
+    'Welche Nachteilsausgleiche helfen autistischen Erwachsenen im Berufsalltag?',
+    'Typische wirksame Anpassungen sind klare, schriftliche Arbeitsaufträge, planbare Arbeitszeiten ohne spontane Wechsel, Lärmschutz (z. B. geräuschunterdrückende Kopfhörer), Rückzugsmöglichkeiten in Reizarmen Räumen sowie die Erlaubnis zur asynchronen Kommunikation per Text.'
+  ],
+  [
+    'Wie läuft eine fachärztliche Autismus-Diagnostik im Erwachsenenalter ab?',
+    'Der erste Schritt führt meist über den Hausarzt oder direkt zu einer Spezialambulanz für Autismus im Erwachsenenalter (z. B. an Universitätskliniken). Die Diagnostik umfasst standardisierte Interviews (wie ADOS-2, ADI-R), biografische Fragebögen sowie differenzialdiagnostische Untersuchungen.'
+  ]
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Autismus-Test Erwachsene: AQ-10 Spektrum-Selbsttest',
+    url: canonicalUrl,
+    inLanguage: 'de',
+    medicalAudience: 'Patient',
+    aspect: 'Screening',
+    isAccessibleForFree: true
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Online Autismus-Test Erwachsene (AQ-10)',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'All',
+    inLanguage: 'de',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    accessibilitySummary: 'Tastaturbedienung mit Ziffern 1–4, Pfeiltasten zur Navigation, Screenreader-Unterstützung und druckbare Profilübersicht.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Startseite', item: 'https://freeiqexam.com/de/' },
+      { '@type': 'ListItem', position: 2, name: 'Selbsttests', item: 'https://freeiqexam.com/de/#tests' },
+      { '@type': 'ListItem', position: 3, name: 'Autismus-Test Erwachsene', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    '@id': `${canonicalUrl}#quiz`,
+    name: 'Autism-Spectrum Quotient (AQ-10) Fragebogen — 10 Fragen',
+    url: canonicalUrl,
+    inLanguage: 'de',
+    numberOfQuestions: 10,
+    isAccessibleForFree: true
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="de"
+>
+  <Header currentPath="/de/autismus-test" />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-[#000000] dark:text-white transition-colors duration-200">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumb" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/de/" class="hover:text-zinc-950 dark:hover:text-white transition-colors">Startseite</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-zinc-600 dark:text-zinc-300">Selbsttests</span>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white font-semibold">Autismus-Test Erwachsene</span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="mx-auto max-w-4xl text-center">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-[#2997ff] sm:text-sm">
+          <svg class="w-4 h-4 text-[#0066cc] dark:text-[#2997ff]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          AQ-10 · Wissenschaftlich fundiertes Screening
+        </div>
+
+        <h1 class="mt-6 font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em]">
+          Autismus-Test Erwachsene: AQ-10 Spektrum-Selbsttest
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Überprüfen Sie typische Merkmale aus dem Autismus-Spektrum anhand des Autism-Spectrum Quotient (AQ-10). 10 Fragen zu sozialer Kommunikation, Sensorik, Detailfokus und Routinen mit interaktivem Eigenschafts-Radar – kostenlos, anonym und ohne Anmeldung.
+        </p>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['10 standardisierte Fragen', '4 Eigenschaftsdimensionen', 'Interaktives Netzdiagramm', 'NICE-Leitlinien-konform', '100 % anonym im Browser'].map((item) => (
+            <span class="rounded-full border border-zinc-200 bg-zinc-50/80 px-4 py-2 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/80 dark:text-zinc-300 shadow-sm">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <!-- Main Application Container -->
+      <section id="autism-app" class="mx-auto mt-12 max-w-4xl">
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/90 p-5 dark:border-zinc-800 dark:bg-zinc-950 p-6 sm:p-9 shadow-sm">
+
+          <!-- Assessment Intro -->
+          <div id="assessment-intro" class="rounded-[1.5rem] border border-blue-200 bg-blue-50/70 p-6 dark:border-blue-900/50 dark:bg-blue-950/20 sm:p-8">
+            <p class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">Hinweis vor Beginn</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Orientierender Selbsttest — keine Diagnose</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Antworten Sie auf der Grundlage Ihrer alltäglichen, authentischen Erfahrungen – nicht danach, wie Sie sich verhalten, wenn Sie sich bewusst anpassen oder maskieren. Dieser Test schätzt Ihre Neigungen im Vergleich zum AQ-10 Referenzschwellenwert ein. Er ersetzt keine klinische Diagnostik.
+            </p>
+            <div class="mt-7 flex flex-wrap items-center gap-4">
+              <button
+                id="begin-assessment"
+                type="button"
+                class="rounded-full bg-[#0066cc] hover:bg-[#0055b3] text-white px-8 py-4 text-base font-semibold shadow-sm transition-all duration-150 hover:scale-[1.02] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              >
+                Selbsttest jetzt starten
+              </button>
+              <span class="text-sm text-zinc-500 dark:text-zinc-400">Tastatur: 1–4 zum Antworten · Pfeiltasten zum Navigieren</span>
+            </div>
+          </div>
+
+          <!-- Questionnaire Section -->
+          <section id="questionnaire-section" class="hidden" aria-labelledby="question-heading">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p id="question-part" class="text-xs font-semibold uppercase tracking-wider text-[#0066cc] dark:text-[#2997ff] sm:text-sm">AQ-10 · Autismus-Spektrum Orientierung</p>
+                <p id="question-domain" class="mt-2 text-base font-semibold text-zinc-800 dark:text-zinc-200">Soziale Kommunikation</p>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="question-number" class="text-base font-semibold text-zinc-900 dark:text-white sm:text-lg">Frage 1 von 10</div>
+                <div id="progress-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">0 % beantwortet</div>
+              </div>
+            </div>
+
+            <div class="mt-5 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+              <div id="progress-fill" class="h-full rounded-full bg-[#0066cc] dark:bg-[#2997ff] transition-all duration-300" style="width:4%"></div>
+            </div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <div class="flex flex-wrap gap-2 text-xs sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+                <span class="rounded-full border border-zinc-200 px-3 py-1 dark:border-zinc-700">Eine Option wählen</span>
+                <span class="rounded-full border border-zinc-200 px-3 py-1 dark:border-zinc-700">Stimme voll zu → Stimme überhaupt nicht zu</span>
+              </div>
+
+              <h2 id="question-heading" class="mt-6 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white"></h2>
+              <p id="question-context" class="mt-3 text-sm sm:text-base text-zinc-500 dark:text-zinc-400"></p>
+
+              <div id="likert-options" class="mt-8 grid gap-3 sm:grid-cols-4" role="group" aria-label="Zustimmungsoptionen"></div>
+
+              <p class="mt-6 rounded-2xl border border-blue-200 bg-blue-50/70 px-5 py-4 text-xs sm:text-sm text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-200">
+                Hervorgehobene Optionen kennzeichnen Antworten, die beim AQ-10 als autistische Wesenszüge (1 Punkt) gewertet werden.
+              </p>
+
+              <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+                <button
+                  id="back-button"
+                  type="button"
+                  class="rounded-full border border-zinc-300 bg-white px-6 py-3.5 text-base font-semibold text-zinc-800 hover:bg-zinc-50 transition active:scale-[0.97] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+                >
+                  Zurück
+                </button>
+                <button
+                  id="next-button"
+                  type="button"
+                  class="rounded-full bg-zinc-900 px-7 py-3.5 text-base font-semibold text-white transition hover:bg-black active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-zinc-900"
+                >
+                  Nächste Frage
+                </button>
+              </div>
+            </article>
+          </section>
+
+          <!-- Results Section -->
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 sm:p-9 shadow-sm">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge low">Unterhalb des Schwellenwerts</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">Ihre Auswertung im Spektrum</h2>
+                  <p id="result-classification" class="mt-2 text-xl font-bold text-[#0066cc] dark:text-[#2997ff]">Geringe Ausprägung</p>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-3 text-center dark:border-zinc-800 dark:bg-zinc-800">
+                  <div id="result-score" class="text-3xl font-extrabold text-zinc-900 dark:text-white">0 / 10</div>
+                  <div id="threshold-status" class="mt-1 text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-300">Schwellenwert: 6 Punkte</div>
+                </div>
+              </div>
+
+              <div class="mt-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-2 text-xs sm:text-sm font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-300">
+                Keine ärztliche Diagnose
+              </div>
+
+              <p id="result-narrative" class="mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <!-- Scores Grid across 4 Subscales -->
+              <div class="mt-8 grid gap-4 sm:grid-cols-2">
+                <article class="score-card">
+                  <div class="score-label">Soziale Kommunikation &amp; Interaktion</div>
+                  <div id="social-score" class="mt-3 text-3xl font-extrabold text-zinc-900 dark:text-white">0 / 5</div>
+                  <div id="social-status" class="score-status">Minimal</div>
+                  <div class="meter"><span id="social-bar"></span></div>
+                </article>
+                <article class="score-card">
+                  <div class="score-label">Sensorik &amp; Detailfokus</div>
+                  <div id="sensory-score" class="mt-3 text-3xl font-extrabold text-zinc-900 dark:text-white">0 / 2</div>
+                  <div id="sensory-status" class="score-status">Minimal</div>
+                  <div class="meter"><span id="sensory-bar"></span></div>
+                </article>
+                <article class="score-card">
+                  <div class="score-label">Aufmerksamkeitswechsel &amp; Flexibilität</div>
+                  <div id="attention-score" class="mt-3 text-3xl font-extrabold text-zinc-900 dark:text-white">0 / 2</div>
+                  <div id="attention-status" class="score-status">Minimal</div>
+                  <div class="meter"><span id="attention-bar"></span></div>
+                </article>
+                <article class="score-card">
+                  <div class="score-label">Systematisierende Interessen</div>
+                  <div id="systematizing-score" class="mt-3 text-3xl font-extrabold text-zinc-900 dark:text-white">0 / 1</div>
+                  <div id="systematizing-status" class="score-status">Minimal</div>
+                  <div class="meter"><span id="systematizing-bar"></span></div>
+                </article>
+              </div>
+
+              <!-- Radar Canvas Card -->
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Eigenschafts-Radar · 4 Dimensionen</p>
+                <h3 class="mt-2 text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Visualisiertes Spektrum-Profil</h3>
+                <div class="relative mx-auto mt-4 max-w-[26.5rem]">
+                  <canvas id="radar-chart" role="img" aria-label="Netzdiagramm der 4 AQ-10 Subskalen"></canvas>
+                  <div id="radar-tooltip" class="radar-tooltip hidden" role="status"></div>
+                </div>
+                <p class="mt-3 text-center text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                  Bewegen Sie den Mauszeiger über einen Eckpunkt für Detailangaben.
+                </p>
+              </article>
+
+              <!-- Threshold Scale -->
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Schwellenwert-Skala · Grenzwert 6</p>
+                <h3 class="mt-2 text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Einordnung Ihres Gesamtwertes</h3>
+                <div id="threshold-scale" class="mt-5 grid grid-cols-11 gap-1" aria-hidden="true"></div>
+                <div class="mt-3 flex justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400 sm:text-sm">
+                  <span>0 · Minimal</span>
+                  <span class="text-[#0066cc] dark:text-[#2997ff]">6 · Schwellenwert (NICE)</span>
+                  <span>10 · Maximum</span>
+                </div>
+              </article>
+
+              <!-- Profile Matrix -->
+              <article class="mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Detaillierte Subskalen</p>
+                <h3 class="mt-2 text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Verteilung der Merkmale</h3>
+                <div id="profile-matrix" class="mt-6 space-y-5"></div>
+              </article>
+
+              <!-- Next Steps List -->
+              <article class="mt-6 rounded-3xl border border-blue-200 bg-blue-50/70 p-6 dark:border-blue-900/50 dark:bg-blue-950/20">
+                <h3 class="text-xl font-bold text-zinc-900 dark:text-white sm:text-2xl">Empfohlene nächste Schritte</h3>
+                <ul id="next-steps-list" class="mt-4 space-y-3 text-sm sm:text-base text-zinc-700 dark:text-zinc-300"></ul>
+              </article>
+
+              <!-- Action Buttons -->
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button
+                  id="print-result"
+                  type="button"
+                  class="rounded-full bg-zinc-950 px-7 py-4 text-base font-semibold text-white dark:bg-white dark:text-zinc-950 hover:opacity-90 transition active:scale-[0.97]"
+                >
+                  Ärztliche Zusammenfassung drucken
+                </button>
+                <button
+                  id="share-result"
+                  type="button"
+                  class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 transition active:scale-[0.97]"
+                >
+                  Ergebnis kopieren
+                </button>
+                <button
+                  id="retake-result"
+                  type="button"
+                  class="rounded-full border border-zinc-300 px-6 py-4 text-base font-semibold text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 transition active:scale-[0.97]"
+                >
+                  Selbsttest wiederholen
+                </button>
+              </div>
+
+            </div>
+          </section>
+
+          <p id="autism-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- Toast -->
+      <div id="share-toast" class="fixed bottom-6 right-6 z-50 rounded-2xl bg-zinc-950 px-5 py-3 text-sm font-semibold text-white shadow-xl opacity-0 translate-y-3 transition-all duration-300 dark:bg-white dark:text-zinc-950">
+        Ergebniszusammenfassung kopiert.
+      </div>
+
+      <!-- Educational Content Section (YMYL Compliant & SEO Hardened) -->
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+
+        <section>
+          <p class="eyebrow">Psychoedukativer Leitfaden</p>
+          <h2 class="mt-3 section-title">Das Autismus-Spektrum im Erwachsenenalter verstehen</h2>
+          <p class="mt-6">
+            Autismus ist eine lebenslange neurobiologische Entwicklungsvariante, die beeinflusst, wie das Gehirn Sinneseindrücke verarbeitet, Aufmerksamkeit lenkt und soziale Interaktionen gestaltet. Entgegen veralteter Stereotype ist Autismus kein starres Störungsbild, sondern ein multidimensionales Spektrum. Viele Erwachsene – insbesondere Frauen und Personen mit unauffälliger Sprachentwicklung – erhalten erst im mittleren oder späteren Lebensalter die Erklärung für lebenslange Reizüberflutung, soziale Erschöpfung und tief verankerte Spezialinteressen.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">1. Neurobiologische Besonderheiten: Atypische Konnektivität</h2>
+          <p class="mt-5">
+            Die moderne Neurowissenschaft beschreibt Autismus als ein verändertes Verknüpfungsmuster neuronaler Netzwerke. Zahlreiche bildgebende Studien belegen eine Tendenz zur lokalen Überkonnektivität: In umschriebenen Arealen (z. B. im visuellen Kortex) sind Nervenverbindungen dichter geknüpft, was eine außerordentliche Detailwahrnehmung und Mustererkennung ermöglicht.
+          </p>
+          <p class="mt-5">
+            Gleichzeitig ist die weitreichende Konnektivität zwischen entfernten Hirnarealen (z. B. zwischen frontalen und temporoparietalen Regionen) oft schwächer ausgeprägt. Dies erklärt, warum das Gehirn unter hoher Reizdichte mehr Verarbeitungszeit benötigt, um Mimik, Tonfall, Gesagtes und Raumkontext gleichzeitig in Echtzeit zu synchronisieren.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">2. Camouflaging, Masking und autistischer Burnout</h2>
+          <p class="mt-5">
+            Unter „Camouflaging“ oder „Masking“ versteht man das bewusste oder unbewusste Nachahmen neurotypischer Verhaltensweisen, um soziale Ablehnung zu vermeiden. Dies reicht vom mühsam antrainierten Blickkontakt über auswendig gelernte Floskeln bis zum gewaltsamen Unterdrücken von Reizüberflutung.
+          </p>
+          <p class="mt-5">
+            Dauerhaftes Maskieren verbraucht enorme kognitive Ressourcen. Führt die Belastung über Monate oder Jahre zu einer totalen Erschöpfung, spricht man vom <em>autistischen Burnout</em>: Betroffene verlieren temporär Fähigkeiten der Alltagsbewältigung, die Reizfilter brechen zusammen, und es kommt zu chronischer Niedergeschlagenheit, die häufig fälschlicherweise als therapieresistente Depression diagnostiziert wird.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">3. Monotropismus: Aufmerksamkeit als fokussierter Tunnel</h2>
+          <p class="mt-5">
+            Die von autistischen Forschern (Murray, Lawson &amp; Lesser) entwickelte <em>Monotropismus-Theorie</em> beschreibt die Aufmerksamkeit als stark gebündelte Ressource. Während neurotypische Personen Aufmerksamkeit meist polytrop auf mehrere parallele Reize verteilen („Multitasking“), vertieft sich der monotrope Geist vollständig in einen einzelnen „Aufmerksamkeitstunnel“.
+          </p>
+          <p class="mt-5">
+            Innerhalb des Tunnels entstehen außergewöhnlicher Fokus, Effizienz und tiefe Freude. Ein plötzlicher Wechsel von außen (Unterbrechungen, spontane Themenwechsel) erfordert jedoch unverhältnismäßig viel Energie und wird oft als schmerzhaft oder desorientierend empfunden.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">4. Sensorische Reizverarbeitung und Stimming</h2>
+          <p class="mt-5">
+            Die meisten Menschen im Spektrum erleben Hyper- oder Hyporeaktivität gegenüber sensorischen Reizen:
+          </p>
+          <ul class="mt-4 list-disc pl-6 space-y-2">
+            <li><strong>Hyperreaktivität:</strong> Summen von Leuchtstoffröhren, kratzende Kleidungsetiketten, grelles Licht oder Essgeräusche lösen echte vegetative Überlastung aus.</li>
+            <li><strong>Sensory Overload &amp; Shutdown/Meltdown:</strong> Überschreitet der Reizpegel die Verarbeitungskapazität, reagiert das Nervensystem unwillkürlich mit Rückzug (Shutdown) oder emotionaler Entladung (Meltdown).</li>
+            <li><strong>Stimming als Regulation:</strong> Repetitive Handbewegungen, Fidget-Tools, Schaukeln oder gleichmäßige Berührungen helfen dem Nervensystem, Reize zu filtern und sich wieder zu beruhigen.</li>
+          </ul>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">5. Der AQ-10 Fragebogen: Aufbau und Schwellenwert</h2>
+          <p class="mt-5">
+            Der AQ-10 wurde von Dr. Carrie Allison, Dr. Bonnie Auyeung und Prof. Simon Baron-Cohen am Autism Research Centre der University of Cambridge entwickelt. Als validierte Kurzform des bewährten AQ-50 erfasst er zehn charakteristische Kernmerkmale aus vier Domänen: Soziale Kommunikation, Sensorik &amp; Detailfokus, Aufmerksamkeitswechsel sowie systematisierende Interessen.
+          </p>
+          <p class="mt-5">
+            Nach den Leitlinien des britischen National Institute for Health and Care Excellence (NICE CG142) dient ein Punktwert von <strong>6 oder mehr Punkten</strong> als Richtwert für Hausärzte, um eine Überweisung an spezialisierte Diagnostikzentren zu veranlassen.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">6. Differenzialdiagnosen und Überlappungen: AuDHD &amp; Ängste</h2>
+          <p class="mt-5">
+            Eine differenzierte Betrachtung unterscheidet autistische Züge von anderen Phänomenen:
+          </p>
+          <ul class="mt-4 list-disc pl-6 space-y-2">
+            <li><strong>AuDHD (Autismus + ADHS):</strong> Viele Betroffene vereinen das Bedürfnis nach Struktur (Autismus) mit gleichzeitigem Drang nach Neuem und Impulsivität (ADHS).</li>
+            <li><strong>Soziale Angststörung:</strong> Während sozialphobische Menschen die sozialen Signale intuitiv verstehen, aber Angst vor Bewertung haben, beruht autistischer Rückzug oft auf Reizüberflutung und Kommunikationsanstrengung.</li>
+            <li><strong>Hochsensibilität (HSP):</strong> Teilt die sensorische Feinfühligkeit, beinhaltet aber in der Regel keine Besonderheiten in der sozialen Pragmatik oder Vorliebe für Routinen.</li>
+          </ul>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="guide-section">
+          <p class="eyebrow">Häufige Fragen</p>
+          <h2 class="section-title mt-3">FAQ zum Autismus-Test für Erwachsene</h2>
+          <div class="mt-7 space-y-4">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 transition-colors shadow-sm">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-zinc-900 dark:text-white sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition-transform duration-200 group-open:rotate-45 text-[#0066cc] dark:text-[#2997ff]">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-100 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
+                  {answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- Verbatim Medical Disclaimer Section -->
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9 shadow-sm">
+          <h2 class="text-2xl font-bold text-zinc-900 dark:text-white sm:text-3xl">Medizinischer Haftungsausschluss</h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 font-medium">
+            Dieser Online-Selbsttest dient ausschließlich der Orientierung und psychoedukativen Information. Er ersetzt keine professionelle medizinische, psychiatrische oder psychotherapeutische Untersuchung oder Diagnose. Ändern oder beenden Sie keine ärztlich verordneten Behandlungen eigenständig.
+          </p>
+          
+          <!-- DACH Crisis Hotlines -->
+          <div class="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-700">
+            <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Krisen- und Notfallkontakte (DACH-Region)</h3>
+            <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm text-zinc-700 dark:text-zinc-300">
+              <li class="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <strong class="text-zinc-900 dark:text-white block">Deutschland: TelefonSeelsorge</strong>
+                <span class="font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">0800 111 0 111</span> / <span class="font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">0800 111 0 222</span>
+                <span class="block text-xs text-zinc-500 mt-0.5">Kostenfrei, anonym, 24/7 | Ärztlicher Bereitschaftsdienst: 116 117 | Notruf: 112</span>
+              </li>
+              <li class="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <strong class="text-zinc-900 dark:text-white block">Österreich: Telefonseelsorge</strong>
+                <span class="font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">142</span>
+                <span class="block text-xs text-zinc-500 mt-0.5">Kostenfrei, rund um die Uhr | Euronotruf: 112</span>
+              </li>
+              <li class="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <strong class="text-zinc-900 dark:text-white block">Schweiz: Die Dargebotene Hand</strong>
+                <span class="font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">143</span>
+                <span class="block text-xs text-zinc-500 mt-0.5">Kostenfrei, anonym, 24/7 | Notruf: 112</span>
+              </li>
+              <li class="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <strong class="text-zinc-900 dark:text-white block">International: findahelpline.com</strong>
+                <span class="text-zinc-600 dark:text-zinc-400">findahelpline.com</span>
+                <span class="block text-xs text-zinc-500 mt-0.5">Kostenfreie Notfall-Hotlines weltweit in über 130 Ländern</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Printable Report for Clinician Consultation -->
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h2 class="text-3xl font-extrabold">AUTISMUS-SCREENING BEFUNDÜBERSICHT (AQ-10)</h2>
+      <p class="mt-2 text-sm uppercase tracking-wider">Autism Spectrum Quotient (10 Items) · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm">
+        <p><strong>Datum:</strong> <span id="report-date">—</span></p>
+        <p><strong>Sitzungs-ID:</strong> <span id="report-session">—</span></p>
+        <p><strong>Gesamtpunktzahl:</strong> <span id="print-total">—</span></p>
+        <p><strong>Schwellenwert-Status:</strong> <span id="print-threshold">—</span></p>
+        <p><strong>Soziale Kommunikation:</strong> <span id="print-social">—</span></p>
+        <p><strong>Sensorik &amp; Detailfokus:</strong> <span id="print-sensory">—</span></p>
+        <p><strong>Aufmerksamkeitswechsel:</strong> <span id="print-attention">—</span></p>
+        <p><strong>Systematisierende Interessen:</strong> <span id="print-systematizing">—</span></p>
+      </div>
+
+      <h3 class="mt-8 text-xl font-bold">10-Fragen Antwortübersicht</h3>
+      <table class="mt-4 w-full border-collapse text-xs">
+        <thead>
+          <tr class="bg-zinc-100 text-left">
+            <th class="border border-zinc-300 p-2">#</th>
+            <th class="border border-zinc-300 p-2">Subskala</th>
+            <th class="border border-zinc-300 p-2">Gewählte Antwort</th>
+            <th class="border border-zinc-300 p-2">Wertung (1 = Autistisches Merkmal)</th>
+          </tr>
+        </thead>
+        <tbody id="print-answer-body"></tbody>
+      </table>
+
+      <div class="mt-8 border-t border-zinc-300 pt-4 text-xs text-zinc-600 leading-relaxed">
+        <strong>Hinweis für Behandler:</strong> Dieser Befund basiert auf der Selbstbeurteilung nach dem AQ-10 (Allison, Auyeung &amp; Baron-Cohen). Er dient der Vorbereitung eines diagnostischen Gesprächs und stellt keine eigenständige Diagnose dar.
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .likert-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 1.15rem 0.65rem;
+      border-radius: 1.25rem;
+      border: 1.5px solid rgb(228 228 231);
+      background: #ffffff;
+      color: rgb(24 24 27);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+      text-align: center;
+    }
+    .likert-option:hover {
+      border-color: #0066cc;
+      background: rgb(248 250 252);
+      transform: translateY(-2px);
+    }
+    .likert-option:active {
+      transform: scale(0.97);
+    }
+    .likert-option.clinical-zone {
+      border-color: rgba(0, 102, 204, 0.4);
+      background: rgba(0, 102, 204, 0.04);
+    }
+    .likert-option.selected {
+      background: #0066cc !important;
+      border-color: #0066cc !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(0, 102, 204, 0.35);
+    }
+    .likert-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.65rem;
+      height: 1.65rem;
+      border: 1px solid rgb(212 212 216);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      font-family: ui-monospace, monospace;
+      background: rgb(244 244 245);
+      color: rgb(113 113 122);
+      transition: all 0.15s ease;
+    }
+    .likert-option:hover .likert-key {
+      border-color: #0066cc;
+      color: #0066cc;
+      background: #ffffff;
+    }
+    .likert-option.selected .likert-key {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+    .likert-label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .likert-clinical-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0066cc;
+      background: rgba(0, 102, 204, 0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      margin-top: 0.15rem;
+    }
+    .likert-option.selected .likert-clinical-badge {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .matrix-row { display: grid; gap: 0.55rem; }
+    .matrix-label { display: flex; justify-content: space-between; gap: 1rem; font-weight: 600; font-size: 0.95rem; }
+    .matrix-track { height: 0.65rem; overflow: hidden; border-radius: 999px; background: rgb(228 228 231); }
+    .matrix-track span { display: block; height: 100%; border-radius: inherit; background: #0066cc; transition: width 0.4s ease; }
+
+    #threshold-scale .threshold-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 0.2rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgb(228 228 231);
+      background: rgb(244 244 245);
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: rgb(82 82 91);
+      transition: all 0.2s ease;
+    }
+    #threshold-scale .threshold-cell.referral-zone {
+      border-color: rgba(0, 102, 204, 0.4);
+      background: rgba(0, 102, 204, 0.06);
+      color: #0066cc;
+    }
+    #threshold-scale .threshold-cell.active {
+      background: #0066cc;
+      border-color: #0066cc;
+      color: #ffffff;
+      transform: scale(1.06);
+      box-shadow: 0 4px 14px rgba(0, 102, 204, 0.35);
+    }
+    #threshold-scale .threshold-cell em {
+      font-style: normal;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .radar-tooltip {
+      position: absolute;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      padding: 0.45rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      background: rgb(24 24 27);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      z-index: 20;
+    }
+
+    /* Dark Mode */
+    :global(.dark) .likert-option {
+      border-color: rgb(39 39 42);
+      background: rgb(18 18 21);
+      color: rgb(244 244 245);
+    }
+    :global(.dark) .likert-option:hover {
+      border-color: #2997ff;
+      background: rgb(24 24 27);
+    }
+    :global(.dark) .likert-option.clinical-zone {
+      background: rgba(41, 151, 255, 0.08);
+      border-color: rgba(41, 151, 255, 0.4);
+    }
+    :global(.dark) .likert-option.selected {
+      background: #0066cc !important;
+      border-color: #2997ff !important;
+      color: #ffffff !important;
+    }
+    :global(.dark) .likert-key {
+      border-color: rgb(63 63 70);
+      background: rgb(24 24 27);
+      color: rgb(161 161 170);
+    }
+    :global(.dark) .likert-clinical-badge {
+      color: #2997ff;
+      background: rgba(41, 151, 255, 0.15);
+    }
+    :global(.dark) .matrix-track { background: rgb(39 39 42); }
+    :global(.dark) .matrix-track span { background: #2997ff; }
+
+    :global(.dark) #threshold-scale .threshold-cell {
+      border-color: rgb(39 39 42);
+      background: rgb(9 9 11);
+      color: rgb(161 161 170);
+    }
+    :global(.dark) #threshold-scale .threshold-cell.referral-zone {
+      border-color: rgba(41, 151, 255, 0.4);
+      background: rgba(41, 151, 255, 0.12);
+      color: #2997ff;
+    }
+    :global(.dark) #threshold-scale .threshold-cell.active {
+      background: #0066cc;
+      border-color: #2997ff;
+      color: #ffffff;
+    }
+
+    #print-answer-body td {
+      border: 1px solid rgb(208 208 212);
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+    }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #0066cc; }
+    :global(.dark) .eyebrow { color: #2997ff; }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.025em; color: rgb(24 24 27); }
+    :global(.dark) .section-title { color: rgb(250 250 250); }
+    .guide-section { margin-top: 3.5rem; }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.25rem; }
+    :global(.dark) .score-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .score-label { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .score-status { margin-top: .4rem; color: #0066cc; font-size: .9rem; font-weight: 600; }
+    :global(.dark) .score-status { color: #2997ff; }
+    .meter { margin-top: 0.75rem; height: .5rem; overflow: hidden; border-radius: 999px; background: rgb(228 228 231); }
+    :global(.dark) .meter { background: rgb(39 39 42); }
+    .meter span { display: block; width: 0; height: 100%; border-radius: inherit; background: #0066cc; transition: width .35s ease; }
+    :global(.dark) .meter span { background: #2997ff; }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .45rem 1rem; font-size: .9rem; font-weight: 700; }
+    .result-badge.low { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.moderate { color: rgb(161 98 7); background: rgb(254 252 232); border-color: rgb(254 240 138); }
+    .result-badge.high { color: #0066cc; background: rgb(239 246 255); border-color: rgb(191 219 254); }
+    :global(.dark) .result-badge.high { color: #2997ff; background: rgba(41, 151, 255, 0.15); border-color: rgba(41, 151, 255, 0.4); }
+
+    .print-only { display: none; }
+    @media print {
+      header, footer, nav, #autism-app, article, #share-toast { display: none !important; }
+      #printable-report { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../../scripts/tools/autism-screener-de.js"></script>
+</Layout>

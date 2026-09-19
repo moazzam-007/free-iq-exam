@@ -1,12 +1,14 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getStandardTestSet } from '../data/questions';
+import Layout from '../../layouts/Layout.astro';
+import { getStandardTestSet } from '../../data/questions';
 
-const title = "Online IQ Test: Full 24-Question Standardized Assessment | FreeIQExam";;
-const description = "Take the full 24-item standardized online IQ test. Calibrated using 2PL Item Response Theory across fluid intelligence and spatial domains. Instant verified results.";;
-const canonicalUrl = "https://freeiqexam.com/test";
-// Locale alternates resolve automatically via Layout legacy mappings (/id/test, /ru/test).
+const title = "Älykkyystesti Netissä: 24 Tehtävän Standardoitu Arviointi | FreeIQExam";
+const description = "Tee 24 tehtävän standardoitu älykkyystesti netissä. Kalibroitu 2PL IRT -mallilla fluidin, spatiaalisen, kvantitatiivisen ja verbaalisen päättelyn osalta. Välitön tulos.";
+const canonicalUrl = "https://freeiqexam.com/fi/alykkyystesti";
 const alternates = {
+  'en': 'https://freeiqexam.com/test',
+  'ru': 'https://freeiqexam.com/ru/test',
+  'id': 'https://freeiqexam.com/id/test',
   'fi': 'https://freeiqexam.com/fi/alykkyystesti'
 };
 
@@ -52,14 +54,15 @@ const schema = [
   {
     "@context": "https://schema.org",
     "@type": "Quiz",
-    "name": "Free Online IQ Test: 24 Questions, 20 Minutes",
-    "description": "Comprehensive 24-item cognitive assessment using 2-Parameter Logistic Item Response Theory across Fluid Reasoning (Gf), Visual-Spatial (Gv), Quantitative (Gq), and Verbal Comprehension (Gc).",
-    "url": "https://freeiqexam.com/test",
+    "name": "Ilmainen älykkyystesti netissä: 24 tehtävää, 20 minuuttia",
+    "description": "Kattava 24 tehtävän kognitiivinen arviointi 2-parametrisella IRT-mallilla: fluidi päättely (Gf), visuospatiaalinen hahmottaminen (Gv), kvantitatiivinen päättely (Gq) ja verbaalinen ymmärtäminen (Gc).",
+    "url": "https://freeiqexam.com/fi/alykkyystesti",
+    "inLanguage": "fi",
     "educationalLevel": "General Population",
     "typicalAgeRange": "16-",
     "about": {
       "@type": "Thing",
-      "name": "IQ - Intelligence Quotient"
+      "name": "Älykkyysosamäärä"
     },
     "timeRequired": "PT20M",
     "numberOfQuestions": 24
@@ -67,14 +70,14 @@ const schema = [
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "Free Online IQ Test",
-    "url": "https://freeiqexam.com/test",
+    "name": "Ilmainen älykkyystesti netissä",
+    "url": "https://freeiqexam.com/fi/alykkyystesti",
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Any",
     "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "USD"
+      "priceCurrency": "EUR"
     }
   },
   {
@@ -84,21 +87,21 @@ const schema = [
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "Home",
-        "item": "https://freeiqexam.com"
+        "name": "Etusivu",
+        "item": "https://freeiqexam.com/fi/"
       },
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Full Assessment Test",
-        "item": "https://freeiqexam.com/test"
+        "name": "Älykkyystesti",
+        "item": "https://freeiqexam.com/fi/alykkyystesti"
       }
     ]
   }
 ];
 ---
 
-<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema}>
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="fi">
   <!-- Distraction-Free Top Navigation Bar -->
   <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
@@ -108,7 +111,7 @@ const schema = [
         id="btn-exit"
         type="button"
         class="flex items-center gap-2.5 group text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black rounded-xl p-1.5 -ml-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-        aria-label="Exit assessment"
+        aria-label="Poistu arvioinnista"
       >
         <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] flex items-center justify-center text-white font-bold text-base shadow-xs transition-opacity group-hover:opacity-90">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
@@ -119,7 +122,7 @@ const schema = [
           <span class="font-heading font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
             FreeIQ<span class="text-blue-600 dark:text-blue-400">Exam</span>
           </span>
-          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Exit Test</span>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Poistu testistä</span>
         </div>
       </button>
 
@@ -141,9 +144,9 @@ const schema = [
 
         <!-- Question Counter Badge -->
         <div class="hidden sm:flex items-center gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400">
-          <span>Question</span>
+          <span>Kysymys</span>
           <span id="stat-current" class="font-bold text-zinc-900 dark:text-white">1</span>
-          <span>of</span>
+          <span>/</span>
           <span class="font-semibold text-zinc-900 dark:text-white">24</span>
         </div>
       </div>
@@ -155,7 +158,7 @@ const schema = [
           type="button"
           class="min-h-[44px] px-4 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] active:scale-[0.97] shadow-sm transition-all duration-200 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
         >
-          <span>Submit</span>
+          <span>Lähetä</span>
           <svg class="w-4 h-4 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
@@ -183,13 +186,13 @@ const schema = [
       <svg class="w-4 h-4 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
       </svg>
-      <span><strong>Notice:</strong> Browser storage is unavailable or in private mode. Your session will stay active while this tab remains open.</span>
+      <span><strong>Huomio:</strong> Selaimen tallennus ei ole käytössä tai yksityinen selaus on päällä. Istunto säilyy niin kauan kuin tämä välilehti on auki.</span>
     </div>
   </div>
 
   <!-- Main Active Assessment Area -->
   <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-between">
-    <h1 class="sr-only">Free Online IQ Test: 20-Minute Full Cognitive Assessment</h1>
+    <h1 class="sr-only">Ilmainen älykkyystesti netissä: 20 minuutin täysi kognitiivinen arviointi</h1>
 
     <!-- Top Metadata Bar -->
     <div class="flex items-center justify-between mb-4 sm:mb-6">
@@ -198,22 +201,22 @@ const schema = [
           id="domain-badge"
           class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-medium tracking-wide bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/80"
         >
-          Loading...
+          Ladataan...
         </span>
         <span id="domain-category" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-mono hidden md:inline">
-          Fluid Intelligence
+          Fluidi älykkyys
         </span>
       </div>
 
       <div class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">
-        <span id="answered-count">0</span> of 24 answered
+        <span id="answered-count">0</span> / 24 vastattu
       </div>
     </div>
 
     <!-- Stimulus Prompt Instruction -->
     <div class="mb-4 sm:mb-6">
       <p id="question-prompt-text" class="text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
-        Loading question...
+        Ladataan tehtävää...
       </p>
     </div>
 
@@ -227,7 +230,7 @@ const schema = [
     <!-- 6-Option Interactive Response Grid -->
     <div class="w-full max-w-xl mx-auto mt-6 sm:mt-8">
       <div class="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3 text-center sm:text-left">
-        Available Choices (Keys 1 to <span id="opt-count-hint">N</span>)
+        Vastausvaihtoehdot (näppäimet 1–<span id="opt-count-hint">N</span>)
       </div>
       <div id="options-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         <!-- Options injected here -->
@@ -245,7 +248,7 @@ const schema = [
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
           </svg>
-          <span>Previous</span>
+          <span>Edellinen</span>
         </button>
 
         <div class="text-sm font-mono font-medium text-zinc-500 sm:hidden">
@@ -257,7 +260,7 @@ const schema = [
           type="button"
           class="min-h-[44px] px-6 sm:px-8 py-2.5 rounded-full text-sm font-semibold text-white bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] active:scale-[0.97] shadow-sm transition-all duration-200 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
         >
-          <span id="btn-next-text">Next</span>
+          <span id="btn-next-text">Seuraava</span>
           <svg id="btn-next-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
           </svg>
@@ -268,8 +271,8 @@ const schema = [
     <!-- 24-Question Quick Navigation Strip -->
     <div class="w-full max-w-2xl mx-auto mt-8 sm:mt-10">
       <div class="flex items-center justify-between mb-3 text-xs font-mono text-zinc-500 dark:text-zinc-400">
-        <span>Question Navigator</span>
-        <span class="hidden sm:inline">Click any number to jump</span>
+        <span>Kysymysnavigaattori</span>
+        <span class="hidden sm:inline">Siirry kysymykseen numerosta</span>
       </div>
       <div id="navigator-strip" class="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1">
         <!-- 24 Pills injected here -->
@@ -279,128 +282,117 @@ const schema = [
     <!-- Desktop Keyboard Shortcuts Helper -->
     <div class="w-full max-w-xl mx-auto mt-8 text-center hidden md:block">
       <div class="inline-flex items-center gap-4 px-4 py-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 text-xs font-mono text-zinc-500 dark:text-zinc-400">
-        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">1-N</kbd> Select Option</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">1-N</kbd> Valitse vaihtoehto</span>
         <span class="text-zinc-300 dark:text-zinc-700">|</span>
-        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&larr;</kbd> <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&rarr;</kbd> Navigate</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&larr;</kbd> <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">&rarr;</kbd> Selaa</span>
         <span class="text-zinc-300 dark:text-zinc-700">|</span>
-        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">Enter</kbd> Finish</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold">Enter</kbd> Lopeta</span>
       </div>
     </div>
 
 
-    <!-- Comprehensive Psychometric Framework & Scientific Documentation (Remediating Content Gap) -->
+    <!-- Comprehensive Psychometric Framework & Scientific Documentation -->
     <section class="max-w-4xl mx-auto mt-16 sm:mt-24 px-4 sm:px-6 text-zinc-700 dark:text-zinc-300 space-y-12 border-t border-zinc-200 dark:border-zinc-800/80 pt-12">
-      
+
       <div class="text-center max-w-2xl mx-auto space-y-3">
         <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
-          Standardized 24-Item Cognitive Assessment Architecture
+          Standardoitu 24 tehtävän kognitiivinen arviointi
         </h2>
         <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          Calibrated against the Cattell-Horn-Carroll (CHC) cognitive framework and evaluated using 2-Parameter Logistic (2PL) Item Response Theory for clinical-grade precision.
+          Kalibroitu Cattell–Horn–Carroll (CHC) -kehystä vasten ja pisteytetty 2-parametrisella IRT-mallilla (2PL) mittaustarkkuuden varmistamiseksi. Ilmainen älykkyystesti ilman rekisteröitymistä.
         </p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-zinc-950 dark:text-white text-base">Fluid Reasoning (Gf)</span>
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400">6 Items</span>
+            <span class="font-bold text-zinc-950 dark:text-white text-base">Fluidi päättely (Gf)</span>
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400">6 tehtävää</span>
           </div>
           <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            Evaluates non-verbal inductive logic, novel matrix pattern completion, and rule extraction independent of formal schooling or linguistic background.
+            Mittaa nonverbaalista induktiivista logiikkaa, uusien matriisikuvioiden täydennystä ja sääntöjen poimintaa koulutustaustasta riippumatta.
           </p>
         </div>
 
         <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-zinc-950 dark:text-white text-base">Visual-Spatial Processing (Gv)</span>
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">6 Items</span>
+            <span class="font-bold text-zinc-950 dark:text-white text-base">Visuospatiaalinen hahmottaminen (Gv)</span>
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">6 tehtävää</span>
           </div>
           <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            Measures 3D mental rotation, surface net folding, and spatial transformation of geometric figures within working memory.
+            Mittaa 3D-mentaalikiertoa, pintojen taittelua ja geometristen kuvioiden muuntelua työmuistissa.
           </p>
         </div>
 
         <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-zinc-950 dark:text-white text-base">Quantitative Knowledge (Gq)</span>
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">6 Items</span>
+            <span class="font-bold text-zinc-950 dark:text-white text-base">Kvantitatiivinen päättely (Gq)</span>
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">6 tehtävää</span>
           </div>
           <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            Tests mathematical series deduction, numerical pattern induction, and relational algebraic logic under timed constraints.
+            Testaa lukusarjojen päättelyä, numeeristen kuvioiden induktiota ja relationaalista logiikkaa aikarajoitteessa.
           </p>
         </div>
 
         <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-zinc-950 dark:text-white text-base">Verbal Comprehension (Gc)</span>
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400">6 Items</span>
+            <span class="font-bold text-zinc-950 dark:text-white text-base">Verbaalinen ymmärtäminen (Gc)</span>
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400">6 tehtävää</span>
           </div>
           <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            Assesses crystallized semantic knowledge, conceptual categorization, and verbal analogies reflecting long-term cognitive encoding.
+            Arvioi kiteytynyttä semanttista tietoa, käsitteellistä luokittelua ja verbaalisia analogioita.
           </p>
         </div>
       </div>
 
       <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 space-y-4">
-        <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">2PL Item Response Theory Calibration</h3>
+        <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">2PL IRT -kalibrointi</h3>
         <p class="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-          Unlike obsolete classical test theory that simply tallies correct answers, FreeIQExam scores your responses using the 2-Parameter Logistic (2PL) model. Each item is characterized by its discrimination coefficient (<em>a</em>) and threshold difficulty (<em>b</em>). This ensures that difficult items provide high information at upper cognitive percentiles, while common errors distinguish average from lower percentiles with high measurement precision.
+          Pelkän oikeiden vastausten laskemisen sijaan vastauksesi pisteytetään 2-parametrisella logistisella (2PL) mallilla. Jokaiselle tehtävälle on määritetty erottelukerroin (<em>a</em>) ja vaikeustaso (<em>b</em>), joten vaikeat tehtävät tuottavat eniten informaatiota jakauman yläpäässä.
         </p>
         <div class="flex flex-wrap gap-4 pt-2 text-xs font-mono text-zinc-500 dark:text-zinc-400">
-          <span>&bull; Latent Trait Theta (&theta;): -3.0 to +3.0</span>
-          <span>&bull; Normal Distribution: &mu; = 100, &sigma; = 15</span>
-          <span>&bull; Standard Error (SEM): &plusmn;3.8 IQ points</span>
+          <span>&bull; Latentti kyky theta (&theta;): -3.0 – +3.0</span>
+          <span>&bull; Normaalijakauma: &mu; = 100, &sigma; = 15</span>
+          <span>&bull; Keskivirhe (SEM): &plusmn;3.8 ÄO-pistettä</span>
         </div>
       </div>
 
       <div class="space-y-4">
-        <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-4">Frequently Asked Questions</h3>
-        
+        <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white mb-4">Usein kysytyt kysymykset</h3>
+
         <details class="group p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
           <summary class="font-bold text-zinc-900 dark:text-zinc-100 cursor-pointer flex items-center justify-between text-sm sm:text-base select-none">
-            <span>How does this compare to official Wechsler (WAIS-IV) or Stanford-Binet tests?</span>
+            <span>Miten tämä vertautuu valvottuihin älykkyystutkimuksiin?</span>
             <span class="text-zinc-400 group-open:rotate-180 transition-transform">&#9660;</span>
           </summary>
           <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200 dark:border-zinc-800">
-            Standard clinical batteries such as WAIS-IV must be proctored in person by a licensed neuropsychologist and include subtests like digit span and block design. FreeIQExam digitizes the core cognitive factors (Gf, Gv, Gq, Gc) using modern IRT item calibration to deliver an accurate, reliable online estimate with zero cost.
+            Valvotut tutkimukset tehdään läsnäoloa vaativassa tilanteessa laillistetun psykologin johdolla. FreeIQExam digitalisoi keskeiset kognitiiviset tekijät (Gf, Gv, Gq, Gc) nykyaikaisella IRT-kalibroinnilla ja tarjoaa arvion verkossa maksutta. Tulos on suuntaa-antava eikä korvaa ammattilaisen arviota.
           </p>
         </details>
 
         <details class="group p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
           <summary class="font-bold text-zinc-900 dark:text-zinc-100 cursor-pointer flex items-center justify-between text-sm sm:text-base select-none">
-            <span>What score is required to qualify for high-IQ societies like Mensa?</span>
+            <span>Millä tuloksella pääsee Mensaan?</span>
             <span class="text-zinc-400 group-open:rotate-180 transition-transform">&#9660;</span>
           </summary>
           <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200 dark:border-zinc-800">
-            Mensa requires a score at or above the 98th percentile, corresponding to an IQ of 130 on an SD 15 scale (or 132 on an SD 16 scale). You can review our <a href="/high-iq-societies" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-500">High IQ Societies Directory</a> for admission cutoffs across Mensa, Intertel, and Triple Nine.
+            Jäsenyys edellyttää sijoittumista 98. persentiiliin, mikä vastaa älykkyysosamäärää 130 asteikolla SD 15. Harjoittele vaativilla tehtävillä <a href="/fi/mensan-testi" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-500">Mensan testin harjoittelusivulla</a>.
           </p>
         </details>
 
         <details class="group p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
           <summary class="font-bold text-zinc-900 dark:text-zinc-100 cursor-pointer flex items-center justify-between text-sm sm:text-base select-none">
-            <span>What should I do if I run out of time?</span>
+            <span>Mitä tapahtuu, jos aika loppuu kesken?</span>
             <span class="text-zinc-400 group-open:rotate-180 transition-transform">&#9660;</span>
           </summary>
           <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-200 dark:border-zinc-800">
-            When the 20-minute timer expires, all completed answers are submitted automatically. Because IRT scoring accounts for missing items appropriately in maximum-likelihood theta estimation, your score will reflect performance on completed items.
+            Kun 20 minuutin ajastin täyttyy, kaikki annetut vastaukset lähetetään automaattisesti. IRT-pisteytys huomioi puuttuvat tehtävät asianmukaisesti, joten pistemäärä kuvastaa suoritustasi vastatuissa tehtävissä.
           </p>
         </details>
-      </div>
-
-      <div class="pt-6 border-t border-zinc-200 dark:border-zinc-800">
-        <h4 class="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-4">Explore Core Psychometric Resources</h4>
-        <div class="flex flex-wrap gap-2.5">
-          <a href="/quick-test" class="px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors">5-Minute Quick IQ Test</a>
-          <a href="/matrix-reasoning-test" class="px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors">Matrix Reasoning Battery</a>
-          <a href="/iq-score-chart" class="px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors">IQ Score Chart & Bell Curve</a>
-          <a href="/iq-percentile-calculator" class="px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors">IQ Percentile Calculator</a>
-          <a href="/methodology" class="px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 transition-colors">2PL IRT Psychometric Whitepaper</a>
-        </div>
       </div>
 
     </section>
-  
+
   </main>
 
   <!-- Exit Confirmation Modal -->
@@ -409,7 +401,7 @@ const schema = [
       <button
         id="btn-close-exit-modal"
         type="button"
-        aria-label="Close exit dialog"
+        aria-label="Sulje poistumisvalinta"
         class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
       >
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -422,10 +414,10 @@ const schema = [
         </svg>
       </div>
       <h3 id="modal-exit-title" class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">
-        Exit Assessment?
+        Poistutaanko arvioinnista?
       </h3>
       <p class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
-        Your current progress and remaining time are saved in this browser. You can return at any time to resume your assessment without losing answers.
+        Edistymisesi ja jäljellä oleva aika on tallennettu tähän selaimeen. Voit palata milloin tahansa ja jatkaa vastaamista.
       </p>
       <div class="flex flex-col sm:flex-row items-center gap-3">
         <button
@@ -433,13 +425,13 @@ const schema = [
           type="button"
           class="w-full sm:w-auto flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black"
         >
-          Resume Test
+          Jatka testiä
         </button>
         <a
-          href="/"
+          href="/fi/"
           class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black"
         >
-          Exit to Home
+          Poistu etusivulle
         </a>
       </div>
     </div>
@@ -451,7 +443,7 @@ const schema = [
       <button
         id="btn-close-submit-modal"
         type="button"
-        aria-label="Close submit dialog"
+        aria-label="Sulje lähetysvalinta"
         class="absolute top-4 right-4 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer"
       >
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -464,10 +456,10 @@ const schema = [
         </svg>
       </div>
       <h3 id="modal-submit-title" class="font-heading text-xl font-bold text-zinc-950 dark:text-white mb-2">
-        Submit Cognitive Assessment?
+        Lähetetäänkö kognitiivinen arviointi?
       </h3>
       <p id="submit-modal-summary" class="text-sm text-zinc-600 dark:text-zinc-300 mb-6 leading-relaxed">
-        Calculating score summary...
+        Lasketaan yhteenvetoa...
       </p>
       <div class="flex flex-col sm:flex-row items-center gap-3">
         <button
@@ -475,14 +467,14 @@ const schema = [
           type="button"
           class="w-full sm:w-auto flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] shadow-md shadow-blue-600/20 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black"
         >
-          Calculate My Score
+          Laske pistemääräni
         </button>
         <button
           id="btn-cancel-submit"
           type="button"
           class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black"
         >
-          Review Questions
+          Tarkista tehtävät
         </button>
       </div>
     </div>
@@ -495,17 +487,17 @@ const schema = [
       var TOTAL_QUESTIONS = 24;
       var TOTAL_TIME_SECONDS = 20 * 60; // 1200 seconds
 
-      var STORAGE_KEY_SESSION   = 'freeiq_active_session';
-      var STORAGE_KEY_ANSWERS   = 'iq_assessment_answers';
-      var STORAGE_KEY_QUESTIONS = 'iq_active_questions';
-      var STORAGE_KEY_TYPE      = 'iq_test_type';
+      var STORAGE_KEY_SESSION   = 'fiq_fi_active_session';
+      var STORAGE_KEY_ANSWERS   = 'iq_fi_assessment_answers';
+      var STORAGE_KEY_QUESTIONS = 'iq_fi_active_questions';
+      var STORAGE_KEY_TYPE      = 'iq_fi_test_type';
 
-      // CHC domain display labels
+      // CHC domain display labels (Finnish)
       var DOMAIN_LABELS = {
-        fluid:        { label: 'Fluid Reasoning',   cat: 'Abstract Induction (Gf)' },
-        spatial:      { label: 'Visual-Spatial',    cat: 'Mental Rotation / Folding (Gv)' },
-        quantitative: { label: 'Quantitative',      cat: 'Numerical Reasoning (Gq)' },
-        verbal:       { label: 'Verbal Comprehension', cat: 'Language Ability (Gc)' }
+        fluid:        { label: 'Fluidi päättely', cat: 'Abstrakti induktio (Gf)' },
+        spatial:      { label: 'Visuospatiaalinen', cat: 'Mentaalikierto / taittelu (Gv)' },
+        quantitative: { label: 'Kvantitatiivinen', cat: 'Numeerinen päättely (Gq)' },
+        verbal:       { label: 'Verbaalinen', cat: 'Kielellinen kyky (Gc)' }
       };
 
       // --- Seeded RNG (Mulberry32) ---
@@ -762,9 +754,9 @@ const schema = [
         var count = Object.keys(userAnswers).length;
         var unanswered = TOTAL_QUESTIONS - count;
         if (count === TOTAL_QUESTIONS) {
-          submitModalSummary.textContent = 'All 24 questions completed! Your response pattern is ready for 2PL IRT scoring and normative standardization.';
+          submitModalSummary.textContent = 'Kaikki 24 tehtävää vastattu! Vastausprofiilisi on valmis 2PL IRT -pisteytykseen ja normitukseen.';
         } else {
-          submitModalSummary.textContent = 'You have answered ' + count + ' of 24 questions (' + unanswered + ' unanswered). Unanswered questions will be scored as incorrect. Are you sure you want to finish?';
+          submitModalSummary.textContent = 'Olet vastannut ' + count + ' / 24 tehtävästä (' + unanswered + ' vastaamatta). Vastaamattomat tehtävät pisteytetään virheellisinä. Haluatko varmasti lopettaa?';
         }
         modalSubmit.classList.remove('hidden');
         modalSubmit.classList.add('flex');
@@ -833,7 +825,7 @@ const schema = [
         if (answeredCountEl) answeredCountEl.textContent = String(answeredCount);
 
         // Domain badge
-        var domInfo = DOMAIN_LABELS[q.domain] || { label: 'Cognitive Assessment', cat: 'Multi-Domain (CHC)' };
+        var domInfo = DOMAIN_LABELS[q.domain] || { label: 'Kognitiivinen arviointi', cat: 'Monialainen (CHC)' };
         if (domainBadge) domainBadge.textContent = domInfo.label;
         if (domainCategory) domainCategory.textContent = domInfo.cat;
 
@@ -860,7 +852,7 @@ const schema = [
           if (promptText) {
             promptText.textContent = (q.promptText && q.promptText.trim().length > 0)
               ? q.promptText
-              : 'Select the option that logically completes the pattern:';
+              : 'Valitse kuvion loogisesti täydentävä vaihtoehto:';
             promptText.className = 'text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
           }
         } else {
@@ -876,7 +868,7 @@ const schema = [
             stimulusContainer.appendChild(svgWrap);
           }
           if (promptText) {
-            promptText.textContent = 'Study the information below, then select the correct answer:';
+            promptText.textContent = 'Tutki alla olevat tiedot ja valitse oikea vastaus:';
             promptText.className = 'text-base sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center';
           }
         }
@@ -899,7 +891,7 @@ const schema = [
             var btn = document.createElement('button');
             btn.type = 'button';
             btn.setAttribute('data-option-id', String(opt.id));
-            btn.setAttribute('aria-label', 'Choice ' + (optIdx + 1));
+            btn.setAttribute('aria-label', 'Vaihtoehto ' + (optIdx + 1));
 
             var baseClass = 'relative p-3 sm:p-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 active:scale-[0.98] cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-black min-h-[44px] ';
             var stateClass = isSelected
@@ -937,10 +929,10 @@ const schema = [
         if (btnPrev) btnPrev.disabled = currentIndex === 0;
         if (btnNextText && btnNextIcon) {
           if (currentIndex === TOTAL_QUESTIONS - 1) {
-            btnNextText.textContent = 'Finish Test';
+            btnNextText.textContent = 'Viimeistele testi';
             btnNextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />';
           } else {
-            btnNextText.textContent = 'Next';
+            btnNextText.textContent = 'Seuraava';
             btnNextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />';
           }
         }
@@ -949,7 +941,7 @@ const schema = [
         saveSession();
 
         if (srAnnouncer) {
-          srAnnouncer.textContent = 'Question ' + (currentIndex + 1) + ' of ' + TOTAL_QUESTIONS + ': ' + (q.promptText || 'Choose the correct pattern');
+          srAnnouncer.textContent = 'Kysymys ' + (currentIndex + 1) + ' / ' + TOTAL_QUESTIONS + ': ' + (q.promptText || 'Valitse oikea kuvio');
         }
       }
 
@@ -962,7 +954,7 @@ const schema = [
           var isAnswered = typeof userAnswers[qId] === 'number';
           var pill = document.createElement('button');
           pill.type = 'button';
-          pill.setAttribute('aria-label', 'Go to question ' + (i + 1));
+          pill.setAttribute('aria-label', 'Siirry kysymykseen ' + (i + 1));
           var pillClass = 'min-w-[44px] min-h-[44px] shrink-0 px-2 rounded-xl font-mono text-xs font-semibold flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ';
           if (isCurrent) {
             pillClass += 'bg-blue-600 text-white ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-black shadow-xs font-bold scale-105';
@@ -1093,9 +1085,9 @@ const schema = [
   </script>
 
   <script>
-    import { calculateScore } from '../utils/scoring';
-    import { saveAssessmentRecord } from '../utils/profileStore';
-    import type { QuestionItem } from '../data/questions';
+    import { calculateScore } from '../../utils/scoring';
+    import { saveAssessmentRecord } from '../../utils/profileStore';
+    import type { QuestionItem } from '../../data/questions';
 
     declare global {
       interface Window {

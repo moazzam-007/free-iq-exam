@@ -1,0 +1,779 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Ilmainen Näkötesti Netissä (Snellen-näöntarkastus) | FreeIQExam";
+const description = "Testaa näöntarkkuutesi ja optinen erotuskykysi Snellen- ja Landolt C -näkötestillä. Nopea ja helppo suuntaa-antava itsearviointi.";
+const canonicalUrl = 'https://freeiqexam.com/fi/nakotesti';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/eye-test',
+  'ru': 'https://freeiqexam.com/ru/eye-test',
+  'id': 'https://freeiqexam.com/id/tes-mata',
+  'fi': 'https://freeiqexam.com/fi/nakotesti'
+};
+
+const faqItems = [
+  [
+    'Kuinka luotettava verkkonäkötesti on optikkoon verrattuna?',
+    'Verkkotesti antaa käyttökelpoisen viitteen siitä, miten hyvin näet valitulla etäisyydellä, mutta se ei mittaa taittovirhettä, silmänpainetta, verkkokalvon terveyttä tai yhteisnäköä. Näytön koko, pikselitiheys, katseluetäisyys, huoneen valaistus ja selaimen zoomaus aiheuttavat virhettä. Pidä tulosta syynä varata näöntutkimus — älä korvikkeena sille.'
+  ],
+  [
+    'Miksi testi pyytää mittaamaan pankkikortin näyttöä vasten?',
+    'Näöntarkkuus määritellään näkökulmana, jonka kirjainmerkki muodostaa silmään — ei pikseleinä. Yhden metrin etäisyydellä 20/20-kirjain on 1,45 mm korkea näytöstä riippumatta. Koska selain ei tunnista luotettavasti näytön fyysistä pikselitiheyttä, standardikortin (85,60 mm leveä) sovitus antaa testille näytön todellisen pikselisuhteen, jolloin merkit piirretään oikeassa koossa.'
+  ],
+  [
+    'Miksi testi ei joskus mittaa tarkemmin kuin 20/40?',
+    'Yhden metrin etäisyydellä 20/20-merkki on 1,45 mm korkea, mikä on tyypillisellä näytöllä vain noin 5 pikseliä — liian vähän viisiviivaisen kirjaimen piirtämiseen. Sen sijaan että kirjain suurennettaisiin ja ilmoitettaisiin mittaamaton tulos, testi ilmoittaa tarkimman tason, jonka näyttösi todella kykenee piirtämään. Kauempaa katsottuna ja pidempi etäisyys valittuna tarkemmat tasot kasvavat fyysisesti ja muuttuvat mitattaviksi.'
+  ],
+  [
+    'Mikä on E-merkki ja miksi sitä käytetään kirjainten sijaan?',
+    'E-merkki on Snellenin E käännettynä osoittamaan ylös, alas, vasemmalle tai oikealle. Katselija ilmoittaa suunnan kirjaimen nimeämisen sijaan, jolloin lukutaito, kieli ja kirjaintuntemus eivät vaikuta mittaukseen. Se on vakiomerkki pienille lapsille ja kaikille, jotka eivät lue latinalaisia aakkosia.'
+  ],
+  [
+    'Mitä hajataittoisuuskello todella havaitsee?',
+    'Kelloskaala esittää säteittäisiä viivoja joka suunnassa. Kun sarveiskalvon tai mykiön kaarevuus poikkeaa suunnittain, valo taittuu eri suuntiin eri tavoin, joten osa viivoista näyttää tummemmilta tai terävämmiltä kuin muut. Jos ilmoitat osan viivoista selkeämmiksi, epäsymmetria viittaa hajataittoisuuteen ja kannattaa mittauttaa asianmukaisesti.'
+  ],
+  [
+    'Miksi punainen ja vihreä paneeli kertovat liki- tai kaukonäköisyydestä?',
+    'Kyse on pitkittäisestä kromaattisesta aberraatiosta. Vihreä valo (noin 535 nm) taittuu voimakkaammin kuin punainen (noin 650 nm), joten vihreä tarkentuu hieman verkkokalvon eteen ja punainen hieman taakse. Jos punainen näyttää terävämmältä, silmä on suhteellisesti likinäköinen; jos vihreä näyttää terävämmältä, suhteellisesti kaukonäköinen. Kun molemmat näyttävät samoilta, pallomainen tarkennus osuu lähelle verkkokalvoa.'
+  ],
+  [
+    'Kertooko tämä testi silmälasireseptini?',
+    'Ei. Resepti määrittää sfäärin, sylinterin, akselin ja usein lukulisän sekä pupillivälin. Tämä testi arvioi näöntarkkuuden yhdellä etäisyydellä ja antaa karkean viitteen hajataittoisuuden epäsymmetriasta ja pallomaisesta tasapainosta. Vain laillistettu optikko tai silmälääkäri voi määrätä reseptin.'
+  ],
+  [
+    'Milloin optikolle on hakeuduttava tuloksesta riippumatta?',
+    'Varaa tutkimus, jos näkö muuttuu äkillisesti tai vähitellen, ilmenee välähdyksiä tai runsaita samentumia, näkökenttään tulee verho tai varjo, silmä kipeytyy tai punoittaa jatkuvasti, näet kahtena, päänsärkyyn liittyy näkömuutos tai sairastat diabetesta tai glaukoomaa. Äkillinen näönmenetys on hätätilanne — hakeudu hoitoon välittömästi verkkotestauksen sijaan.'
+  ]
+];
+
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    '@id': `${canonicalUrl}#medical-page`,
+    name: 'Verkkonäöntarkkuuden, hajataittoisuuden ja duokromin suuntaa-antava seulonta',
+    url: canonicalUrl,
+    inLanguage: 'fi',
+    medicalAudience: 'Patient',
+    aspect: 'Diagnostic',
+    isAccessibleForFree: true,
+    about: {
+      '@type': 'MedicalCondition',
+      name: 'Refractive Error',
+      alternateName: ['Myopia', 'Hyperopia', 'Astigmatism', 'Presbyopia']
+    },
+    lastReviewed: '2026-09-19'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'Ilmainen näkötesti netissä — Snellen, hajataittoisuuskello ja duokromi',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    accessibilitySummary: 'Näppäimistöllä vastattavat suuntavastaukset, näytön suuntapainikkeet, koko kortin kalibrointiliukusäädin, näkyvät kohdistustilat, live-ilmoitukset ja tulostettava yhteenveto.'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Etusivu', item: 'https://freeiqexam.com/fi/' },
+      { '@type': 'ListItem', position: 2, name: 'Arvioinnit', item: 'https://freeiqexam.com/fi/alykkyystesti' },
+      { '@type': 'ListItem', position: 3, name: 'Näkötesti', item: canonicalUrl }
+    ]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqItems.map(([name, text]) => ({
+      '@type': 'Question',
+      name,
+      acceptedAnswer: { '@type': 'Answer', text }
+    }))
+  }
+];
+
+const stages = [
+  ['intro-section', '1 · Yleiskatsaus'],
+  ['calibration-section', '2 · Kalibrointi'],
+  ['acuity-section', '3 · Näöntarkkuus'],
+  ['astigmatism-section', '4 · Hajataittoisuus'],
+  ['duochrome-section', '5 · Duokromi'],
+  ['results-section', '6 · Tulokset']
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schemas} lang="fi">
+  <Header currentPath="/fi/nakotesti" />
+
+  <main id="assessment-page-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+      <nav aria-label="Breadcrumb" class="mb-8 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <a href="/fi/" class="hover:text-zinc-950 dark:hover:text-white">Etusivu</a><span aria-hidden="true">/</span>
+        <a href="/fi/alykkyystesti" class="hover:text-zinc-950 dark:hover:text-white">Arvioinnit</a><span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-950 dark:text-white">Näkötesti</span>
+      </nav>
+
+      <header class="mx-auto max-w-4xl text-center">
+        <div class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300 sm:text-sm">
+          Visuaalisen tarkkuuden itsearviointi
+        </div>
+        <h1 class="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Snellen Näkötesti &amp; Näöntarkastus Netissä</h1>
+        <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+          Arvioi näöntarkkuutesi (Visus) Snellen- ja Landolt C -taululla sopivalta katseluetäisyydeltä.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm sm:text-base">
+          {['Kortilla kalibroitu mittakaava', 'E-merkin näöntarkkuus', 'Hajataittoisuuskello', 'Duokromitasapaino', 'Ei tiliä vaadita'].map((item) => (
+            <span class="rounded-full border border-zinc-200 px-4 py-2.5 text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <section id="eye-app" class="mx-auto mt-12 max-w-4xl">
+        <ol class="stage-strip" aria-label="Testin eteneminen">
+          {stages.map(([id, label]) => (
+            <li data-stage={id} class="stage-chip">{label}</li>
+          ))}
+        </ol>
+
+        <div class="rounded-[2rem] border border-zinc-200 bg-zinc-50/80 p-5 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-8">
+
+          <section id="intro-section" class="rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900/50 dark:bg-emerald-950/30 sm:p-8">
+            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Ennen aloittamista</p>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Seulontatyökalu, ei tutkimus</h2>
+            <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              Tämä testi arvioi, miten hyvin näet valitulla etäisyydellä. Se ei mittaa taittovirhettäsi, silmänpainetta, näkökenttiä tai verkkokalvon terveyttä eikä tuota reseptiä. Näytön koko, pikselitiheys, katseluetäisyys ja huoneen valaistus vaikuttavat tulokseen.
+            </p>
+            <ul class="mt-5 space-y-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+              <li class="intro-bullet">Pidä tavallinen pankki- tai henkilökortti valmiina — sovitat sen näyttöä vasten fyysisen mittakaavan kalibroimiseksi.</li>
+              <li class="intro-bullet">Peitä toinen silmä kerrallaan. Kämmen toimii paremmin kuin silmän päälle kuperoitu käsi.</li>
+              <li class="intro-bullet">Testaa tasaisessa, kohtalaisessa valaistuksessa. Vältä kirkasta ikkunaa suoraan näytön takana tai edessä.</li>
+              <li class="intro-bullet">Käytä tavallisia silmälasejasi tai piilolinssejäsi, jos testaat nykyisen korjauksen toimivuutta. Poista ne vain, jos haluat tietää korjaamattoman tarkkuutesi.</li>
+            </ul>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <button id="begin-eye-test" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition hover:scale-[1.02] active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 sm:rounded-full">Aloita näkötesti</button>
+              <span class="self-center text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">Näppäimistö: ↑ ↓ ← → vastaamiseen tarkkuusosiossa</span>
+            </div>
+            <p class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200 sm:text-base">
+              <strong>Äkillinen näönmenetys, välähdykset, verho näkökentässä tai silmäkipu on lääketieteellinen hätätilanne.</strong> Älä testaa verkossa — hakeudu välittömästi hoitoon.
+            </p>
+          </section>
+
+          <section id="calibration-section" class="hidden" aria-labelledby="calibration-title">
+            <div class="rounded-[1.5rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Vaihe 1 · Fyysinen kalibrointi</p>
+              <h2 id="calibration-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Sovita oikea kortti näyttöön</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Pidä tavallista pankki-, henkilöllisyys- tai kirjastokorttia näyttöä vasten ja vedä liukusäädintä, kunnes alla oleva valkoinen ääriviiva on täsmälleen kortin levyinen. Näin testi saa näytön todellisen pikselisuhteen, mikä tekee merkeistä fyysisesti oikean kokoisia.
+              </p>
+
+              <div class="calibration-stage">
+                <div id="card-preview" class="card-preview" aria-hidden="true"></div>
+              </div>
+
+              <label for="card-slider" class="mt-8 block text-base font-semibold">Kortin leveys näytöllä</label>
+              <input id="card-slider" type="range" min="100" max="600" step="1" value="260" class="calibration-slider" />
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                <span>Kortin leveys: <strong id="card-width-label" class="font-mono">260 px</strong></span>
+                <span>Näytön mittakaava: <strong id="ppm-readout" class="font-mono">—</strong></span>
+              </div>
+
+              <div class="mt-8">
+                <p class="text-base font-semibold">Testietäisyys</p>
+                <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Istu tai seiso niin, että silmäsi on täsmälleen tämän etäisyyden päässä näytöstä. Kauempaa tarkemmat merkit kasvavat fyysisesti — ja muuttuvat mitattaviksi.</p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  {[['near', '40 cm', '16 in · puhelin'], ['desk', '1 m', '3.3 ft · työpöytä'], ['room', '2 m', '6.6 ft'], ['hall', '3 m', '10 ft'], ['snellen', '6 m', '20 ft · Snellen-standardi']].map(([id, label, hint]) => (
+                    <button type="button" data-distance={id} class="distance-button">
+                      <span class="distance-label">{label}</span>
+                      <span class="distance-hint">{hint}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <p id="resolution-warning" class="mt-7 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200 sm:text-base"></p>
+
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="confirm-calibration" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] sm:rounded-full">Kalibroitu — aloita näöntarkkuustesti</button>
+                <button id="skip-calibration" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Siirry kellotauluun &amp; duokromiin</button>
+              </div>
+              <p class="mt-4 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Kalibrointi tarvitaan vain tarkkuustauluun. Kellotaulu ja duokromi toimivat ilman sitä.</p>
+            </div>
+          </section>
+
+          <section id="acuity-section" class="hidden" aria-labelledby="acuity-title">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Vaihe 2 · Näöntarkkuus</p>
+                <h2 id="acuity-title" class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl"><span id="acuity-eye-label">Oikea silmä</span></h2>
+              </div>
+              <div class="text-left sm:text-right">
+                <div id="acuity-eye-progress" class="text-base font-semibold sm:text-lg">Silmä 1 / 3</div>
+                <div id="acuity-trial-label" class="mt-1 text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">—</div>
+              </div>
+            </div>
+            <div class="mt-5 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800"><div id="acuity-progress-fill" class="h-full rounded-full bg-emerald-600 transition-all duration-300" style="width:0%"></div></div>
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div id="acuity-tier-dots" class="tier-dots" aria-hidden="true"></div>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">Kolme oikein läpäisee tason · kaksi hutiä pudottaa tasoa tai päättää silmän</p>
+            </div>
+
+            <article class="mt-8 rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p id="acuity-instruction" class="rounded-2xl border border-emerald-200 bg-emerald-50/70 px-5 py-4 text-base font-semibold text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-200 sm:text-lg">Peitä VASEN silmäsi.</p>
+              <p class="mt-6 text-base text-zinc-500 dark:text-zinc-400 sm:text-lg">
+                Mihin suuntaan E osoittaa? Nykyinen taso <strong id="acuity-tier-label" class="font-mono text-zinc-900 dark:text-white">—</strong>
+              </p>
+
+              <div id="optotype-mount" class="mt-6"></div>
+
+              <div class="direction-pad mt-8">
+                <div></div>
+                <button type="button" data-direction="up" class="direction-button" aria-label="E osoittaa ylös">↑</button>
+                <div></div>
+                <button type="button" data-direction="left" class="direction-button" aria-label="E osoittaa vasemmalle">←</button>
+                <div class="direction-center" aria-hidden="true">E</div>
+                <button type="button" data-direction="right" class="direction-button" aria-label="E osoittaa oikealle">→</button>
+                <div></div>
+                <button type="button" data-direction="down" class="direction-button" aria-label="E osoittaa alas">↓</button>
+                <div></div>
+              </div>
+
+              <p id="acuity-feedback" class="acuity-feedback" role="status" aria-live="polite"></p>
+              <p class="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400 sm:text-base">
+                Kolme oikein tasolla läpäisee sen. Kaksi väärin päättää silmän.
+              </p>
+            </article>
+          </section>
+
+          <section id="astigmatism-section" class="hidden" aria-labelledby="astig-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Vaihe 3 · Hajataittoisuuskello</p>
+              <h2 id="astig-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Näyttävätkö jotkin viivat tummemmilta tai terävämmiltä?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Katso valitsemaltasi etäisyydeltä kellotaulun keskustaa silmä kerrallaan ja vertaa kahtatoista viivaa. Korjaamattomasta hajataittoisuudesta kärsivillä yksi tai kaksi viivaa erottuu selvästi tummempana tai terävämpänä kuin muut. Valitse jokainen erottuva viiva.
+              </p>
+              <p class="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Jokainen säde on valittavissa erikseen, mukaan lukien kaksi vastakkaista sädettä samalla keskustan kautta kulkevalla viivalla — ne kuvaavat yhtä ja samaa meridiaania, joten jos viiva näyttää sumealta molemmista päistä, merkitse molemmat.
+              </p>
+              <div id="dial-mount" class="dial-stage mt-8"></div>
+              <p id="dial-selection-label" class="mt-6 text-base font-semibold text-emerald-800 dark:text-emerald-300 sm:text-lg">Ei valittuja viivoja vielä.</p>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="submit-astigmatism" type="button" class="rounded-2xl bg-emerald-600 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] sm:rounded-full">Jatka duokromiin</button>
+                <button id="dial-none" type="button" aria-pressed="false" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Kaikki viivat näyttävät samoilta</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="duochrome-section" class="hidden" aria-labelledby="duo-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <p class="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 sm:text-sm">Vaihe 4 · Puna-viherduokromi</p>
+              <h2 id="duo-title" class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">Kumpi rengas näyttää terävämmältä?</h2>
+              <p class="mt-4 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                Vertaa mustaa rengasta punaisella paneelilla ja mustaa rengasta vihreällä paneelilla. Arvioi <strong>terävyyttä ja selkeyttä</strong>, älä kirkkautta — värit eroavat tarkoituksella luminanssiltaan. Katso molempia muutama sekunti ennen päätöstä.
+              </p>
+              <div class="duochrome-grid mt-8">
+                <div class="duochrome-panel duo-red">
+                  <div id="duochrome-red" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Punainen · ~650 nm</span>
+                </div>
+                <div class="duochrome-panel duo-green">
+                  <div id="duochrome-green" class="duochrome-target"></div>
+                  <span class="duochrome-caption">Vihreä · ~535 nm</span>
+                </div>
+              </div>
+              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button type="button" data-duo="red" class="duo-choice rounded-2xl border-2 border-red-300 bg-red-50 px-6 py-4 text-base font-semibold text-red-900 transition active:scale-[0.99] dark:border-red-900 dark:bg-red-950/40 dark:text-red-200 sm:rounded-full">Punainen näyttää terävämmältä</button>
+                <button type="button" data-duo="green" class="duo-choice rounded-2xl border-2 border-emerald-300 bg-emerald-50 px-6 py-4 text-base font-semibold text-emerald-900 transition active:scale-[0.99] dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200 sm:rounded-full">Vihreä näyttää terävämmältä</button>
+                <button type="button" data-duo="equal" class="duo-choice rounded-2xl border-2 border-zinc-300 bg-zinc-100 px-6 py-4 text-base font-semibold text-zinc-800 transition active:scale-[0.99] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 sm:rounded-full">Molemmat näyttävät samoilta</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="results-section" class="hidden" aria-labelledby="results-title">
+            <div class="rounded-[1.75rem] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 sm:p-9">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div id="result-badge" class="result-badge neutral">Näöntarkkuustulos tallennettu</div>
+                  <h2 id="results-title" class="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">Näköseulontasi yhteenveto</h2>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 sm:text-base">Ei diagnoosi</div>
+              </div>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <article class="score-card reveal"><div class="score-label">Oikea silmä</div><div id="acuity-right" class="acuity-fraction">—</div><div id="acuity-right-note" class="score-status">Paras läpäisty taso</div></article>
+                <article class="score-card reveal"><div class="score-label">Vasen silmä</div><div id="acuity-left" class="acuity-fraction">—</div><div id="acuity-left-note" class="score-status">Paras läpäisty taso</div></article>
+                <article class="score-card reveal"><div class="score-label">Molemmat silmät</div><div id="acuity-both" class="acuity-fraction">—</div><div id="acuity-both-note" class="score-status">Paras läpäisty taso</div></article>
+              </div>
+
+              <p id="acuity-summary-note" class="reveal mt-6 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg"></p>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <article class="stat-card reveal"><span>Hajataittoisuuskello</span><strong id="astig-result">Ei tallennettu</strong><p id="astig-note" class="stat-note"></p></article>
+                <article class="stat-card reveal"><span>Duokromitasapaino</span><strong id="duo-result">Ei tallennettu</strong><p id="duo-note" class="stat-note"></p></article>
+              </div>
+
+              <article class="reveal mt-6 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-base">Testiolosuhteet</p>
+                <h3 class="mt-2 text-xl font-bold sm:text-2xl">Mitä mittaus oletti</h3>
+                <p id="calibration-summary" class="mt-4 font-mono text-base sm:text-lg">—</p>
+                <p class="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-lg">
+                  Tarkkuusluvut ovat vain yhtä hyviä kuin kalibrointi ja etäisyys, joilla ne mitattiin. Jos korttisovitus oli likimääräinen tai istuit valittua etäisyyttä lähempänä tai kauempana, todellinen arvo poikkeaa ilmoitetusta.
+                </p>
+              </article>
+
+              <div class="reveal mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="print-result" type="button" class="rounded-2xl bg-zinc-950 px-7 py-4 text-base font-semibold text-white transition active:scale-[0.99] dark:bg-white dark:text-zinc-950 sm:rounded-full">Tulosta yhteenveto</button>
+                <button id="share-result" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Jaa yhteenveto</button>
+                <button id="retake-result" type="button" class="rounded-2xl border border-zinc-300 px-6 py-4 text-base font-semibold transition active:scale-[0.99] dark:border-zinc-700 sm:rounded-full">Tee testi uudelleen</button>
+              </div>
+
+              <div class="reveal mt-8 rounded-3xl border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900/50 dark:bg-emerald-950/30">
+                <h3 class="text-xl font-bold sm:text-2xl">Lue tulos asiayhteydessään</h3>
+                <p class="mt-3 text-base leading-relaxed text-emerald-950 dark:text-emerald-100 sm:text-lg">
+                  Seulontatulos on syy varata tutkimus, ei sen korvike. Optikko mittaa taittovirheen, yhteisnäön, silmänpaineen ja verkkokalvon terveyden — mitään näistä selain ei kykene arvioimaan. Jos tuloksesi on alentunut, silmät eroavat toisistaan tai jokin on muuttunut äskettäin, varaa aika.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <p id="eye-live-region" class="sr-only" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <article class="mx-auto mt-16 max-w-4xl text-base leading-relaxed text-zinc-700 dark:text-zinc-300 sm:text-lg">
+        <section>
+          <p class="eyebrow">Näöntutkimuksen opas</p>
+          <h2 class="mt-3 section-title">Miten näön testaus toimii</h2>
+          <p class="mt-6">Näkö tuntuu yhdeltä aistilta, mutta näkötaulu mittaa siitä vain kapean siivun: kykyä erottaa hienoja yksityiskohtia suurella kontrastilla, tietyllä etäisyydellä, tietyssä valaistuksessa. Sen ymmärtäminen, mitä mittaus kattaa ja mitä ei, erottaa hyödyllisen seulontatuloksen harhaanjohtavasta luvusta.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">1. Näön anatomia ja optiikka</h2>
+          <p class="mt-5">Silmään tuleva valo taittuu kahdesti ennen verkkokalvoa. <strong>Sarveiskalvo</strong> tekee suurimman työn — noin kaksi kolmannesta silmän kokonaistaittovoimasta, noin 43 dioptriaa — koska ilman ja kudoksen rajapinta muuttaa taitekerrointa eniten. <strong>Mykiö</strong> tuottaa loput, levossa noin 19 dioptriaa, ja sen pehmeä kerrosrakenne mahdollistaa kaarevuuden muutoksen.</p>
+          <p class="mt-5">Muutos on <strong>mukautumista (akkommodaatio)</strong>. Sädelihas supistuu, mykiötä jännittävät säikeet löystyvät ja mykiö pyöristyy optisesti voimakkaammaksi. Näin terve nuori silmä tarkentaa äärettömästä noin 10 senttimetriin. Mukautumiskyky heikkenee iän myötä tasaisesti mykiön ytimen jäykistyessä — lapsuuden noin 14 dioptriasta alle 2 dioptriaan viisikymppisenä. Heikkeneminen on ikänäköä (presbyopiaa), normaali mekaaninen ikääntymisen seuraus eikä sairaus.</p>
+          <p class="mt-5">Terävään kuvaan sarveiskalvon ja mykiön yhteisen taittovoiman on osuttava tarkalleen verkkokalvon valoaistinsolukerrokseen. Kun silmän pituus ja optinen voima eivät täsmää, polttopiste jää verkkokalvon eteen tai taakse — tuloksena on taittovirhe.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">2. Miten näöntarkkuus mitataan</h2>
+          <p class="mt-5">Näöntarkkuutta ei mitata millimetreinä vaan <strong>näkökulmana</strong> — kuinka suuren osan näkökentästä kohde peittää. Vuoden 1862 Snellen-standardi on yhä käytössä: normaali silmä erottaa juuri ja juuri merkin, joka muodostaa <strong>5 kaariminuutin</strong> kulman katseluetäisyydellä. Merkin jokainen viiva ja väli on 1 kaariminuutti. Juuri 1 kaariminuutin viiva on mittauksen todellinen raja.</p>
+          <p class="mt-5">Siksi Snellen-murtoluku kirjoitetaan 20/20 eikä kokona. Osoittaja on testietäisyys jalkoina; nimittäjä on etäisyys, jolta normaalitarkkuuksinen henkilö lukisi saman kirjaimen. 6 metrissä 20/20-merkki on 8,73 mm korkea — kätevä fyysinen koko, ja syy siihen, miksi 6 metristä (20 jalkaa) tuli standardietäisyys. 1 metrissä sama merkki olisi vain 1,45 mm, mikä on juuri syy siihen, miksi näyttötestaus lyhyillä etäisyyksillä törmää koviin fyysisiin rajoihin.</p>
+          <p class="mt-5">Tässä testissä käytetty <strong>E-merkki</strong> on Snellenin E käännettynä neljään suuntaan. Koska katselija ilmoittaa suunnan kirjaimen nimeämisen sijaan, mittaukseen eivät vaikuta lukutaito, kieli tai latinalaisten aakkosten tuntemus.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">3. Taittovirheiden ymmärtäminen</h2>
+          <p class="mt-5"><strong>Likinäköisyys (myopia)</strong> syntyy, kun silmän optinen voima on liian suuri pituuteen nähden, jolloin polttopiste jää verkkokalvon eteen. Kaukaiset kohteet sumentuvat; lähellä näkyy tarkasti. Se koskettaa noin 30:aa prosenttia maailman väestöstä ja yleistyy nopeasti. Korjaus miinuslinsseillä (kovera), jotka hajottavat valoa ennen sarveiskalvoa.</p>
+          <p class="mt-5"><strong>Kaukonäköisyys (hyperopia)</strong> on käänteinen: polttopiste jää verkkokalvon taakse. Nuoret kaukonäköiset kompensoivat usein mukauttamalla, minkä vuoksi vika voi pysyä piilossa vuosikymmeniä ja paljastua vasta myöhään silmien rasituksena ja päänsärkynä. Korjaus pluslinsseillä (kupera).</p>
+          <p class="mt-5"><strong>Hajataittoisuus (astigmatismi)</strong> on optisen voiman ero kahden toisiaan vastaan kohtisuoran meridiaanin välillä. Rugbypallon muotoinen sarveiskalvo tarkentaa toisen suunnan eri pisteeseen kuin toisen, joten mikään pallomainen linssi ei terävöitä kuvaa. Korjaus sylinteriosalla, joka lisää voimaa vain yhteen meridiaaniin; <strong>akseli</strong> kertoo mihin. Tämän testin kellotaulu tutkii juuri tätä epäsymmetriaa.</p>
+          <p class="mt-5"><strong>Ikänäkö (presbyopia)</strong> ei ole taittovirhe samassa mielessä — silmän optiikka on ennallaan, mutta mykiö ei enää muuta muotoaan tarpeeksi lähitarkennukseen. Se alkaa erottua 40–45-vuotiaana ja etenee noin 60-vuotiaaksi. Korjaus lukulisällä, moniteholaseilla tai monitehopiilolinsseillä.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">4. Kellotaulun ja duokromin fysiikka</h2>
+          <p class="mt-5"><strong>Hajataittoisuuskello.</strong> Kellotaulu esittää säteittäisiä viivoja kahdessatoista meridiaanissa. Ilman sylinterivirhettä kaikki meridiaanit tarkentuvat samaan pisteeseen ja kaikki kaksitoista viivaa näyttävät yhtä teräviltä. Virheen kanssa tarkin meridiaani piirtää terävän viivan verkkokalvolle, kun taas kohtisuora meridiaani piirtää sumean. Havaitsija ilmoittaa erottuvat viivat. Arvioitu akseli on näiden viivojen meridiaani asteina vaakatasosta 0–180.</p>
+          <p class="mt-5"><strong>Duokromitesti</strong> hyödyntää <em>pitkittäistä kromaattista aberraatiota</em>. Lyhyemmät aallonpituudet taittuvat voimakkaammin kuin pidemmät: vihreä valo (noin 535 nm) tarkentuu noin 0,50 dioptriaa punaisen (noin 650 nm) eteen. Tämä on silmän todellinen, mitattava ominaisuus, ei näytön artefakti.</p>
+          <p class="mt-5">Johtopäätös seuraa suoraan. Normaalitaitteisessa silmässä punaisen ja vihreän polttopisteet reunustavat verkkokalvoa symmetrisesti ja molemmat paneelit näyttävät yhtä teräviltä. Likinäköisessä silmässä koko tarkennusalue siirtyy eteenpäin ja punainen — alun perin taaempi — osuu lähemmäs verkkokalvoa, joten <strong>punainen näyttää terävämmältä</strong>. Kaukonäköisessä vastaavasti <strong>vihreä näyttää terävämmältä</strong>.</p>
+        </section>
+
+        <section class="guide-section">
+          <h2 class="section-title">5. Digitaalinen silmärasitus ja 20-20-20-sääntö</h2>
+          <p class="mt-5">Pitkittynyt näyttötyö tuottaa tyypillisen oireryppään — polttelua, kuivuutta, etäisyyden sumentumista ja otsapäänsärkyä. Mekanismi ei ole vaurio vaan väsymys: sädelihas pitää mukautusta kiinteällä lähietäisyydellä tuntikausia, mihin se ei ole kehittynyt.</p>
+          <p class="mt-5">Mitattavin muutos on <strong>räpytystaajuudessa</strong>. Normaali räpytys on noin 15–20 kertaa minuutissa. Keskittyneessä näyttöluvussa se putoaa yli puoleen, ja jäljelle jäävät räpäytykset ovat usein epätäydellisiä — yläluomi ei kohtaa alaluomea, jolloin kyynelfilmi ei uusiudu ja sarveiskalvo kuivuu. Tuloksena on polttelu ja paradoksaalinen vuotaminen (“kuivat mutta vetiset” silmät).</p>
+          <p class="mt-5"><strong>20-20-20-sääntö</strong> on vakiovastakeino: 20 minuutin välein katso noin 6 metrin (20 jalan) päähän vähintään 20 sekunniksi. Etäisyys antaa sädelihaksen rentoutua täysin, ja kesto antaa kyynelfilmin tasaantua. Sääntö toimii parhaiten, kun samalla räpyttelee tietoisesti.</p>
+          <p class="mt-5">Huomaa lopuksi, mitä tämä testi ei näe. Tarkkuus, taittovirhe ja meridiaanien sumu ovat vain osa näkötoimintoa. Glaukooma voi tuhota suuren osan ääreisnäöstä ennen kuin keskitarkkuus muuttuu, ja diabeettinen retinopatia on alkuvaiheessaan näkymätön tarkkuustaululle. Se on vahvin peruste säännölliselle laajennetulle tutkimukselle optikkosi suosittelemalla aikataululla — riippumatta siitä, miten hyvin luet taulun tänään.</p>
+        </section>
+
+        <section id="faq" class="guide-section">
+          <p class="eyebrow">UKK</p>
+          <h2 class="section-title mt-3">Usein kysytyt kysymykset verkkonäkötesteistä</h2>
+          <div class="mt-7 space-y-3">
+            {faqItems.map(([question, answer]) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white px-5 py-5 dark:border-zinc-800 dark:bg-zinc-950">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold sm:text-lg">
+                  <span>{question}</span>
+                  <span aria-hidden="true" class="transition group-open:rotate-45">+</span>
+                </summary>
+                <p class="mt-4 border-t border-zinc-200 pt-4 text-base leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-300 sm:text-lg">{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section class="guide-section rounded-[2rem] border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-9">
+          <h2 class="text-2xl font-bold sm:text-3xl">Terveyttä koskeva huomio</h2>
+          <p class="mt-4">Tämä näkötesti on suuntaa-antava verkkotyökalu. Se ei korvaa optikon tai silmälääkärin tekemää perusteellista näöntutkimusta.</p>
+          <p class="mt-4">Hakeudu välittömästi hoitoon äkillisen näönmenetyksen, valonvälähdysten, äkillisesti lisääntyneiden samentumien, näkökentän verhon tai varjon, kaksoiskuvien tai silmäkivun vuoksi. Jos sairastat diabetesta tai glaukoomaa tai suvussasi on silmäsairauksia, noudata lääkärisi suosittelemaa tutkimusaikataulua tuloksesta riippumatta.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="printable-report" class="print-only mx-auto w-full max-w-5xl px-8 py-8 text-zinc-950">
+    <div class="border border-zinc-300 p-8">
+      <h1 class="text-3xl font-extrabold">NÄKÖSEULONNAN YHTEENVETO</h1>
+      <p class="mt-2 text-sm uppercase tracking-wider">Näytölle kalibroitu Snellen E-merkki · FreeIQExam</p>
+      <div class="mt-8 grid gap-2 text-sm">
+        <p><strong>Päivämäärä:</strong> <span id="report-date">—</span></p>
+        <p><strong>Istunto:</strong> <span id="report-session">—</span></p>
+        <p><strong>Testiolosuhteet:</strong> <span id="print-calibration">—</span></p>
+        <p><strong>Oikean silmän tarkkuus:</strong> <span id="print-right">—</span></p>
+        <p><strong>Vasemman silmän tarkkuus:</strong> <span id="print-left">—</span></p>
+        <p><strong>Molempien silmien tarkkuus:</strong> <span id="print-both">—</span></p>
+        <p><strong>Hajataittoisuuskello:</strong> <span id="print-astig">—</span></p>
+        <p><strong>Duokromitasapaino:</strong> <span id="print-duo">—</span></p>
+      </div>
+      <h2 class="mt-8 text-xl font-bold">Mittauksen rajoitukset</h2>
+      <p class="mt-3 text-sm leading-relaxed"><span id="print-notes">—</span></p>
+      <p class="mt-6 text-sm leading-relaxed">Tämä on itse tehty seulontayhteenveto. Se ei ole taittovirhemääritys, diagnoosi eikä resepti. Näytöllä mitattuun näöntarkkuuteen vaikuttavat kalibroinnin tarkkuus, todellinen katseluetäisyys, ympäristön valaistus ja näytön ominaisuudet. Taittovirheen, yhteisnäön, silmänpaineen ja verkkokalvon terveyden arviointi edellyttää kattavaa näöntutkimusta.</p>
+    </div>
+  </div>
+
+  <div id="share-toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-full border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm font-semibold text-white opacity-0 transition-all dark:border-zinc-200 dark:bg-white dark:text-zinc-950">Yhteenveto kopioitu.</div>
+
+  <style is:global>
+    .stage-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0;
+      list-style: none;
+    }
+    .stage-chip {
+      border: 1px solid rgb(228 228 231);
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: rgb(113 113 122);
+      background: #ffffff;
+    }
+    .stage-chip.active { border-color: rgb(5 150 105); background: rgb(236 253 245); color: rgb(4 120 87); }
+    .stage-chip.done { color: rgb(4 120 87); border-color: rgb(167 243 208); }
+
+    .intro-bullet { position: relative; padding-left: 1.75rem; }
+    .intro-bullet::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.6rem;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: rgb(5 150 105);
+    }
+
+    /* Calibration: the card preview must be a physically accurate outline. */
+    .calibration-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border: 1px dashed rgb(212 212 216);
+      border-radius: 1.5rem;
+      background: #ffffff;
+      overflow-x: auto;
+    }
+    .card-preview {
+      width: 260px;
+      height: 164px;
+      border: 2px solid rgb(5 150 105);
+      border-radius: 0.75rem;
+      background: rgb(236 253 245);
+      flex: 0 0 auto;
+    }
+    .calibration-slider { width: 100%; margin-top: 0.75rem; accent-color: rgb(5 150 105); }
+
+    .distance-button {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.85rem 1.25rem;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .distance-button:hover { border-color: rgb(110 231 183); transform: translateY(-1px); }
+    .distance-button:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; }
+    .distance-button.selected { border-color: rgb(5 150 105); background: rgb(236 253 245); }
+    .distance-label { font-size: 1rem; font-weight: 800; font-family: ui-monospace, monospace; }
+    .distance-hint { font-size: 0.75rem; color: rgb(113 113 122); }
+
+    /* Optotype stage is always white-on-black regardless of theme: a
+       dark-mode chart would change contrast and invalidate the measure. */
+    .optotype-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      border-radius: 1.25rem;
+      background: #ffffff;
+    }
+    .optotype-placeholder {
+      padding: 3rem 1rem;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgb(82 82 91);
+    }
+
+    .direction-pad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      max-width: 20rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .direction-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      border: 2px solid rgb(228 228 231);
+      border-radius: 1.25rem;
+      background: #ffffff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .direction-button:hover { border-color: rgb(5 150 105); background: rgb(236 253 245); transform: translateY(-2px); }
+    .direction-button:active { transform: scale(0.96); }
+    .direction-button:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; }
+    .direction-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      border-radius: 1.25rem;
+      background: rgb(244 244 245);
+      color: rgb(161 161 170);
+      font-weight: 800;
+      font-family: ui-monospace, monospace;
+    }
+
+    /* ---------- Motion ---------- */
+    @keyframes stageEnter {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    /* Kept short: the optotype scales up as it fades, so the response gate in
+       the engine stays closed until this settles and the strokes are only
+       ever judged at their true size. */
+    @keyframes optotypeEnter {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes keyPulse {
+      0% { transform: scale(1); }
+      45% { transform: scale(0.93); }
+      100% { transform: scale(1); }
+    }
+    @keyframes dotPop {
+      from { transform: scale(0.55); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .stage-enter { animation: stageEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    /* Animate the optotype itself, not its stage — scaling the wrapper would
+       scale the white panel behind it and read as the whole chart pulsing. */
+    .optotype-stage.optotype-enter > svg { animation: optotypeEnter 0.19s ease-out both; }
+
+    .direction-button.is-pressed {
+      animation: keyPulse 0.22s ease;
+      border-color: rgb(5 150 105);
+      background: rgb(236 253 245);
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.22);
+    }
+    .dark .direction-button.is-pressed {
+      border-color: rgb(5 150 105);
+      background: rgba(6, 78, 59, 0.4);
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.28);
+    }
+
+    #results-section .reveal.is-revealed { animation: revealUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+    .acuity-feedback { margin-top: 1.5rem; min-height: 1.6rem; text-align: center; font-size: 1rem; font-weight: 700; }
+    .acuity-feedback.good { color: rgb(4 120 87); }
+    .acuity-feedback.bad { color: rgb(185 28 28); }
+
+    /* Dial and duochrome are also fixed light-ground optical targets. */
+    .dial-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 1.5rem;
+      background: #ffffff;
+    }
+    .dial-svg { width: 100%; max-width: 26rem; height: auto; }
+    .dial-ray { cursor: pointer; }
+    .dial-ray:focus-visible { outline: 3px solid rgb(5 150 105); outline-offset: 2px; border-radius: 0.5rem; }
+    .dial-ray-line {
+      stroke: #000000;
+      transition: stroke-width 0.18s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.18s ease;
+    }
+    .dial-ray:hover .dial-ray-line { stroke: rgb(5 150 105); stroke-width: 6; }
+    .dial-ray.selected .dial-ray-line {
+      stroke: rgb(5 150 105);
+      stroke-width: 7;
+      filter: drop-shadow(0 0 5px rgba(5, 150, 105, 0.75));
+    }
+    .dial-label {
+      fill: rgb(82 82 91);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: ui-monospace, monospace;
+      transition: fill 0.18s ease;
+    }
+    .dial-ray:hover .dial-label { fill: rgb(4 120 87); }
+    .dial-ray.selected .dial-label { fill: rgb(4 120 87); }
+    /* Decorative only — must never swallow a ray's pointer target. */
+    .dial-hub { pointer-events: none; }
+
+    /* Per-tier trial dots */
+    .tier-dots { display: flex; align-items: center; gap: 0.5rem; min-height: 1.25rem; }
+    .trial-dot {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 999px;
+      border: 2px solid rgb(212 212 216);
+      background: transparent;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .trial-dot.hit { border-color: rgb(5 150 105); background: rgb(5 150 105); animation: dotPop 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
+    .trial-dot.miss { border-color: rgb(220 38 38); background: rgb(220 38 38); animation: dotPop 0.24s cubic-bezier(0.22, 1, 0.36, 1); }
+    .dark .trial-dot { border-color: rgb(63 63 70); }
+    .dark .trial-dot.hit { border-color: rgb(16 185 129); background: rgb(16 185 129); }
+    .dark .trial-dot.miss { border-color: rgb(248 113 113); background: rgb(248 113 113); }
+
+    .duochrome-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .duochrome-grid { grid-template-columns: 1fr 1fr; } }
+    .duochrome-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 2rem 1rem;
+      border-radius: 1.5rem;
+    }
+    .duo-red { background: rgb(204 0 0); }
+    .duo-green { background: rgb(0 153 51); }
+    .duochrome-target { display: flex; align-items: center; justify-content: center; }
+    .duochrome-caption {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .duo-choice.selected { box-shadow: 0 0 0 3px rgb(5 150 105); }
+
+    /* Toggle state for "All lines look equal". An id selector is used so it
+       outranks the Tailwind border utilities on the same element. */
+    #dial-none.selected { border-color: rgb(5 150 105); background: rgb(236 253 245); color: rgb(4 120 87); }
+    .dark #dial-none.selected { border-color: rgb(5 150 105); background: rgba(6, 78, 59, 0.4); color: rgb(110 231 183); }
+
+    /* Calibration failure severe enough that no tier can be measured. The
+       engine toggles this class, so it must exist here or the worst case
+       renders identically to a mild one. */
+    #resolution-warning.is-blocking { border-color: rgb(252 165 165); background: rgb(254 242 242); color: rgb(153 27 27); font-weight: 600; }
+    .dark #resolution-warning.is-blocking { border-color: rgb(153 27 27); background: rgba(69, 10, 10, 0.45); color: rgb(252 165 165); }
+
+    .result-badge { display: inline-flex; border-radius: 999px; border: 1px solid; padding: .55rem 1.1rem; font-size: .95rem; font-weight: 700; }
+    .result-badge.neutral { color: rgb(82 82 91); background: rgb(244 244 245); border-color: rgb(228 228 231); }
+    .result-badge.good { color: rgb(22 101 52); background: rgb(240 253 244); border-color: rgb(187 247 208); }
+    .result-badge.moderate { color: rgb(146 64 14); background: rgb(255 247 237); border-color: rgb(254 215 170); }
+    .result-badge.bad { color: rgb(153 27 27); background: rgb(254 242 242); border-color: rgb(254 202 202); }
+
+    .score-card { border: 1px solid rgb(228 228 231); border-radius: 1.5rem; background: #fff; padding: 1.35rem; }
+    .score-label { font-size: .9rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: rgb(113 113 122); }
+    .acuity-fraction { margin-top: .75rem; font-size: 1.875rem; font-weight: 800; font-family: ui-monospace, monospace; letter-spacing: -.02em; }
+    .score-status { margin-top: .5rem; color: rgb(4 120 87); font-size: .95rem; font-weight: 600; }
+    .stat-card { display: flex; flex-direction: column; gap: .5rem; padding: 1.25rem; border: 1px solid rgb(228 228 231); border-radius: 1.25rem; background: #fff; }
+    .stat-card span { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: rgb(113 113 122); }
+    .stat-card strong { font-size: 1.1rem; line-height: 1.35; }
+    .stat-note { font-size: .95rem; line-height: 1.55; color: rgb(82 82 91); }
+
+    .eyebrow { font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(4 120 87); }
+    .section-title { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -.025em; color: rgb(24 24 27); }
+    .guide-section { margin-top: 3.5rem; }
+
+    .dark .stage-chip { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(161 161 170); }
+    .dark .stage-chip.active { background: rgba(6, 78, 59, 0.5); border-color: rgb(6 95 70); color: rgb(110 231 183); }
+    .dark .stage-chip.done { color: rgb(110 231 183); border-color: rgb(6 95 70); }
+    .dark .calibration-stage { border-color: rgb(39 39 42); }
+    .dark .distance-button { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .distance-button.selected { background: rgba(6, 78, 59, 0.4); border-color: rgb(5 150 105); }
+    .dark .distance-hint { color: rgb(161 161 170); }
+    .dark .direction-button { background: rgb(9 9 11); border-color: rgb(39 39 42); color: rgb(250 250 250); }
+    .dark .direction-button:hover { background: rgba(6, 78, 59, 0.4); border-color: rgb(5 150 105); }
+    .dark .direction-center { background: rgb(24 24 27); color: rgb(113 113 122); }
+    .dark .optotype-placeholder { color: rgb(161 161 170); }
+    .dark .acuity-feedback.good { color: rgb(110 231 183); }
+    .dark .acuity-feedback.bad { color: rgb(252 165 165); }
+    .dark .result-badge.neutral { color: rgb(212 212 216); background: rgb(24 24 27); border-color: rgb(63 63 70); }
+    .dark .result-badge.good { color: rgb(134 239 172); background: rgba(5, 46, 22, 0.55); border-color: rgb(22 101 52); }
+    .dark .result-badge.moderate { color: rgb(252 211 77); background: rgba(69, 26, 3, 0.5); border-color: rgb(146 64 14); }
+    .dark .result-badge.bad { color: rgb(153 27 27); background: rgba(69, 10, 10, 0.55); border-color: rgb(153 27 27); }
+    .dark .score-card, .dark .stat-card { border-color: rgb(39 39 42); background: rgb(9 9 11); }
+    .dark .score-status { color: rgb(110 231 183); }
+    .dark .stat-note { color: rgb(161 161 170); }
+    .dark .eyebrow { color: rgb(110 231 183); }
+    .dark .section-title { color: rgb(250 250 250); }
+
+    .print-only { display: none; }
+    @media print {
+      #main-content > header,
+      #main-content > footer,
+      #main-content > #assessment-page-content,
+      #share-toast { display: none !important; }
+      #main-content > #printable-report { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+      @page { margin: 16mm; }
+    }
+
+    /* Motion is decorative here. It must never gate comprehension, and it must
+       never obscure an optotype — so it is fully removable on request. */
+    @media (prefers-reduced-motion: reduce) {
+      .stage-enter,
+      .optotype-stage.optotype-enter > svg,
+      #results-section .reveal.is-revealed,
+      .direction-button.is-pressed,
+      .trial-dot.hit,
+      .trial-dot.miss { animation: none !important; }
+      .dial-ray-line,
+      .dial-label,
+      .trial-dot { transition: none !important; }
+      .dial-ray.selected .dial-ray-line { filter: none; }
+      .stage-enter { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 640px) {
+      .section-title { font-size: 1.75rem; }
+    }
+  </style>
+
+  <Footer />
+  <script src="../../scripts/tools/eye-tester.js"></script>
+</Layout>

@@ -1,14 +1,17 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-
-const title = "CPS Test: Free Click Speed Test & Clicks Per Second Counter | FreeIQExam";
-const description = "Test your clicking speed with our free CPS test. Measure clicks per second across 1, 5, 10, and 60-second time intervals. Accurate real-time counter and ranking.";
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
 
 const alternates = {
+  'en': 'https://freeiqexam.com/games/click-speed-test',
+  'ru': 'https://freeiqexam.com/ru/games/click-speed-test',
+  'id': 'https://freeiqexam.com/id/permainan/click-speed-test',
   'fi': 'https://freeiqexam.com/fi/permainan/click-speed-test'
 };
+const title = "CPS Test & Klikkausnopeustesti (Clicks Per Second) | FreeIQExam";
+const description = "Testaa kuinka nopeasti pystyt klikkaamaan sekunnissa (CPS). Valitse 1s, 5s, 10s tai 60s aikatila ja analysoi klikkausnopeutta ilmaiseksi.";
+const canonicalUrl = "https://freeiqexam.com/fi/permainan/click-speed-test";
 
 const DURATIONS = [5, 10, 30];
 const DEFAULT_DURATION = 10;
@@ -17,16 +20,17 @@ const schema = [
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "Clicks Per Second (CPS) Speed Test",
-    "url": "https://freeiqexam.com/games/click-speed-test",
+    "name": "CPS Klikkausnopeustesti (Clicks Per Second)",
+    "url": "https://freeiqexam.com/fi/permainan/click-speed-test",
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Any",
     "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "USD"
+      "priceCurrency": "EUR"
     },
-    "description": "Free click speed test measuring raw clicks per second (CPS), peak one-second burst rate, and inter-click rhythm consistency over a 5, 10 or 30 second trial."
+    "description": "Ilmainen klikkausnopeustesti (CPS). Mittaa klikkauksia sekunnissa, huippupyrähdystä ja rytmin tasaisuutta 5, 10 tai 30 sekunnin kokeessa.",
+    "inLanguage": "fi"
   },
   {
     "@context": "https://schema.org",
@@ -35,48 +39,48 @@ const schema = [
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "Home",
-        "item": "https://freeiqexam.com"
+        "name": "Etusivu",
+        "item": "https://freeiqexam.com/fi"
       },
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Cognitive Games",
-        "item": "https://freeiqexam.com/games"
+        "name": "Pelit",
+        "item": "https://freeiqexam.com/fi/permainan/click-speed-test"
       },
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "Click Speed Test",
-        "item": "https://freeiqexam.com/games/click-speed-test"
+        "name": "Klikkausnopeustesti",
+        "item": "https://freeiqexam.com/fi/permainan/click-speed-test"
       }
     ]
   }
 ];
 ---
 
-<Layout title={title} description={description} schema={schema} alternates={alternates}>
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="fi">
   <Header />
 
   <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
     <!-- Breadcrumb -->
     <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
-      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Home</a>
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Etusivu</a>
       <span class="mx-2">/</span>
-      <a href="/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Cognitive Games</a>
+      <a href="/games" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Pelit</a>
       <span class="mx-2">/</span>
-      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Click Speed Test</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Klikkausnopeustesti</span>
     </nav>
 
     <!-- Header / HUD -->
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
       <div>
         <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-yellow mb-1.5">
-          Gs &bull; Motor Speed
+          REAKTIONOPEUS JA NAPUTUSTESTI
         </div>
         <div class="flex items-center gap-3">
           <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
-            CPS Test (Free Click Speed Test)
+            CPS Test &amp; Klikkausnopeustesti
           </h1>
           <button
             id="btn-how-to-play"
@@ -84,29 +88,32 @@ const schema = [
             class="min-h-[44px] px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
             aria-haspopup="dialog"
           >
-            How to Play
+            Kuinka pelataan
           </button>
         </div>
+        <p class="text-sm text-zinc-600 dark:text-zinc-300 mt-2 max-w-xl">
+          Mittaa klikkausnopeutesi sekunnissa (CPS). Valitse aikatila ja napsauta painiketta niin nopeasti kuin pystyt.
+        </p>
       </div>
 
       <div class="flex items-center gap-2">
         <div class="pastel-hud pastel-hud-accent-yellow rounded-xl px-3.5 py-2 text-center min-w-[84px]">
-          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Time Left</div>
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Aika jäljellä</div>
           <div id="hud-time" class="text-lg font-mono tabular-nums tracking-tight font-bold leading-tight">10.0s</div>
         </div>
         <div class="pastel-hud pastel-hud-accent-mint rounded-xl px-3.5 py-2 text-center min-w-[84px]">
-          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Clicks</div>
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Klikkaukset</div>
           <div id="hud-clicks" class="text-lg font-mono tabular-nums tracking-tight font-bold leading-tight">0</div>
         </div>
         <div class="pastel-hud pastel-hud-accent-sky rounded-xl px-3.5 py-2 text-center min-w-[84px]">
-          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Live CPS</div>
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Klikkaukset sekunnissa (CPS)</div>
           <div id="hud-cps" class="text-lg font-mono tabular-nums tracking-tight font-bold leading-tight">0.0</div>
         </div>
       </div>
     </section>
 
     <!-- Duration selector -->
-    <div class="mb-6 flex flex-wrap items-center justify-center gap-2.5" role="group" aria-label="Test duration">
+    <div class="mb-6 flex flex-wrap items-center justify-center gap-2.5" role="group" aria-label="Testin kesto">
       {DURATIONS.map((d) => (
         <button
           type="button"
@@ -114,13 +121,13 @@ const schema = [
           class={`duration-chip pastel-chip min-h-[44px] ${d === DEFAULT_DURATION ? 'active' : ''}`}
           aria-pressed={d === DEFAULT_DURATION ? 'true' : 'false'}
         >
-          {d} seconds
+          {d} sekuntia
         </button>
       ))}
     </div>
 
     <!-- Arena -->
-    <section class="mb-6" aria-label="Click speed test arena">
+    <section class="mb-6" aria-label="Klikkausnopeustestin alue">
       <button
         id="cps-arena"
         type="button"
@@ -134,10 +141,10 @@ const schema = [
             </svg>
           </div>
           <div class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white">
-            Click the pad to begin
+            Klikkaa tästä aloittaaksesi
           </div>
           <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed max-w-sm">
-            The timer starts on your first click. Tap or click as fast as you can until time runs out.
+            Ajastin käynnistyy ensimmäisestä klikkauksesta. Napsauta niin nopeasti kuin pystyt kunnes aika loppuu.
           </p>
         </div>
 
@@ -147,7 +154,7 @@ const schema = [
             0
           </div>
           <div class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
-            Keep going
+            Jatka klikkaamista
           </div>
         </div>
 
@@ -159,9 +166,9 @@ const schema = [
             </svg>
           </div>
           <div class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white">
-            Trial complete
+            Koe valmis
           </div>
-          <p class="text-sm text-zinc-500 dark:text-zinc-400">Press Retake to run another attempt.</p>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">Paina Uudelleen aloittaaksesi uuden kokeen.</p>
         </div>
       </button>
     </section>
@@ -173,26 +180,26 @@ const schema = [
         type="button"
         class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
       >
-        <span id="btn-start-label">Start Test</span>
+        <span id="btn-start-label">Aloita testi</span>
       </button>
       <button
         id="btn-reset"
         type="button"
         class="min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
       >
-        Reset
+        Nollaa
       </button>
     </div>
 
     <!-- Results -->
-    <section id="results-panel" class="hidden mb-12" aria-live="polite" aria-label="Test results">
+    <section id="results-panel" class="hidden mb-12" aria-live="polite" aria-label="Testitulokset">
       <div class="game-pastel-arena rounded-3xl p-6 sm:p-8">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <div class="pastel-eyebrow pastel-eyebrow-mint mb-2">Result</div>
+            <div class="pastel-eyebrow pastel-eyebrow-mint mb-2">Tulos</div>
             <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
               <span id="res-cps" class="tabular-nums">0.0</span>
-              <span class="text-base sm:text-lg font-semibold text-zinc-500 dark:text-zinc-400">clicks per second</span>
+              <span class="text-base sm:text-lg font-semibold text-zinc-500 dark:text-zinc-400">klikkausta sekunnissa</span>
             </h2>
           </div>
           <div id="res-tier" class="px-4 py-2 rounded-xl border text-sm font-bold text-center"></div>
@@ -200,19 +207,19 @@ const schema = [
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
           <div class="pastel-metric rounded-2xl p-4 text-center">
-            <small class="block">Total Clicks</small>
+            <small class="block">Klikkauksia yhteensä</small>
             <strong id="res-total" class="text-2xl font-mono tabular-nums tracking-tight font-bold">0</strong>
           </div>
           <div class="pastel-metric rounded-2xl p-4 text-center">
-            <small class="block">Peak 1s Burst</small>
+            <small class="block">Huippu 1 s</small>
             <strong id="res-peak" class="text-2xl font-mono tabular-nums tracking-tight font-bold">0</strong>
           </div>
           <div class="pastel-metric rounded-2xl p-4 text-center">
-            <small class="block">Median Interval</small>
+            <small class="block">Mediaani-intervalli</small>
             <strong id="res-median" class="text-2xl font-mono tabular-nums tracking-tight font-bold">--</strong>
           </div>
           <div class="pastel-metric rounded-2xl p-4 text-center">
-            <small class="block">Rhythm Consistency</small>
+            <small class="block">Rytmin tasaisuus</small>
             <strong id="res-rhythm" class="text-2xl font-mono tabular-nums tracking-tight font-bold">--</strong>
           </div>
         </div>
@@ -221,21 +228,21 @@ const schema = [
 
         <div class="pt-5 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
           <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
-            Personal best: <strong id="res-best" class="text-zinc-700 dark:text-zinc-200">--</strong>
+            Huipputulos: <strong id="res-best" class="text-zinc-700 dark:text-zinc-200">--</strong>
           </span>
           <div class="flex flex-wrap gap-3">
             <a
               href="/profile"
               class="inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
             >
-              View Profile
+              Profiili
             </a>
             <button
               id="btn-retake"
               type="button"
               class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
             >
-              Retake
+              Uudelleen
             </button>
           </div>
         </div>
@@ -246,19 +253,19 @@ const schema = [
     <section class="border-t border-[var(--pastel-line)] dark:border-zinc-800 pt-12 pb-6">
       <div class="bg-white/90 dark:bg-zinc-900/60 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none">
         <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-4">
-          What Does a Click Speed Test Measure?
+          Mitä klikkausnopeustesti mittaa?
         </h2>
         <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed mb-4">
-          A clicks-per-second (CPS) score is a composite of finger motor speed, the latency of your input device, and the sustained attention needed to keep tapping without drifting into an uneven rhythm. In the Cattell-Horn-Carroll (CHC) model this maps onto processing speed (Gs) &mdash; specifically the perceptual-motor fluency component, which underpins rapid simple decision making.
+          Klikkaus sekunnissa (CPS) on yhdistelmä sormien motorisesta nopeudesta, syöttölaitteen viiveestä ja keskittymisestä, jota tarvitaan tasaisen rytmin ylläpitämiseen. Cattell-Horn-Carroll (CHC) -mallissa se kytkeytyy prosessointinopeuteen (Gs) — erityisesti havaintomotoriseen sujuvuuteen.
         </p>
         <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed mb-4">
-          Average mouse users land somewhere between 5 and 7 CPS. Sustained rates above 8 CPS usually require a technique such as butterfly clicking or jitter clicking, both of which trade long-run endurance for peak burst speed. Because peak burst and average rate measure different things, this test reports both: the average across the full trial, and the fastest single second inside it.
+          Keskimääräinen hiiren käyttäjä yltää 5–7 CPS:iin. Yli 8 CPS:n lukemat vaativat yleensä tekniikan kuten butterfly- tai jitter-klikkauksen, jotka vaihtavat kestävyyden huippunopeuteen. Tämä testi raportoi molemmat: keskiarvon koko kokeen ajalta ja nopeimman yksittäisen sekunnin.
         </p>
         <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed mb-6">
-          <strong class="text-zinc-900 dark:text-zinc-100">Rhythm consistency</strong> is reported as a percentage derived from the variability of the gaps between your clicks. A high figure means an even, metronomic cadence; a low figure means your tapping was bursty, which is normal for short trials and usually reflects a deliberate speed technique rather than a lapse in attention.
+          <strong class="text-zinc-900 dark:text-zinc-100">Rytmin tasaisuus</strong> ilmoitetaan prosentteina klikkausvälien vaihtelun perusteella. Korkea luku tarkoittaa tasaista, metronomista rytmiä; matala taas pyrähtelevää tapaa, joka on tavallista lyhyissä kokeissa.
         </p>
         <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-medium">
-          Note: A CPS score depends heavily on your mouse, touchscreen, and browser polling rate. It reflects motor and device throughput on one task, not general intelligence, and should not be read as an IQ measurement. Stop if your hand or wrist becomes uncomfortable.
+          Huomio: CPS-tulos riippuu vahvasti hiirestä, kosketusnäytöstä ja selaimen näytteenottotaajuudesta. Se kuvaa motorisen laitteen suorituskykyä tässä tehtävässä, ei yleistä älykkyyttä, eikä sitä pidä tulkita ÄO-mittauksena. Lopeta jos käsi kipeytyy.
         </div>
       </div>
     </section>
@@ -275,25 +282,25 @@ const schema = [
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 max-h-[85vh] overflow-y-auto">
       <div class="flex items-start justify-between gap-4 mb-4">
         <h2 id="how-to-play-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
-          How to Play
+          Kuinka pelataan
         </h2>
         <button
           id="btn-close-how-to-play"
           type="button"
           class="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-          aria-label="Close"
+          aria-label="Sulje"
         >
           &times;
         </button>
       </div>
       <ol class="list-decimal list-inside space-y-3 text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
-        <li>Choose a trial length: <strong class="text-zinc-900 dark:text-zinc-100">5, 10 or 30 seconds</strong>. Longer trials measure endurance; shorter ones reward peak burst speed.</li>
-        <li>Press <strong class="text-zinc-900 dark:text-zinc-100">Start Test</strong>, then click or tap the pad to begin. The timer starts on that first click, so there is no reaction-time penalty.</li>
-        <li>Keep clicking as fast as you can until the timer reaches zero. Use a mouse, trackpad, touchscreen, or the <kbd class="px-1.5 py-0.5 rounded border border-zinc-300 dark:border-zinc-600 font-mono text-xs">Space</kbd> key.</li>
-        <li>Your results are scored automatically and saved to your <a href="/profile" class="text-blue-600 dark:text-blue-400 hover:underline">cognitive profile</a>.</li>
+        <li>Valitse kokeen kesto: <strong class="text-zinc-900 dark:text-zinc-100">5, 10 tai 30 sekuntia</strong>. Pidemmät kokeet mittaavat kestävyyttä; lyhyet palkitsevat huippunopeuden.</li>
+        <li>Paina <strong class="text-zinc-900 dark:text-zinc-100">Aloita testi</strong>, sitten klikkaa alustaa aloittaaksesi. Ajastin käynnistyy ensimmäisestä klikkauksesta, joten reaktioaikaa ei rankaista.</li>
+        <li>Jatka klikkaamista niin nopeasti kuin pystyt kunnes aika loppuu. Voit käyttää hiirtä, kosketuslevyä, kosketusnäyttöä tai <kbd class="px-1.5 py-0.5 rounded border border-zinc-300 dark:border-zinc-600 font-mono text-xs">Välilyönti</kbd>-näppäintä.</li>
+        <li>Tuloksesi pisteytetään automaattisesti ja tallennetaan <a href="/profile" class="text-blue-600 dark:text-blue-400 hover:underline">profiiliisi</a>.</li>
       </ol>
       <div class="mt-5 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
-        Tip: rest your forearm on the desk and keep the movement in your fingers. Tensing the whole arm produces a fast first second and a steep drop-off afterwards.
+        Vinkki: lepää kyynärvarsi pöydällä ja liikuta sormia. Koko käsivarren jännittäminen tuottaa nopean alun mutta jyrkän hiipumisen.
       </div>
     </div>
   </div>
@@ -302,16 +309,12 @@ const schema = [
 </Layout>
 
 <script>
-  import { saveGameRecord, getPerformanceTier, getProfile } from '../../utils/profileStore';
+  import { saveGameRecord, getPerformanceTier, getProfile } from '../../../utils/profileStore';
 
   type Phase = 'ready' | 'running' | 'done';
 
   let durationSeconds = 10;
-  // The pad is armed from the moment the page settles, so the on-screen prompt
-  // ("Click the pad to begin") is always literally true and a visitor can start
-  // without first hunting for the Start button.
   let phase: Phase = 'ready';
-  /** performance.now() offsets, in ms from the first click of the current trial. */
   let clickTimes: number[] = [];
   let trialStart = 0;
   let rafId = 0;
@@ -337,7 +340,6 @@ const schema = [
 
   const modal = byId('how-to-play-modal');
 
-  /** Toggle visibility removing/adding Tailwind hidden class and inline display */
   function show(node: HTMLElement | null, visible: boolean) {
     if (!node) return;
     if (visible) {
@@ -348,7 +350,6 @@ const schema = [
     }
   }
 
-  /** Toggle between `hidden` and a flex layout for the arena's stacked layers. */
   function showLayer(node: HTMLElement | null, visible: boolean) {
     if (!node) return;
     node.classList.toggle('hidden', !visible);
@@ -371,11 +372,6 @@ const schema = [
     return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
   }
 
-  /**
-   * Highest number of clicks falling inside any single 1000ms window.
-   * Two-pointer sweep over the sorted click offsets, so a burst that straddles
-   * a second boundary is still counted as one window.
-   */
   function peakBurst(offsets: number[]) {
     let best = 0;
     let left = 0;
@@ -394,7 +390,7 @@ const schema = [
     showLayer(arenaDone, next === 'done');
 
     if (btnStartLabel) {
-      btnStartLabel.textContent = next === 'running' ? 'Testing…' : next === 'done' ? 'Run Again' : 'Start Test';
+      btnStartLabel.textContent = next === 'running' ? 'Testataan…' : next === 'done' ? 'Aloita uudelleen' : 'Aloita testi';
     }
     if (btnStart) btnStart.disabled = next === 'running';
     if (arena) arena.disabled = next === 'done';
@@ -434,8 +430,6 @@ const schema = [
 
   function registerClick() {
     if (phase === 'ready') {
-      // Record the starter click at offset 0 so the first tap is counted in
-      // the CPS total, matching the behaviour of the ID/RU versions (DEF-50).
       trialStart = performance.now();
       clickTimes.push(0);
       setPhase('running');
@@ -475,9 +469,6 @@ const schema = [
     }
     const medianInterval = median(intervals);
 
-    // Rhythm consistency: 100% when every gap is identical, falling off as the
-    // spread of gaps grows. Coefficient of variation is capped at 1 so a very
-    // erratic trial floors at 0 instead of going negative.
     let rhythm: number | null = null;
     if (intervals.length >= 2) {
       const mean = intervals.reduce((sum, v) => sum + v, 0) / intervals.length;
@@ -488,7 +479,6 @@ const schema = [
       }
     }
 
-    // 10 CPS is treated as full marks for the saved 0-100 performance score.
     const performanceScore = Math.max(0, Math.min(100, Math.round((cps / 10) * 100)));
     const tier = getPerformanceTier(performanceScore);
 
@@ -506,8 +496,8 @@ const schema = [
     setText(
       'res-description',
       total === 0
-        ? 'No clicks were registered in this trial. Press Retake and click the pad as soon as the timer starts.'
-        : `${tier.description} Your fastest single second contained ${peak} click${peak === 1 ? '' : 's'}.`
+        ? 'Yhtään klikkausta ei rekisteröity. Paina Uudelleen ja klikkaa alustaa heti ajastimen käynnistyttyä.'
+        : `${tier.description} Nopein sekuntisi sisälsi ${peak} klikkausta.`
     );
 
     show(resultsPanel, true);
@@ -521,8 +511,6 @@ const schema = [
           mode: 'standard',
           metrics: {
             performanceScore,
-            // Every registered click is a valid response on a CPS task, so the
-            // accuracy slot carries no signal here and is reported as perfect.
             accuracy: 1,
             trialsCompleted: total,
             correctCount: total,
@@ -576,8 +564,6 @@ const schema = [
           other.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
 
-        // A duration change mid-session invalidates the pending trial, so return
-        // to the armed state with fresh readouts rather than leaving a stale one.
         armTrial();
       });
     });
@@ -612,9 +598,6 @@ const schema = [
   function initArena() {
     if (!arena) return;
 
-    // pointerdown covers mouse, touch and pen in a single path. Also suppressing
-    // the click event avoids the synthetic mouse event that would otherwise
-    // double-count every tap on touch devices.
     arena.addEventListener('pointerdown', (event) => {
       event.preventDefault();
       registerClick();
@@ -623,8 +606,6 @@ const schema = [
     arena.addEventListener('click', (event) => event.preventDefault());
     arena.addEventListener('contextmenu', (event) => event.preventDefault());
 
-    // Keyboard parity: the pad is a real button, so Space/Enter should score the
-    // same as a click. Held keys are ignored so auto-repeat cannot inflate CPS.
     arena.addEventListener('keydown', (event) => {
       if (event.key !== ' ' && event.key !== 'Enter') return;
       event.preventDefault();

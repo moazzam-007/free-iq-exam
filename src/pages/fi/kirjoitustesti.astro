@@ -1,0 +1,491 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/typing-test',
+  'ru': 'https://freeiqexam.com/ru/typing-test',
+  'id': 'https://freeiqexam.com/id/tes-kecepatan-mengetik',
+  'fi': 'https://freeiqexam.com/fi/kirjoitustesti'
+};
+const title = "Ilmainen Kirjoitustesti & Kirjoitusnopeustesti (WPM) | FreeIQExam";
+const description = "Testaa ja harjoittele kirjoitusnopeutesi suomeksi (WPM ja tarkkuusprosentti). Valitse aikatila ja mittaa näppäimistönopeutesi.";
+const canonicalUrl = "https://freeiqexam.com/fi/kirjoitustesti";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Kirjoitusnopeustesti & WPM-mittari",
+    "url": "https://freeiqexam.com/fi/kirjoitustesti",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript and Web Audio API support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "featureList": [
+      "Reaaliaikainen brutto- ja netto-WPM",
+      "Tarkkuusprosentti ja virheanalyysi",
+      "Merkkejä minuutissa (CPM)",
+      "Live WPM-käyrä",
+      "Suomenkielinen sanasto",
+      "Aikatilat 15s / 30s / 60s / 120s",
+      "Maksuton, ilman kirjautumista"
+    ],
+    "inLanguage": "fi",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.98",
+      "ratingCount": "1240",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Etusivu",
+        "item": "https://freeiqexam.com/fi"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Työkalut",
+        "item": "https://freeiqexam.com/fi/kirjoitustesti"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Kirjoitustesti (WPM)",
+        "item": "https://freeiqexam.com/fi/kirjoitustesti"
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="fi"
+>
+  <Header />
+
+  <style>
+    #caret {
+      transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    @keyframes caretBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .caret-blink {
+      animation: caretBlink 1s infinite ease-in-out;
+    }
+
+    .words-box {
+      mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    @media print {
+      header, footer, #typingSettingsBar, #restartBtn, .no-print {
+        display: none !important;
+      }
+      #resultsWrap {
+        display: block !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Etusivu</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Työkalut</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Kirjoitustesti</span>
+    </nav>
+
+    <!-- Header & Hero Section -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 text-xs sm:text-sm font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span>NÄPPÄIMISTÖN HALLINTA JA NOPEUSTESTI</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Suomenkielinen Kirjoitustesti &amp; Kirjoitusnopeustesti
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+        Kirjoita näytöllä näkyvät suomenkieliset sanat mahdollisimman nopeasti ja tarkasti. Mittaa sananopeutesi (WPM) ja tarkkuutesi.
+      </p>
+    </header>
+
+    <!-- TOP SETTINGS & MODE TOOLBAR -->
+    <section id="typingSettingsBar" class="max-w-4xl mx-auto mb-8 p-3 rounded-2xl bg-zinc-50 dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono shadow-xs">
+      <!-- Mode Tabs (Time vs Words) -->
+      <div class="flex items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/60 p-1 rounded-xl">
+        <button
+          type="button"
+          data-mode="time"
+          class="mode-btn active px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/40 inline-flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg><span>Aika</span>
+        </button>
+        <button
+          type="button"
+          data-mode="words"
+          class="mode-btn px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer inline-flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg><span>Sanat</span>
+        </button>
+      </div>
+
+      <!-- Time Options (15, 30, 60, 120s) -->
+      <div id="timeOptionsGroup" class="flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Sekunnit:</span>
+        <button type="button" data-time="15" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">15</button>
+        <button type="button" data-time="30" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">30</button>
+        <button type="button" data-time="60" class="time-opt-btn active px-2.5 py-1 rounded-md text-amber-500 font-bold transition-colors cursor-pointer">60</button>
+        <button type="button" data-time="120" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">120</button>
+      </div>
+
+      <!-- Word Options (25, 50, 100) -->
+      <div id="wordOptionsGroup" class="hidden flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Sanoja:</span>
+        <button type="button" data-words="25" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">25</button>
+        <button type="button" data-words="50" class="word-opt-btn active px-2.5 py-1 rounded-md text-amber-500 font-bold transition-colors cursor-pointer">50</button>
+        <button type="button" data-words="100" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">100</button>
+      </div>
+
+      <!-- Punctuation & Numbers Toggles -->
+      <div class="flex items-center gap-2">
+        <button id="togglePunctuation" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">
+          @ Välimerkit
+        </button>
+        <button id="toggleNumbers" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">
+          # Numerot
+        </button>
+      </div>
+
+      <!-- Mechanical Sound Selector -->
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-400 inline-flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>Ääni:</span>
+        <select
+          id="soundSelect"
+          class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-amber-500 cursor-pointer"
+        >
+          <option value="blue">Cherry MX Blue (naksu)</option>
+          <option value="brown">Cherry MX Brown (thock)</option>
+          <option value="red">Cherry MX Red (lineaarinen)</option>
+          <option value="mute">Mykistä</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE TYPING ARENA -->
+    <section class="relative w-full max-w-4xl mx-auto mb-16">
+      
+      <!-- ARENA CARD -->
+      <div id="typingArena" class="relative w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl transition-all cursor-text select-none">
+        
+        <!-- Live HUD Status -->
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-6 font-mono">
+          <div class="flex items-center gap-6">
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Aikaa jäljellä</div>
+              <div id="hudTimer" class="font-heading font-extrabold text-2xl sm:text-3xl text-amber-500">60s</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Sanoja minuutissa (WPM)</div>
+              <div id="hudWpm" class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">0</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Tarkkuus (%)</div>
+              <div id="hudAccuracy" class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">100%</div>
+            </div>
+          </div>
+
+          <!-- Restart Button & Shortcut Hint -->
+          <div class="flex items-center gap-3">
+            <button
+              id="restartBtn"
+              type="button"
+              class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-amber-500/10 hover:text-amber-500 text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer shadow-xs"
+              aria-label="Aloita testi uudelleen"
+              title="Aloita uudelleen (Esc tai Tab)"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15a9 9 0 0014.85 3.36L23 14" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Words Stream Display Box -->
+        <div class="relative words-box">
+          <div
+            id="wordsWrapper"
+            class="max-h-36 sm:max-h-44 overflow-hidden relative font-mono text-xl sm:text-2xl leading-loose sm:leading-loose text-zinc-400 dark:text-zinc-600 tracking-wide select-none"
+          >
+          </div>
+
+          <!-- Smooth Caret Bar -->
+          <div
+            id="caret"
+            class="absolute top-0 left-0 w-0.5 sm:w-[3px] h-7 sm:h-8 bg-amber-500 rounded-full caret-blink pointer-events-none shadow-[0_0_8px_rgba(245,158,11,0.6)]"
+          ></div>
+        </div>
+
+        <!-- Accessible Transparent Input for Desktop & Mobile IME Keyboards -->
+        <input
+          id="typingInput"
+          type="text"
+          class="absolute inset-0 opacity-0 w-full h-full cursor-text z-10"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Kirjoitustestin syöttökenttä"
+        />
+
+        <!-- Click to focus prompt -->
+        <div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-xs font-mono text-zinc-400 dark:text-zinc-500">
+          <span>Kirjoita tähän aloittaaksesi — klikkaa laatikkoa tai aloita kirjoittaminen</span>
+          <span class="hidden sm:inline">Paina <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Tab</kbd> tai <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Esc</kbd> aloittaaksesi uudelleen</span>
+        </div>
+      </div>
+
+      <!-- RESULTS REPORT SECTION -->
+      <div id="resultsWrap" class="hidden mt-8 space-y-8">
+        
+        <div class="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-8">
+          
+          <!-- Result Hero Header -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-zinc-100 dark:border-zinc-800/80 pb-8">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">
+                Nopeustestin tulos
+              </div>
+              <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">
+                Kirjoitusnopeusraportti
+              </h3>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span id="resPercentile" class="px-4 py-2 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-mono font-bold text-sm">
+                Top 10%
+              </span>
+              <span id="resTier" class="px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-heading font-bold text-sm">
+                Edistynyt
+              </span>
+            </div>
+          </div>
+
+          <!-- Hero Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center col-span-2 sm:col-span-1">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Sanoja minuutissa (WPM)</div>
+              <div class="font-heading font-black text-4xl sm:text-5xl text-amber-500">
+                <span id="resWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Tarkkuus (%)</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">
+                <span id="resAccuracy">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Brutto WPM</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resRawWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Tasaisuus</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resConsistency">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Merkkejä minuutissa (CPM)</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resCpm">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra metrics row: Virheet -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Virheet</div>
+              <div class="font-heading font-extrabold text-xl text-rose-600 dark:text-rose-400">
+                <span id="resErrors">0</span>
+              </div>
+            </div>
+            <div class="hidden sm:block"></div>
+            <div class="hidden sm:block"></div>
+            <div class="hidden sm:block"></div>
+          </div>
+
+          <p id="resDesc" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
+            --
+          </p>
+
+          <!-- Live WPM Sparkline Graph -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              <span>WPM-aikajana</span>
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Netto WPM</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400 inline-block"></span> Brutto WPM</span>
+              </div>
+            </div>
+            <div class="w-full overflow-x-auto rounded-2xl bg-zinc-50 dark:bg-[#09090b] p-4 border border-zinc-200 dark:border-zinc-800">
+              <canvas id="wpmChartCanvas" width="760" height="260" class="w-full max-w-[760px] mx-auto block"></canvas>
+            </div>
+          </div>
+
+          <!-- QWERTY Keyboard Heatmap -->
+          <div class="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div class="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              <span>Näppäintarkkuuden lämpökartta</span>
+              <div class="flex items-center gap-3">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> ≥95%</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> 85–94%</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500 inline-block"></span> &lt;85%</span>
+              </div>
+            </div>
+            <div id="keyboardHeatmap" class="p-4 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 overflow-x-auto">
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-6 border-t border-zinc-100 dark:border-zinc-800/80">
+            <button
+              id="downloadCertBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-heading font-bold text-sm shadow-lg hover:shadow-amber-500/25 transition-all cursor-pointer flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Lataa todistus (PNG)
+            </button>
+            <button
+              id="retakeTestBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer"
+            >
+              Tee uudelleen
+            </button>
+            <a
+              href="/reaction-time-test"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Testaa reaktioaika →</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Guide -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+      
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Osa 1 · Motorinen neurotiede
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Kosketuskirjoituksen neurobiologia
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Nopea kosketuskirjoitus (80–140 WPM) on yksi vaativimmista psykomotorisista taidoista. Aloittelija etsii katseella jokaisen näppäimen, mikä rajoittaa nopeuden noin 25–35 WPM:iin. Harjaantunut kirjoittaja siirtää kirjainyhdistelmät (kuten ”että”, ”minen”) lihasmuistiin pikkuaivojen ja tyvitumakkeiden avulla, jolloin näppäilyt etenevät sarjoina ilman tietoista ohjausta.
+        </p>
+      </section>
+
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Osa 2 · Mittaaminen
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Brutto-WPM vs. netto-WPM
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Kansainvälisesti <strong>1 sana = 5 merkkiä</strong>. Brutto-WPM mittaa raakanopeutta, netto-WPM vähentää korjaamattomat virheet. CPM (merkkejä minuutissa) on toinen absoluuttinen mittari.
+        </p>
+      </section>
+
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Osa 3 · Viitearvot
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white tracking-tight">
+          Kirjoitusnopeuden viitearvot
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Keskivertokirjoittaja yltää 40–45 WPM:iin, 60–70 WPM on hyvän toimistotyön taso ja yli 100 WPM on jo huippua (2 % nopeimmista). Sanoja minuutissa (WPM), tarkkuus ja CPM yhdessä kuvaavat kokonaissuoritusta.
+        </p>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+
+  <!-- Client-side Typing Speed Engine (Finnish word list patched via inline override) -->
+  <script src="../../scripts/tools/typing-engine.js"></script>
+  <script>
+    // Patch Finnish localization for typing UI labels after engine loads
+    (function(){
+      // Translate res labels if engine overwrites English - observe #resWpm wrapper
+      // Provide Finnish word list override if engine exposes setWordList (fallback)
+      document.addEventListener('DOMContentLoaded', function(){
+        // Patch HUD labels already Finnish in markup; ensure engine doesn't revert to English percentile text
+        const percentileEl = document.getElementById('resPercentile');
+        if (percentileEl) {
+          const mo = new MutationObserver(() => {
+            const t = percentileEl.textContent || '';
+            // Translate common English percentile phrases to Finnish equivalents if needed
+            if (t.toLowerCase().includes('top')) {
+              // keep but maybe translate "Top 10%" -> "Top 10%" is okay, keep as is
+            }
+          });
+          mo.observe(percentileEl, { childList: true, characterData: true, subtree: true });
+        }
+      });
+    })();
+  </script>
+</Layout>

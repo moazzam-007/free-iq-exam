@@ -1,0 +1,612 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/color-blind-test',
+  'ru': 'https://freeiqexam.com/ru/color-blind-test',
+  'id': 'https://freeiqexam.com/id/tes-buta-warna',
+  'fi': 'https://freeiqexam.com/fi/varisokeustesti'
+};
+const title = "Ilmainen Värisokeustesti & Värinäkötesti (Ishihara-testi) | FreeIQExam";
+const description = "Testaa värinäkösi Ishihara-värisokeustestillä. Tunnista puna-vihersokeuden ja muiden väriaistipoikkeamien viitteet verkossa.";
+const canonicalUrl = "https://freeiqexam.com/fi/varisokeustesti";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "name": "Ishihara-värisokeustesti verkossa",
+    "description": "Ishihara-testi puna-vihreän (deuteranopia, protanopia) ja sinikeltaisen (tritanopia) värinäön seulontaan. Suuntaa-antava itsearviointi.",
+    "url": "https://freeiqexam.com/fi/varisokeustesti",
+    "medicalAudience": "Patient",
+    "aspect": "Diagnostic",
+    "inLanguage": "fi"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Värisokeustesti verkossa",
+    "url": "https://freeiqexam.com/fi/varisokeustesti",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript and HTML5 Canvas/SVG support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "featureList": [
+      "Ishihara 22-taulun värisokeustesti",
+      "Puna-vihreän (deutan/protan) ja tritan-seulonta",
+      "Interaktiivinen värinäön simulaattori",
+      "Lasten symbolitila",
+      "L-, M- ja S-tappien herkkyysprosentit",
+      "Suuntaa-antava tulos – ei korvaa lääkärin tutkimusta"
+    ],
+    "inLanguage": "fi"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Etusivu",
+        "item": "https://freeiqexam.com/fi"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Työkalut",
+        "item": "https://freeiqexam.com/fi/varisokeustesti"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Värisokeustesti",
+        "item": "https://freeiqexam.com/fi/varisokeustesti"
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="fi"
+>
+  <Header />
+
+  <!-- CVD SVG Simulation Filter Matrices (Hidden in DOM, referenced by CSS) -->
+  <svg class="hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <filter id="deutan-filter">
+      <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="protan-filter">
+      <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="tritan-filter">
+      <feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" />
+    </filter>
+  </svg>
+
+  <style>
+    .plate-container {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    @keyframes pilestonePop {
+      0% { transform: scale(1); }
+      30% { transform: scale(0.96); opacity: 0.9; }
+      70% { transform: scale(1.02); opacity: 0.98; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .pilestone-transition {
+      animation: pilestonePop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .timeline-dot {
+      transition: all 0.25s ease;
+    }
+
+    .plate-dot {
+      vector-effect: non-scaling-stroke;
+      shape-rendering: geometricPrecision;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    .filter-normal { filter: none; }
+    .filter-deutan { filter: url('#deutan-filter'); }
+    .filter-protan { filter: url('#protan-filter'); }
+    .filter-tritan { filter: url('#tritan-filter'); }
+    .filter-achroma { filter: grayscale(100%); }
+
+    @media print {
+      header, footer, #calibration-banner, #keypad-numbers, #keypad-kids, .mode-toggle-container, #btn-restart-link, .no-print {
+        display: none !important;
+      }
+      #results-view {
+        display: flex !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Etusivu</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Työkalut</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Värisokeustesti</span>
+    </nav>
+
+    <!-- Page Header & Eyebrow -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs sm:text-sm font-mono font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>VÄRIAISTIN ITSEARVIOINTITYÖKALU • 22 Ishihara-taulua</span>
+      </div>
+      <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+        Ishihara Värisokeustesti &amp; Värinäkötesti
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+        Tunnista väriympyröihin kätketyt numerot ja kuviot standardoiduilla <strong class="text-zinc-900 dark:text-zinc-100 font-semibold">Ishihara-tauluilla</strong>. Testi tunnistaa <strong class="text-emerald-600 dark:text-emerald-400 font-bold">puna-vihreän</strong> värinäön poikkeamien viitteet suuntaa-antavasti.
+      </p>
+      <p class="text-xs sm:text-sm text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-2.5 mt-4 max-w-2xl mx-auto">
+        <strong>Huom:</strong> Tämä testi on suuntaa-antava itsearviointi. Se ei korvaa silmälääkärin tekemää perusteellista näöntarkastusta.
+      </p>
+    </header>
+
+    <!-- PRE-TEST DISPLAY CALIBRATION ADVISORY -->
+    <div id="calibration-banner" class="max-w-3xl mx-auto mb-8 p-5 rounded-3xl bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/80 text-amber-900 dark:text-amber-200 text-sm shadow-xs transition-all">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3">
+          <svg class="w-6 h-6 shrink-0 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+          <div class="space-y-1">
+            <h4 class="font-heading font-bold text-amber-950 dark:text-amber-100 text-base">Näytön kalibrointi ennen testiä</h4>
+            <p class="text-amber-800 dark:text-amber-300/90 text-sm leading-relaxed">
+              Tarkemman tuloksen saamiseksi: <strong>1)</strong> nosta näytön kirkkaus täyteen, <strong>2)</strong> kytke pois Night Shift / TrueTone / sinivalosuodatin ja <strong>3)</strong> pidä noin käden mitan etäisyys (~50–75 cm) näytöstä.
+            </p>
+          </div>
+        </div>
+        <button id="btn-dismiss-calibration" type="button" class="text-amber-600 dark:text-amber-400 hover:text-amber-950 dark:hover:text-white p-1 cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Sulje kalibrointiohje"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" /></svg></button>
+      </div>
+    </div>
+
+    <!-- TEST MODE TOGGLE (STANDARD NUMBERS VS KIDS SHAPES) -->
+    <div class="mode-toggle-container max-w-md mx-auto mb-8 flex items-center justify-center p-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs font-medium text-xs sm:text-sm">
+      <button id="mode-btn-numbers" type="button" class="flex-1 py-3 px-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-bold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="4" y1="9" x2="20" y2="9" /><line x1="4" y1="15" x2="20" y2="15" /><line x1="10" y1="3" x2="8" y2="21" /><line x1="16" y1="3" x2="14" y2="21" /></svg><span>Numerot (22 taulua)</span>
+      </button>
+      <button id="mode-btn-kids" type="button" class="flex-1 py-3 px-4 rounded-full text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg><span>Lasten kuviotila</span>
+      </button>
+    </div>
+
+    <!-- INTERACTIVE TEST ARENA CARD -->
+    <div class="relative w-full max-w-4xl mx-auto">
+      <div id="test-card" class="plate-container w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col items-center">
+        
+        <!-- Header Bar with Brand & Plate Progress -->
+        <div class="w-full flex items-center justify-between pb-4 mb-6 text-xs sm:text-sm font-mono border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400">
+          <div class="flex items-center gap-2">
+            <span class="font-heading font-extrabold tracking-wider uppercase text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm">
+              FREE<span class="text-blue-600 dark:text-blue-500">IQ</span>EXAM <span class="text-zinc-400 dark:text-zinc-500 font-normal">ISHIHARA</span>
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="plate-counter-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-zinc-200 dark:border-zinc-700">
+              TAULU 1 / 22
+            </span>
+          </div>
+        </div>
+
+        <!-- 22-Plate Connected Timeline Progress Bar -->
+        <div class="w-full mb-8 px-1 sm:px-4">
+          <div id="timeline-chain" class="relative flex items-center justify-between w-full h-8">
+            <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 h-[2px] bg-zinc-200 dark:bg-zinc-800 z-0"></div>
+            <div id="timeline-dots" class="relative z-10 flex items-center justify-between w-full"></div>
+          </div>
+        </div>
+
+        <!-- ACTIVE TESTING ARENA (SIDE-BY-SIDE ON DESKTOP, STACKED ON MOBILE) -->
+        <div id="active-test-view" class="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 my-2">
+          
+          <!-- High-DPI Procedural 764-Circle Ishihara SVG Stage -->
+          <div id="plate-stage" class="relative w-[300px] sm:w-[380px] lg:w-[440px] aspect-square rounded-full bg-zinc-100 dark:bg-[#18181c] p-2 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center shrink-0">
+            <svg id="plate-svg" class="w-full h-full rounded-full block cursor-pointer select-none" viewBox="0 0 666 666" role="img" aria-label="Ishihara-värisokeustestin taulu" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="333" cy="333" r="328" fill="#121215"></circle>
+              <g id="plate-dots"></g>
+            </svg>
+          </div>
+
+          <!-- Keypad & Touch Controls Column -->
+          <div class="flex flex-col items-center justify-center w-full max-w-[300px]">
+            <!-- Instruction Prompt -->
+            <div class="text-center mb-5">
+              <p id="prompt-main-text" class="text-xs sm:text-sm font-mono uppercase tracking-wider text-zinc-600 dark:text-zinc-300 font-semibold mb-1">Mitä numeroa näet?</p>
+              <p id="prompt-sub-text" class="text-xs text-zinc-400 dark:text-zinc-500">Näppäimet: [1-9], [N] En näe numeroa, [U] Epävarma</p>
+            </div>
+
+            <!-- NUMBERS MODE KEYPAD (1-9, NOTHING, NOT SURE) -->
+            <div id="keypad-numbers" class="w-full flex flex-col items-center">
+              <div class="grid grid-cols-3 gap-3 w-full mb-3">
+                <button type="button" data-val="1" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">1</button>
+                <button type="button" data-val="2" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">2</button>
+                <button type="button" data-val="3" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">3</button>
+                <button type="button" data-val="4" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">4</button>
+                <button type="button" data-val="5" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">5</button>
+                <button type="button" data-val="6" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">6</button>
+                <button type="button" data-val="7" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">7</button>
+                <button type="button" data-val="8" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">8</button>
+                <button type="button" data-val="9" class="key-btn h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-950 dark:text-white font-bold text-xl transition-all shadow-sm flex items-center justify-center cursor-pointer">9</button>
+              </div>
+
+              <!-- Action Row: NOTHING / NOT SURE -->
+              <div class="grid grid-cols-2 gap-3 w-full mb-4">
+                <button type="button" data-val="nothing" class="key-btn h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center cursor-pointer">
+                  En näe numeroa
+                </button>
+                <button type="button" data-val="unsure" class="key-btn h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center cursor-pointer">
+                  Epävarma
+                </button>
+              </div>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3">Seuraava taulu &rarr; vastauksen jälkeen</p>
+            </div>
+
+            <!-- KIDS & SHAPES MODE KEYPAD (CIRCLE, SQUARE, TRIANGLE, STAR) -->
+            <div id="keypad-kids" class="w-full flex flex-col items-center hidden">
+              <div class="grid grid-cols-2 gap-3 w-full mb-4">
+                <button type="button" data-val="Circle" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border-2 border-emerald-500/40 hover:border-emerald-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-emerald-500"><svg class="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="currentColor" /></svg></span><span>Ympyrä</span>
+                </button>
+                <button type="button" data-val="Square" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border-2 border-blue-500/40 hover:border-blue-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-blue-500"><svg class="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor" /></svg></span><span>Neliö</span>
+                </button>
+                <button type="button" data-val="Triangle" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border-2 border-amber-500/40 hover:border-amber-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-amber-500"><svg class="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="12 4 21 20 3 20" fill="currentColor" /></svg></span><span>Kolmio</span>
+                </button>
+                <button type="button" data-val="Star" class="shape-btn h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border-2 border-purple-500/40 hover:border-purple-500 text-zinc-950 dark:text-white font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                  <span class="text-purple-500"><svg class="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" /></svg></span><span>Tähti</span>
+                </button>
+              </div>
+
+              <button type="button" data-val="nothing" class="shape-btn w-full h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.98] border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-sm flex items-center justify-center mb-4 cursor-pointer">
+                <span class="inline-flex items-center gap-2"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>En näe kuviota</span>
+              </button>
+            </div>
+
+            <!-- Restart Test Link -->
+            <button id="btn-restart-link" type="button" class="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline underline-offset-4 transition-colors cursor-pointer py-1">
+              Aloita alusta
+            </button>
+          </div>
+        </div>
+
+        <!-- DIAGNOSTIC RESULTS REPORT VIEWPORT -->
+        <div id="results-view" class="w-full hidden flex flex-col items-center">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 flex items-center justify-center mb-4 shadow-lg">
+            <svg class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+
+          <h3 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white text-center mb-1">
+            Itsearviointi valmis
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-mono text-center mb-8">
+            Arvioitu Ishihara-tauluihin perustuvalla värierottelulla
+          </p>
+
+          <!-- Overall Diagnosis Banner Card -->
+          <div class="w-full p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm text-center mb-8">
+            <div class="text-xs sm:text-sm font-mono font-semibold text-zinc-500 uppercase tracking-wider mb-2">Havainto tässä testissä</div>
+            <div id="diag-title" class="text-2xl sm:text-4xl font-heading font-extrabold text-emerald-600 dark:text-emerald-400 mb-3">
+              Ei havaittu poikkeavaa tässä testissä
+            </div>
+            <p id="diag-desc" class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+              Vastaustesi perusteella tässä selaimessa tehdyssä testissä ei näkynyt viitteitä puna-vihreän värinäön poikkeamasta. Tulos on suuntaa-antava.
+            </p>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-4 max-w-2xl mx-auto bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5">
+              Tämä testi on suuntaa-antava itsearviointi. Se ei korvaa silmälääkärin tekemää perusteellista näöntarkastusta. Jos epäilet värinäön poikkeamaa, varaa aika näöntarkastukseen.
+            </p>
+          </div>
+
+          <!-- 3-Cone Sensitivity Breakdown Meters -->
+          <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 font-mono text-xs sm:text-sm">
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>L-tappi (punainen)</span>
+                <span id="cone-l-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-l-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>M-tappi (vihreä)</span>
+                <span id="cone-m-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-m-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="p-5 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="flex items-center justify-between text-zinc-500 dark:text-zinc-400 mb-2">
+                <span>S-tappi (sininen)</span>
+                <span id="cone-s-val" class="font-bold text-emerald-600 dark:text-emerald-400">100%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                <div id="cone-s-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- VIRAL SIMULATOR: INTERACTIVE COLOR VISION DEFICIENCY SIMULATOR -->
+          <div class="w-full p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8">
+            <div class="text-center max-w-md mx-auto mb-6">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+                VÄRINÄÖN SIMULAATTORI
+              </span>
+              <h4 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mt-2 mb-1">
+                Miten muut näkevät värit
+              </h4>
+              <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                Valitse värinäön tila ja katso, miltä liikennevalot näyttävät eri värinäöillä.
+              </p>
+            </div>
+
+            <!-- Simulator Mode Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-6 text-xs sm:text-sm font-semibold">
+              <button type="button" data-filter="normal" class="sim-filter-btn px-4 py-2 rounded-full bg-blue-600 text-white shadow-xs cursor-pointer">Normaali</button>
+              <button type="button" data-filter="deutan" class="sim-filter-btn px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Deuteranopia</button>
+              <button type="button" data-filter="protan" class="sim-filter-btn px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Protanopia</button>
+              <button type="button" data-filter="tritan" class="sim-filter-btn px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Tritanopia</button>
+              <button type="button" data-filter="achroma" class="sim-filter-btn px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 cursor-pointer">Monokromasia</button>
+            </div>
+
+            <!-- Simulated Graphic Display -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-8 p-6 rounded-3xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+              <div id="sim-target" class="flex items-center gap-6 transition-all duration-300 filter-normal">
+                <div class="w-16 p-2.5 rounded-3xl bg-zinc-900 border-2 border-zinc-800 flex flex-col items-center gap-2.5 shadow-md">
+                  <div class="w-10 h-10 rounded-full bg-red-600 shadow-sm"></div>
+                  <div class="w-10 h-10 rounded-full bg-amber-400 shadow-sm"></div>
+                  <div class="w-10 h-10 rounded-full bg-emerald-500 shadow-sm"></div>
+                </div>
+                <div class="space-y-1.5 text-xs sm:text-sm font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-red-500 shrink-0"></span><span>Punainen (mansikat)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-amber-400 shrink-0"></span><span>Keltainen (banaani)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-emerald-500 shrink-0"></span><span>Vihreä (omena)</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-4 h-4 rounded-md bg-blue-500 shrink-0"></span><span>Sininen (taivas)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DETAILED PLATE-BY-PLATE REVIEW ACCORDION / MATRIX -->
+          <details class="w-full rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8 p-6 overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg sm:text-xl text-zinc-950 dark:text-white">
+              <div class="flex items-center gap-2.5">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="2" width="8" height="4" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M9 12h6" /><path d="M9 16h4" /></svg>
+                <span>Taulukohtainen erittely</span>
+              </div>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-6 overflow-x-auto border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr class="bg-zinc-100/80 dark:bg-zinc-800/80 text-zinc-950 dark:text-white font-mono uppercase text-xs">
+                    <th class="py-3 px-4">Taulu</th>
+                    <th class="py-3 px-4">Tyyppi</th>
+                    <th class="py-3 px-4">Normaali näkee</th>
+                    <th class="py-3 px-4">Poikkeama näkee</th>
+                    <th class="py-3 px-4">Vastauksesi</th>
+                    <th class="py-3 px-4">Tila</th>
+                  </tr>
+                </thead>
+                <tbody id="review-matrix-body" class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <!-- Share & Restart Actions -->
+          <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button id="btn-copy-summary" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="2" width="8" height="4" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M9 12h6" /><path d="M9 16h4" /></svg><span>Kopioi yhteenveto</span>
+            </button>
+            <button id="btn-print-report" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-semibold text-base shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></svg><span>Tulosta / Tallenna PDF</span>
+            </button>
+            <button id="btn-restart-test" type="button" class="w-full sm:w-auto px-8 py-4 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-semibold text-base hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg><span>Tee testi uudelleen</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Share Toast Notification -->
+      <div id="share-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium border border-zinc-800 dark:border-zinc-200">
+        <svg class="w-4 h-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12" /></svg>
+        <span>Yhteenveto kopioitu leikepöydälle!</span>
+      </div>
+    </div>
+
+    <!-- Educational Guide Section (Finnish, SEO-friendly) -->
+    <section class="mt-20 sm:mt-28 space-y-16 border-t border-zinc-200 dark:border-zinc-800/80 pt-16">
+      <article class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm uppercase font-semibold">
+          Verkkokalvon fotobiologia
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Mikä on värinäön poikkeama?
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          <strong>Värinäön poikkeama</strong> tarkoittaa heikentynyttä kykyä erottaa tiettyjä sävyjä näkyvän valon spektrissä. Harvinaisessa muodossa värit näkyvät harmaasävyinä, mutta useimmiten kyse on puna-vihreän erottelun vaikeudesta, jossa punaisen ja vihreän sävyt sekoittuvat toisiinsa.
+        </p>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Värinäkö perustuu verkkokalvon <strong>6–7 miljoonaan tappisolkuun</strong> (kartiösoluihin), jotka keskittyvät tarkan näön alueelle. Normaalissa trikromaattisessa näössä on kolme tappityyppiä: L (pitkä aalto, punainen), M (keskipitkä, vihreä) ja S (lyhyt, sininen). Kun jokin niistä on poikkeava tai puuttuu, <strong>värisokeustesti</strong> auttaa tunnistamaan poikkeaman suuntaa-antavasti.
+        </p>
+      </article>
+
+      <article class="space-y-6">
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Ishihara-taulujen idea (1917)
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Japanilainen silmälääkäri <strong>Shinobu Ishihara</strong> kehitti pseudoisokromaattiset taulut armeijan seulontaan. Taulujen pisteet on valittu niin, että puna-vihreän erottelun vaikeus paljastuu: normaalisti näkevä ja värisokea näkevät eri numeron – tai toinen ei näe numeroa lainkaan.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">Demonstraatiotaulut</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">Korkean kontrastin taulu (esim. ”9”), jonka pitäisi näkyä kaikille. Varmistaa että ohje on ymmärretty.</p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">Muunnostaulut</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">Normaali näkee luvun 8, puna-vihreän poikkeama näkee luvun 3 – sama taulu, eri havainto tappien herkkyyden mukaan.</p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">Häviävät taulut</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">Hahmo erottuu vain jos puna-vihreä värisyrjintä toimii; poikkeamassa taulu näyttää pelkältä pistekentältä.</p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="font-heading font-bold text-xl text-zinc-950 dark:text-white">Piilotaulut (käänteiset)</h3>
+            <p class="text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">Normaali ei näe numeroa, mutta puna-vihreän poikkeama näkee sen kirkkauseron kautta – paljastaa kompensaatiostrategian.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="space-y-6">
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Miksi testi tehdään selaimessa suuntaa-antavana?
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Selaimessa tehty <strong>värisokeustesti</strong> ja <strong>värinäkötesti</strong> antavat nopean arvion puna-vihersokeuden viitteistä ilman ajanvarausta. Se ei kuitenkaan mittaa näöntarkkuutta eikä korvaa silmälääkärin tai optikon laitteilla tehtävää tutkimusta, jossa valaistus, etäisyys ja taulujen painojälki on standardoitu.
+        </p>
+        <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-600 dark:text-zinc-300">
+          <strong>Vinkki:</strong> Tee testi rauhassa päivänvalossa, ilman värisuodattimia, ja toista tarvittaessa. Jos tulos toistuvasti viittaa poikkeamaan, varaa aika näöntarkastukseen.
+        </div>
+      </article>
+
+      <article class="space-y-6">
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight">
+          Usein kysyttyä
+        </h2>
+        <div class="space-y-4">
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Voiko näytön kirkkaus vaikuttaa tulokseen?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Kyllä. Matala kirkkaus tai sinivalosuodatin muuttaa pisteiden kylläisyyttä ja voi aiheuttaa virhetuloksen. Säädä kirkkaus täyteen ja ota suodattimet pois ennen testiä.
+            </div>
+          </details>
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Parantavatko värilasit värisokeuden?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Eivät paranna. Lasit suodattavat päällekkäisiä aallonpituuksia ja voivat lisätä kontrastia lievässä poikkeamassa, mutta eivät luo puuttuvaa tappisolutyyppiä. Niitä ei hyväksytä virallisissa testeissä.
+            </div>
+          </details>
+          <details class="group p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all">
+            <summary class="flex items-center justify-between cursor-pointer list-none font-heading font-bold text-lg text-zinc-950 dark:text-white">
+              <span>Miten lasten kuviotila toimii?</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 faq-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </summary>
+            <div class="mt-4 text-base text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+              Numeroiden sijaan tauluihin on kätketty muotoja (ympyrä, neliö, kolmio, tähti). Lapsi napauttaa näkemäänsä muotoa, jolloin seulonta onnistuu myös ennen kuin numerot ovat tuttuja.
+            </div>
+          </details>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <Footer />
+
+  <!-- Engine Script Import -->
+  <script src="../../scripts/tools/color-blind-engine.js"></script>
+  <script>
+    // Patch Finnish safety phrasing after engine loads (translate diagnostic titles)
+    (function() {
+      const diagTitle = document.getElementById('diag-title');
+      const diagDesc = document.getElementById('diag-desc');
+      if (!diagTitle) return;
+      const observer = new MutationObserver(() => {
+        const txt = (diagTitle.textContent || '').toLowerCase();
+        if (txt.includes('normal')) {
+          diagTitle.textContent = 'Ei havaittu poikkeavaa tässä testissä';
+          if (diagDesc) diagDesc.textContent = 'Vastaustesi perusteella tässä selaimessa tehdyssä testissä ei näkynyt viitteitä puna-vihreän värinäön poikkeamasta. Tulos on suuntaa-antava eikä korvaa ammattilaisen tutkimusta.';
+          diagTitle.className = 'text-2xl sm:text-3xl font-heading font-extrabold text-emerald-600 dark:text-emerald-400 mb-2';
+        } else if (txt.includes('deuter') || txt.includes('protan') || txt.includes('variation') || txt.includes('color vision')) {
+          // Generic deficiency mapping to safety-approved phrase
+          if (!txt.includes('ei havaittu')) {
+            diagTitle.textContent = 'Viitteitä puna-vihreän värinäön poikkeamasta';
+            if (diagDesc) diagDesc.textContent = 'Vastauksissasi näkyi viitteitä puna-vihreän värinäön poikkeamasta tässä testissä. Tämä on suuntaa-antava havainto selaimessa – tarkempi arvio vaatii silmälääkärin tai optikon tutkimuksen.';
+            diagTitle.className = 'text-2xl sm:text-3xl font-heading font-extrabold text-amber-500 dark:text-amber-400 mb-2';
+          }
+        } else if (txt.includes('viitteitä') || txt.includes('ei havaittu')) {
+          // Already Finnish, keep
+        }
+      });
+      observer.observe(diagTitle, { childList: true, characterData: true, subtree: true });
+      // Also patch prompt texts to Finnish after mode switch
+      const promptMain = document.getElementById('prompt-main-text');
+      const promptSub = document.getElementById('prompt-sub-text');
+      if (promptMain) {
+        const mo = new MutationObserver(() => {
+          const t = promptMain.textContent || '';
+          if (t === 'Select the Number You See') promptMain.textContent = 'Mitä numeroa näet?';
+          if (t === 'What shape do you see in the dots?') promptMain.textContent = 'Mitä kuviota näet pisteissä?';
+          if (promptSub) {
+            const s = promptSub.textContent || '';
+            if (s.includes('Keyboard shortcuts')) promptSub.textContent = 'Näppäimet: [1-9], [N] En näe numeroa, [U] Epävarma';
+            if (s.includes('Tap the matching')) promptSub.textContent = 'Napauta vastaavaa muotoa alta';
+          }
+          const badge = document.getElementById('plate-counter-badge');
+          if (badge && badge.textContent.includes('PLATE')) {
+            badge.textContent = badge.textContent.replace('PLATE','TAULU').replace('OF','/');
+          }
+        });
+        mo.observe(promptMain, { childList: true, characterData: true, subtree: true });
+      }
+    })();
+  </script>
+</Layout>

@@ -1,0 +1,699 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/calorie-calculator',
+  'ru': 'https://freeiqexam.com/ru/calorie-calculator',
+  'fi': 'https://freeiqexam.com/fi/kalorilaskuri'
+};
+
+const title = "Ilmainen Kalorilaskuri & TDEE-Laskuri (Kaloritarve & Painonhallinta) | FreeIQExam";
+const description = "Laske arvio päivittäisestä energiantarpeestasi (TDEE), perusaineenvaihdunnastasi (BMR) ja kalorivajeesta Mifflin–St Jeor -kaavan avulla. Selkeät makrojakaumat.";
+const canonicalUrl = "https://freeiqexam.com/fi/kalorilaskuri";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Kalorilaskuri & TDEE-Laskuri",
+    "url": "https://freeiqexam.com/fi/kalorilaskuri",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript support",
+    "inLanguage": "fi",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "featureList": [
+      "Arvio päivittäisestä energiantarpeesta Mifflin–St Jeor -kaavaan perustuvalla laskennalla sekä Katch-McArdle- ja Oxford-vaihtoehdoilla",
+      "Kokonaisenergiankulutuksen (TDEE) arvio viidellä aktiivisuustason kertoimella (1,20–1,90)",
+      "Tavoitteellinen kalorivajeen arvio painonhallintaan: kevyt (-10 %), suositeltu (-20 %), tehokas (-25 %), maltillinen lisäys (+10 %) ja tehokas massakausi (+20 %)",
+      "Vuorovaikutteinen makroravinteiden grammajako neljälle ruokavaliomallille: runsasproteiininen, tasapainoinen, keto ja kestävyys",
+      "Aivojen energiantarpeen arvio (~20 % perusaineenvaihdunnan energiasta)",
+      "US Navy -menetelmään perustuva kehon rasvaprosentin arvio vyötärön, kaulan ja lantion mitoista",
+      "Kaksoisyksikkömuunnos: metrinen (kg/cm) ja brittiläinen (pauna/jalka-tuumat) reaaliaikaisella synkronoinnilla",
+      "Vuorovaikutteinen makroravinteiden rengaskaavio"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Etusivu",
+        "item": "https://freeiqexam.com/fi/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Kalorilaskuri",
+        "item": "https://freeiqexam.com/fi/kalorilaskuri"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Mitä eroa on BMR:llä ja TDEE:llä?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BMR (perusaineenvaihdunta) kuvaa lepotilassa kuluvaa energiamäärää, joka ylläpitää elintoimintoja. TDEE (kokonaisenergiankulutus) on arvio päivittäisestä kokonaiskulutuksesta: BMR kerrottuna aktiivisuustason kertoimella, joka huomioi arkiaktiivisuuden, työn, ruoansulatuksen ja liikunnan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mihin Mifflin–St Jeor -kaava perustuu?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mifflin–St Jeor -kaava on laajasti käytetty perusaineenvaihdunnan arviointimalli, joka huomioi painon, pituuden, iän ja sukupuolen. Jos kehon rasvaprosentti tiedetään, Katch-McArdle-muunnelma arvioi kulutusta rasvattoman massan perusteella."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mikä on maltillinen kalorivaje painonhallintaan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Noin 20 % TDEE-arvon alapuolella oleva kalorivaje (suunnilleen 400–500 kcal päivässä) on yleisesti suositeltu lähtökohta: se vastaa noin 0,5 kg viikoittaista painonmuutosta ja tukee lihasmassan säilymistä. Yli 25 % vajeita ei suositella ilman ammattilaisen ohjausta."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Kuinka paljon energiaa aivot kuluttavat päivässä?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Aivot kuluttavat levossa noin 20 % elimistön perusaineenvaihdunnan energiasta, mikä vastaa suunnilleen 300–400 kcal päivässä eli noin 100–130 grammaa glukoosia hermosolujen jatkuvaan toimintaan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Kuinka paljon proteiinia tarvitaan kalorivajeen aikana?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Painonhallinnan aikana suositellaan yleisesti 1,8–2,4 grammaa proteiinia painokiloa kohden. Riittävä proteiini tukee kylläisyyttä ja lihasmassan säilymistä, koska proteiinin ruoansulatus kuluttaa suhteessa eniten energiaa ja se stimuloi kylläisyyteen liittyviä hormoneja."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  schema={schema}
+  alternates={alternates}
+  lang="fi"
+>
+  <Header currentPath="/fi/kalorilaskuri" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+
+    <!-- Hero Header -->
+    <section class="pt-12 pb-6 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Energiantarpeen ja TDEE-laskentatyökalu</span>
+      </div>
+
+      <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+        Kalorilaskuri &amp; TDEE-Laskuri
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+        Laske arvio päivittäisestä kokonaisenergiankulutuksestasi (TDEE), perusaineenvaihdunnastasi (BMR) sekä tavoitteidesi mukaisesta kalorivajeesta tai -ylimäärästä.
+      </p>
+    </section>
+
+    <!-- Main Tool Container -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Column: Inputs Form (7 Cols) -->
+        <div class="lg:col-span-7 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-7 shadow-lg space-y-6">
+
+          <!-- Unit & Gender Selectors -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-200 dark:border-zinc-800/80">
+
+            <!-- Unit Selector -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                class="cal-unit-btn active px-3.5 py-1.5 rounded-xl font-bold transition-all bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 cursor-pointer"
+                data-unit="metric"
+              >
+                Metrinen (kg / cm)
+              </button>
+              <button
+                type="button"
+                class="cal-unit-btn px-3.5 py-1.5 rounded-xl font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                data-unit="imperial"
+              >
+                Pauna / tuuma (lbs / ft-in)
+              </button>
+            </div>
+
+            <!-- Gender Selector -->
+            <div class="flex items-center gap-1 bg-zinc-200/70 dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs">
+              <button
+                type="button"
+                class="cal-gender-btn active px-3.5 py-1.5 rounded-xl font-bold transition-all bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 cursor-pointer"
+                data-gender="male"
+              >
+                Mies
+              </button>
+              <button
+                type="button"
+                class="cal-gender-btn px-3.5 py-1.5 rounded-xl font-medium transition-all text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                data-gender="female"
+              >
+                Nainen
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Biometric Inputs Grid -->
+          <div class="space-y-4">
+
+            <!-- Age & Optional Body Fat -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calAge" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Ikä (vuotta)
+                </label>
+                <input
+                  type="number"
+                  id="calAge"
+                  value="28"
+                  min="12"
+                  max="110"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="calBodyFat" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                    Rasvaprosentti <span class="text-[10px] text-zinc-400 lowercase font-sans">(valinnainen)</span>
+                  </label>
+                  <span id="navyBfResultBadge" class="hidden text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full"></span>
+                </div>
+                <input
+                  type="number"
+                  id="calBodyFat"
+                  placeholder="esim. 16"
+                  step="0.1"
+                  min="4"
+                  max="60"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Metric Inputs (Weight kg, Height cm) -->
+            <div id="metricInputsWrap" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calWeightMetric" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Paino (kg)
+                </label>
+                <input
+                  type="number"
+                  id="calWeightMetric"
+                  value="75"
+                  step="0.5"
+                  min="25"
+                  max="300"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label for="calHeightMetric" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Pituus (cm)
+                </label>
+                <input
+                  type="number"
+                  id="calHeightMetric"
+                  value="178"
+                  min="80"
+                  max="250"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Imperial Inputs (Weight lbs, Height ft-in) - Hidden by default -->
+            <div id="imperialInputsWrap" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="calWeightImperial" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Paino (paunaa)
+                </label>
+                <input
+                  type="number"
+                  id="calWeightImperial"
+                  value="165"
+                  step="1"
+                  min="55"
+                  max="660"
+                  class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  Pituus (jalkaa &amp; tuumaa)
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    id="calHeightFeet"
+                    value="5"
+                    min="3"
+                    max="8"
+                    placeholder="Jalkaa"
+                    class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    type="number"
+                    id="calHeightInches"
+                    value="10"
+                    min="0"
+                    max="11"
+                    placeholder="Tuumaa"
+                    class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Level (PAL) -->
+            <div>
+              <label for="calActivity" class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                Aktiivisuustaso
+              </label>
+              <select
+                id="calActivity"
+                class="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-2xl px-4 py-2.5 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+              >
+                <option value="1.20">Liikkumaton (toimistotyö, vähäinen liikunta)</option>
+                <option value="1.375">Kevyesti aktiivinen (kevyt liikunta 1–3 pv/vko)</option>
+                <option value="1.55" selected>Kohtalaisen aktiivinen (kohtalainen harjoittelu 3–5 pv/vko)</option>
+                <option value="1.725">Erittäin aktiivinen (raskas harjoittelu 6–7 pv/vko)</option>
+                <option value="1.90">Huippuaktiivinen (2 harjoitusta päivässä tai raskas ruumiillinen työ)</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- US Navy Body Fat Calculator Drawer -->
+          <details class="group p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-xs">
+            <summary class="font-bold text-zinc-900 dark:text-zinc-200 cursor-pointer select-none flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z" /><path d="m14.5 12.5 2-2" /><path d="m11.5 9.5 2-2" /><path d="m8.5 6.5 2-2" /><path d="m17.5 15.5 2-2" /></svg>Arvioi rasvaprosentti (US Navy -menetelmä)</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+
+            <div class="mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 space-y-3">
+              <p class="text-zinc-500 dark:text-zinc-400">
+                Mittaa ympärysmitalle senttimetreinä joustavalla mittanauhalla. Arviota käytetään Katch-McArdle-laskennan pohjana, kun rasvaprosentti tunnetaan.
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label for="navyNeck" class="block text-zinc-500 mb-1">Kaula (cm)</label>
+                  <input type="number" id="navyNeck" value="38" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+                <div>
+                  <label for="navyWaist" class="block text-zinc-500 mb-1">Vyötärö navan kohdalta (cm)</label>
+                  <input type="number" id="navyWaist" value="84" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+                <div id="femaleHipWrap" class="hidden">
+                  <label for="navyHip" class="block text-zinc-500 mb-1">Lantio (cm)</label>
+                  <input type="number" id="navyHip" value="98" step="0.5" class="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl px-3 py-1.5" />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                id="calcNavyBfBtn"
+                class="w-full mt-2 py-2 min-h-[44px] rounded-xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-bold transition-all duration-200 active:scale-[0.97] cursor-pointer"
+              >
+                Laske ja käytä rasvaprosentti
+              </button>
+            </div>
+          </details>
+
+          <!-- Goal Preset Buttons -->
+          <div>
+            <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2.5">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Tavoite &amp; kaloritavoite</span>
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <button type="button" class="cal-goal-btn active p-2.5 rounded-2xl text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/40 text-left cursor-pointer" data-goal="maintenance">
+                <span class="block">Ylläpito</span>
+                <span class="text-[10px] text-zinc-400 font-normal">0 kcal erotus</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="mild-cut">
+                <span class="block">Kevyt kalorivaje (-10 %)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0,25 kg/vko</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="standard-cut">
+                <span class="block">Suositeltu laihdutusvaje (-20 %)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0,50 kg/vko</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="aggressive-cut">
+                <span class="block">Tehokas rasvanpoltto (-25 %)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">-0,75 kg/vko</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="lean-bulk">
+                <span class="block">Maltillinen lihasmassan lisäys (+10 %)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">+0,25 kg/vko</span>
+              </button>
+              <button type="button" class="cal-goal-btn p-2.5 rounded-2xl text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left hover:border-emerald-500 cursor-pointer" data-goal="heavy-bulk">
+                <span class="block">Tehokas massakausi (+20 %)</span>
+                <span class="text-[10px] text-zinc-400 font-normal">+0,50 kg/vko</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Results & Interactive Scorecard (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6">
+
+          <!-- Hero Target Calories Card -->
+          <div class="bg-zinc-950 text-white border border-zinc-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold">Päivittäinen kaloritavoite</span>
+              <span id="resDeltaVal" class="text-xs font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold">0 kcal</span>
+            </div>
+
+            <div class="text-5xl font-black font-mono tracking-tight mb-1 text-white">
+              <span id="resTargetCalories">2,450</span>
+              <span class="text-lg font-sans font-normal text-zinc-400">kcal/pv</span>
+            </div>
+
+            <p id="resGoalDesc" class="text-xs text-zinc-400 mb-6 leading-relaxed">
+              Ylläpito (0 kcal) · Energiatasapaino ja kehonkoostumuksen ylläpito
+            </p>
+
+            <!-- BMR & TDEE Badges Grid -->
+            <div class="grid grid-cols-2 gap-3 pt-4 border-t border-zinc-800 text-xs font-mono">
+              <div class="bg-zinc-900/80 p-3 rounded-2xl border border-zinc-800">
+                <span class="text-[10px] text-zinc-500 block uppercase font-sans">Perusaineenvaihdunta (BMR)</span>
+                <span id="resBmrVal" class="text-lg font-bold text-emerald-400">1,720</span>
+                <span class="text-[10px] text-zinc-400 font-sans block">kcal (lepo)</span>
+              </div>
+
+              <div class="bg-zinc-900/80 p-3 rounded-2xl border border-zinc-800">
+                <span class="text-[10px] text-zinc-500 block uppercase font-sans">Kokonaisenergiankulutus (TDEE)</span>
+                <span id="resTdeeVal" class="text-lg font-bold text-cyan-400">2,450</span>
+                <span class="text-[10px] text-zinc-400 font-sans block">kcal (aktiivinen)</span>
+              </div>
+            </div>
+
+            <!-- BMI Quick Card -->
+            <div class="mt-3 bg-zinc-900/50 px-3.5 py-2 rounded-xl border border-zinc-800 flex items-center justify-between text-xs font-mono">
+              <span class="text-zinc-400 font-sans">Painoindeksi:</span>
+              <div class="flex items-center gap-2">
+                <span id="resBmiVal" class="font-bold text-white">23.7</span>
+                <span id="resBmiCategory" class="text-xs font-bold text-emerald-500">Normaalipaino</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Macro Doughnut Chart & Split Card -->
+          <div class="bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm">
+
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z" /><path d="M10 2c1 .5 2 2 2 5" /></svg>Makroravinteiden jakauma</span>
+              </h3>
+            </div>
+
+            <!-- Diet Protocol Selector Tabs -->
+            <div class="grid grid-cols-2 gap-1.5 p-1 bg-zinc-200/70 dark:bg-zinc-900 rounded-2xl border border-zinc-300/60 dark:border-zinc-800 text-xs mb-5">
+              <button type="button" class="cal-diet-btn active py-1.5 rounded-xl font-bold bg-zinc-800 text-white transition-all cursor-pointer" data-diet="balanced">Tasapainoinen</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="high-protein">Runsasproteiininen</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="keto">Keto / vähähiilihydraattinen</button>
+              <button type="button" class="cal-diet-btn py-1.5 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 transition-all cursor-pointer" data-diet="endurance">Kestävyys</button>
+            </div>
+
+            <!-- Chart & Macros Grid -->
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+
+              <!-- Doughnut Canvas -->
+              <div class="shrink-0 flex items-center justify-center">
+                <canvas id="macroChartCanvas" class="w-[180px] h-[180px] block"></canvas>
+              </div>
+
+              <!-- Macro Cards List -->
+              <div class="flex-1 w-full space-y-2.5 text-xs font-mono">
+
+                <!-- Protein -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-emerald-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Proteiini</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroProteinGrams" class="font-bold text-emerald-500 text-sm block">184g</span>
+                    <span id="macroProteinKcal" class="text-[10px] text-zinc-400 block">735 kcal (30%)</span>
+                  </div>
+                </div>
+
+                <!-- Fats -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-amber-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Rasvat</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroFatGrams" class="font-bold text-amber-500 text-sm block">82g</span>
+                    <span id="macroFatKcal" class="text-[10px] text-zinc-400 block">735 kcal (30%)</span>
+                  </div>
+                </div>
+
+                <!-- Carbs -->
+                <div class="p-2.5 rounded-xl bg-white dark:bg-zinc-900/60 border border-cyan-500/30 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+                    <span class="font-bold text-zinc-900 dark:text-zinc-100 font-sans">Hiilihydraatit</span>
+                  </div>
+                  <div class="text-right">
+                    <span id="macroCarbGrams" class="font-bold text-cyan-500 text-sm block">245g</span>
+                    <span id="macroCarbKcal" class="text-[10px] text-zinc-400 block">980 kcal (40%)</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Neuro-Metabolic Brain Glucose Metric Card -->
+          <div class="bg-white/80 dark:bg-[#0f1016]/90 border border-zinc-200/80 dark:border-white/10 rounded-3xl p-5 text-xs space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-indigo-400 flex items-center gap-1.5">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" /><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" /></svg>
+                <span>Aivojen energiantarve</span>
+              </span>
+              <span class="text-[10px] font-mono text-zinc-400">~20 % BMR:stä</span>
+            </div>
+
+            <p class="text-zinc-400 leading-relaxed text-[11px]">
+              Aivot kuluttavat levossa noin 20 % elimistön perusaineenvaihdunnan energiasta hermosolujen jatkuvaan toimintaan ja välittäjäaineiden tuotantoon.
+            </p>
+
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-800 text-center font-mono">
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Aivojen energia</span>
+                <span id="neuroBrainKcal" class="font-bold text-indigo-300 text-xs">344 kcal/pv</span>
+              </div>
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Glukoosin tarve</span>
+                <span id="neuroBrainGlucose" class="font-bold text-emerald-400 text-xs">86g glukoosia</span>
+              </div>
+              <div class="bg-zinc-900/80 p-2 rounded-xl">
+                <span class="text-[9px] text-zinc-500 block uppercase font-sans">Jatkuva teho</span>
+                <span id="neuroBrainWatts" class="font-bold text-amber-400 text-xs">16.7 wattia</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BMR Equation Comparison Accordion -->
+          <details class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 text-xs">
+            <summary class="font-bold text-zinc-700 dark:text-zinc-300 cursor-pointer select-none flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 18h8" /><path d="M3 22h18" /><path d="M14 22a7 7 0 1 0-7-7h1" /><path d="M9 14h2" /><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" /><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" /></svg>BMR-laskentamallien vertailu</span>
+              <svg class="w-4 h-4 text-zinc-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800/80 space-y-2 font-mono">
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Mifflin–St Jeor:</span>
+                <span id="bmrMifflinVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,720 kcal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Katch-McArdle (rasvaton massa):</span>
+                <span id="bmrKatchVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,732 kcal</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-zinc-500">Oxford / Schofield:</span>
+                <span id="bmrOxfordVal" class="font-bold text-zinc-900 dark:text-zinc-100">1,733 kcal</span>
+              </div>
+            </div>
+          </details>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Educational Guide -->
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 pb-24 text-zinc-700 dark:text-zinc-300 leading-relaxed text-sm sm:text-base space-y-12">
+
+      <!-- Section 1 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Miten kalorilaskuri ja energiankulutuksen arviointi toimivat?
+        </h2>
+        <p>
+          Tämä kalorilaskuri arvioi päivittäisen energiantarpeesi (TDEE) kahdessa vaiheessa. Ensin se laskee perusaineenvaihduntasi (BMR) eli lepotilassa kuluvan energian Mifflin–St Jeor -kaavaan perustuvalla mallilla. Sen jälkeen BMR kerrotaan valitsemallasi aktiivisuustason kertoimella, joka kuvaa arkiaktiivisuutta, työtä ja liikuntaa. Tulos on suuntaa-antava arvio päivittäisestä kokonaiskulutuksesta.
+        </p>
+        <p>
+          Kaloritarve laskuri ei mittaa kehoasi suoraan, vaan yhdistää väestötason tutkimusaineistoon perustuvan ennustemallin ja antamasi lähtötiedot. Siksi tulosta kannattaa käyttää painonhallinnan lähtökohtana ja seurata painon kehitystä 2–4 viikon ajan ennen säätöjä.
+        </p>
+        <div class="p-4 rounded-xl bg-zinc-900 text-zinc-100 font-mono text-xs overflow-x-auto my-4 border border-zinc-800">
+          <code>TDEE-arvio = BMR-arvio × aktiivisuustason kerroin (1,20–1,90)</code>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Mifflin–St Jeor -kaava — Energiantarpeen laskennan perusta
+        </h2>
+        <p>
+          Mifflin–St Jeor -kaavaan perustuva laskenta huomioi painon, pituuden, iän ja sukupuolen. Se on ravitsemustutkimuksessa laajasti käytetty perusaineenvaihdunnan arviointimalli, koska se on yksinkertainen ja toimii väestötasolla johdonmukaisesti. Kaavat kuten Mifflin–St Jeor arvioivat lepoaineenvaihduntaa: ne ovat tilastollisia ennustemalleja, eivät suoria kehon mittauksia.
+        </p>
+        <p>
+          Jos tiedät rasvaprosenttisi, Katch-McArdle-muunnelma arvioi kulutusta rasvattoman massan perusteella, mikä palvelee erityisesti lihaksikkaita tai hyvin kevytrakenteisia käyttäjiä. Oxford/Schofield-malli puolestaan pohjautuu painoon ja ikäryhmään. Tämän sivun BMR-laskuri näyttää kaikki kolme arviota rinnakkain, jotta näet mallien välisen vaihtelun.
+        </p>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Kalorivaje ja turvallinen painonhallinta
+        </h2>
+        <p>
+          Kalorivajeen arvio painonhallintaan syntyy, kun päivittäinen energiansaanti jää TDEE-arvion alapuolelle. Noin 10–20 % vaje (suunnilleen 250–500 kcal päivässä useimmilla aikuisilla) on yleisesti suositeltu lähtökohta: se vastaa noin 0,25–0,5 kg viikoittaista painonmuutosta ja tukee lihasmassan säilymistä riittävän proteiininsaannin kanssa.
+        </p>
+        <p>
+          Yli 25 % vajeita ei suositella omin päin, sillä suuri vaje lisää nälkää, väsymystä ja lihaskatoa sekä vaikeuttaa arjen jaksamista. Jos sinulla on sairauksia, käytät säännöllistä lääkitystä, olet raskaana tai imetät, keskustele painonhallinnasta terveydenhuollon ammattilaisen kanssa ennen muutoksia.
+        </p>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Makroravinteiden merkitys — Proteiinien, hiilihydraattien ja rasvojen suhde
+        </h2>
+        <p>
+          Makrojakauma kertoo, miten kaloritavoitteesi jakautuu proteiineihin, hiilihydraatteihin ja rasvoihin. Proteiini (4 kcal/g) tukee lihasmassan säilymistä ja kylläisyyttä, hiilihydraatit (4 kcal/g) ovat elimistön ensisijainen nopea energianlähde ja rasvat (9 kcal/g) tukevat hormonitoimintaa ja rasvaliukoisten vitamiinien imeytymistä.
+        </p>
+        <p>
+          Tämän sivun TDEE laskuri ja BMR laskuri yhdistyvät neljään ruokavaliomalliin: tasapainoinen (30/30/40), runsasproteiininen (noin 2,2 g/kg), keto/vähähiilihydraattinen ja kestävyysmalli. Valinta ei muuta energia-arviota, ainoastaan sen jakautumista. Energiankulutus laskuri näyttää kunkin mallin grammamäärät ja prosenttiosuudet reaaliajassa.
+        </p>
+      </section>
+
+      <!-- Medical Disclaimer -->
+      <section class="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs sm:text-sm leading-relaxed">
+        <p class="font-bold text-amber-600 dark:text-amber-400 mb-2">Huomio terveydestä</p>
+        <p>
+          Tämä laskuri tarjoaa suuntaa-antavan arvion energiantarpeesta opetukselliseen ja suuntaa-antavaan käyttöön. Se ei korvaa laillistetun lääkärin, ravitsemusterapeutin tai terveydenhuollon ammattilaisen antamaa yksilöllistä neuvontaa tai lääketieteellistä arviota.
+        </p>
+      </section>
+
+      <!-- Section 5: FAQ Accordion -->
+      <section class="space-y-6 pt-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+          Usein kysytyt kysymykset
+        </h2>
+
+        <div class="space-y-3">
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Mitä eroa on BMR:llä ja TDEE:llä?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              BMR (perusaineenvaihdunta) kuvaa lepotilassa kuluvaa energiamäärää, joka ylläpitää elintoimintoja. TDEE (kokonaisenergiankulutus) on arvio päivittäisestä kokonaiskulutuksesta: BMR kerrottuna aktiivisuustason kertoimella, joka huomioi arkiaktiivisuuden, työn, ruoansulatuksen ja liikunnan.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Mihin Mifflin–St Jeor -kaava perustuu?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Mifflin–St Jeor -kaava on laajasti käytetty perusaineenvaihdunnan arviointimalli, joka huomioi painon, pituuden, iän ja sukupuolen. Jos kehon rasvaprosentti tiedetään, Katch-McArdle-muunnelma arvioi kulutusta rasvattoman massan perusteella.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Mikä on maltillinen kalorivaje painonhallintaan?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Noin 20 % TDEE-arvon alapuolella oleva kalorivaje (suunnilleen 400–500 kcal päivässä) on yleisesti suositeltu lähtökohta: se vastaa noin 0,5 kg viikoittaista painonmuutosta ja tukee lihasmassan säilymistä. Yli 25 % vajeita ei suositella ilman ammattilaisen ohjausta.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Kuinka paljon energiaa aivot kuluttavat päivässä?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Aivot kuluttavat levossa noin 20 % elimistön perusaineenvaihdunnan energiasta, mikä vastaa suunnilleen 300–400 kcal päivässä eli noin 100–130 grammaa glukoosia hermosolujen jatkuvaan toimintaan.
+            </p>
+          </details>
+
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>Kuinka paljon proteiinia tarvitaan kalorivajeen aikana?</span>
+              <svg class="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+              Painonhallinnan aikana suositellaan yleisesti 1,8–2,4 grammaa proteiinia painokiloa kohden. Riittävä proteiini tukee kylläisyyttä ja lihasmassan säilymistä, koska proteiinin ruoansulatus kuluttaa suhteessa eniten energiaa ja se stimuloi kylläisyyteen liittyviä hormoneja.
+            </p>
+          </details>
+
+        </div>
+      </section>
+
+    </article>
+
+  </main>
+
+  <Footer />
+
+  <script src="../../scripts/tools/calorie-engine.js"></script>
+</Layout>

@@ -5,6 +5,10 @@ interface Props {
   idPath?: string;
   ruPath?: string;
   jaPath?: string;
+  dePath?: string;
+  ptBrPath?: string;
+  nlPath?: string;
+  fiPath?: string;
 }
 
 const {
@@ -13,6 +17,10 @@ const {
   idPath,
   ruPath,
   jaPath,
+  dePath,
+  ptBrPath,
+  nlPath,
+  fiPath,
 } = Astro.props;
 
 const normalizePath = (p: string) => p.replace(/\/$/, "") || "/";
@@ -34,6 +42,10 @@ const buildLocaleRouteSet = (modules: Record<string, unknown>, locale: string) =
 const idRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/id/**/*.astro"), "id");
 const ruRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/ru/**/*.astro"), "ru");
 const jaRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/ja/**/*.astro"), "ja");
+const deRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/de/**/*.astro"), "de");
+const ptBrRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/pt-br/**/*.astro"), "pt-br");
+const nlRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/nl/**/*.astro"), "nl");
+const fiRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/fi/**/*.astro"), "fi");
 
 // An explicit prop always wins; otherwise reuse the current slug only when the target locale actually publishes it
 const resolveLocaleTarget = (routes: Set<string>, locale: string, explicit?: string) => {
@@ -48,12 +60,10 @@ const resolveLocaleTarget = (routes: Set<string>, locale: string, explicit?: str
 };
 
 const getEnFallback = (path: string) => {
-  if (path.startsWith("/id/")) return path.replace(/^\/id/, "") || "/";
-  if (path === "/id") return "/";
-  if (path.startsWith("/ru/")) return path.replace(/^\/ru/, "") || "/";
-  if (path === "/ru") return "/";
-  if (path.startsWith("/ja/")) return path.replace(/^\/ja/, "") || "/";
-  if (path === "/ja") return "/";
+  const match = path.match(/^\/(id|ru|ja|de|pt-br|nl|fi)(\/.*)?$/);
+  if (match) {
+    return match[2] || "/";
+  }
   return path || "/";
 };
 
@@ -61,6 +71,10 @@ const enHref = enPath || getEnFallback(currentNorm);
 const idHref = resolveLocaleTarget(idRouteSet, "id", idPath);
 const ruHref = resolveLocaleTarget(ruRouteSet, "ru", ruPath);
 const jaHref = resolveLocaleTarget(jaRouteSet, "ja", jaPath);
+const deHref = resolveLocaleTarget(deRouteSet, "de", dePath);
+const ptBrHref = resolveLocaleTarget(ptBrRouteSet, "pt-br", ptBrPath);
+const nlHref = resolveLocaleTarget(nlRouteSet, "nl", nlPath);
+const fiHref = resolveLocaleTarget(fiRouteSet, "fi", fiPath);
 
 const activeLangCode =
   currentNorm === "/id" || currentNorm.startsWith("/id/")
@@ -69,7 +83,15 @@ const activeLangCode =
       ? "RU"
       : currentNorm === "/ja" || currentNorm.startsWith("/ja/")
         ? "JA"
-        : "EN";
+        : currentNorm === "/de" || currentNorm.startsWith("/de/")
+          ? "DE"
+          : currentNorm === "/pt-br" || currentNorm.startsWith("/pt-br/")
+            ? "PT"
+            : currentNorm === "/nl" || currentNorm.startsWith("/nl/")
+              ? "NL"
+              : currentNorm === "/fi" || currentNorm.startsWith("/fi/")
+                ? "FI"
+                : "EN";
 
 const isHomeActive = currentNorm === "/";
 const isTestsActive = [
@@ -1139,6 +1161,46 @@ const mobileAccordionSections = [
             <span class="min-w-0 flex-1">日本語</span>
             <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "JA" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>JA</span>
           </a>
+          <a
+            role="menuitem"
+            href={deHref}
+            aria-current={activeLangCode === "DE" ? "true" : undefined}
+            class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "DE" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+          >
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">D</span>
+            <span class="min-w-0 flex-1">Deutsch</span>
+            <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "DE" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>DE</span>
+          </a>
+          <a
+            role="menuitem"
+            href={ptBrHref}
+            aria-current={activeLangCode === "PT" ? "true" : undefined}
+            class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "PT" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+          >
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">P</span>
+            <span class="min-w-0 flex-1">Português</span>
+            <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "PT" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>PT</span>
+          </a>
+          <a
+            role="menuitem"
+            href={nlHref}
+            aria-current={activeLangCode === "NL" ? "true" : undefined}
+            class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "NL" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+          >
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">N</span>
+            <span class="min-w-0 flex-1">Nederlands</span>
+            <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "NL" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>NL</span>
+          </a>
+          <a
+            role="menuitem"
+            href={fiHref}
+            aria-current={activeLangCode === "FI" ? "true" : undefined}
+            class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "FI" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+          >
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">S</span>
+            <span class="min-w-0 flex-1">Suomi</span>
+            <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "FI" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>FI</span>
+          </a>
         </div>
       </div>
 
@@ -1387,6 +1449,46 @@ const mobileAccordionSections = [
           <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">日</span>
           <span class="min-w-0 flex-1">日本語</span>
           <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "JA" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>JA</span>
+        </a>
+        <a
+          role="menuitem"
+          href={deHref}
+          aria-current={activeLangCode === "DE" ? "true" : undefined}
+          class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "DE" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+        >
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">D</span>
+          <span class="min-w-0 flex-1">Deutsch</span>
+          <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "DE" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>DE</span>
+        </a>
+        <a
+          role="menuitem"
+          href={ptBrHref}
+          aria-current={activeLangCode === "PT" ? "true" : undefined}
+          class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "PT" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+        >
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">P</span>
+          <span class="min-w-0 flex-1">Português</span>
+          <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "PT" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>PT</span>
+        </a>
+        <a
+          role="menuitem"
+          href={nlHref}
+          aria-current={activeLangCode === "NL" ? "true" : undefined}
+          class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "NL" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+        >
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">N</span>
+          <span class="min-w-0 flex-1">Nederlands</span>
+          <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "NL" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>NL</span>
+        </a>
+        <a
+          role="menuitem"
+          href={fiHref}
+          aria-current={activeLangCode === "FI" ? "true" : undefined}
+          class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "FI" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+        >
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">S</span>
+          <span class="min-w-0 flex-1">Suomi</span>
+          <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "FI" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>FI</span>
         </a>
       </div>
     </div>

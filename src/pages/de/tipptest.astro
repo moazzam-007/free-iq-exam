@@ -1,0 +1,541 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/typing-test',
+  'ru': 'https://freeiqexam.com/ru/typing-test',
+  'id': 'https://freeiqexam.com/id/tes-kecepatan-mengetik',
+  'fi': 'https://freeiqexam.com/fi/kirjoitustesti',
+  'de': 'https://freeiqexam.com/de/tipptest'
+};
+
+const title = "Tipptest: 10-Finger-Schreibtest & WPM online prüfen | FreeIQExam";
+const description = "Prüfen Sie Ihre Schreibgeschwindigkeit und Genauigkeit mit unserem kostenlosen 60-Sekunden-Tipptest. Ermitteln Sie Ihre WPM (Wörter pro Minute).";
+const canonicalUrl = "https://freeiqexam.com/de/tipptest";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam Online-Tipptest & WPM-Geschwindigkeitstest",
+    "url": "https://freeiqexam.com/de/tipptest",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "inLanguage": "de",
+    "browserRequirements": "Erfordert JavaScript und Web Audio API Unterstützung",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "featureList": [
+      "Echtzeit-Berechnung von Brutto- und Netto-WPM",
+      "Präzise Genauigkeits- und Fehleranalyse",
+      "Zeichen pro Minute (CPM) & Konsistenz-Index",
+      "Deutsche Standard-Wortdatenbank",
+      "Testmodi 15s / 30s / 60s / 120s",
+      "Interaktives Tastatur-Fehler-Heatmap",
+      "Kostenloses herunterladbares Schreibgeschwindigkeits-Zertifikat (PNG)"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Startseite",
+        "item": "https://freeiqexam.com/de"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://freeiqexam.com/de"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Tipptest (WPM)",
+        "item": "https://freeiqexam.com/de/tipptest"
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="de"
+>
+  <Header currentPath="/de/tipptest" />
+
+  <style>
+    /* Caret Pulse and Floating Smooth Movement */
+    #caret {
+      transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    @keyframes caretBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .caret-blink {
+      animation: caretBlink 1s infinite ease-in-out;
+    }
+
+    /* Word Box Line Clamping & Mask */
+    .words-box {
+      mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, #000 75%, transparent 100%);
+    }
+
+    /* Character state styles */
+    .char.correct {
+      color: #10b981;
+    }
+
+    .char.incorrect {
+      color: #ef4444;
+      background-color: rgba(239, 68, 68, 0.15);
+      border-radius: 2px;
+    }
+
+    .char.extra {
+      color: #b91c1c;
+      opacity: 0.8;
+    }
+
+    @media print {
+      header, footer, #typingSettingsBar, #restartBtn, .no-print {
+        display: none !important;
+      }
+      #resultsWrap {
+        display: block !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="Breadcrumb">
+      <a href="/de" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Startseite</a>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-500 dark:text-zinc-400">Tools</span>
+      <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">Tipptest (WPM)</span>
+    </nav>
+
+    <!-- Header & Hero Section -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 text-xs sm:text-sm font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-4 shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span>Psychomotorische Geschwindigkeit &bull; 10-Finger-Schreibtest &bull; Mechanischer Sound</span>
+      </div>
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-tight leading-tight mb-4">
+        Tipptest: Wörter pro Minute (WPM) prüfen
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+        Prüfen Sie Ihre Tippgeschwindigkeit, Netto-WPM, Genauigkeit und Tastenkonstanz. Mit mechanischer Akustik, Live-WPM-Grafik und Tasten-Heatmap.
+      </p>
+    </header>
+
+    <!-- TOP SETTINGS & MODE TOOLBAR -->
+    <section id="typingSettingsBar" class="max-w-4xl mx-auto mb-8 p-3 rounded-2xl bg-zinc-50 dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono shadow-xs">
+      <!-- Mode Tabs (Time vs Words) -->
+      <div class="flex items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/60 p-1 rounded-xl">
+        <button
+          type="button"
+          data-mode="time"
+          class="mode-btn active px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/40 inline-flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg><span>Zeit</span>
+        </button>
+        <button
+          type="button"
+          data-mode="words"
+          class="mode-btn px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all cursor-pointer inline-flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg><span>Wörter</span>
+        </button>
+      </div>
+
+      <!-- Time Options (15, 30, 60, 120s) -->
+      <div id="timeOptionsGroup" class="flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Sekunden:</span>
+        <button type="button" data-time="15" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">15</button>
+        <button type="button" data-time="30" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">30</button>
+        <button type="button" data-time="60" class="time-opt-btn active px-2.5 py-1 rounded-md text-amber-500 font-bold transition-colors cursor-pointer">60</button>
+        <button type="button" data-time="120" class="time-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">120</button>
+      </div>
+
+      <!-- Word Options (25, 50, 100) -->
+      <div id="wordOptionsGroup" class="hidden flex items-center gap-2">
+        <span class="text-zinc-400 hidden sm:inline">Wörter:</span>
+        <button type="button" data-words="25" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">25</button>
+        <button type="button" data-words="50" class="word-opt-btn active px-2.5 py-1 rounded-md text-amber-500 font-bold transition-colors cursor-pointer">50</button>
+        <button type="button" data-words="100" class="word-opt-btn px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">100</button>
+      </div>
+
+      <!-- Punctuation & Numbers Toggles -->
+      <div class="flex items-center gap-2">
+        <button id="togglePunctuation" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">
+          @ Satzzeichen
+        </button>
+        <button id="toggleNumbers" type="button" class="px-2.5 py-1 rounded-md text-zinc-500 hover:text-amber-500 transition-colors cursor-pointer">
+          # Zahlen
+        </button>
+      </div>
+
+      <!-- Mechanical Sound Selector -->
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-400 inline-flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>Sound:</span>
+        <select
+          id="soundSelect"
+          class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-amber-500 cursor-pointer"
+        >
+          <option value="blue">Cherry MX Blue (Clicky)</option>
+          <option value="brown">Cherry MX Brown (Thock)</option>
+          <option value="red">Cherry MX Red (Linear)</option>
+          <option value="mute">Ton aus (Stumm)</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE TYPING ARENA -->
+    <section class="relative w-full max-w-4xl mx-auto mb-16">
+      
+      <!-- ARENA CARD -->
+      <div id="typingArena" class="relative w-full rounded-3xl p-6 sm:p-10 md:p-12 bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl transition-all cursor-text select-none">
+        
+        <!-- Live HUD Status -->
+        <div class="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-6 font-mono">
+          <div class="flex items-center gap-6">
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Verbleibende Zeit</div>
+              <div id="hudTimer" class="font-heading font-extrabold text-2xl sm:text-3xl text-amber-500">60s</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Live WPM</div>
+              <div id="hudWpm" class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">0</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 uppercase tracking-wider">Genauigkeit</div>
+              <div id="hudAccuracy" class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">100%</div>
+            </div>
+          </div>
+
+          <!-- Restart Button & Shortcut Hint -->
+          <div class="flex items-center gap-3">
+            <button
+              id="restartBtn"
+              type="button"
+              class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-amber-500/10 hover:text-amber-500 text-zinc-500 dark:text-zinc-400 transition-all cursor-pointer shadow-xs"
+              aria-label="Test neu starten"
+              title="Test neu starten (Esc oder Tab)"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15a9 9 0 0014.85 3.36L23 14" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Words Stream Display Box -->
+        <div class="relative words-box">
+          <div
+            id="wordsWrapper"
+            class="max-h-36 sm:max-h-44 overflow-hidden relative font-mono text-xl sm:text-2xl leading-loose sm:leading-loose text-zinc-400 dark:text-zinc-600 tracking-wide select-none"
+          >
+            <!-- Dynamically populated word spans -->
+          </div>
+
+          <!-- Smooth Caret Bar -->
+          <div
+            id="caret"
+            class="absolute top-0 left-0 w-0.5 sm:w-[3px] h-7 sm:h-8 bg-amber-500 rounded-full caret-blink pointer-events-none shadow-[0_0_8px_rgba(245,158,11,0.6)]"
+          ></div>
+        </div>
+
+        <!-- Accessible Transparent Input for Desktop & Mobile IME Keyboards -->
+        <input
+          id="typingInput"
+          type="text"
+          class="absolute inset-0 opacity-0 w-full h-full cursor-text z-10"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Tipptest-Eingabefeld"
+        />
+
+        <!-- Click to focus prompt -->
+        <div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-xs font-mono text-zinc-400 dark:text-zinc-500">
+          <span>Klicken Sie in das Feld oder beginnen Sie sofort mit dem Tippen</span>
+          <span class="hidden sm:inline">Drücken Sie <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Tab</kbd> oder <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Esc</kbd> zum Neustart</span>
+        </div>
+      </div>
+
+      <!-- RESULTS REPORT SECTION -->
+      <div id="resultsWrap" class="hidden mt-8 space-y-8">
+        
+        <div class="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-8">
+          
+          <!-- Result Hero Header -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-zinc-100 dark:border-zinc-800/80 pb-8">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">
+                Testergebnis
+              </div>
+              <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">
+                Ihr Schreibgeschwindigkeits-Bericht
+              </h3>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span id="resPercentile" class="px-4 py-2 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-mono font-bold text-sm">
+                Top 15%
+              </span>
+              <span id="resTier" class="px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-heading font-bold text-sm">
+                Fortgeschritten
+              </span>
+            </div>
+          </div>
+
+          <!-- Hero Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center col-span-2 sm:col-span-1">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Netto-WPM</div>
+              <div class="font-heading font-black text-4xl sm:text-5xl text-amber-500">
+                <span id="resWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Genauigkeit</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 dark:text-emerald-400">
+                <span id="resAccuracy">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Brutto-WPM</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resRawWpm">0</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Konsistenz</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resConsistency">0%</span>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
+              <div class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1 uppercase">Anschläge (CPM)</div>
+              <div class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white">
+                <span id="resCpm">0</span>
+              </div>
+            </div>
+          </div>
+
+          <p id="resDesc" class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
+            --
+          </p>
+
+          <!-- Live WPM Sparkline Graph -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              <span>WPM-Verlauf</span>
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Netto-WPM</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400 inline-block"></span> Brutto-WPM</span>
+              </div>
+            </div>
+            <div class="w-full overflow-x-auto rounded-2xl bg-zinc-50 dark:bg-[#09090b] p-4 border border-zinc-200 dark:border-zinc-800">
+              <canvas id="wpmChartCanvas" width="760" height="260" class="w-full max-w-[760px] mx-auto block"></canvas>
+            </div>
+          </div>
+
+          <!-- QWERTY/QWERTZ Keyboard Heatmap -->
+          <div class="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div class="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              <span>Tastatur-Genauigkeits-Heatmap</span>
+              <div class="flex items-center gap-3">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> &ge;95%</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> 85–94%</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500 inline-block"></span> &lt;85%</span>
+              </div>
+            </div>
+            <div id="keyboardHeatmap" class="p-4 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 overflow-x-auto">
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-6 border-t border-zinc-100 dark:border-zinc-800/80">
+            <button
+              id="downloadCertBtn"
+              type="button"
+              class="px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-heading font-bold text-sm shadow-lg hover:shadow-amber-500/25 transition-all cursor-pointer flex items-center gap-2 active:scale-[0.97]"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg> Zertifikat herunterladen (PNG)
+            </button>
+            <button
+              id="retakeTestBtn"
+              type="button"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer active:scale-[0.97]"
+            >
+              Erneut versuchen
+            </button>
+            <a
+              href="/de/spiele/klick-test"
+              class="px-6 py-3.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-heading font-semibold text-sm transition-all cursor-pointer flex items-center gap-1.5 active:scale-[0.97]"
+            >
+              <span>CPS-Klicktest testen &rarr;</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Guide -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+      
+      <section class="space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Teil 1 &bull; Kognitive Motorik
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white tracking-tight">
+          Neurobiologie des 10-Finger-Schreibens &amp; Muskelgedächtnis
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Schnelles 10-Finger-Tippen (60 bis 120+ WPM) zählt zu den komplexesten psychomotorischen Fertigkeiten des Menschen. Während ungeübte Schreiber jedes Zeichen visuell auf der Tastatur suchen müssen (Zwei-Finger-Suchsystem, ca. 20–35 WPM), verlagert das Tastschreiben die Bewegungsmuster in das motorische Kleinhirn und die Basalganglien. Ganze Wortsilben wie &bdquo;sch&ldquo;, &bdquo;ung&ldquo; oder &bdquo;tion&ldquo; werden als zusammenhängende Bewegungsschleifen (Motor Chunks) ohne bewusste kognitive Anstrengung abgerufen.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Teil 2 &bull; Messmethodik
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white tracking-tight">
+          Brutto-WPM vs. Netto-WPM: Internationale Standardformel
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          In psychometrischen Schreibtests gilt weltweit der Grundsatz: <strong>1 Wort = genau 5 Tastenanschläge</strong> (inklusive Leerzeichen und Interpunktion). Dies verhindert, dass Texte mit längeren Wörtern das Ergebnis künstlich verfälschen.
+        </p>
+        <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 font-mono text-sm text-zinc-800 dark:text-zinc-200 not-prose space-y-1">
+          <div>Brutto-WPM = (Gesamte Anschläge / 5) / Testdauer in Minuten</div>
+          <div>Netto-WPM = Brutto-WPM &minus; (Unkorrigierte Fehler / Testdauer in Minuten)</div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-mono font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+          Teil 3 &bull; Referenzwerte
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white tracking-tight">
+          Typische Schreibgeschwindigkeiten im Vergleich
+        </h2>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Der weltweite Durchschnitt liegt bei ca. <strong>40 bis 45 WPM</strong>. Geschwindigkeiten von 60 bis 70 WPM gelten als überdurchschnittlich und genügen höchsten beruflichen Büroanforderungen. Über 80 WPM erreichen nur die oberen 10% der Schreiber, während 100+ WPM die absolute Spitze (oberste 2%) markiert.
+        </p>
+      </section>
+
+    </article>
+
+    <!-- FAQ Accordion Section (Visible HTML Accordions only, no schema) -->
+    <section class="pt-8 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">
+          Häufige Fragen
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+          Fragen und Antworten zum Schreibtest
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Was ist eine gute Schreibgeschwindigkeit (WPM)?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Ein Wert von 40–45 WPM ist der globale Durchschnitt. Für professionelles Arbeiten am Computer sind 60–75 WPM ideal. Professionelle Stenografen und E-Sport-Schreiber erreichen über 100 WPM.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Was ist der Unterschied zwischen Brutto-WPM und Netto-WPM?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Brutto-WPM erfasst die reine Anschlagsgeschwindigkeit ohne Fehlerabzug. Netto-WPM zieht Tippfehler ab und ist der maßgebliche Standard für reale Produktivität und Einstellungstests.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Wie ist 1 Wort im Tipptest definiert?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            1 standardisiertes Wort entspricht genau 5 Tastenanschlägen (Buchstaben, Satzzeichen oder Leerzeichen).
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Wie kann ich meine Tippgeschwindigkeit steigern?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Priorisieren Sie stets 100% Genauigkeit vor Geschwindigkeit. Wenn Sie nicht auf die Tastatur schauen und täglich 10–15 Minuten üben, verdoppelt sich die Geschwindigkeit durch Muskelgedächtnis oft innerhalb weniger Wochen.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Welche Tastaturlayouts werden unterstützt?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Unser Test verarbeitet die nativen Zeicheneingaben Ihres Betriebssystems und funktioniert gleichermaßen perfekt mit deutschem QWERTZ, englischem QWERTY, Schweizer Layout sowie Neo oder Dvorak.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Werden meine Tastenanschläge oder Texte aufgezeichnet?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Nein. Die gesamte Zeichenverarbeitung, WPM-Berechnung und Zertifikaterstellung erfolgt zu 100% lokal in Ihrem Webbrowser.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+
+  <script src="../../scripts/tools/typing-engine.js"></script>
+</Layout>

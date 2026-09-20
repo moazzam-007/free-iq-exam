@@ -1,0 +1,732 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+
+const title = "CPS Test: Kostenloser Klick-Geschwindigkeitstest (Klicks pro Sekunde) | FreeIQExam";
+const description = "Messen Sie Ihre Klickgeschwindigkeit (CPS) in 5, 10 und 30 Sekunden. Testen Sie Ihre Fingerfertigkeit und Reflexe mit unserem Online-Klicktest.";
+const canonicalUrl = "https://freeiqexam.com/de/spiele/klick-test";
+
+const alternates = {
+  'en': 'https://freeiqexam.com/games/click-speed-test',
+  'ru': 'https://freeiqexam.com/ru/games/click-speed-test',
+  'id': 'https://freeiqexam.com/id/permainan/click-speed-test',
+  'fi': 'https://freeiqexam.com/fi/permainan/click-speed-test',
+  'de': 'https://freeiqexam.com/de/spiele/klick-test'
+};
+
+const DURATIONS = [5, 10, 30];
+const DEFAULT_DURATION = 10;
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "CPS-Test: Klick-Geschwindigkeitstest (Klicks pro Sekunde)",
+    "url": "https://freeiqexam.com/de/spiele/klick-test",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "de",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "description": "Kostenloser Klick-Geschwindigkeitstest zur Messung von Klicks pro Sekunde (CPS), Spitzen-Burst-Rate und motorischer Rhythmus-Konstanz in 5, 10 oder 30 Sekunden."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Startseite",
+        "item": "https://freeiqexam.com/de"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Spiele",
+        "item": "https://freeiqexam.com/de"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "CPS-Klicktest",
+        "item": "https://freeiqexam.com/de/spiele/klick-test"
+      }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} schema={schema} alternates={alternates} lang="de">
+  <Header currentPath="/de/spiele/klick-test" />
+
+  <main class="flex-1 game-pastel-wrap game-pastel py-10 md:py-14 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-6" aria-label="Breadcrumb">
+      <a href="/de" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Startseite</a>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-500">Spiele</span>
+      <span class="mx-2">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100 font-semibold">CPS-Klicktest</span>
+    </nav>
+
+    <!-- Header / HUD -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium uppercase tracking-wider pastel-tag pastel-tag-yellow mb-1.5">
+          Gs &bull; Motorische Geschwindigkeit
+        </div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+            CPS Test: Klick-Geschwindigkeitstest
+          </h1>
+          <button
+            id="btn-how-to-play"
+            type="button"
+            class="min-h-[44px] px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            aria-haspopup="dialog"
+          >
+            Anleitung
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="pastel-hud pastel-hud-accent-yellow rounded-xl px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Zeit</div>
+          <div id="hud-time" class="text-lg font-mono tabular-nums tracking-tight font-bold leading-tight">10.0s</div>
+        </div>
+        <div class="pastel-hud pastel-hud-accent-mint rounded-xl px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Klicks</div>
+          <div id="hud-clicks" class="text-lg font-mono tabular-nums tracking-tight font-bold leading-tight">0</div>
+        </div>
+        <div class="pastel-hud pastel-hud-accent-sky rounded-xl px-3.5 py-2 text-center min-w-[84px]">
+          <div class="text-[10px] font-mono font-bold uppercase tracking-wider opacity-80">Live CPS</div>
+          <div id="hud-cps" class="text-lg font-mono tabular-nums tracking-tight font-bold leading-tight">0.0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Duration selector -->
+    <div class="mb-6 flex flex-wrap items-center justify-center gap-2.5" role="group" aria-label="Testdauer">
+      {DURATIONS.map((d) => (
+        <button
+          type="button"
+          data-duration={d}
+          class={`duration-chip pastel-chip min-h-[44px] ${d === DEFAULT_DURATION ? 'active' : ''}`}
+          aria-pressed={d === DEFAULT_DURATION ? 'true' : 'false'}
+        >
+          {d} Sekunden
+        </button>
+      ))}
+    </div>
+
+    <!-- Arena -->
+    <section class="mb-6" aria-label="Klick-Test Arena">
+      <button
+        id="cps-arena"
+        type="button"
+        class="game-pastel-arena relative w-full rounded-3xl flex flex-col items-center justify-center gap-3 px-6 py-12 sm:py-14 min-h-[260px] sm:min-h-[320px] select-none cursor-pointer transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+      >
+        <!-- Layer: awaiting start -->
+        <div id="arena-ready" class="flex flex-col items-center gap-3 text-center">
+          <div class="pastel-icon pastel-icon-yellow w-16 h-16 rounded-2xl">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
+            </svg>
+          </div>
+          <div class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+            Hier klicken zum Starten
+          </div>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed max-w-sm">
+            Der Timer beginnt mit Ihrem ersten Klick. Klicken Sie so schnell wie möglich, bis die Zeit abgelaufen ist.
+          </p>
+        </div>
+
+        <!-- Layer: running -->
+        <div id="arena-running" class="hidden flex-col items-center gap-2 text-center">
+          <div id="arena-click-count" class="text-6xl sm:text-7xl font-mono tabular-nums tracking-tight font-bold text-zinc-950 dark:text-white leading-none">
+            0
+          </div>
+          <div class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+            Schneller! Nicht aufhören
+          </div>
+        </div>
+
+        <!-- Layer: finished / locked -->
+        <div id="arena-done" class="hidden flex-col items-center gap-3 text-center">
+          <div class="pastel-icon pastel-icon-cyan w-16 h-16 rounded-2xl">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="text-xl sm:text-2xl font-heading font-bold text-zinc-950 dark:text-white">
+            Durchgang beendet
+          </div>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">Klicken Sie unten auf &bdquo;Erneut versuchen&ldquo; für einen neuen Test.</p>
+        </div>
+      </button>
+    </section>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+      <button
+        id="btn-start"
+        type="button"
+        class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+      >
+        <span id="btn-start-label">Test starten</span>
+      </button>
+      <button
+        id="btn-reset"
+        type="button"
+        class="min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+      >
+        Zurücksetzen
+      </button>
+    </div>
+
+    <!-- Results -->
+    <section id="results-panel" class="hidden mb-12" aria-live="polite" aria-label="Testergebnisse">
+      <div class="game-pastel-arena rounded-3xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div class="pastel-eyebrow pastel-eyebrow-mint mb-2">Ergebnis</div>
+            <h2 class="text-2xl sm:text-3xl font-heading font-bold text-zinc-950 dark:text-white">
+              <span id="res-cps" class="tabular-nums">0.0</span>
+              <span class="text-base sm:text-lg font-semibold text-zinc-500 dark:text-zinc-400">Klicks pro Sekunde (CPS)</span>
+            </h2>
+          </div>
+          <div id="res-tier" class="px-4 py-2 rounded-xl border text-sm font-bold text-center"></div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div class="pastel-metric rounded-2xl p-4 text-center">
+            <small class="block">Gesamtklicks</small>
+            <strong id="res-total" class="text-2xl font-mono tabular-nums tracking-tight font-bold">0</strong>
+          </div>
+          <div class="pastel-metric rounded-2xl p-4 text-center">
+            <small class="block">Spitzen-Sekunde</small>
+            <strong id="res-peak" class="text-2xl font-mono tabular-nums tracking-tight font-bold">0</strong>
+          </div>
+          <div class="pastel-metric rounded-2xl p-4 text-center">
+            <small class="block">Median-Intervall</small>
+            <strong id="res-median" class="text-2xl font-mono tabular-nums tracking-tight font-bold">--</strong>
+          </div>
+          <div class="pastel-metric rounded-2xl p-4 text-center">
+            <small class="block">Rhythmus-Konstanz</small>
+            <strong id="res-rhythm" class="text-2xl font-mono tabular-nums tracking-tight font-bold">--</strong>
+          </div>
+        </div>
+
+        <p id="res-description" class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6"></p>
+
+        <div class="pt-5 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4">
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+            Persönliche Bestleistung: <strong id="res-best" class="text-zinc-700 dark:text-zinc-200">--</strong>
+          </span>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="/profile"
+              class="inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            >
+              Profil anzeigen
+            </a>
+            <button
+              id="btn-retake"
+              type="button"
+              class="pastel-play inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            >
+              Erneut versuchen
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational section -->
+    <section class="border-t border-[var(--pastel-line)] dark:border-zinc-800 pt-12 pb-6">
+      <div class="bg-white/90 dark:bg-zinc-900/60 border border-[var(--pastel-line)] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-[var(--pastel-card-shadow)] dark:shadow-none space-y-8">
+        
+        <div>
+          <h2 class="text-2xl font-heading font-bold text-zinc-950 dark:text-white mb-3">
+            Was misst ein CPS-Klick-Geschwindigkeitstest?
+          </h2>
+          <p class="text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+            CPS steht für <strong>Clicks Per Second</strong> (Klicks pro Sekunde). Dieser Test erfasst die neuromuskuläre Verarbeitungsgeschwindigkeit, Fingerfertigkeit und motorische Ausdauer. In der Kognitionspsychologie fällt diese Fähigkeit unter die CHC-Breitbanddomäne der <em>motorischen Geschwindigkeit (Gs)</em>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white mb-1">Durchschnitt (5–7 CPS)</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">Normales Klickverhalten mit einem Finger bei alltäglicher Computernutzung.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white mb-1">Fortgeschritten (8–10 CPS)</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">Sehr schnelle Einzelfinger-Klicks oder leichtes Jitter-Klicken für kompetitives Gaming.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white mb-1">Profi-Gamer (11–15+ CPS)</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">Spezielle Klicktechniken wie Butterfly-Clicking oder Drag-Clicking auf optimierten Mäusen.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FAQ Accordion Section (Visible HTML Accordions only, no schema) -->
+    <section class="pt-8 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">
+          Häufige Fragen
+        </div>
+        <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+          Fragen und Antworten zum CPS-Klicktest
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Was ist ein normaler CPS-Wert (Klicks pro Sekunde)?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Die meisten Gelegenheitsnutzer erreichen zwischen 5,5 und 6,8 CPS. Erfahrene Gamer erreichen im 5- oder 10-Sekunden-Test oft 8 bis 10 CPS.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Was ist der Unterschied zwischen 5s-, 10s- und 30s-Tests?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Ein 5-Sekunden-Test misst die explosive Höchstgeschwindigkeit (Burst-Speed), während ein 30-Sekunden-Test die neuromuskuläre Ausdauer und Ermüdungsresistenz der Handmuskulatur prüft.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Welche Klick-Techniken gibt es (Jitter, Butterfly, Drag Click)?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Beim Butterfly-Clicking werden Zeige- und Mittelfinger abwechselnd auf derselben Maustaste verwendet (bis zu 15–20 CPS). Beim Jitter-Clicking erzeugt man eine bewusste Muskelvibration im Unterarm (10–14 CPS).
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Zählt die Leertaste auch als Klick?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Ja. Sie können sowohl mit der Maus, dem Trackpad, dem Touchscreen als auch mit der Leertaste (<kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-xs font-mono">Leertaste</kbd> / <kbd class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-xs font-mono">Enter</kbd>) klicken.
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Wie wird die Rhythmus-Konstanz berechnet?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Die Konstanz basiert auf dem Variationskoeffizienten der Zeitabstände zwischen einzelnen Klicks. Je gleichmäßiger die Abstände sind, desto höher liegt der Prozentwert (100% = perfektes Metronom).
+          </p>
+        </details>
+
+        <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
+          <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+            <span>Werden meine Bestleistungen gespeichert?</span>
+            <span class="text-zinc-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+            Ja. Ihre persönliche Bestleistung wird lokal in Ihrem Browserprofil hinterlegt, sodass Sie Ihren Fortschritt jederzeit nachverfolgen können.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- How-To-Play Modal -->
+  <div
+    id="how-to-play-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="how-to-play-title"
+  >
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 mb-4">
+        <h2 id="how-to-play-title" class="text-xl font-heading font-bold text-zinc-950 dark:text-white">
+          Anleitung zum Klicktest
+        </h2>
+        <button
+          id="btn-close-how-to-play"
+          type="button"
+          class="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          aria-label="Schließen"
+        >
+          &times;
+        </button>
+      </div>
+      <ol class="list-decimal list-inside space-y-3 text-zinc-700 dark:text-zinc-300 text-[17px] leading-relaxed">
+        <li>Wählen Sie eine Testdauer: <strong class="text-zinc-900 dark:text-zinc-100">5, 10 oder 30 Sekunden</strong>.</li>
+        <li>Klicken Sie auf das Klickfeld oder drücken Sie <strong class="text-zinc-900 dark:text-zinc-100">Test starten</strong>. Der Timer startet automatisch mit dem ersten Klick.</li>
+        <li>Klicken Sie so schnell Sie können, bis der Timer auf 0 steht.</li>
+        <li>Ihre Ergebnisse (CPS, Burst, Konstanz) werden sofort berechnet und in Ihrem kognitiven Profil gespeichert.</li>
+      </ol>
+      <div class="mt-5 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        Tipp: Legen Sie den Unterarm ruhig auf dem Schreibtisch ab und führen Sie die Klickbewegung aus den Fingern aus, um vorzeitige Ermüdung zu vermeiden.
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { saveGameRecord, getPerformanceTier, getProfile } from '../../../utils/profileStore';
+
+  type Phase = 'ready' | 'running' | 'done';
+
+  let durationSeconds = 10;
+  let phase: Phase = 'ready';
+  let clickTimes: number[] = [];
+  let trialStart = 0;
+  let rafId = 0;
+  let endTimerId = 0;
+
+  const byId = (id: string) => document.getElementById(id);
+
+  const arena = byId('cps-arena') as HTMLButtonElement | null;
+  const arenaReady = byId('arena-ready');
+  const arenaRunning = byId('arena-running');
+  const arenaDone = byId('arena-done');
+  const arenaClickCount = byId('arena-click-count');
+
+  const hudTime = byId('hud-time');
+  const hudClicks = byId('hud-clicks');
+  const hudCps = byId('hud-cps');
+
+  const btnStart = byId('btn-start') as HTMLButtonElement | null;
+  const btnStartLabel = byId('btn-start-label');
+  const btnReset = byId('btn-reset') as HTMLButtonElement | null;
+  const btnRetake = byId('btn-retake') as HTMLButtonElement | null;
+  const resultsPanel = byId('results-panel');
+
+  const modal = byId('how-to-play-modal');
+
+  function show(node: HTMLElement | null, visible: boolean) {
+    if (!node) return;
+    if (visible) {
+      node.classList.remove('hidden');
+      node.style.display = '';
+    } else {
+      node.classList.add('hidden');
+    }
+  }
+
+  function showLayer(node: HTMLElement | null, visible: boolean) {
+    if (!node) return;
+    node.classList.toggle('hidden', !visible);
+    node.classList.toggle('flex', visible);
+  }
+
+  function formatSeconds(ms: number) {
+    return `${Math.max(0, ms / 1000).toFixed(1)}s`;
+  }
+
+  function setText(id: string, value: string) {
+    const node = byId(id);
+    if (node) node.textContent = value;
+  }
+
+  function median(values: number[]) {
+    if (values.length === 0) return null;
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+  }
+
+  function peakBurst(offsets: number[]) {
+    let best = 0;
+    let left = 0;
+    for (let right = 0; right < offsets.length; right += 1) {
+      while (offsets[right] - offsets[left] >= 1000) left += 1;
+      best = Math.max(best, right - left + 1);
+    }
+    return best;
+  }
+
+  function setPhase(next: Phase) {
+    phase = next;
+
+    showLayer(arenaReady, next === 'ready');
+    showLayer(arenaRunning, next === 'running');
+    showLayer(arenaDone, next === 'done');
+
+    if (btnStartLabel) {
+      btnStartLabel.textContent = next === 'running' ? 'Läuft…' : next === 'done' ? 'Erneut starten' : 'Test starten';
+    }
+    if (btnStart) btnStart.disabled = next === 'running';
+    if (arena) arena.disabled = next === 'done';
+  }
+
+  function resetReadouts() {
+    clickTimes = [];
+    if (hudTime) hudTime.textContent = formatSeconds(durationSeconds * 1000);
+    if (hudClicks) hudClicks.textContent = '0';
+    if (hudCps) hudCps.textContent = '0.0';
+    if (arenaClickCount) arenaClickCount.textContent = '0';
+  }
+
+  function armTrial() {
+    window.clearTimeout(endTimerId);
+    window.cancelAnimationFrame(rafId);
+    resetReadouts();
+    show(resultsPanel, false);
+    setPhase('ready');
+  }
+
+  function tick() {
+    if (phase !== 'running') return;
+    const elapsed = performance.now() - trialStart;
+    const remaining = Math.max(0, durationSeconds * 1000 - elapsed);
+
+    if (hudTime) hudTime.textContent = formatSeconds(remaining);
+    if (hudCps) {
+      const cps = elapsed > 0 ? clickTimes.length / (elapsed / 1000) : 0;
+      hudCps.textContent = cps.toFixed(1);
+    }
+
+    if (remaining > 0) {
+      rafId = window.requestAnimationFrame(tick);
+    }
+  }
+
+  function registerClick() {
+    if (phase === 'ready') {
+      trialStart = performance.now();
+      clickTimes.push(0);
+      setPhase('running');
+      if (hudClicks) hudClicks.textContent = String(clickTimes.length);
+      if (arenaClickCount) arenaClickCount.textContent = String(clickTimes.length);
+      rafId = window.requestAnimationFrame(tick);
+      endTimerId = window.setTimeout(finishTrial, durationSeconds * 1000);
+      return;
+    }
+
+    if (phase !== 'running') return;
+
+    const offset = performance.now() - trialStart;
+    if (offset >= durationSeconds * 1000) return;
+
+    clickTimes.push(offset);
+    if (hudClicks) hudClicks.textContent = String(clickTimes.length);
+    if (arenaClickCount) arenaClickCount.textContent = String(clickTimes.length);
+    if (hudCps) {
+      const cps = offset > 0 ? clickTimes.length / (offset / 1000) : 0;
+      hudCps.textContent = cps.toFixed(1);
+    }
+  }
+
+  function finishTrial() {
+    window.cancelAnimationFrame(rafId);
+    window.clearTimeout(endTimerId);
+    setPhase('done');
+
+    const total = clickTimes.length;
+    const cps = total / durationSeconds;
+    const peak = peakBurst(clickTimes);
+
+    const intervals: number[] = [];
+    for (let i = 1; i < clickTimes.length; i += 1) {
+      intervals.push(clickTimes[i] - clickTimes[i - 1]);
+    }
+    const medianInterval = median(intervals);
+
+    let rhythm: number | null = null;
+    if (intervals.length >= 2) {
+      const mean = intervals.reduce((sum, v) => sum + v, 0) / intervals.length;
+      if (mean > 0) {
+        const variance = intervals.reduce((sum, v) => sum + (v - mean) ** 2, 0) / intervals.length;
+        const cv = Math.min(1, Math.sqrt(variance) / mean);
+        rhythm = Math.round((1 - cv) * 100);
+      }
+    }
+
+    const performanceScore = Math.max(0, Math.min(100, Math.round((cps / 10) * 100)));
+    const tier = getPerformanceTier(performanceScore);
+
+    setText('res-cps', cps.toFixed(2));
+    setText('res-total', String(total));
+    setText('res-peak', String(peak));
+    setText('res-median', medianInterval === null ? '--' : `${Math.round(medianInterval)}ms`);
+    setText('res-rhythm', rhythm === null ? '--' : `${rhythm}%`);
+
+    const tierNode = byId('res-tier');
+    if (tierNode) {
+      tierNode.textContent = tier.tier;
+      tierNode.className = `px-4 py-2 rounded-xl border text-sm font-bold text-center ${tier.badgeClass}`;
+    }
+    setText(
+      'res-description',
+      total === 0
+        ? 'In diesem Durchgang wurden keine Klicks registriert. Klicken Sie auf das Feld, sobald der Test startet.'
+        : `${tier.description} Ihre schnellste einzelne Sekunde enthielt ${peak} Klick${peak === 1 ? '' : 's'}.`
+    );
+
+    show(resultsPanel, true);
+
+    if (total > 0) {
+      try {
+        saveGameRecord({
+          gameId: 'click-speed-test',
+          completedAt: new Date().toISOString(),
+          durationSeconds,
+          mode: 'standard',
+          metrics: {
+            performanceScore,
+            accuracy: 1,
+            trialsCompleted: total,
+            correctCount: total,
+            errorCount: 0,
+            ...(medianInterval === null ? {} : { medianRT: Math.round(medianInterval) }),
+            bestStreak: peak,
+            maxLevel: durationSeconds,
+          },
+        });
+      } catch (e) {
+        console.warn('Could not save click speed record:', e);
+      }
+    }
+
+    renderPersonalBest();
+
+    if (resultsPanel) {
+      resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function renderPersonalBest() {
+    const node = byId('res-best');
+    if (!node) return;
+    try {
+      const games = getProfile().games || [];
+      let best = 0;
+      games.forEach((session) => {
+        if (session.gameId !== 'click-speed-test') return;
+        const score = session.metrics?.performanceScore ?? 0;
+        if (score > best) best = score;
+      });
+      node.textContent = best > 0 ? `${(best / 10).toFixed(2)} CPS` : '--';
+    } catch {
+      node.textContent = '--';
+    }
+  }
+
+  function initDurationChips() {
+    const chips = document.querySelectorAll<HTMLButtonElement>('.duration-chip');
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        if (phase === 'running') return;
+        const value = parseInt(chip.getAttribute('data-duration') || '', 10);
+        if (Number.isNaN(value)) return;
+        durationSeconds = value;
+
+        chips.forEach((other) => {
+          const isActive = other === chip;
+          other.classList.toggle('active', isActive);
+          other.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
+        armTrial();
+      });
+    });
+  }
+
+  function initModal() {
+    const openBtn = byId('btn-how-to-play') as HTMLButtonElement | null;
+    const closeBtn = byId('btn-close-how-to-play') as HTMLButtonElement | null;
+    if (!modal) return;
+
+    const open = () => {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      closeBtn?.focus();
+    };
+    const close = () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      openBtn?.focus();
+    };
+
+    openBtn?.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) close();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !modal.classList.contains('hidden')) close();
+    });
+  }
+
+  function initArena() {
+    if (!arena) return;
+
+    arena.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      registerClick();
+    });
+
+    arena.addEventListener('click', (event) => event.preventDefault());
+    arena.addEventListener('contextmenu', (event) => event.preventDefault());
+
+    arena.addEventListener('keydown', (event) => {
+      if (event.key !== ' ' && event.key !== 'Enter') return;
+      event.preventDefault();
+      if (event.repeat) return;
+      registerClick();
+    });
+  }
+
+  function init() {
+    resetReadouts();
+    setPhase('ready');
+    show(resultsPanel, false);
+    renderPersonalBest();
+
+    initDurationChips();
+    initModal();
+    initArena();
+
+    btnStart?.addEventListener('click', () => {
+      if (phase === 'running') return;
+      armTrial();
+      arena?.focus();
+    });
+
+    btnReset?.addEventListener('click', () => {
+      armTrial();
+    });
+
+    btnRetake?.addEventListener('click', () => {
+      armTrial();
+      arena?.focus();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

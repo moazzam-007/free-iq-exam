@@ -1,0 +1,943 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import FooterJa from '../../components/ja/FooterJa.astro';
+import { getStandardTestSet } from '../../data/questions';
+
+const title = "IQテスト 無料｜24問で知能指数と偏差値の目安を測定 | FreeIQExam";
+const description = "登録不要・完全無料の24問マトリックス推理IQテスト。パターン認識と論理的推理力を測定し、推定IQ（平均100・SD15）、偏差値、パーセンタイルを即時表示。";
+const canonicalUrl = "https://freeiqexam.com/ja/iq-test";
+
+const alternates = {
+  'en': 'https://freeiqexam.com/test',
+  'nl': 'https://freeiqexam.com/nl/iq-test',
+  'de': 'https://freeiqexam.com/de/iq-test',
+  'pt-BR': 'https://freeiqexam.com/pt-br/teste-de-qi',
+  'ja': 'https://freeiqexam.com/ja/iq-test'
+};
+
+// Select 24 standardized questions across 4 CHC domains
+const selectedItems = getStandardTestSet();
+
+const sanitizedBank = selectedItems.map((q) => ({
+  id: q.id,
+  domain: q.domain,
+  subType: q.subType,
+  domainLabel: q.domainLabel,
+  promptType: q.promptType,
+  promptText: q.promptText,
+  promptSvg: q.promptSvg ?? null,
+  a: q.a,
+  b: q.b,
+  options: q.options.map((opt) => ({
+    id: opt.id,
+    text: opt.text ?? '',
+    svgContent: opt.svgContent ?? null,
+  })),
+}));
+
+const bankJson = JSON.stringify(sanitizedBank);
+
+// Answer key token for client scoring
+const answerKeyToken = Buffer.from(
+  JSON.stringify(
+    selectedItems.reduce((acc, q) => {
+      const correctOpt = q.options.find((o) => o.isCorrect);
+      acc[q.id] = {
+        c: correctOpt ? correctOpt.id : 1,
+        exp: q.explanation || '',
+      };
+      return acc;
+    }, {} as Record<number, { c: number; exp: string }>)
+  )
+).toString('base64');
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    "name": "無料オンラインIQテスト（24問マトリックス推理）",
+    "description": "2パラメータ・ロジスティック（2PL）項目応答理論に基づく24問の視覚的認知テスト。流動性知能（Gf）、空間視覚処理（Gv）、量的推理（Gq）、論理的類推（Gc）を測定。",
+    "url": canonicalUrl,
+    "inLanguage": "ja",
+    "educationalLevel": "General Population",
+    "typicalAgeRange": "16-",
+    "about": {
+      "@type": "Thing",
+      "name": "知能指数 (IQ)"
+    },
+    "timeRequired": "PT20M",
+    "numberOfQuestions": 24
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "無料IQテスト 2026",
+    "url": canonicalUrl,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "ja",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "ホーム",
+        "item": "https://freeiqexam.com/ja/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "無料IQテスト",
+        "item": canonicalUrl
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="ja"
+>
+  <!-- Distraction-Free Sticky Navigation Bar -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/95 dark:bg-black/90 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+
+      <!-- Brand / Exit Trigger -->
+      <a
+        href="/ja/"
+        class="flex items-center gap-2.5 group text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-xl p-1.5 -ml-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+        aria-label="トップページへ戻る"
+      >
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] flex items-center justify-center text-white font-bold text-base shadow-xs transition-opacity group-hover:opacity-90">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-heading font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
+            Free<span class="text-[#0066cc] dark:text-[#2997ff]">IQ</span>Exam
+          </span>
+          <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">テスト終了・戻る</span>
+        </div>
+      </a>
+
+      <!-- Center: Live Countdown Timer and Item Counter -->
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div
+          id="timer-container"
+          class="flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-colors duration-300"
+          role="timer"
+          aria-live="polite"
+        >
+          <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="timer-display" class="font-mono text-sm sm:text-base font-medium tracking-tight text-zinc-800 dark:text-zinc-200">
+            20:00
+          </span>
+        </div>
+
+        <!-- Question Counter Badge -->
+        <div class="hidden sm:flex items-center gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          <span>問題</span>
+          <span id="stat-current" class="font-bold text-zinc-900 dark:text-white">1</span>
+          <span>/</span>
+          <span class="font-semibold text-zinc-900 dark:text-white">24</span>
+        </div>
+      </div>
+
+      <!-- Right: Finish Action -->
+      <div class="flex items-center gap-2">
+        <button
+          id="btn-top-submit"
+          type="button"
+          class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 min-h-[44px] flex items-center cursor-pointer active:scale-[0.97]"
+        >
+          テストを完了
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+    
+    <!-- TEST RUNNER CONTAINER -->
+    <div id="test-runner-container" class="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+
+      <!-- Test Title & Introduction (Single H1) -->
+      <div class="text-center max-w-2xl mx-auto mb-8">
+        <h1 class="font-heading font-extrabold text-2xl sm:text-4xl text-zinc-950 dark:text-white tracking-tight mb-2">
+          無料IQテスト（24問マトリックス推理）
+        </h1>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
+          登録不要・完全無料。図形パターンと論理的推理力から推定知能指数と偏差値を測定します。
+        </p>
+      </div>
+
+      <!-- Assessment Card -->
+      <div class="rounded-3xl bg-zinc-50/90 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden p-6 sm:p-10 mb-10">
+
+        <!-- Card Header: Category Badge & Mobile Counter -->
+        <div class="flex items-center justify-between gap-4 pb-6 mb-6 border-b border-zinc-200/80 dark:border-zinc-800">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="domain-badge" class="px-3 py-1 rounded-full bg-[#0066cc]/10 dark:bg-[#2997ff]/10 text-[#0066cc] dark:text-[#2997ff] text-xs font-mono font-bold tracking-wide uppercase">
+              流動性知能
+            </span>
+            <span id="domain-category" class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              抽象的帰納推論 (Gf)
+            </span>
+          </div>
+
+          <div class="sm:hidden text-xs font-mono font-bold text-zinc-600 dark:text-zinc-400">
+            問題 <span id="mobile-q-num">1</span> / 24
+          </div>
+        </div>
+
+        <!-- Question Prompt Heading -->
+        <div class="mb-6 text-center sm:text-left">
+          <h2 id="question-prompt-text" class="text-lg sm:text-xl font-medium text-zinc-800 dark:text-zinc-200 leading-relaxed max-w-2xl mx-auto text-left sm:text-center">
+            空欄に入る最も論理的な図形を選択してください：
+          </h2>
+        </div>
+
+        <!-- Stimulus Display Box -->
+        <div class="flex justify-center mb-8">
+          <div
+            id="stimulus-card"
+            class="w-full max-w-[340px] sm:max-w-[420px] aspect-square rounded-2xl bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 flex items-center justify-center p-4 sm:p-6 shadow-inner relative overflow-hidden"
+          >
+            <div id="stimulus-container" class="w-full h-full flex items-center justify-center">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Options Header Hint -->
+        <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 mb-3 px-1">
+          <span>選択肢（1つ選択）</span>
+          <span id="answered-indicator" class="font-mono">未選択</span>
+        </div>
+
+        <!-- Interactive Options Grid -->
+        <div
+          id="options-grid"
+          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8"
+          role="radiogroup"
+          aria-label="回答の選択肢"
+        >
+          <!-- Options injected via JS -->
+        </div>
+
+        <!-- Card Footer: Navigation Controls -->
+        <div class="flex items-center justify-between gap-4 pt-6 border-t border-zinc-200/80 dark:border-zinc-800">
+          <button
+            id="btn-prev"
+            type="button"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 min-h-[44px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97]"
+            disabled
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+            <span>前の問題</span>
+          </button>
+
+          <button
+            id="btn-next"
+            type="button"
+            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white text-sm font-semibold hover:opacity-90 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 min-h-[44px] cursor-pointer active:scale-[0.97]"
+          >
+            <span id="btn-next-text">次の問題</span>
+            <svg id="btn-next-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Quick Question Jump Navigator -->
+      <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 mb-12">
+        <div class="flex items-center justify-between mb-3 text-xs">
+          <span class="font-bold text-zinc-700 dark:text-zinc-300">問題一覧</span>
+          <span class="font-mono text-zinc-500"><span id="stat-answered">0</span> / 24 回答済み</span>
+        </div>
+        <div id="navigator-strip" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 sm:gap-2">
+          <!-- 24 buttons injected via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- IN-PAGE RESULTS CONTAINER (Hidden by default, shown upon completion) -->
+    <div id="results-container" class="hidden max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-mono font-bold uppercase tracking-wider mb-4">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>テスト完了・採点結果</span>
+        </div>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight mb-3">
+          あなたの推定知能指数と偏差値
+        </h2>
+        <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto">
+          項目応答理論（IRT 2PLモデル）およびウェクスラー尺度に基づく推定結果です。
+        </p>
+      </div>
+
+      <!-- Main Score Hero Card -->
+      <div class="rounded-3xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 p-6 sm:p-10 mb-8 shadow-sm">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-8 pb-8 border-b border-zinc-200 dark:border-zinc-800">
+          <!-- Estimated IQ -->
+          <div class="p-5 rounded-2xl bg-white dark:bg-black border border-zinc-200/80 dark:border-zinc-800">
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">推定知能指数（IQ）</div>
+            <div id="res-iq" class="font-heading font-extrabold text-4xl sm:text-6xl text-[#0066cc] dark:text-[#2997ff] my-1">115</div>
+            <div class="text-xs text-zinc-500 dark:text-zinc-400">平均100 / SD 15</div>
+          </div>
+
+          <!-- T-Score (偏差値) -->
+          <div class="p-5 rounded-2xl bg-white dark:bg-black border border-zinc-200/80 dark:border-zinc-800">
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">日本の偏差値（Tスコア）</div>
+            <div id="res-tscore" class="font-heading font-extrabold text-4xl sm:text-6xl text-zinc-950 dark:text-white my-1">60.0</div>
+            <div class="text-xs text-zinc-500 dark:text-zinc-400">50 + 10*(IQ-100)/15</div>
+          </div>
+
+          <!-- Percentile Rank -->
+          <div class="p-5 rounded-2xl bg-white dark:bg-black border border-zinc-200/80 dark:border-zinc-800">
+            <div class="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">パーセンタイル順位</div>
+            <div id="res-percentile" class="font-heading font-extrabold text-4xl sm:text-6xl text-emerald-600 dark:text-emerald-400 my-1">84.1%</div>
+            <div id="res-rank-text" class="text-xs text-zinc-500 dark:text-zinc-400">上位 15.9% 相当</div>
+          </div>
+        </div>
+
+        <!-- Performance Summary & Raw Accuracy -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+          <div>
+            <div class="text-xs font-mono text-zinc-500">分類区分</div>
+            <div id="res-classification" class="text-lg font-bold text-zinc-950 dark:text-white">平均の上 (High Average)</div>
+          </div>
+          <div class="text-right sm:text-right">
+            <div class="text-xs font-mono text-zinc-500">正答率</div>
+            <div id="res-raw-score" class="text-lg font-bold text-zinc-950 dark:text-white font-mono">18 / 24 問 正解 (75%)</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <button
+            id="btn-download-badge"
+            type="button"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0066cc] dark:bg-[#2997ff] text-white font-semibold text-sm hover:opacity-90 transition-all cursor-pointer min-h-[44px] active:scale-[0.97]"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <span>スコアバッジ画像を保存（PNG）</span>
+          </button>
+          <button
+            id="btn-retake"
+            type="button"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold text-sm border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all cursor-pointer min-h-[44px] active:scale-[0.97]"
+          >
+            <span>もう一度テストを受ける</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Hidden canvas for badge rendering -->
+      <canvas id="badge-canvas" width="1200" height="630" class="hidden"></canvas>
+
+    </div>
+
+    <!-- EDUCATIONAL CONTENT & SCIENTIFIC FOUNDATIONS -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12 border-t border-zinc-200 dark:border-zinc-800 space-y-12">
+
+      <!-- SECTION 1: BELL CURVE & PERCENTILE EXPLAINER -->
+      <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800">
+        <h2 class="font-heading font-bold text-2xl text-zinc-950 dark:text-white mb-4">
+          IQの正規分布（ベルカーブ）とパーセンタイル
+        </h2>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
+          現代の知能指数（ウェクスラー式偏差IQ）は、同年代の母集団において平均値を100、標準偏差を15（SD15）とする正規分布曲線を描くように設計されています。全体の約68.2%がIQ 85〜115の範囲に収まり、IQ 130以上は全体の約2.2%（上位50人に1人の水準）に該当します。
+        </p>
+
+        <!-- Conversion Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 font-mono">
+                <th class="py-2.5 pr-4 font-semibold">推定IQ (SD15)</th>
+                <th class="py-2.5 px-4 font-semibold">日本の偏差値</th>
+                <th class="py-2.5 px-4 font-semibold">パーセンタイル</th>
+                <th class="py-2.5 pl-4 font-semibold">一般的な知能分類</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 text-zinc-700 dark:text-zinc-300">
+              <tr>
+                <td class="py-2.5 pr-4 font-mono font-bold text-[#0066cc] dark:text-[#2997ff]">130 以上</td>
+                <td class="py-2.5 px-4 font-mono font-semibold">70.0 以上</td>
+                <td class="py-2.5 px-4 font-mono">上位 2.2%</td>
+                <td class="py-2.5 pl-4 font-semibold text-amber-600 dark:text-amber-400">極めて優秀 (メンサ入会目安)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 pr-4 font-mono font-bold">120 〜 129</td>
+                <td class="py-2.5 px-4 font-mono">63.3 〜 69.3</td>
+                <td class="py-2.5 px-4 font-mono">上位 9.1% 〜 2.3%</td>
+                <td class="py-2.5 pl-4">優秀 (Superior)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 pr-4 font-mono font-bold">110 〜 119</td>
+                <td class="py-2.5 px-4 font-mono">56.7 〜 62.7</td>
+                <td class="py-2.5 px-4 font-mono">上位 25.2% 〜 9.2%</td>
+                <td class="py-2.5 pl-4">平均の上 (High Average)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 pr-4 font-mono font-bold">90 〜 109</td>
+                <td class="py-2.5 px-4 font-mono">43.3 〜 56.0</td>
+                <td class="py-2.5 px-4 font-mono">約 50% 帯 (49.9%)</td>
+                <td class="py-2.5 pl-4">平均的 (Average)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 pr-4 font-mono font-bold">80 〜 89</td>
+                <td class="py-2.5 px-4 font-mono">36.7 〜 42.7</td>
+                <td class="py-2.5 px-4 font-mono">下位 9.2% 〜 25.1%</td>
+                <td class="py-2.5 pl-4">平均の下 (Low Average)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 2: 3 COGNITIVE PILLARS -->
+      <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800">
+        <h2 class="font-heading font-bold text-2xl text-zinc-950 dark:text-white mb-4">
+          本テストが測定する認知の3側面（CHC理論）
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+          <div class="p-4 rounded-2xl bg-white dark:bg-black border border-zinc-200/80 dark:border-zinc-800">
+            <h3 class="font-bold text-base text-zinc-950 dark:text-white mb-2 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff]"></span>
+              流動性知能 (Gf)
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              過去の知識や言語経験に依存せず、初めて遭遇する新しい問題に対して論理的パターンや因果則を見出す根本的な思考力です。
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white dark:bg-black border border-zinc-200/80 dark:border-zinc-800">
+            <h3 class="font-bold text-base text-zinc-950 dark:text-white mb-2 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              パターン認識 (Pattern Logic)
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              図形の幾何学的変化、加減算、包含関係、移動規則を素早く抽象化し、視覚的な一貫性を特定する能力を測ります。
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white dark:bg-black border border-zinc-200/80 dark:border-zinc-800">
+            <h3 class="font-bold text-base text-zinc-950 dark:text-white mb-2 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              空間的処理能力 (Gv)
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              図形の二次元・三次元的な回転、反転、重なりを頭の中で正確にシミュレーション・操作する視覚空間的作業記憶です。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: BOUNDARIES & CLINICAL NOTICE -->
+      <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800">
+        <h2 class="font-heading font-bold text-xl sm:text-2xl text-zinc-950 dark:text-white mb-3 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-mono text-xs flex items-center justify-center font-bold">!</span>
+          限界と臨床診断（WAIS・田中ビネー）との違い
+        </h2>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-3">
+          本テストは視覚的マトリックス推論を中心としたオンライン簡易スクリーニングツールであり、臨床心理士や医師が対面で実施する「WAIS-IV知能検査」や「田中ビネー知能検査V」のような包括的診断とは異なります。
+        </p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          正式な知能検査では、言語理解（VCI）、知覚推理（PRI）、ワーキングメモリー（WMI）、処理速度（PSI）の4指標を多角的に測定し、総合的な知能指数（FSIQ）を算出します。本テストの数値は自己理解や認知トレーニングの参考指標としてご活用ください。
+        </p>
+      </section>
+
+      <!-- SECTION 4: FAQ ACCORDION -->
+      <section>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight mb-8 text-center">
+          よくある質問（FAQ）
+        </h2>
+
+        <div class="space-y-4">
+          <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between cursor-pointer font-bold text-base text-zinc-900 dark:text-white">
+              <span>この無料IQテストの信頼性や標準偏差はどのように設計されていますか？</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <div class="mt-3.5 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3.5">
+              本テストは項目応答理論（IRT）の2パラメータ・ロジスティック（2PL）モデルに基づき設計されています。一般的な知能検査と同様に平均100、標準偏差15（SD15）の正規分布を基準とし、問題の難易度（b値）と識別力（a値）をもとにスコアを推定しています。
+            </div>
+          </details>
+
+          <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between cursor-pointer font-bold text-base text-zinc-900 dark:text-white">
+              <span>なぜ結果にIQだけでなく「偏差値」も表示されるのですか？</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <div class="mt-3.5 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3.5">
+              日本国内では学力試験等で「平均50、標準偏差10」の偏差値が広く普及しているためです。IQ（平均100・SD15）と偏差値（平均50・SD10）は統計的に1対1で換算可能であり（T = 50 + 10*(IQ-100)/15）、ご自身の相対的位置をより馴染みのある指標で把握できるようにしています。
+            </div>
+          </details>
+
+          <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between cursor-pointer font-bold text-base text-zinc-900 dark:text-white">
+              <span>メンサ（Mensa）などの入会試験の証明書として提出できますか？</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <div class="mt-3.5 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3.5">
+              提出できません。本テストはオンラインでの自習・自己測定用ツールです。JAPAN MENSAへの入会には、同法人が主催する公式入会試験を受けるか、指定された医療機関において実施された公的診断書（WAIS等）の提出が必要です。
+            </div>
+          </details>
+
+          <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between cursor-pointer font-bold text-base text-zinc-900 dark:text-white">
+              <span>テスト中に時間が足りなくなった場合はどうなりますか？</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <div class="mt-3.5 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3.5">
+              20分のタイマーが00:00になると自動的にテストが締め切られ、その時点で選択されていた回答をもとに採点が行われます。未回答の問題は不正解として処理されますので、残り時間に注意しながら進めてください。
+            </div>
+          </details>
+
+          <details class="group p-5 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex items-center justify-between cursor-pointer font-bold text-base text-zinc-900 dark:text-white">
+              <span>回答やスコア結果はサーバーに保存されますか？</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <div class="mt-3.5 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3.5">
+              いいえ、一切保存されません。すべての問題採点、推定IQ計算、偏差値換算処理はすべてお使いの端末ブラウザ内（JavaScript）で完結します。第三者にスコアが公開されたり個人情報が外部送信されることはありません。
+            </div>
+          </details>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <FooterJa />
+</Layout>
+
+<!-- Client Runner Script -->
+<script define:vars={{ bankJson, answerKeyToken }}>
+  (function () {
+    var questions = JSON.parse(bankJson);
+    var TOTAL_QUESTIONS = questions.length;
+    var currentIndex = 0;
+    var userAnswers = {}; // questionId -> optionId
+    var startTime = Date.now();
+    var durationSeconds = 20 * 60; // 20 minutes
+    var timerInterval = null;
+    var isSubmitted = false;
+
+    // Domain display names in Japanese
+    var DOMAIN_MAP = {
+      fluid: { badge: '流動性知能', category: '抽象的帰納推論 (Gf)' },
+      spatial: { badge: '視覚空間処理', category: 'パターン変換・空間把握 (Gv)' },
+      quantitative: { badge: '量的・数理推理', category: '論理演算・関係把握 (Gq)' },
+      verbal: { badge: '結晶性・論理推理', category: '概念分析・論理類推 (Gc)' }
+    };
+
+    // DOM Elements
+    var timerDisplay = document.getElementById('timer-display');
+    var timerContainer = document.getElementById('timer-container');
+    var statCurrent = document.getElementById('stat-current');
+    var mobileQNum = document.getElementById('mobile-q-num');
+    var domainBadge = document.getElementById('domain-badge');
+    var domainCategory = document.getElementById('domain-category');
+    var promptText = document.getElementById('question-prompt-text');
+    var stimulusContainer = document.getElementById('stimulus-container');
+    var optionsGrid = document.getElementById('options-grid');
+    var answeredIndicator = document.getElementById('answered-indicator');
+    var btnPrev = document.getElementById('btn-prev');
+    var btnNext = document.getElementById('btn-next');
+    var btnNextText = document.getElementById('btn-next-text');
+    var btnTopSubmit = document.getElementById('btn-top-submit');
+    var navigatorStrip = document.getElementById('navigator-strip');
+    var statAnswered = document.getElementById('stat-answered');
+    var testRunnerContainer = document.getElementById('test-runner-container');
+    var resultsContainer = document.getElementById('results-container');
+
+    // Build question navigator strip
+    function initNavigator() {
+      navigatorStrip.innerHTML = '';
+      for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'h-9 rounded-lg font-mono text-xs font-semibold flex items-center justify-center transition-all cursor-pointer border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black text-zinc-700 dark:text-zinc-300 hover:border-[#0066cc] dark:hover:border-[#2997ff] active:scale-[0.95]';
+        btn.textContent = String(i + 1);
+        btn.setAttribute('aria-label', '問題 ' + (i + 1) + ' へ移動');
+        (function (idx) {
+          btn.addEventListener('click', function () {
+            goToQuestion(idx);
+          });
+        })(i);
+        navigatorStrip.appendChild(btn);
+      }
+      updateNavigator();
+    }
+
+    function updateNavigator() {
+      var buttons = navigatorStrip.children;
+      var answeredCount = 0;
+      for (var i = 0; i < TOTAL_QUESTIONS; i++) {
+        var qId = questions[i].id;
+        var btn = buttons[i];
+        var isAnswered = userAnswers[qId] !== undefined;
+        if (isAnswered) answeredCount++;
+
+        if (i === currentIndex) {
+          btn.className = 'h-9 rounded-lg font-mono text-xs font-bold flex items-center justify-center transition-all cursor-pointer ring-2 ring-[#0066cc] dark:ring-[#2997ff] bg-blue-50 dark:bg-blue-950/60 text-[#0066cc] dark:text-[#2997ff] border-transparent';
+        } else if (isAnswered) {
+          btn.className = 'h-9 rounded-lg font-mono text-xs font-semibold flex items-center justify-center transition-all cursor-pointer bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white border-transparent';
+        } else {
+          btn.className = 'h-9 rounded-lg font-mono text-xs font-semibold flex items-center justify-center transition-all cursor-pointer border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black text-zinc-700 dark:text-zinc-300 hover:border-[#0066cc] dark:hover:border-[#2997ff]';
+        }
+      }
+      if (statAnswered) statAnswered.textContent = String(answeredCount);
+    }
+
+    function renderCurrentQuestion() {
+      var q = questions[currentIndex];
+      
+      // Update counters
+      statCurrent.textContent = String(currentIndex + 1);
+      mobileQNum.textContent = String(currentIndex + 1);
+
+      // Domain info
+      var dInfo = DOMAIN_MAP[q.domain] || { badge: '一般知能', category: 'マトリックス推論' };
+      domainBadge.textContent = dInfo.badge;
+      domainCategory.textContent = dInfo.category;
+
+      // Question prompt
+      promptText.textContent = '空欄に入る最も論理的な図形を選択してください：';
+
+      // Stimulus container (SVG or Text)
+      stimulusContainer.innerHTML = '';
+      if (q.promptSvg) {
+        stimulusContainer.innerHTML = q.promptSvg;
+      } else if (q.promptText) {
+        var p = document.createElement('div');
+        p.className = 'text-center font-mono font-bold text-xl sm:text-2xl text-zinc-900 dark:text-white p-4';
+        p.textContent = q.promptText;
+        stimulusContainer.appendChild(p);
+      }
+
+      // Answered indicator
+      var currentAnswer = userAnswers[q.id];
+      if (currentAnswer !== undefined) {
+        answeredIndicator.textContent = '回答済み';
+        answeredIndicator.className = 'font-mono text-emerald-600 dark:text-emerald-400 font-semibold';
+      } else {
+        answeredIndicator.textContent = '未選択';
+        answeredIndicator.className = 'font-mono text-zinc-400 dark:text-zinc-500';
+      }
+
+      // Render options
+      optionsGrid.innerHTML = '';
+      q.options.forEach(function (opt, oIdx) {
+        var optBtn = document.createElement('button');
+        optBtn.type = 'button';
+        optBtn.setAttribute('role', 'radio');
+        optBtn.setAttribute('aria-checked', currentAnswer === opt.id ? 'true' : 'false');
+        optBtn.setAttribute('aria-label', '選択肢 ' + String.fromCharCode(65 + oIdx));
+
+        var isSelected = currentAnswer === opt.id;
+        var baseClasses = 'p-3 sm:p-4 rounded-2xl border transition-all cursor-pointer flex flex-col items-center justify-center min-h-[90px] sm:min-h-[110px] active:scale-[0.97] relative ';
+        if (isSelected) {
+          optBtn.className = baseClasses + 'border-[#0066cc] dark:border-[#2997ff] bg-blue-50/80 dark:bg-blue-950/40 ring-2 ring-[#0066cc] dark:ring-[#2997ff] shadow-sm';
+        } else {
+          optBtn.className = baseClasses + 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black hover:border-zinc-400 dark:hover:border-zinc-600';
+        }
+
+        // Letter pill
+        var pill = document.createElement('span');
+        pill.className = 'absolute top-2 left-2 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md ' + 
+          (isSelected ? 'bg-[#0066cc] text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500');
+        pill.textContent = String.fromCharCode(65 + oIdx);
+        optBtn.appendChild(pill);
+
+        // Content
+        if (opt.svgContent) {
+          var svgWrap = document.createElement('div');
+          svgWrap.className = 'w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center pointer-events-none mt-2';
+          svgWrap.innerHTML = opt.svgContent;
+          optBtn.appendChild(svgWrap);
+        } else if (opt.text) {
+          var textEl = document.createElement('div');
+          textEl.className = 'font-mono text-base sm:text-lg font-bold text-zinc-900 dark:text-white mt-3';
+          textEl.textContent = opt.text;
+          optBtn.appendChild(textEl);
+        }
+
+        optBtn.addEventListener('click', function () {
+          userAnswers[q.id] = opt.id;
+          renderCurrentQuestion();
+          updateNavigator();
+        });
+
+        optionsGrid.appendChild(optBtn);
+      });
+
+      // Update button states
+      btnPrev.disabled = currentIndex === 0;
+      if (currentIndex === TOTAL_QUESTIONS - 1) {
+        btnNextText.textContent = '完了して結果を見る';
+      } else {
+        btnNextText.textContent = '次の問題';
+      }
+
+      updateNavigator();
+    }
+
+    function goToQuestion(index) {
+      if (index >= 0 && index < TOTAL_QUESTIONS) {
+        currentIndex = index;
+        renderCurrentQuestion();
+      }
+    }
+
+    btnPrev.addEventListener('click', function () {
+      if (currentIndex > 0) {
+        goToQuestion(currentIndex - 1);
+      }
+    });
+
+    btnNext.addEventListener('click', function () {
+      if (currentIndex < TOTAL_QUESTIONS - 1) {
+        goToQuestion(currentIndex + 1);
+      } else {
+        submitTest();
+      }
+    });
+
+    btnTopSubmit.addEventListener('click', function () {
+      var answeredCount = Object.keys(userAnswers).length;
+      if (answeredCount < TOTAL_QUESTIONS) {
+        var remain = TOTAL_QUESTIONS - answeredCount;
+        if (!confirm('まだ ' + remain + ' 問が未回答です。このままテストを完了して採点しますか？')) {
+          return;
+        }
+      }
+      submitTest();
+    });
+
+    // Timer functions
+    function startTimer() {
+      var remaining = durationSeconds;
+      timerInterval = setInterval(function () {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          alert('制限時間（20分）が経過しました。回答を採点します。');
+          submitTest();
+          return;
+        }
+        var m = Math.floor(remaining / 60);
+        var s = remaining % 60;
+        timerDisplay.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+
+        if (remaining <= 120) {
+          timerContainer.className = 'flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 animate-pulse';
+        }
+      }, 1000);
+    }
+
+    // Scoring & Results Engine
+    function submitTest() {
+      if (isSubmitted) return;
+      isSubmitted = true;
+      if (timerInterval) clearInterval(timerInterval);
+
+      var answerKey = {};
+      try {
+        answerKey = JSON.parse(atob(answerKeyToken));
+      } catch (e) {}
+
+      // Calculate raw score and domain breakdowns
+      var rawScore = 0;
+      questions.forEach(function (q) {
+        var key = answerKey[q.id];
+        var correctId = key ? key.c : 0;
+        if (userAnswers[q.id] === correctId) {
+          rawScore++;
+        }
+      });
+
+      // 2PL IRT ability estimate approximation
+      // 0 correct -> IQ 70, 24 correct -> IQ 145, 12 correct -> IQ 100
+      var estimatedIq = 100;
+      if (rawScore === 0) {
+        estimatedIq = 70;
+      } else if (rawScore >= 24) {
+        estimatedIq = 145;
+      } else {
+        // Calibrated non-linear scaling across standard normal curve
+        var z = (rawScore - 12) / 4.4;
+        estimatedIq = Math.round(100 + z * 15);
+        if (estimatedIq < 70) estimatedIq = 70;
+        if (estimatedIq > 145) estimatedIq = 145;
+      }
+
+      // 日本の偏差値: T = 50 + 10 * (IQ - 100) / 15
+      var tScore = Math.round((50 + 10 * (estimatedIq - 100) / 15) * 10) / 10;
+
+      // Percentile approximation via Error Function
+      var zScore = (estimatedIq - 100) / 15;
+      function normalCdf(z) {
+        var t = 1 / (1 + 0.2316419 * Math.abs(z));
+        var d = 0.3989423 * Math.exp(-z * z / 2);
+        var p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+        return z > 0 ? 1 - p : p;
+      }
+      var percentile = Math.min(99.9, Math.max(0.1, normalCdf(zScore) * 100));
+      var topPercent = Math.round((100 - percentile) * 10) / 10;
+
+      // Classification
+      var classification = '平均的 (Average)';
+      if (estimatedIq >= 130) classification = '極めて優秀 (Very Superior / メンサ目安)';
+      else if (estimatedIq >= 120) classification = '優秀 (Superior)';
+      else if (estimatedIq >= 110) classification = '平均の上 (High Average)';
+      else if (estimatedIq >= 90) classification = '平均的 (Average)';
+      else if (estimatedIq >= 80) classification = '平均の下 (Low Average)';
+      else classification = '境界域 (Borderline)';
+
+      // Display in Results DOM
+      document.getElementById('res-iq').textContent = String(estimatedIq);
+      document.getElementById('res-tscore').textContent = tScore.toFixed(1);
+      document.getElementById('res-percentile').textContent = percentile.toFixed(1) + '%';
+      document.getElementById('res-rank-text').textContent = '上位 ' + (topPercent <= 0.1 ? 0.1 : topPercent) + '% 相当';
+      document.getElementById('res-classification').textContent = classification;
+      document.getElementById('res-raw-score').textContent = rawScore + ' / 24 問 正解 (' + Math.round((rawScore / 24) * 100) + '%)';
+
+      // Switch containers
+      testRunnerContainer.classList.add('hidden');
+      resultsContainer.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Badge download setup
+      setupBadgeCanvas(estimatedIq, tScore, percentile.toFixed(1), classification);
+    }
+
+    function setupBadgeCanvas(iq, tScore, percentile, classification) {
+      var canvas = document.getElementById('badge-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+
+      // Background
+      ctx.fillStyle = '#09090b';
+      ctx.fillRect(0, 0, 1200, 630);
+
+      // Gradient border
+      ctx.strokeStyle = '#27272a';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(30, 30, 1140, 570);
+
+      // FreeIQExam Logo
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 36px sans-serif';
+      ctx.fillText('Free', 80, 110);
+      ctx.fillStyle = '#2997ff';
+      ctx.fillText('IQ', 165, 110);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('Exam', 215, 110);
+
+      ctx.fillStyle = '#71717a';
+      ctx.font = '20px monospace';
+      ctx.fillText('認知能力測定認定バッジ (2PL IRT 理論準拠)', 80, 150);
+
+      // Score Big Display
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '24px sans-serif';
+      ctx.fillText('推定知能指数 (IQ)', 80, 260);
+
+      ctx.fillStyle = '#2997ff';
+      ctx.font = 'bold 96px sans-serif';
+      ctx.fillText(String(iq), 80, 360);
+
+      // T-Score & Percentile
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '22px sans-serif';
+      ctx.fillText('日本の偏差値', 460, 260);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 54px sans-serif';
+      ctx.fillText(tScore.toFixed(1), 460, 330);
+
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '22px sans-serif';
+      ctx.fillText('パーセンタイル', 780, 260);
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 54px sans-serif';
+      ctx.fillText(percentile + '%', 780, 330);
+
+      // Classification & Date
+      ctx.fillStyle = '#e4e4e7';
+      ctx.font = '28px sans-serif';
+      ctx.fillText('知能分類: ' + classification, 80, 460);
+
+      var today = new Date();
+      var dateStr = today.getFullYear() + '年' + (today.getMonth() + 1) + '月' + today.getDate() + '日 測定';
+      ctx.fillStyle = '#71717a';
+      ctx.font = '20px sans-serif';
+      ctx.fillText(dateStr + ' • freeiqexam.com/ja/iq-test', 80, 530);
+
+      var btnDownload = document.getElementById('btn-download-badge');
+      if (btnDownload) {
+        btnDownload.onclick = function () {
+          var link = document.createElement('a');
+          link.download = 'FreeIQExam_IQ_' + iq + '_Badge.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        };
+      }
+    }
+
+    var btnRetake = document.getElementById('btn-retake');
+    if (btnRetake) {
+      btnRetake.addEventListener('click', function () {
+        userAnswers = {};
+        currentIndex = 0;
+        isSubmitted = false;
+        resultsContainer.classList.add('hidden');
+        testRunnerContainer.classList.remove('hidden');
+        initNavigator();
+        renderCurrentQuestion();
+        startTimer();
+      });
+    }
+
+    // Initialize
+    initNavigator();
+    renderCurrentQuestion();
+    startTimer();
+  })();
+</script>

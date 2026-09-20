@@ -1,0 +1,720 @@
+---
+// Japanese Hearing Test
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import FooterJa from '../../components/ja/FooterJa.astro';
+
+const title = "聴力検査 オンライン｜モスキート音で耳年齢チェック | FreeIQExam";
+const description = "8,000〜20,000Hzのモスキート音による耳年齢チェックと、250〜8,000Hzの純音による簡易聴力チェック。左右別に確認できます。※医療用の検査ではありません。";
+const canonicalUrl = "https://freeiqexam.com/ja/hearing-test";
+
+const alternates = {
+  en: "https://freeiqexam.com/hearing-test",
+  fi: "https://freeiqexam.com/fi/kuulotesti",
+  de: "https://freeiqexam.com/de/hoertest",
+  nl: "https://freeiqexam.com/nl/gehoortest",
+  ja: "https://freeiqexam.com/ja/hearing-test"
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam オンライン簡易聴力チェック・モスキート音耳年齢測定",
+    "url": canonicalUrl,
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires Web Audio API support and stereo headphones",
+    "inLanguage": "ja",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    },
+    "featureList": [
+      "1,000Hz基準音によるセーフティ音量キャリブレーション機能",
+      "8,000Hz〜20,000Hz モスキート音による耳年齢推定チェック",
+      "250Hz〜8,000Hz 純音による左右別（StereoPannerNode）簡易聴力バランスチェック",
+      "結果の簡易参考グラフ表示機能",
+      "ポップノイズ防止用の20msフェードイン・フェードアウト波形制御"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "ホーム",
+        "item": "https://freeiqexam.com/ja/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "オンライン聴力セルフチェック",
+        "item": canonicalUrl
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="ja"
+>
+  <Header currentPath="/ja/hearing-test" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+    
+    <!-- Hero Header -->
+    <section class="pt-10 pb-6 px-4 sm:px-6 max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-[#2997ff] border border-blue-500/20 text-xs font-semibold uppercase tracking-wider mb-4">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Web Audio 純音合成 &amp; モスキート音チェックエンジン</span>
+      </div>
+
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight mb-4 leading-tight">
+        オンライン聴力セルフチェック・耳年齢
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+        モスキート音（高周波）による耳年齢の測定と、左右別（ステレオイヤホン必須）の純音聴力セルフチェック。医療用検査ではない簡易スクリーニングガイドです。
+      </p>
+
+      <!-- Purpose Notice Banner -->
+      <div class="mt-6 p-4 rounded-xl bg-blue-50/80 dark:bg-zinc-900/90 border border-blue-200/80 dark:border-zinc-800 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 text-left sm:text-center max-w-3xl mx-auto shadow-sm">
+        <div class="flex items-start sm:items-center justify-center gap-2.5">
+          <svg class="w-5 h-5 shrink-0 text-[#0066cc] dark:text-[#2997ff] mt-0.5 sm:mt-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span><strong>ご注意：</strong>本オンラインセルフチェックは医療用の聴力検査（臨床オージオメトリー）ではありません。聴力障害や耳鳴りの自己診断を目的としたものではありません。</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Disclaimer -->
+    <section class="px-4 sm:px-6 max-w-3xl mx-auto mb-8">
+      <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+        <p>
+          <strong>【推奨使用環境】</strong>必ず<strong>ステレオヘッドホンまたはイヤホン</strong>を装着し、静かな部屋でご使用ください。スマホ内蔵スピーカーでは左右別のチェックや高周波モスキート音が正しく再生されない場合があります。
+        </p>
+      </div>
+    </section>
+
+    <!-- Step 0: Mandatory Volume Calibration Panel -->
+    <section class="px-4 sm:px-6 max-w-3xl mx-auto mb-10">
+      <div class="bg-zinc-950 text-white rounded-3xl p-6 sm:p-8 border border-zinc-800 shadow-xl space-y-6">
+        
+        <div class="flex items-center justify-between border-b border-zinc-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-[#0066cc] text-white flex items-center justify-center font-bold text-sm">
+              0
+            </span>
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-white">
+                Step 0: 音量キャリブレーション（必須）
+              </h2>
+              <p class="text-xs text-zinc-400">
+                聴覚保護のため、検査開始前に基準音（1,000 Hz）で音量を調整します。
+              </p>
+            </div>
+          </div>
+          <span id="calib-status-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            未完了
+          </span>
+        </div>
+
+        <div class="space-y-4">
+          <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+            下の「基準音（1,000 Hz）を試聴」ボタンを押し、お使いの端末やイヤホンの音量を調節して、<strong>「かすかに聞こえる程度」の静かな音量</strong>に設定してください。
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <button
+              type="button"
+              id="play-calib-btn"
+              class="px-5 py-3 rounded-xl bg-[#0066cc] hover:bg-blue-600 text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow-md transition-all active:scale-95"
+            >
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <span>基準音 (1,000 Hz) を試聴 (3秒)</span>
+            </button>
+
+            <button
+              type="button"
+              id="confirm-calib-btn"
+              class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold transition-all active:scale-95"
+            >
+              音量を固定した（検査を開始する）
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Main Test Modes Container (Disabled until Step 0 is completed) -->
+    <section id="test-content-area" class="px-4 sm:px-6 max-w-4xl mx-auto pb-16 opacity-50 pointer-events-none transition-opacity duration-300 space-y-12">
+      
+      <!-- MODE 1: Mosquito Sound Ear Age Check -->
+      <div class="bg-white dark:bg-zinc-900/90 rounded-3xl p-6 sm:p-8 border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-6">
+        
+        <div>
+          <div class="inline-block px-3 py-1 rounded-md bg-blue-100 dark:bg-blue-950/60 text-[#0066cc] dark:text-[#2997ff] text-xs font-bold uppercase tracking-wider mb-2">
+            Mode 1
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white">
+            モスキート音 耳年齢チェック
+          </h2>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            加齢とともに高周波音（モスキート音）に対する感度が低下する傾向に基づいた簡易目安ガイドです。
+          </p>
+        </div>
+
+        <!-- Warning Note regarding phone speakers -->
+        <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-600 dark:text-zinc-400">
+          ※スマホ内蔵スピーカーや一部のイヤホンは、高周波（15,000Hz〜20,000Hz）を出力できないハードウェア仕様の場合があります。聞こえない場合でも機器の再生限界による可能性があります。
+        </div>
+
+        <!-- Frequency Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          <!-- 20,000 Hz -->
+          <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-lg font-extrabold text-zinc-900 dark:text-white">20,000 Hz</span>
+                <span class="block text-xs font-semibold text-blue-600 dark:text-blue-400">10代以下 (18歳未満)</span>
+              </div>
+              <button
+                type="button"
+                data-freq="20000"
+                class="play-freq-btn p-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-[#0066cc] hover:text-white dark:hover:bg-[#2997ff] transition-colors"
+                aria-label="20000Hz再生"
+              >
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="flex gap-2 text-xs">
+              <button type="button" data-freq="20000" data-ans="yes" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-blue-500 font-medium">聞こえる</button>
+              <button type="button" data-freq="20000" data-ans="no" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 font-medium text-zinc-400">聞こえない</button>
+            </div>
+          </div>
+
+          <!-- 17,400 Hz -->
+          <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-lg font-extrabold text-zinc-900 dark:text-white">17,400 Hz</span>
+                <span class="block text-xs font-semibold text-blue-600 dark:text-blue-400">24歳未満</span>
+              </div>
+              <button
+                type="button"
+                data-freq="17400"
+                class="play-freq-btn p-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-[#0066cc] hover:text-white dark:hover:bg-[#2997ff] transition-colors"
+                aria-label="17400Hz再生"
+              >
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="flex gap-2 text-xs">
+              <button type="button" data-freq="17400" data-ans="yes" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-blue-500 font-medium">聞こえる</button>
+              <button type="button" data-freq="17400" data-ans="no" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 font-medium text-zinc-400">聞こえない</button>
+            </div>
+          </div>
+
+          <!-- 15,000 Hz -->
+          <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-lg font-extrabold text-zinc-900 dark:text-white">15,000 Hz</span>
+                <span class="block text-xs font-semibold text-blue-600 dark:text-blue-400">30歳未満</span>
+              </div>
+              <button
+                type="button"
+                data-freq="15000"
+                class="play-freq-btn p-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-[#0066cc] hover:text-white dark:hover:bg-[#2997ff] transition-colors"
+                aria-label="15000Hz再生"
+              >
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="flex gap-2 text-xs">
+              <button type="button" data-freq="15000" data-ans="yes" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-blue-500 font-medium">聞こえる</button>
+              <button type="button" data-freq="15000" data-ans="no" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 font-medium text-zinc-400">聞こえない</button>
+            </div>
+          </div>
+
+          <!-- 12,000 Hz -->
+          <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-lg font-extrabold text-zinc-900 dark:text-white">12,000 Hz</span>
+                <span class="block text-xs font-semibold text-blue-600 dark:text-blue-400">40歳未満</span>
+              </div>
+              <button
+                type="button"
+                data-freq="12000"
+                class="play-freq-btn p-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-[#0066cc] hover:text-white dark:hover:bg-[#2997ff] transition-colors"
+                aria-label="12000Hz再生"
+              >
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="flex gap-2 text-xs">
+              <button type="button" data-freq="12000" data-ans="yes" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-blue-500 font-medium">聞こえる</button>
+              <button type="button" data-freq="12000" data-ans="no" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 font-medium text-zinc-400">聞こえない</button>
+            </div>
+          </div>
+
+          <!-- 10,000 Hz -->
+          <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-lg font-extrabold text-zinc-900 dark:text-white">10,000 Hz</span>
+                <span class="block text-xs font-semibold text-blue-600 dark:text-blue-400">50歳未満</span>
+              </div>
+              <button
+                type="button"
+                data-freq="10000"
+                class="play-freq-btn p-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-[#0066cc] hover:text-white dark:hover:bg-[#2997ff] transition-colors"
+                aria-label="10000Hz再生"
+              >
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="flex gap-2 text-xs">
+              <button type="button" data-freq="10000" data-ans="yes" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-blue-500 font-medium">聞こえる</button>
+              <button type="button" data-freq="10000" data-ans="no" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 font-medium text-zinc-400">聞こえない</button>
+            </div>
+          </div>
+
+          <!-- 8,000 Hz -->
+          <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-lg font-extrabold text-zinc-900 dark:text-white">8,000 Hz</span>
+                <span class="block text-xs font-semibold text-blue-600 dark:text-blue-400">60歳以上</span>
+              </div>
+              <button
+                type="button"
+                data-freq="8000"
+                class="play-freq-btn p-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-[#0066cc] hover:text-white dark:hover:bg-[#2997ff] transition-colors"
+                aria-label="8000Hz再生"
+              >
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="flex gap-2 text-xs">
+              <button type="button" data-freq="8000" data-ans="yes" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-blue-500 font-medium">聞こえる</button>
+              <button type="button" data-freq="8000" data-ans="no" class="ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 font-medium text-zinc-400">聞こえない</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Mode 1 Result Box -->
+        <div class="p-6 rounded-2xl bg-zinc-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-zinc-400">
+              推定耳年齢ガイド
+            </div>
+            <div id="ear-age-result" class="text-2xl sm:text-3xl font-extrabold text-[#2997ff] mt-1">
+              周波数ボタンを押して試聴してください
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MODE 2: Stereo Pure Tone Screening (250Hz - 8,000Hz) -->
+      <div class="bg-white dark:bg-zinc-900/90 rounded-3xl p-6 sm:p-8 border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-6">
+        
+        <div>
+          <div class="inline-block px-3 py-1 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+            Mode 2
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white">
+            左右別 簡易純音チェック
+          </h2>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            250Hz〜8,000Hzの純音を用いて、左耳（Left）と右耳（Right）の可聴バランスを確認します。
+          </p>
+        </div>
+
+        <!-- Pure Tone Controls -->
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
+            <button type="button" data-pt-freq="250" class="pt-freq-btn py-2.5 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-xs font-bold text-[#0066cc] dark:text-[#2997ff]">250 Hz</button>
+            <button type="button" data-pt-freq="500" class="pt-freq-btn py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-bold">500 Hz</button>
+            <button type="button" data-pt-freq="1000" class="pt-freq-btn py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-bold">1,000 Hz</button>
+            <button type="button" data-pt-freq="2000" class="pt-freq-btn py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-bold">2,000 Hz</button>
+            <button type="button" data-pt-freq="4000" class="pt-freq-btn py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-bold">4,000 Hz</button>
+            <button type="button" data-pt-freq="8000" class="pt-freq-btn py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-bold">8,000 Hz</button>
+          </div>
+
+          <!-- Channel Testing Buttons -->
+          <div class="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              id="test-left-btn"
+              class="p-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
+            >
+              <span>左耳（L）で試聴</span>
+            </button>
+            <button
+              type="button"
+              id="test-right-btn"
+              class="p-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
+            >
+              <span>右耳（R）で試聴</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Result Reference Chart -->
+        <div>
+          <h3 class="text-sm font-bold text-zinc-900 dark:text-white mb-2">
+            簡易グラフ（参考）
+          </h3>
+          <div class="p-4 rounded-2xl bg-zinc-950 text-white border border-zinc-800 space-y-3">
+            <div class="flex justify-between text-xs text-zinc-400">
+              <span>周波数 (Hz)</span>
+              <span>可聴反応ステータス</span>
+            </div>
+            <div class="grid grid-cols-6 gap-2 text-center text-xs font-mono">
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div class="text-[10px] text-zinc-500">250Hz</div>
+                <div id="status-250" class="font-bold text-emerald-400 mt-1">-</div>
+              </div>
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div class="text-[10px] text-zinc-500">500Hz</div>
+                <div id="status-500" class="font-bold text-emerald-400 mt-1">-</div>
+              </div>
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div class="text-[10px] text-zinc-500">1kHz</div>
+                <div id="status-1000" class="font-bold text-emerald-400 mt-1">-</div>
+              </div>
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div class="text-[10px] text-zinc-500">2kHz</div>
+                <div id="status-2000" class="font-bold text-emerald-400 mt-1">-</div>
+              </div>
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div class="text-[10px] text-zinc-500">4kHz</div>
+                <div id="status-4000" class="font-bold text-emerald-400 mt-1">-</div>
+              </div>
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div class="text-[10px] text-zinc-500">8kHz</div>
+                <div id="status-8000" class="font-bold text-emerald-400 mt-1">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Educational Content Sections -->
+    <section class="py-12 px-4 sm:px-6 max-w-4xl mx-auto border-t border-zinc-200 dark:border-zinc-800 space-y-12">
+      
+      <!-- Section 1 -->
+      <div>
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">
+          加齢性難聴とヘッドホン難聴（イヤホン難聴）の予防
+        </h2>
+        <div class="prose dark:prose-invert max-w-none text-zinc-600 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-3">
+          <p>
+            人間の内耳にある有毛細胞（音の振動を電気信号に変換する細胞）は、高周波の音を感知する入口部分からダメージを受けやすいため、加齢に伴い高音域（モスキート音）から聞こえにくくなる現象（加齢性難聴）が生じます。
+          </p>
+          <p>
+            世界保健機関（WHO）は、若年層における「音響内耳障害（イヤホン難聴）」の急増を警告しています。大音量（80dB以上）で長時間の音楽聴取を続けると、若い年代であっても高周波帯域の有毛細胞が回復不能な損傷を受ける危険性があります。WHOは<strong>「80dB以下・週40時間以内」</strong>の安全な聴取ガイドライン（60-60ルール: 最大音量の60%以下・連続60分以内）を推奨しています。
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div>
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">
+          正確な聴力検査は耳鼻咽喉科への受診をお勧めします
+        </h2>
+        <div class="prose dark:prose-invert max-w-none text-zinc-600 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-3">
+          <p>
+            本ウェブサイトの検査は、ブラウザのWeb Audio機能を用いた簡易的なセルフチェックツールであり、防音室での校正済みオージオメータによる臨床臨床検査ではありません。
+          </p>
+          <p>
+            「左右で音の聞こえ方が明らかに異なる」「耳鳴りが続く」「会話が聞き取りづらい」といった症状を感じる場合は、放置せず必ず耳鼻咽喉科専門医を受診し、正確なオージオグラム検査を受けてください。
+          </p>
+        </div>
+      </div>
+
+      <!-- Citations -->
+      <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-400 space-y-2">
+        <h3 class="font-bold text-zinc-900 dark:text-zinc-200 uppercase tracking-wider text-[11px]">
+          出典・聴覚医学参考文献
+        </h3>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>日本耳鼻咽喉科学会「加齢性難聴と聞こえのケア」</li>
+          <li>World Health Organization (WHO), <i>Make Listening Safe</i> initiative guidelines (2019).</li>
+          <li>ISO 7029:2017 <i>Acoustics — Statistical distribution of hearing thresholds related to age and gender</i>.</li>
+        </ul>
+      </div>
+
+      <!-- FAQ Accordion -->
+      <div>
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-6">
+          よくある質問（FAQ）
+        </h2>
+        <div class="space-y-3">
+          
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q1. モスキート音が全く聞こえないのは病気ですか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              必ずしも病気ではありません。15,000Hz以上の高周波は、成人の多くで自然な加齢変化として聞こえにくくなります。また、お使いのスマホ・PCスピーカーやイヤホンの再生周波数帯域の上限を超えている場合も聞こえません。
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q2. なぜ検査前にStep 0の音量調整（キャリブレーション）が必要なのですか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              大音量の純音を突然再生すると内耳や鼓膜に負担がかかる危険があるためです。1,000Hzの基準音を「かすかに聞こえる程度」に音量固定することで、安全かつ相対的に正確な比較チェックが可能になります。
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q3. 左右で聴力に差があると感じた場合はどうすればよいですか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              まずイヤホンの左右を反転させて再テストし、イヤホン自体の不良でないか確認してください。左右を反転させても同じ耳で聞こえにくい場合は、耳垢栓塞（耳あか詰まり）や片耳の聴力低下の可能性があるため耳鼻咽喉科を受診してください。
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q4. イヤホン難聴を防ぐための日常的な工夫はありますか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              音量を端末の最大音量の60%以下に抑えること、ノイズキャンセリング機能を利用して周りの騒音に負けない音量設定にすること、1時間使用したら10分以上の耳の休憩を取ることが有効です。
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q5. このセルフチェック結果を診断書として使用できますか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              いいえ、診断書としては使用できません。本ツールは自己理解および啓発のための簡易チェックであり、医学的診断には医療機関でのオージオメータ測定が必要です。
+            </p>
+          </details>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bottom Full Clinical Disclaimer -->
+    <footer class="py-8 px-4 sm:px-6 max-w-4xl mx-auto border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+      <p>
+        【免責事項】本オンラインセルフチェックは、教育的自己理解およびスクリーニングを目的としたツールであり、医師、精神科医、公認心理師による医学的診断や専門的評価に代わるものではありません。心身の不調や日常生活における困難が続く場合は、必ず心療内科・精神科等の専門医療機関へご相談ください。
+      </p>
+    </footer>
+
+  </main>
+
+  <FooterJa />
+</Layout>
+
+<script is:inline>
+  (function() {
+    let audioCtx = null;
+    let isCalibrated = false;
+
+    let answersMode1 = {}; // { 20000: 'yes'|'no', ... }
+    let ptSelectedFreq = 250;
+
+    // DOM Elements
+    const playCalibBtn = document.getElementById('play-calib-btn');
+    const confirmCalibBtn = document.getElementById('confirm-calib-btn');
+    const calibStatusBadge = document.getElementById('calib-status-badge');
+    const testContentArea = document.getElementById('test-content-area');
+
+    const playFreqBtns = document.querySelectorAll('.play-freq-btn');
+    const ansBtns = document.querySelectorAll('.ans-btn');
+    const earAgeResult = document.getElementById('ear-age-result');
+
+    const ptFreqBtns = document.querySelectorAll('.pt-freq-btn');
+    const testLeftBtn = document.getElementById('test-left-btn');
+    const testRightBtn = document.getElementById('test-right-btn');
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Pure Sine Tone Player with anti-popping smooth 20ms envelope
+    function playPureTone(freq, panValue, durationSec) {
+      initAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const panner = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+      const duration = durationSec || 2.5;
+      const now = audioCtx.currentTime;
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+
+      // Smooth envelope: 20ms fade-in, 20ms fade-out
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.03);
+      gain.gain.setValueAtTime(0.12, now + duration - 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      if (panner) {
+        panner.pan.setValueAtTime(panValue || 0, now);
+        osc.connect(gain);
+        gain.connect(panner);
+        panner.connect(audioCtx.destination);
+      } else {
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+      }
+
+      osc.start(now);
+      osc.stop(now + duration);
+    }
+
+    // Step 0 Calibration Event Listeners
+    if (playCalibBtn) {
+      playCalibBtn.addEventListener('click', function() {
+        playPureTone(1000, 0, 3.0);
+      });
+    }
+
+    if (confirmCalibBtn) {
+      confirmCalibBtn.addEventListener('click', function() {
+        isCalibrated = true;
+        calibStatusBadge.textContent = '完了 (固定済)';
+        calibStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+
+        testContentArea.classList.remove('opacity-50', 'pointer-events-none');
+      });
+    }
+
+    // Mode 1: Mosquito Frequency Play Buttons
+    playFreqBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const freq = parseFloat(btn.getAttribute('data-freq'));
+        playPureTone(freq, 0, 2.0);
+      });
+    });
+
+    // Mode 1: Answer buttons
+    ansBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const freq = btn.getAttribute('data-freq');
+        const ans = btn.getAttribute('data-ans');
+
+        answersMode1[freq] = ans;
+
+        // Highlight selected answer button
+        const siblingBtns = btn.parentElement.querySelectorAll('.ans-btn');
+        siblingBtns.forEach(b => {
+          b.className = 'ans-btn flex-1 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 font-medium text-zinc-400';
+        });
+
+        if (ans === 'yes') {
+          btn.className = 'ans-btn flex-1 py-1.5 rounded-lg border border-blue-500 bg-blue-50 dark:bg-blue-950/40 font-bold text-[#0066cc] dark:text-[#2997ff]';
+        } else {
+          btn.className = 'ans-btn flex-1 py-1.5 rounded-lg border border-zinc-500 bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-700 dark:text-zinc-300';
+        }
+
+        evaluateEarAge();
+      });
+    });
+
+    function evaluateEarAge() {
+      // Find highest frequency heard
+      const freqs = [20000, 17400, 15000, 12000, 10000, 8000];
+      let maxHeard = null;
+
+      for (let i = 0; i < freqs.length; i++) {
+        if (answersMode1[freqs[i]] === 'yes') {
+          maxHeard = freqs[i];
+          break;
+        }
+      }
+
+      if (maxHeard === 20000) {
+        earAgeResult.textContent = '推定耳年齢: 10代以下（18歳未満相当）';
+      } else if (maxHeard === 17400) {
+        earAgeResult.textContent = '推定耳年齢: 20代前半以下（24歳未満相当）';
+      } else if (maxHeard === 15000) {
+        earAgeResult.textContent = '推定耳年齢: 20代後半〜30歳未満相当';
+      } else if (maxHeard === 12000) {
+        earAgeResult.textContent = '推定耳年齢: 30代〜40歳未満相当';
+      } else if (maxHeard === 10000) {
+        earAgeResult.textContent = '推定耳年齢: 40代〜50歳未満相当';
+      } else if (maxHeard === 8000) {
+        earAgeResult.textContent = '推定耳年齢: 50代〜60歳以上相当';
+      } else {
+        earAgeResult.textContent = '周波数ごとの回答を入力してください';
+      }
+    }
+
+    // Mode 2: Frequency Selector
+    ptFreqBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        ptFreqBtns.forEach(b => {
+          b.className = 'pt-freq-btn py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-bold';
+        });
+        btn.className = 'pt-freq-btn py-2.5 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-xs font-bold text-[#0066cc] dark:text-[#2997ff]';
+
+        ptSelectedFreq = parseFloat(btn.getAttribute('data-pt-freq'));
+      });
+    });
+
+    if (testLeftBtn) {
+      testLeftBtn.addEventListener('click', function() {
+        playPureTone(ptSelectedFreq, -1.0, 2.0); // pan left = -1
+        updateChartStatus(ptSelectedFreq, 'L可聴');
+      });
+    }
+
+    if (testRightBtn) {
+      testRightBtn.addEventListener('click', function() {
+        playPureTone(ptSelectedFreq, 1.0, 2.0); // pan right = +1
+        updateChartStatus(ptSelectedFreq, 'R可聴');
+      });
+    }
+
+    function updateChartStatus(freq, statusText) {
+      const el = document.getElementById('status-' + freq);
+      if (el) {
+        el.textContent = statusText;
+      }
+    }
+  })();
+</script>

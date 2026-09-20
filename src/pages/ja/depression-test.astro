@@ -1,0 +1,799 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { DEPRESSION_QUESTIONS_JA, DEPRESSION_OPTIONS_JA, DEPRESSION_SEVERITY_MAP } from '../../scripts/ja/depression-test/scoring';
+import { JAPANESE_CRISIS_HOTLINES, CLINICAL_DISCLAIMER_JA } from '../../data/ja/mental-health/hotlines';
+
+const title = "うつ病 診断テスト｜PHQ-9セルフチェック（無料・5分） | FreeIQExam";
+const description = "国際標準質問票PHQ-9で、過去2週間の気分・睡眠・意欲などの状態を確認できる無料セルフチェック。※診断ではありません。24時間相談窓口も掲載。";
+const canonicalUrl = "https://freeiqexam.com/ja/depression-test";
+
+const alternates = {
+  en: "https://freeiqexam.com/depression-test",
+  ru: "https://freeiqexam.com/ru/depression-test",
+  id: "https://freeiqexam.com/id/tes-depresi",
+  de: "https://freeiqexam.com/de/depressionstest",
+  nl: "https://freeiqexam.com/nl/depressie-test",
+  fi: "https://freeiqexam.com/fi/masennustesti",
+  'pt-BR': "https://freeiqexam.com/pt-br/teste-depressao",
+  ja: "https://freeiqexam.com/ja/depression-test"
+};
+
+const faqItems = [
+  {
+    q: "PHQ-9とはどのような尺度ですか？",
+    a: "PHQ-9（患者健康質問票-9）は、米国精神医学会のDSM診断基準に完全準拠し、大うつ病エピソードの9つの主症状を直接評価するためにロバート・L・スピッツァー博士らによって開発された国際標準の抑うつ尺度です。過去2週間の気分、意欲、睡眠、食欲などの状態を0〜3点で評価します。"
+  },
+  {
+    q: "PHQ-9のスコアが10点以上だった場合は何を意味しますか？",
+    a: "原著論文および数多くのメタアナリシス研究において、10点以上は「中等度以上の抑うつ状態」を示す国際標準のカットオフ値とされています。感度・特異度ともに約88%と高い識別力を持ち、専門医療機関（心療内科・精神科）での診察や治療介入が推奨される水準です。"
+  },
+  {
+    q: "自傷・希死念慮の質問（第9問）で点数がついた場合はどうすればよいですか？",
+    a: "第9問（死について考えることや自傷行為に関する項目）で1点以上の回答があった場合は、総合スコアにかかわらず安全確保が最優先されます。決して一人で抱え込まず、本ページ下部に掲載の「よりそいホットライン（0120-279-338）」や「#いのちSOS（0120-061-338）」等の24時間無料相談窓口や専門医療機関へご相談ください。"
+  },
+  {
+    q: "うつ病と一時的な気分の落ち込みやバーンアウト（燃え尽き）の違いは何ですか？",
+    a: "一時的な落ち込みは原因が去ったり休養を取ることで自然に回復します。一方、うつ病では「何をしても興味が湧かず楽しめない（アヘドニア）」「睡眠障害」「食欲の急変」「強い無価値感」といった心身の不調が2週間以上にわたり持続し、日常生活や仕事に深刻な支障をきたします。"
+  },
+  {
+    q: "オンラインのPHQ-9セルフチェックは確定診断になりますか？",
+    a: "いいえ、本ツールは客観的なスクリーニング（簡易把握）を目的としており、医学的診断を行うものではありません。確定診断には、甲状腺疾患や貧血等の身体疾患の除外、双極性障害や適応障害との鑑別を含む、医師による対面での問診と臨床評価が必要です。"
+  }
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'うつ病PHQ-9セルフチェック（無料）',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'ja-JP',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' },
+    accessibilitySummary: 'キーボード操作対応（1〜4キー）、セマンティックHTML、危機ホットライン表示、プライバシー保護（回答データ保存なし）。'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://freeiqexam.com/ja/' },
+      { '@type': 'ListItem', position: 2, name: 'うつ病セルフチェック（PHQ-9）', item: canonicalUrl }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="ja" ogLocale="ja_JP">
+  <Header jaPath="/ja/depression-test" />
+
+  <main id="main-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-zinc-50" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Yu Gothic', 'Noto Sans JP', Meiryo, sans-serif; line-height: 1.75; line-break: strict; word-break: normal; overflow-wrap: anywhere;">
+    <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      
+      <!-- Breadcrumb -->
+      <nav aria-label="パンくずリスト" class="mb-6 flex flex-wrap items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+        <a href="/ja/" class="hover:text-blue-600 dark:hover:text-blue-400">ホーム</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-900 font-medium dark:text-zinc-100">うつ病セルフチェック（PHQ-9）</span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="mx-auto max-w-3xl text-center">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300">
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          PHQ-9（患者健康質問票-9）国際標準尺度
+        </div>
+        <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl text-zinc-950 dark:text-white" style="text-wrap: balance;">
+          うつ病 診断テスト｜PHQ-9セルフチェック
+        </h1>
+        <p class="mt-4 text-base text-zinc-600 dark:text-zinc-300 sm:text-lg leading-relaxed">
+          国際的に標準化されたPHQ-9質問票に基づき、過去2週間の気分・睡眠・意欲・疲労感などの状態を9問で客観的に確認できる無料セルフチェックです。
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">所要時間 約3分</span>
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">完全無料・登録不要</span>
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">回答データ保存なし</span>
+        </div>
+      </header>
+
+      <!-- Prominent Top Disclaimer (Verbatim) -->
+      <div class="mx-auto mt-8 max-w-3xl rounded-2xl border border-amber-200 bg-amber-50/90 p-4.5 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200" role="note">
+        <p class="font-bold flex items-center gap-2">
+          <svg class="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          医療に関する重要な注意事項
+        </p>
+        <p class="mt-2 text-xs sm:text-sm leading-relaxed">{CLINICAL_DISCLAIMER_JA}</p>
+      </div>
+
+      <!-- Immediate Safety Intervention Modal / Banner (Active if Item 9 > 0) -->
+      <div id="safety-gate-banner" class="hidden mx-auto mt-6 max-w-3xl rounded-2xl border-2 border-red-300 bg-red-50 p-5 text-red-950 dark:border-red-800 dark:bg-red-950/60 dark:text-red-100" role="alert">
+        <div class="flex items-start gap-3">
+          <svg class="h-6 w-6 shrink-0 text-red-600 dark:text-red-400 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <h3 class="font-bold text-base sm:text-lg text-red-900 dark:text-red-200">
+              つらいお気持ちを抱えていらっしゃる方へ
+            </h3>
+            <p class="mt-1 text-xs sm:text-sm leading-relaxed">
+              ご回答の中に強い苦痛や自傷・希死に関する項目が含まれていました。決してご自身だけで抱え込まず、以下の無料相談窓口や身近な医療機関に今すぐご連絡ください。いつでもあなたの声を受け止める場所があります。
+            </p>
+            <div class="mt-3 flex flex-wrap gap-2 text-xs">
+              <a href="tel:0120279338" class="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3.5 py-2 font-bold text-white shadow-sm hover:bg-red-700 min-h-[44px]">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 4V3z" /></svg>
+                よりそいホットライン（通話無料・24時間）：0120-279-338
+              </a>
+              <a href="#support" class="inline-flex items-center gap-1.5 rounded-lg border border-red-300 bg-white px-3.5 py-2 font-semibold text-red-800 hover:bg-red-50 dark:border-red-700 dark:bg-red-900/40 dark:text-red-200 min-h-[44px]">
+                相談窓口一覧を見る（ページ下部）
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Depression PHQ-9 Interactive App -->
+      <section id="depression-app" class="mx-auto mt-8 max-w-3xl" aria-label="うつ病PHQ-9セルフチェックアプリ">
+        <div class="rounded-3xl border border-zinc-200 bg-zinc-50/60 p-5 dark:border-zinc-800 dark:bg-zinc-950/60 sm:p-8">
+          
+          <!-- Intro View -->
+          <div id="depression-intro-view" class="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 text-center">
+            <h2 class="text-xl font-bold text-zinc-950 dark:text-white sm:text-2xl">セルフチェックを開始する前に</h2>
+            <p class="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed text-left">
+              <strong>過去2週間（この2週間の間）</strong>のご自身の気分や心身の状態について、最も頻度が高かった選択肢をお選びください。全9問の回答完了後、国際基準による抑うつ重症度バンドと目安が表示されます。
+            </p>
+            <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button id="btn-start" type="button" class="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.97] dark:bg-blue-500 dark:hover:bg-blue-600 min-h-[44px]">
+                チェックを開始する（全9問）
+              </button>
+            </div>
+            <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">キーボード操作：数字キー 1〜4 で回答、← / → で前後の質問へ移動</p>
+          </div>
+
+          <!-- Question View (Hidden initially) -->
+          <div id="depression-question-view" class="hidden" aria-live="polite">
+            <div class="flex items-center justify-between text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">
+              <span id="question-indicator">第 1 問 / 全 9 問</span>
+              <span id="progress-percent">0% 完了</span>
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800 mb-6">
+              <div id="progress-bar" class="h-full bg-blue-600 dark:bg-blue-500 transition-all duration-300" style="width: 11.1%;"></div>
+            </div>
+
+            <div class="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+              <span id="question-context-tag" class="inline-block rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 mb-3">
+                興味・意欲
+              </span>
+              <h2 id="question-text" class="text-lg sm:text-xl font-bold text-zinc-950 dark:text-white leading-snug">
+                質問文
+              </h2>
+              <p class="mt-2 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                ※過去2週間のご自身の状態に最も当てはまるものを1つ選んでください。
+              </p>
+
+              <!-- Option buttons -->
+              <div id="options-container" class="mt-6 grid gap-3" role="radiogroup" aria-label="回答選択肢">
+                <!-- Dynamically populated via JS -->
+              </div>
+
+              <!-- Navigation Controls -->
+              <div class="mt-6 flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <button id="btn-prev" type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 active:scale-[0.98] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-750 min-h-[44px]">
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
+                  前の質問へ
+                </button>
+                <button id="btn-next" type="button" class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-600 min-h-[44px]">
+                  <span>次の質問へ</span>
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results View (Hidden initially) -->
+          <div id="depression-result-view" class="hidden" aria-live="polite">
+            <div class="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+              <div class="text-center pb-6 border-b border-zinc-200 dark:border-zinc-800">
+                <span class="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300">
+                  PHQ-9 総合判定結果
+                </span>
+                <h2 id="result-title" class="mt-3 text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white">
+                  抑うつ傾向の重症度目安
+                </h2>
+                <div class="mt-4 inline-flex items-baseline gap-2 rounded-2xl bg-zinc-100 px-6 py-4 dark:bg-zinc-800/80">
+                  <span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">PHQ-9 合計得点：</span>
+                  <span id="result-score" class="text-3xl sm:text-4xl font-black text-blue-600 dark:text-blue-400">0</span>
+                  <span class="text-lg font-bold text-zinc-600 dark:text-zinc-400">/ 27 点</span>
+                </div>
+                <div class="mt-3">
+                  <span id="result-badge" class="inline-block rounded-lg px-3 py-1 text-sm font-bold"></span>
+                </div>
+              </div>
+
+              <!-- Safety Alert in Results if Item 9 > 0 -->
+              <div id="result-item9-alert" class="hidden mt-6 rounded-xl border border-red-300 bg-red-50 p-4 text-red-900 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
+                <p class="font-bold text-sm sm:text-base flex items-center gap-2">
+                  <svg class="h-5 w-5 text-red-600 dark:text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                  【安全に関する重要なお知らせ】
+                </p>
+                <p class="mt-1 text-xs sm:text-sm leading-relaxed">
+                  希死念慮や自傷に関する項目（第9問）で回答がありました。点数の高低に関わらず、つらい気持ちは一人で抱え込まず、信頼できる専門機関や24時間無料相談窓口へ今すぐご相談ください。
+                </p>
+                <a href="#support" class="mt-2 inline-block text-xs font-bold text-red-700 dark:text-red-300 underline underline-offset-2">
+                  24時間相談窓口ディレクトリ（id="support"）へジャンプ →
+                </a>
+              </div>
+
+              <!-- Result explanation narrative -->
+              <div class="mt-6 space-y-4 text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                <div class="rounded-xl bg-zinc-50 p-4 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800">
+                  <h3 class="font-bold text-zinc-950 dark:text-white text-sm sm:text-base">臨床的解釈の目安</h3>
+                  <p id="result-interpretation" class="mt-1 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed"></p>
+                </div>
+                <div class="rounded-xl border border-blue-200 bg-blue-50/60 p-4 dark:border-blue-900/50 dark:bg-blue-950/30">
+                  <h3 class="font-bold text-blue-950 dark:text-blue-200 text-sm sm:text-base">受診・対処の推奨アクション</h3>
+                  <p id="result-action" class="mt-1 text-xs sm:text-sm text-blue-900 dark:text-blue-300 leading-relaxed"></p>
+                </div>
+              </div>
+
+              <!-- Item-by-item breakdown list -->
+              <div class="mt-8">
+                <h3 class="text-base font-bold text-zinc-950 dark:text-white sm:text-lg">
+                  全9項目の回答一覧
+                </h3>
+                <div id="item-breakdown-list" class="mt-4 space-y-3">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="mt-8 flex flex-col sm:flex-row gap-3 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+                <button id="btn-print" type="button" class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800 active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 min-h-[44px]">
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.5A1.75 1.75 0 0116.75 8H17a2 2 0 012 2v5a2 2 0 01-2 2h-1v-2.25A1.75 1.75 0 0014.25 13h-8.5A1.75 1.75 0 004 14.75V17H3a2 2 0 01-2-2v-5a2 2 0 012-2h.25A1.75 1.75 0 015 6.25v-3.5zm1.5 0v3.5h7v-3.5h-7zM4 14.75c0-.138.112-.25.25-.25h11.5c.138 0 .25.112.25.25V18H4v-3.25z" clip-rule="evenodd" /></svg>
+                  結果を印刷・PDF保存
+                </button>
+                <button id="btn-retake" type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 active:scale-[0.98] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-750 min-h-[44px]">
+                  もう一度チェックする
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Prominent Bottom Disclaimer (Verbatim) -->
+      <div class="mx-auto mt-8 max-w-3xl rounded-2xl border border-amber-200 bg-amber-50/90 p-4.5 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200" role="note">
+        <p class="font-bold flex items-center gap-2">
+          <svg class="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          医療に関する免責事項
+        </p>
+        <p class="mt-2 text-xs sm:text-sm leading-relaxed">{CLINICAL_DISCLAIMER_JA}</p>
+      </div>
+
+      <!-- CONTRACT REQUIREMENT: id="support" element containing the full Japanese Crisis Hotline Directory -->
+      <section id="support" class="mx-auto mt-14 max-w-3xl rounded-3xl border-2 border-blue-200 bg-blue-50/50 p-6 sm:p-8 dark:border-blue-900/50 dark:bg-blue-950/30" aria-labelledby="support-heading">
+        <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 4V3z" /></svg>
+          緊急・危機相談窓口
+        </div>
+        <h2 id="support-heading" class="mt-2 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+          日本の主な無料・公的相談窓口一覧
+        </h2>
+        <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          誰にも言えない悩みやつらい気持ち、不安を抱えているときは、一人で抱え込まずに専門の相談機関をご利用ください。通話料無料や24時間対応の窓口も多数設置されています。
+        </p>
+
+        <div class="mt-6 grid gap-4">
+          {JAPANESE_CRISIS_HOTLINES.map((hotline) => (
+            <div class={`rounded-2xl border bg-white p-5 dark:bg-zinc-900 ${hotline.isEmergency ? 'border-red-300 dark:border-red-900/60' : 'border-zinc-200 dark:border-zinc-800'}`}>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <h3 class="font-bold text-base sm:text-lg text-zinc-950 dark:text-white flex items-center gap-2">
+                  {hotline.isEmergency && (
+                    <span class="rounded bg-red-100 px-2 py-0.5 text-xs font-black text-red-700 dark:bg-red-900/60 dark:text-red-200">緊急</span>
+                  )}
+                  {hotline.name}
+                </h3>
+                {hotline.phone && (
+                  <a href={`tel:${hotline.phone.replace(/[^0-9]/g, '')}`} class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-1.5 text-sm font-bold text-white hover:bg-blue-700 active:scale-[0.98] dark:bg-blue-500 dark:hover:bg-blue-600 self-start sm:self-center min-h-[44px]">
+                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 4V3z" /></svg>
+                    {hotline.displayPhone || hotline.phone}
+                  </a>
+                )}
+                {hotline.url && (
+                  <a href={hotline.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 rounded-lg border border-blue-300 bg-blue-50 px-3.5 py-1.5 text-xs sm:text-sm font-bold text-blue-700 hover:bg-blue-100 active:scale-[0.98] dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-300 self-start sm:self-center min-h-[44px]">
+                    案内サイトを開く
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h4a.75.75 0 010 1.5h-4z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" clip-rule="evenodd" /></svg>
+                  </a>
+                )}
+              </div>
+              <p class="mt-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                {hotline.description}
+              </p>
+              <div class="mt-2 flex flex-wrap gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+                <span class="font-medium text-zinc-700 dark:text-zinc-300">受付時間：{hotline.hours}</span>
+                {hotline.note && <span class="text-zinc-500 dark:text-zinc-500">（{hotline.note}）</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Educational Content Guide -->
+      <article class="mx-auto mt-16 max-w-3xl space-y-12">
+        
+        <!-- Section 1: Severity Bands Explanation -->
+        <section>
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.75a.75.75 0 00-1.5 0v4.5c0 .414.336.75.75.75h3.5a.75.75 0 000-1.5h-2.75V6.75z" /></svg>
+            スコアの解釈
+          </div>
+          <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            PHQ-9得点の見方と重症度バンド
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+            PHQ-9は合計得点（0〜27点）により、抑うつ症状の重症度を5段階に分類します。国際的な臨床現場において治療方針の決定や経過観察のモニタリング指標として広く活用されています。
+          </p>
+          <div class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-zinc-100 dark:bg-zinc-850 text-zinc-900 dark:text-zinc-100 font-bold border-b border-zinc-200 dark:border-zinc-800">
+                <tr>
+                  <th class="p-3.5">得点範囲</th>
+                  <th class="p-3.5">重症度区分</th>
+                  <th class="p-3.5">臨床的推奨アクション</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300">
+                <tr>
+                  <td class="p-3.5 font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">0〜4点</td>
+                  <td class="p-3.5">ほとんどなし（軽微）</td>
+                  <td class="p-3.5">特別な治療介入は不要。生活習慣や睡眠の維持。</td>
+                </tr>
+                <tr>
+                  <td class="p-3.5 font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">5〜9点</td>
+                  <td class="p-3.5">軽度</td>
+                  <td class="p-3.5">経過観察とストレス軽減。症状継続時は受診相談。</td>
+                </tr>
+                <tr>
+                  <td class="p-3.5 font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">10〜14点</td>
+                  <td class="p-3.5 text-amber-700 dark:text-amber-400 font-bold">中等度（カットオフ）</td>
+                  <td class="p-3.5">心療内科・精神科の受診推奨。心理療法や薬物療法の検討。</td>
+                </tr>
+                <tr>
+                  <td class="p-3.5 font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">15〜19点</td>
+                  <td class="p-3.5 text-amber-700 dark:text-amber-400 font-bold">中等度〜重度</td>
+                  <td class="p-3.5">早期の専門医療機関受診と十分な休養が強く推奨。</td>
+                </tr>
+                <tr>
+                  <td class="p-3.5 font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">20〜27点</td>
+                  <td class="p-3.5 text-red-700 dark:text-red-400 font-bold">重度</td>
+                  <td class="p-3.5">至急、専門医による診療と包括的な治療体制の確立。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 2: Physical & Psychological Symptoms -->
+        <section>
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" /></svg>
+            症状のサイン
+          </div>
+          <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            うつ病における身体症状と心理症状
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+            うつ病は気分の落ち込みという「こころの症状」だけでなく、多彩な「からだの症状（自律神経・生体リズムの変化）」が連動して現れる全身性の病気です。
+          </p>
+          <div class="mt-6 grid gap-4 sm:grid-cols-3">
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base">睡眠リズムの乱れ</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                寝つきの悪さ（入眠困難）、夜中や早朝に目が覚めて再入眠できない（中途覚醒・早朝覚醒）、あるいは日中も起き上がれない過眠が見られます。
+              </p>
+            </div>
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base">食欲・体重の変動</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                何を食べても美味しく感じられない食欲減退や急激な体重減少、またはストレス反応としての過食が生じることがあります。
+              </p>
+            </div>
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base">意欲減退と疲労感</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                朝起きた瞬間に強い疲労感があり、身支度や入浴、家事などの日常動作を行うことさえ極めて困難に感じられます。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: References & Citations -->
+        <section class="border-t border-zinc-200 pt-8 dark:border-zinc-800">
+          <h2 class="text-xl font-bold text-zinc-950 dark:text-white">出典 / 参考文献</h2>
+          <ul class="mt-4 space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <li>
+              ・Kroenke, K., Spitzer, R. L., & Williams, J. B. (2001). The PHQ-9: validity of a brief depression severity measure. <em>Journal of General Internal Medicine</em>, 16(9), 606–613.
+            </li>
+            <li>
+              ・Spitzer, R. L., Kroenke, K., & Williams, J. B. (1999). Validation and utility of a self-report version of PRIME-MD: the PHQ primary care study. <em>JAMA</em>, 282(18), 1737–1744.
+            </li>
+            <li>
+              ・厚生労働省. うつ病の認知療法・認知行動療法 治療者用マニュアル / 自殺対策白書.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Section 4: Accessible FAQ Accordion (5 Q&As) -->
+        <section class="border-t border-zinc-200 pt-8 dark:border-zinc-800">
+          <h2 class="text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            よくある質問（FAQ）
+          </h2>
+          <div class="mt-6 space-y-3">
+            {faqItems.map((item, idx) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 transition-colors">
+                <summary class="flex cursor-pointer list-none items-center justify-between font-bold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg">
+                  <span>{item.q}</span>
+                  <span class="ml-4 shrink-0 transition-transform duration-200 group-open:rotate-180">
+                    <svg class="h-5 w-5 text-zinc-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </summary>
+                <p class="mt-4 text-sm sm:text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  {item.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+
+  <Footer />
+
+  <!-- Depression PHQ-9 Screener Client Script -->
+  <script is:inline>
+    (() => {
+      'use strict';
+
+      const QUESTIONS = [
+        {
+          id: 1,
+          text: '物事に対してほとんど興味がない、または楽しめない',
+          context: '興味・喜びの喪失（アヘドニア）'
+        },
+        {
+          id: 2,
+          text: '気分が落ち込む、憂うつになる、または絶望的な気持ちになる',
+          context: '抑うつ気分・絶望感'
+        },
+        {
+          id: 3,
+          text: '寝つきが悪い、途中で目がさめる、または逆に眠りすぎる',
+          context: '睡眠障害（不眠または過眠）'
+        },
+        {
+          id: 4,
+          text: '疲れた感じがする、または気力・エネルギーがない',
+          context: '易疲労性・エネルギー減退'
+        },
+        {
+          id: 5,
+          text: '食欲がない、または逆に食べすぎてしまう',
+          context: '食欲不振または過食'
+        },
+        {
+          id: 6,
+          text: '自分はダメな人間だ、失敗者だと感じる、または自分や家族に申し訳ないと感じる',
+          context: '無価値感・過剰な罪責感'
+        },
+        {
+          id: 7,
+          text: '新聞を読むことやテレビを見ることなど、物事に集中することが難しい',
+          context: '集中力・思考力の減退'
+        },
+        {
+          id: 8,
+          text: '他の人が気づくほど動きや話し方が遅くなる、または逆に落ち着きがなくそわそわして動き回る',
+          context: '精神運動焦燥または精神運動制止'
+        },
+        {
+          id: 9,
+          text: '死んだ方がましだ、あるいは自分を何らかの方法で傷つけようと思ったことがある',
+          context: '自傷・希死念慮（セーフティゲート項目）'
+        }
+      ];
+
+      const OPTIONS = [
+        { value: 0, label: '全くない（0点）' },
+        { value: 1, label: '数日ある（1点）' },
+        { value: 2, label: '半分以上の日数（2点）' },
+        { value: 3, label: 'ほぼ毎日（3点）' }
+      ];
+
+      const SEVERITY_INFO = {
+        minimal: {
+          label: 'ほとんどなし（軽微）',
+          badgeClass: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
+          interpretation: '抑うつ症状はほとんど認められないか、日常生活に支障をきたさない軽微なレベルです。',
+          action: '現時点では積極的な治療介入は必要ないと判断されることが多いですが、十分な休養と睡眠、バランスのよい生活リズムを維持してください。'
+        },
+        mild: {
+          label: '軽度の抑うつ傾向',
+          badgeClass: 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300',
+          interpretation: '軽度の抑うつ傾向が見られます。疲労や生活ストレスの蓄積が心身に影響を与えている可能性があります。',
+          action: '経過観察（経過を見守る）や生活習慣の見直し、休養が推奨されます。症状が2週間以上続く場合や悪化する場合は専門機関への相談をご検討ください。'
+        },
+        moderate: {
+          label: '中等度の抑うつ傾向（カットオフ該当）',
+          badgeClass: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
+          interpretation: '中等度の抑うつ状態を示唆しており、国際的な臨床基準においてうつ病（大うつ病エピソード）のカットオフ値（10点以上）に該当します。',
+          action: '心療内科や精神科などの専門医療機関を受診し、医師による詳しい診察やカウンセリングを受けることが推奨されます。'
+        },
+        moderately_severe: {
+          label: '中等度〜重度の抑うつ傾向',
+          badgeClass: 'bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300',
+          interpretation: '顕著な抑うつ症状が認められ、日常生活や仕事、対人関係に明確な支障が生じている可能性が高い状態です。',
+          action: '早期の専門医療機関（心療内科・精神科）受診が必要です。十分な休養と、医師の指導のもとでの適切な薬物療法や精神療法の検討が強く推奨されます。'
+        },
+        severe: {
+          label: '重度の抑うつ傾向',
+          badgeClass: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300',
+          interpretation: '重度の抑うつ状態を示唆しています。心身の負担が非常に大きく、早急な専門的ケアを要する水準です。',
+          action: '一人で抱え込まず、できるだけ早く心療内科・精神科などの専門医を受診してください。身近な信頼できる人や各種相談窓口への連絡もご検討ください。'
+        }
+      };
+
+      // Pure in-memory state - ZERO persistence to localStorage / cookies
+      const state = {
+        currentIndex: 0,
+        answers: {}
+      };
+
+      const introView = document.getElementById('depression-intro-view');
+      const questionView = document.getElementById('depression-question-view');
+      const resultView = document.getElementById('depression-result-view');
+      const safetyBanner = document.getElementById('safety-gate-banner');
+      const btnStart = document.getElementById('btn-start');
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      const btnRetake = document.getElementById('btn-retake');
+      const btnPrint = document.getElementById('btn-print');
+      const optionsContainer = document.getElementById('options-container');
+
+      function showQuestion(index) {
+        state.currentIndex = index;
+        const q = QUESTIONS[index];
+        const currentAnswer = state.answers[q.id];
+
+        document.getElementById('question-indicator').textContent = `第 ${index + 1} 問 / 全 ${QUESTIONS.length} 問`;
+        const progressPct = Math.round(((index + 1) / QUESTIONS.length) * 100);
+        document.getElementById('progress-percent').textContent = `${progressPct}% 完了`;
+        document.getElementById('progress-bar').style.width = `${progressPct}%`;
+        document.getElementById('question-context-tag').textContent = q.context;
+        document.getElementById('question-text').textContent = q.text;
+
+        btnPrev.disabled = index === 0;
+        btnPrev.style.visibility = index === 0 ? 'hidden' : 'visible';
+
+        // Render options
+        optionsContainer.innerHTML = '';
+        OPTIONS.forEach((opt, optIdx) => {
+          const isSelected = currentAnswer === opt.value;
+          
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `flex w-full items-center justify-between rounded-xl border p-4 text-left text-sm sm:text-base font-medium transition min-h-[48px] active:scale-[0.98] ${
+            isSelected
+              ? 'border-blue-600 bg-blue-50/80 text-blue-950 font-bold dark:border-blue-500 dark:bg-blue-950/40 dark:text-blue-100 ring-2 ring-blue-500/20'
+              : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-850 dark:text-zinc-200 dark:hover:border-zinc-700'
+          }`;
+          
+          btn.innerHTML = `
+            <span class="flex items-center gap-3">
+              <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                isSelected
+                  ? 'bg-blue-600 text-white dark:bg-blue-500'
+                  : 'border border-zinc-300 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400'
+              }">${optIdx + 1}</span>
+              <span>${opt.label}</span>
+            </span>
+          `;
+
+          btn.addEventListener('click', () => {
+            selectOption(q.id, opt.value);
+          });
+
+          optionsContainer.appendChild(btn);
+        });
+
+        const hasAnswered = currentAnswer !== undefined;
+        btnNext.disabled = !hasAnswered;
+        btnNext.querySelector('span').textContent = index === QUESTIONS.length - 1 ? '結果を表示する' : '次の質問へ';
+      }
+
+      function selectOption(qId, val) {
+        state.answers[qId] = val;
+
+        // Safety Gate: If Item 9 is answered > 0, show supportive crisis banner
+        if (qId === 9 && val > 0) {
+          safetyBanner.classList.remove('hidden');
+        }
+
+        showQuestion(state.currentIndex);
+
+        // Auto advance after brief delay for smooth tactile flow
+        setTimeout(() => {
+          if (state.currentIndex < QUESTIONS.length - 1) {
+            showQuestion(state.currentIndex + 1);
+          } else {
+            showResults();
+          }
+        }, 220);
+      }
+
+      function calculateScore() {
+        let totalScore = 0;
+        const itemResults = [];
+
+        for (const q of QUESTIONS) {
+          const val = state.answers[q.id] ?? 0;
+          totalScore += val;
+
+          const opt = OPTIONS.find(o => o.value === val) || OPTIONS[0];
+          itemResults.push({
+            questionId: q.id,
+            questionText: q.text,
+            context: q.context,
+            responseLabel: opt.label,
+            points: val
+          });
+        }
+
+        const item9Val = state.answers[9] ?? 0;
+        const hasItem9Risk = item9Val > 0;
+
+        let bandKey = 'minimal';
+        if (totalScore <= 4) bandKey = 'minimal';
+        else if (totalScore <= 9) bandKey = 'mild';
+        else if (totalScore <= 14) bandKey = 'moderate';
+        else if (totalScore <= 19) bandKey = 'moderately_severe';
+        else bandKey = 'severe';
+
+        return {
+          totalScore,
+          hasItem9Risk,
+          severity: SEVERITY_INFO[bandKey],
+          itemResults
+        };
+      }
+
+      function showResults() {
+        questionView.classList.add('hidden');
+        resultView.classList.remove('hidden');
+
+        const { totalScore, hasItem9Risk, severity, itemResults } = calculateScore();
+
+        document.getElementById('result-score').textContent = totalScore;
+        const badgeEl = document.getElementById('result-badge');
+        badgeEl.textContent = severity.label;
+        badgeEl.className = `inline-block rounded-lg px-3 py-1.5 text-sm font-bold ${severity.badgeClass}`;
+
+        document.getElementById('result-interpretation').textContent = severity.interpretation;
+        document.getElementById('result-action').textContent = severity.action;
+
+        const item9AlertEl = document.getElementById('result-item9-alert');
+        if (hasItem9Risk) {
+          item9AlertEl.classList.remove('hidden');
+        } else {
+          item9AlertEl.classList.add('hidden');
+        }
+
+        // Render item breakdown list
+        const breakdownContainer = document.getElementById('item-breakdown-list');
+        breakdownContainer.innerHTML = '';
+        itemResults.forEach((item) => {
+          const div = document.createElement('div');
+          const isItem9 = item.questionId === 9;
+          div.className = `flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl border p-3.5 text-xs sm:text-sm ${
+            isItem9 && item.points > 0
+              ? 'border-red-300 bg-red-50/50 dark:border-red-900/40 dark:bg-red-950/20'
+              : 'border-zinc-200 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/30'
+          }`;
+          div.innerHTML = `
+            <div class="flex-1">
+              <span class="font-bold text-zinc-900 dark:text-zinc-100">問${item.questionId}. ${item.context}</span>
+              <p class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5">${item.questionText}</p>
+            </div>
+            <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+              <span class="rounded bg-white px-2.5 py-1 font-semibold text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">${item.responseLabel}</span>
+            </div>
+          `;
+          breakdownContainer.appendChild(div);
+        });
+
+        // Scroll smoothly to results
+        resultView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Event Listeners
+      if (btnStart) {
+        btnStart.addEventListener('click', () => {
+          introView.classList.add('hidden');
+          questionView.classList.remove('hidden');
+          showQuestion(0);
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          if (state.currentIndex > 0) {
+            showQuestion(state.currentIndex - 1);
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          if (state.currentIndex < QUESTIONS.length - 1) {
+            showQuestion(state.currentIndex + 1);
+          } else {
+            showResults();
+          }
+        });
+      }
+
+      if (btnRetake) {
+        btnRetake.addEventListener('click', () => {
+          state.currentIndex = 0;
+          state.answers = {};
+          safetyBanner.classList.add('hidden');
+          resultView.classList.add('hidden');
+          introView.classList.remove('hidden');
+          introView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+
+      if (btnPrint) {
+        btnPrint.addEventListener('click', () => {
+          window.print();
+        });
+      }
+
+      // Keyboard navigation
+      window.addEventListener('keydown', (e) => {
+        if (questionView && !questionView.classList.contains('hidden')) {
+          if (['1', '2', '3', '4'].includes(e.key)) {
+            const optVal = parseInt(e.key, 10) - 1;
+            const q = QUESTIONS[state.currentIndex];
+            selectOption(q.id, optVal);
+          } else if (e.key === 'ArrowLeft' && state.currentIndex > 0) {
+            showQuestion(state.currentIndex - 1);
+          } else if (e.key === 'ArrowRight' && state.answers[QUESTIONS[state.currentIndex].id] !== undefined) {
+            if (state.currentIndex < QUESTIONS.length - 1) {
+              showQuestion(state.currentIndex + 1);
+            } else {
+              showResults();
+            }
+          }
+        }
+      });
+
+    })();
+  </script>
+</Layout>

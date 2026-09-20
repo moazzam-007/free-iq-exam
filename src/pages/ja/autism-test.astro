@@ -1,0 +1,644 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { AUTISM_QUESTIONS_JA, AUTISM_OPTIONS_JA } from '../../scripts/ja/autism-test/scoring';
+import { JAPANESE_CRISIS_HOTLINES, CLINICAL_DISCLAIMER_JA } from '../../data/ja/mental-health/hotlines';
+
+const title = "ASD 診断テスト｜自閉スペクトラム症のセルフチェック（AQ-10） | FreeIQExam";
+const description = "自閉スペクトラム症（ASD・旧アスペルガー症候群）の特性傾向を10問の短縮版AQで確認できる無料セルフチェック。※医学的診断ではありません。";
+const canonicalUrl = "https://freeiqexam.com/ja/autism-test";
+
+const alternates = {
+  en: "https://freeiqexam.com/autism-test",
+  ru: "https://freeiqexam.com/ru/autism-test",
+  id: "https://freeiqexam.com/id/tes-autisme",
+  de: "https://freeiqexam.com/de/autismus-test",
+  nl: "https://freeiqexam.com/nl/autisme-test",
+  'pt-BR': "https://freeiqexam.com/pt-br/teste-autismo",
+  ja: "https://freeiqexam.com/ja/autism-test"
+};
+
+const faqItems = [
+  {
+    q: "AQ-10オンラインセルフチェックで自閉スペクトラム症の確定診断はできますか？",
+    a: "いいえ、本ツールは確定診断を行うものではありません。AQ-10（自閉スペクトラム指数短縮版）は、ケンブリッジ大学自閉症研究センターのサイモン・バロン＝コーエン教授らによって開発されたスクリーニング（簡易評価）質問票です。確定診断には、専門医による詳細な問診、幼少期からの発達歴の聴取、心理検査を組み合わせた総合的な臨床評価が必要です。"
+  },
+  {
+    q: "AQ-10で6点以上だった場合は何を意味しますか？",
+    a: "英国国立医療技術評価機構（NICE）の臨床ガイドラインにおいて、10点満点中6点以上は「自閉スペクトラム症に特徴的な認知的・行動的傾向が多く見られ、専門医療機関での包括的な診断評価を受けることが推奨される水準」とされています。ただし、カットオフ値はあくまで参考目安であり、6点以上であっても直ちにASDと確定されるわけではありません。"
+  },
+  {
+    q: "アスペルガー症候群と自閉スペクトラム症（ASD）は何が違うのですか？",
+    a: "かつて知能や言語発達の遅れを伴わない自閉症のサブタイプを「アスペルガー症候群」と呼称していましたが、現在の診断基準（DSM-5・ICD-11）では明確な境界線を引きにくいため、すべて「自閉スペクトラム症（ASD）」というひとつの連続体（スペクトラム）として統合されました。"
+  },
+  {
+    q: "大人になってからASDの特性に気づく人が多いのはなぜですか？",
+    a: "特に知的能力が高い方や女性の場合、周囲を観察して行動を合わせる「マスキング（過剰適応）」を無意識に行うため、学生時代までは問題が目立たないことがあります。社会人になって曖昧な指示や複雑な人間関係、自己管理の負担が増大した際に適応の限界を迎え、初めて受診に至るケースが少なくありません。"
+  },
+  {
+    q: "感覚過敏（音や光への過敏さ）があるだけでASDと言えますか？",
+    a: "感覚過敏単独ではASDとは断定できません。感覚過敏はADHD、不安障害、PTSD、あるいは個人の体質などでも生じます。ASDの臨床評価では、感覚の特異性に加えて「対人相互関係や非言語コミュニケーションの特性」や「同一性へのこだわり・反復的な行動様式」が幼少期から継続して存在しているかが重視されます。"
+  }
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: 'ASD自閉スペクトラム症セルフチェック（AQ-10）',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'ja-JP',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' },
+    accessibilitySummary: 'キーボード操作対応（1〜4キー）、セマンティックHTML、プライバシー保護（回答データ保存なし）。'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://freeiqexam.com/ja/' },
+      { '@type': 'ListItem', position: 2, name: 'ASDセルフチェック', item: canonicalUrl }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="ja" ogLocale="ja_JP">
+  <Header jaPath="/ja/autism-test" />
+
+  <main id="main-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-zinc-50" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Yu Gothic', 'Noto Sans JP', Meiryo, sans-serif; line-height: 1.75; line-break: strict; word-break: normal; overflow-wrap: anywhere;">
+    <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      
+      <!-- Breadcrumb -->
+      <nav aria-label="パンくずリスト" class="mb-6 flex flex-wrap items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+        <a href="/ja/" class="hover:text-blue-600 dark:hover:text-blue-400">ホーム</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-900 font-medium dark:text-zinc-100">ASDセルフチェック</span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="mx-auto max-w-3xl text-center">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300">
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          AQ-10（自閉スペクトラム指数 短縮版）
+        </div>
+        <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl text-zinc-950 dark:text-white" style="text-wrap: balance;">
+          ASD 診断テスト｜自閉スペクトラム症のセルフチェック
+        </h1>
+        <p class="mt-4 text-base text-zinc-600 dark:text-zinc-300 sm:text-lg leading-relaxed">
+          ケンブリッジ大学自閉症研究センターのAQ-10質問票をもとに、自閉スペクトラム症（ASD・旧アスペルガー症候群）の認知的・社会的コミュニケーション特性の傾向を10問で確認できます。
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">所要時間 約3分</span>
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">完全無料・登録不要</span>
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">データ送信・保存なし</span>
+        </div>
+      </header>
+
+      <!-- Prominent Top Disclaimer (Verbatim) -->
+      <div class="mx-auto mt-8 max-w-3xl rounded-2xl border border-amber-200 bg-amber-50/90 p-4.5 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200" role="note">
+        <p class="font-bold flex items-center gap-2">
+          <svg class="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          医療に関する重要な注意事項
+        </p>
+        <p class="mt-2 text-xs sm:text-sm leading-relaxed">{CLINICAL_DISCLAIMER_JA}</p>
+      </div>
+
+      <!-- Autism / ASD Interactive App -->
+      <section id="autism-app" class="mx-auto mt-8 max-w-3xl" aria-label="ASDセルフチェックアプリ">
+        <div class="rounded-3xl border border-zinc-200 bg-zinc-50/60 p-5 dark:border-zinc-800 dark:bg-zinc-950/60 sm:p-8">
+          
+          <!-- Intro View -->
+          <div id="autism-intro-view" class="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 text-center">
+            <h2 class="text-xl font-bold text-zinc-950 dark:text-white sm:text-2xl">セルフチェックを開始する前に</h2>
+            <p class="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed text-left">
+              日常生活におけるご自身の自然な感じ方や行動の傾向について、直感で当てはまる選択肢をお選びください。全10問の回答を完了すると、原著研究に基づく特性傾向のスコアと目安が表示されます。
+            </p>
+            <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button id="btn-start" type="button" class="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.97] dark:bg-blue-500 dark:hover:bg-blue-600 min-h-[44px]">
+                チェックを開始する（全10問）
+              </button>
+            </div>
+            <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">キーボード操作：数字キー 1〜4 で回答、← / → で前後の質問へ移動</p>
+          </div>
+
+          <!-- Question View (Hidden initially) -->
+          <div id="autism-question-view" class="hidden" aria-live="polite">
+            <div class="flex items-center justify-between text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">
+              <span id="question-indicator">第 1 問 / 全 10 問</span>
+              <span id="progress-percent">0% 完了</span>
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800 mb-6">
+              <div id="progress-bar" class="h-full bg-blue-600 dark:bg-blue-500 transition-all duration-300" style="width: 10%;"></div>
+            </div>
+
+            <div class="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+              <span id="question-context-tag" class="inline-block rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 mb-3">
+                感覚・注意
+              </span>
+              <h2 id="question-text" class="text-lg sm:text-xl font-bold text-zinc-950 dark:text-white leading-snug">
+                質問文
+              </h2>
+              <p class="mt-2 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                ※ご自身の自然な状態や考え方に最も近いものを1つ選んでください。
+              </p>
+
+              <!-- Option buttons -->
+              <div id="options-container" class="mt-6 grid gap-3" role="radiogroup" aria-label="回答選択肢">
+                <!-- Dynamically populated via JS -->
+              </div>
+
+              <!-- Navigation Controls -->
+              <div class="mt-6 flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <button id="btn-prev" type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 active:scale-[0.98] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-750 min-h-[44px]">
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
+                  前の質問へ
+                </button>
+                <button id="btn-next" type="button" class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-600 min-h-[44px]">
+                  <span>次の質問へ</span>
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results View (Hidden initially) -->
+          <div id="autism-result-view" class="hidden" aria-live="polite">
+            <div class="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+              <div class="text-center pb-6 border-b border-zinc-200 dark:border-zinc-800">
+                <span class="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300">
+                  AQ-10 スクリーニング結果
+                </span>
+                <h2 id="result-title" class="mt-3 text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white">
+                  ASD特性傾向の目安
+                </h2>
+                <div class="mt-4 inline-flex items-baseline gap-2 rounded-2xl bg-zinc-100 px-6 py-4 dark:bg-zinc-800/80">
+                  <span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">AQ-10 スコア：</span>
+                  <span id="result-score" class="text-3xl sm:text-4xl font-black text-blue-600 dark:text-blue-400">0</span>
+                  <span class="text-lg font-bold text-zinc-600 dark:text-zinc-400">/ 10 点</span>
+                </div>
+                <p id="result-label" class="mt-3 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100"></p>
+              </div>
+
+              <!-- Result explanation narrative -->
+              <div class="mt-6 space-y-4 text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                <p id="result-summary" class="rounded-xl bg-zinc-50 p-4 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800"></p>
+                <div class="rounded-xl border border-blue-200 bg-blue-50/60 p-4 dark:border-blue-900/50 dark:bg-blue-950/30">
+                  <h3 class="font-bold text-blue-950 dark:text-blue-200 text-sm sm:text-base">専門機関受診・今後のアドバイス</h3>
+                  <p id="result-recommendation" class="mt-1 text-xs sm:text-sm text-blue-900 dark:text-blue-300 leading-relaxed"></p>
+                </div>
+              </div>
+
+              <!-- Item-by-item response review (Unidimensional list without fake subscales) -->
+              <div class="mt-8">
+                <h3 class="text-base font-bold text-zinc-950 dark:text-white sm:text-lg">
+                  全10項目の回答一覧と配点状況
+                </h3>
+                <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                  ※AQ-10は単一の総合スクリーニング尺度です。項目によって肯定（そうである等）で1点となるものと、否定（そうではない等）で1点となるものが混在しています。
+                </p>
+                <div id="item-breakdown-list" class="mt-4 space-y-3">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="mt-8 flex flex-col sm:flex-row gap-3 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+                <button id="btn-print" type="button" class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800 active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 min-h-[44px]">
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.5A1.75 1.75 0 0116.75 8H17a2 2 0 012 2v5a2 2 0 01-2 2h-1v-2.25A1.75 1.75 0 0014.25 13h-8.5A1.75 1.75 0 004 14.75V17H3a2 2 0 01-2-2v-5a2 2 0 012-2h.25A1.75 1.75 0 015 6.25v-3.5zm1.5 0v3.5h7v-3.5h-7zM4 14.75c0-.138.112-.25.25-.25h11.5c.138 0 .25.112.25.25V18H4v-3.25z" clip-rule="evenodd" /></svg>
+                  結果を印刷・PDF保存
+                </button>
+                <button id="btn-retake" type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 active:scale-[0.98] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-750 min-h-[44px]">
+                  もう一度チェックする
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Prominent Bottom Disclaimer (Verbatim) -->
+      <div class="mx-auto mt-8 max-w-3xl rounded-2xl border border-amber-200 bg-amber-50/90 p-4.5 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200" role="note">
+        <p class="font-bold flex items-center gap-2">
+          <svg class="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          医療に関する免責事項
+        </p>
+        <p class="mt-2 text-xs sm:text-sm leading-relaxed">{CLINICAL_DISCLAIMER_JA}</p>
+      </div>
+
+      <!-- Educational Content Guide -->
+      <article class="mx-auto mt-16 max-w-3xl space-y-12">
+        
+        <!-- Section 1: Asperger & ASD Integration -->
+        <section>
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.75a.75.75 0 00-1.5 0v4.5c0 .414.336.75.75.75h3.5a.75.75 0 000-1.5h-2.75V6.75z" /></svg>
+            医学的背景
+          </div>
+          <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            アスペルガー症候群とASD（自閉スペクトラム症）の統合
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+            従来、知能や言語発達の遅れを伴わない自閉症傾向は「アスペルガー症候群」や「高機能自閉症」などと個別の診断名で呼ばれていました。しかし、臨床研究の進展に伴い、明確な境界線を設けることが困難であることや、本質的な特性の重なりが明らかになったことから、米国精神医学会のDSM-5（2013年）やWHOのICD-11において「自閉スペクトラム症（ASD）」というひとつの連続体（スペクトラム）の概念に統合されました。
+          </p>
+          <p class="mt-3 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+            スペクトラムとは「虹のグラデーションのように連続している」ことを意味します。特性の強さ、対人関係での困りごと、感覚過敏の度合いなどは個人によって多様であり、一人ひとりの個性と環境の相互作用を丁寧に理解することが重要視されています。
+          </p>
+        </section>
+
+        <!-- Section 2: Neurodiversity Perspective -->
+        <section>
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" /></svg>
+            多様性の理解
+          </div>
+          <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            ニューロダイバーシティ（神経多様性）の視点
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+            現代の認知科学や当事者運動において、「ニューロダイバーシティ（Neurodiversity：神経多様性）」という考え方が広く支持されています。これは、自閉スペクトラムやADHDなどの脳や神経の特性を「欠陥や治療すべき異常」と捉えるのではなく、人類の持つ「自然で尊重されるべき認知のバリエーション（多様性）」として捉え直す視点です。
+          </p>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base">強みとしての特性</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                高い集中力、論理的思考、細部への観察眼、特定の興味分野に対する徹底した探求心などは、専門分野や研究開発、IT、芸術領域において卓越した強みとして発揮されることがあります。
+              </p>
+            </div>
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base">環境調整の重要性</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                生きづらさの多くは個人の能力不足ではなく、多数派（定型発達）に合わせて作られた職場や社会構造とのミスマッチによって生じます。明確なテキストでの指示や静かな作業環境の整備が効果的です。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: References & Citations -->
+        <section class="border-t border-zinc-200 pt-8 dark:border-zinc-800">
+          <h2 class="text-xl font-bold text-zinc-950 dark:text-white">出典 / 参考文献</h2>
+          <ul class="mt-4 space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <li>
+              ・Allison, C., Auyeung, B., & Baron-Cohen, S. (2012). Toward brief “red flags” for autism screening: the Short Autism Spectrum Quotient and the Short Quantitative Checklist for Autism in toddlers in screening and clinical practice. <em>Journal of the American Academy of Child & Adolescent Psychiatry</em>, 51(2), 202–212.
+            </li>
+            <li>
+              ・National Institute for Health and Care Excellence (NICE). (2012). <em>Autism spectrum disorder in adults: diagnosis and management</em> (NICE Guideline CG142).
+            </li>
+            <li>
+              ・American Psychiatric Association. (2013). <em>Diagnostic and Statistical Manual of Mental Disorders (5th ed.)</em> (DSM-5). Arlington, VA.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Section 4: Accessible FAQ Accordion (5 Q&As) -->
+        <section class="border-t border-zinc-200 pt-8 dark:border-zinc-800">
+          <h2 class="text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            よくある質問（FAQ）
+          </h2>
+          <div class="mt-6 space-y-3">
+            {faqItems.map((item, idx) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 transition-colors">
+                <summary class="flex cursor-pointer list-none items-center justify-between font-bold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg">
+                  <span>{item.q}</span>
+                  <span class="ml-4 shrink-0 transition-transform duration-200 group-open:rotate-180">
+                    <svg class="h-5 w-5 text-zinc-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </summary>
+                <p class="mt-4 text-sm sm:text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  {item.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+
+  <Footer />
+
+  <!-- Autism Screener Client Script -->
+  <script is:inline>
+    (() => {
+      'use strict';
+
+      const QUESTIONS = [
+        {
+          id: 1,
+          text: '私は他の人が気づかないような小さな物音に気づくことがよくある。',
+          context: '感覚の過敏性・細部への注意',
+          scoreDirection: 'agree'
+        },
+        {
+          id: 2,
+          text: '物事を見るとき、細かい部分よりも全体像に集中することが多い。',
+          context: '全体把握と細部への注目傾向',
+          scoreDirection: 'disagree'
+        },
+        {
+          id: 3,
+          text: '人が集まる場でも、複数の人が話している会話を簡単に追うことができる。',
+          context: '複数人での会話・注意の分割',
+          scoreDirection: 'disagree'
+        },
+        {
+          id: 4,
+          text: '複数の異なる作業や活動を行ったり来たり切り替えるのは簡単である。',
+          context: 'タスクの認知的切り替え・柔軟性',
+          scoreDirection: 'disagree'
+        },
+        {
+          id: 5,
+          text: '相手が話しているとき、「行間を読む」（言葉の裏の意図を察する）ことは得意である。',
+          context: '非言語的コミュニケーション・文脈理解',
+          scoreDirection: 'disagree'
+        },
+        {
+          id: 6,
+          text: '自分の話を聞いている相手が退屈しているかどうかがすぐに分かる。',
+          context: '相手の心理状態や反応の察知',
+          scoreDirection: 'disagree'
+        },
+        {
+          id: 7,
+          text: '小説や物語を読んでいるとき、登場人物の意図や動機を理解するのが難しいと感じる。',
+          context: '登場人物・他者の心理推論',
+          scoreDirection: 'agree'
+        },
+        {
+          id: 8,
+          text: '特定のカテゴリ（車、鳥、電車、植物、データなど）の情報を収集・整理するのが好きである。',
+          context: '特定の興味・体系化への志向',
+          scoreDirection: 'agree'
+        },
+        {
+          id: 9,
+          text: '相手の表情を見るだけで、その人が何を考え、感じているかが簡単に分かる。',
+          context: '表情からの感情・思考の読み取り',
+          scoreDirection: 'disagree'
+        },
+        {
+          id: 10,
+          text: '他人の意図や気持ちを察したり想像したりすることが難しいと感じる。',
+          context: '他者の視点取得・社会的想像力',
+          scoreDirection: 'agree'
+        }
+      ];
+
+      const OPTIONS = [
+        { value: 0, label: 'そうである' },
+        { value: 1, label: 'どちらかといえばそうである' },
+        { value: 2, label: 'どちらかといえばそうではない' },
+        { value: 3, label: 'そうではない' }
+      ];
+
+      // Pure in-memory state - ZERO persistence to localStorage / cookies
+      const state = {
+        currentIndex: 0,
+        answers: {}
+      };
+
+      const introView = document.getElementById('autism-intro-view');
+      const questionView = document.getElementById('autism-question-view');
+      const resultView = document.getElementById('autism-result-view');
+      const btnStart = document.getElementById('btn-start');
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      const btnRetake = document.getElementById('btn-retake');
+      const btnPrint = document.getElementById('btn-print');
+      const optionsContainer = document.getElementById('options-container');
+
+      function showQuestion(index) {
+        state.currentIndex = index;
+        const q = QUESTIONS[index];
+        const currentAnswer = state.answers[q.id];
+
+        document.getElementById('question-indicator').textContent = `第 ${index + 1} 問 / 全 ${QUESTIONS.length} 問`;
+        const progressPct = Math.round(((index + 1) / QUESTIONS.length) * 100);
+        document.getElementById('progress-percent').textContent = `${progressPct}% 完了`;
+        document.getElementById('progress-bar').style.width = `${progressPct}%`;
+        document.getElementById('question-context-tag').textContent = q.context;
+        document.getElementById('question-text').textContent = q.text;
+
+        btnPrev.disabled = index === 0;
+        btnPrev.style.visibility = index === 0 ? 'hidden' : 'visible';
+
+        // Render options
+        optionsContainer.innerHTML = '';
+        OPTIONS.forEach((opt, optIdx) => {
+          const isSelected = currentAnswer === opt.value;
+          
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `flex w-full items-center justify-between rounded-xl border p-4 text-left text-sm sm:text-base font-medium transition min-h-[48px] active:scale-[0.98] ${
+            isSelected
+              ? 'border-blue-600 bg-blue-50/80 text-blue-950 font-bold dark:border-blue-500 dark:bg-blue-950/40 dark:text-blue-100 ring-2 ring-blue-500/20'
+              : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-850 dark:text-zinc-200 dark:hover:border-zinc-700'
+          }`;
+          
+          btn.innerHTML = `
+            <span class="flex items-center gap-3">
+              <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                isSelected
+                  ? 'bg-blue-600 text-white dark:bg-blue-500'
+                  : 'border border-zinc-300 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400'
+              }">${optIdx + 1}</span>
+              <span>${opt.label}</span>
+            </span>
+          `;
+
+          btn.addEventListener('click', () => {
+            selectOption(q.id, opt.value);
+          });
+
+          optionsContainer.appendChild(btn);
+        });
+
+        const hasAnswered = currentAnswer !== undefined;
+        btnNext.disabled = !hasAnswered;
+        btnNext.querySelector('span').textContent = index === QUESTIONS.length - 1 ? '結果を表示する' : '次の質問へ';
+      }
+
+      function selectOption(qId, val) {
+        state.answers[qId] = val;
+        showQuestion(state.currentIndex);
+
+        // Auto advance after brief delay for smooth tactile flow
+        setTimeout(() => {
+          if (state.currentIndex < QUESTIONS.length - 1) {
+            showQuestion(state.currentIndex + 1);
+          } else {
+            showResults();
+          }
+        }, 220);
+      }
+
+      function calculateScore() {
+        let totalScore = 0;
+        const itemResults = [];
+
+        for (const q of QUESTIONS) {
+          const val = state.answers[q.id] ?? 3;
+          let points = 0;
+          if (q.scoreDirection === 'agree' && (val === 0 || val === 1)) {
+            points = 1;
+          } else if (q.scoreDirection === 'disagree' && (val === 2 || val === 3)) {
+            points = 1;
+          }
+
+          totalScore += points;
+
+          const opt = OPTIONS.find(o => o.value === val) || OPTIONS[3];
+          itemResults.push({
+            questionId: q.id,
+            questionText: q.text,
+            context: q.context,
+            responseLabel: opt.label,
+            points
+          });
+        }
+
+        const isPositive = totalScore >= 6;
+        return {
+          totalScore,
+          isPositive,
+          itemResults
+        };
+      }
+
+      function showResults() {
+        questionView.classList.add('hidden');
+        resultView.classList.remove('hidden');
+
+        const { totalScore, isPositive, itemResults } = calculateScore();
+
+        document.getElementById('result-score').textContent = totalScore;
+        const resultLabelEl = document.getElementById('result-label');
+        const resultSummaryEl = document.getElementById('result-summary');
+        const resultRecommendationEl = document.getElementById('result-recommendation');
+
+        if (isPositive) {
+          resultLabelEl.textContent = '自閉スペクトラム症（ASD）の特性傾向が高い目安（6点以上 / 専門機関への相談が推奨される水準）';
+          resultLabelEl.className = 'mt-3 text-base sm:text-lg font-bold text-amber-700 dark:text-amber-400';
+          resultSummaryEl.textContent = `AQ-10の採点結果は ${totalScore} / 10 点です。英国NICEガイドラインおよび原著研究における専門機関受診の推奨カットオフ値（6点以上）を満たしており、ASD（自閉スペクトラム症）に特徴的な認知や社会的コミュニケーションの特性傾向が多く見られます。`;
+          resultRecommendationEl.textContent = '感覚過敏、コミュニケーションのすれ違い、環境変化へのストレスなどにより日常生活や仕事で生きづらさを感じている場合は、自己判断せず、心療内科・精神科や発達障害者支援センターなどの専門窓口へのご相談をおすすめします。';
+        } else {
+          resultLabelEl.textContent = '自閉スペクトラム症（ASD）の特性傾向は標準的な目安（6点未満）';
+          resultLabelEl.className = 'mt-3 text-base sm:text-lg font-bold text-blue-700 dark:text-blue-400';
+          resultSummaryEl.textContent = `AQ-10の採点結果は ${totalScore} / 10 点です。一般的なカットオフ値（6点以上）を下回っており、ASDに特徴的な傾向の該当数は標準的な範囲にとどまっています。`;
+          resultRecommendationEl.textContent = 'このスクリーニングで点数が低くても、職場や対人関係での強い疲労感やストレスが続いている場合は、不安障害、気分障害、適応障害など他の要因も考えられます。必要に応じて専門機関にご相談ください。';
+        }
+
+        // Render item breakdown list
+        const breakdownContainer = document.getElementById('item-breakdown-list');
+        breakdownContainer.innerHTML = '';
+        itemResults.forEach((item) => {
+          const div = document.createElement('div');
+          div.className = `flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl border p-3.5 text-xs sm:text-sm ${
+            item.points > 0
+              ? 'border-amber-200 bg-amber-50/50 dark:border-amber-900/40 dark:bg-amber-950/20'
+              : 'border-zinc-200 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/30'
+          }`;
+          div.innerHTML = `
+            <div class="flex-1">
+              <span class="font-bold text-zinc-900 dark:text-zinc-100">問${item.questionId}. ${item.context}</span>
+              <p class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5">${item.questionText}</p>
+            </div>
+            <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+              <span class="rounded bg-white px-2.5 py-1 font-semibold text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">${item.responseLabel}</span>
+              ${
+                item.points > 0
+                  ? '<span class="rounded bg-amber-100 px-2 py-1 text-xs font-bold text-amber-800 dark:bg-amber-900/60 dark:text-amber-200">特性スコア +1</span>'
+                  : '<span class="rounded bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">0点</span>'
+              }
+            </div>
+          `;
+          breakdownContainer.appendChild(div);
+        });
+
+        // Scroll smoothly to results
+        resultView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Event Listeners
+      if (btnStart) {
+        btnStart.addEventListener('click', () => {
+          introView.classList.add('hidden');
+          questionView.classList.remove('hidden');
+          showQuestion(0);
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          if (state.currentIndex > 0) {
+            showQuestion(state.currentIndex - 1);
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          if (state.currentIndex < QUESTIONS.length - 1) {
+            showQuestion(state.currentIndex + 1);
+          } else {
+            showResults();
+          }
+        });
+      }
+
+      if (btnRetake) {
+        btnRetake.addEventListener('click', () => {
+          state.currentIndex = 0;
+          state.answers = {};
+          resultView.classList.add('hidden');
+          introView.classList.remove('hidden');
+          introView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+
+      if (btnPrint) {
+        btnPrint.addEventListener('click', () => {
+          window.print();
+        });
+      }
+
+      // Keyboard navigation
+      window.addEventListener('keydown', (e) => {
+        if (questionView && !questionView.classList.contains('hidden')) {
+          if (['1', '2', '3', '4'].includes(e.key)) {
+            const optVal = parseInt(e.key, 10) - 1;
+            const q = QUESTIONS[state.currentIndex];
+            selectOption(q.id, optVal);
+          } else if (e.key === 'ArrowLeft' && state.currentIndex > 0) {
+            showQuestion(state.currentIndex - 1);
+          } else if (e.key === 'ArrowRight' && state.answers[QUESTIONS[state.currentIndex].id] !== undefined) {
+            if (state.currentIndex < QUESTIONS.length - 1) {
+              showQuestion(state.currentIndex + 1);
+            } else {
+              showResults();
+            }
+          }
+        }
+      });
+
+    })();
+  </script>
+</Layout>

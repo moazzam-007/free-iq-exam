@@ -1,0 +1,645 @@
+---
+// Japanese White Noise Generator
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import FooterJa from '../../components/ja/FooterJa.astro';
+
+const title = "ホワイトノイズ｜ピンク・ブラウンノイズも無料で再生 | FreeIQExam";
+const description = "ブラウザだけで再生できるホワイトノイズ・ピンクノイズ・ブラウンノイズ。音量調整とスリープタイマー付き。違いと使い方をわかりやすく解説します。";
+const canonicalUrl = "https://freeiqexam.com/ja/white-noise";
+
+const alternates = {
+  en: "https://freeiqexam.com/brown-noise",
+  de: "https://freeiqexam.com/de/rosa-rauschen",
+  ja: "https://freeiqexam.com/ja/white-noise"
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam ホワイトノイズ・ピンクノイズ・ブラウンノイズ音源生成器",
+    "url": canonicalUrl,
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires Web Audio API support",
+    "inLanguage": "ja",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    },
+    "featureList": [
+      "Web Audio APIによるリアルタイム純粋ノイズ合成（ホワイト・ピンク・ブラウン）",
+      "音量過大防止用セーフティマスターゲイン（初期値0.15・上限0.60制限）",
+      "クロスフェード切替機能によるノイズ切替時ポップノイズ防止",
+      "スリープタイマー（15分・30分・45分・60分・120分・3秒フェードアウト自動停止）",
+      "リアルタイム周波数スペクトラム・ビジュアルキャンバス描画"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "ホーム",
+        "item": "https://freeiqexam.com/ja/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "ホワイトノイズ生成器",
+        "item": canonicalUrl
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  alternates={alternates}
+  schema={schema}
+  lang="ja"
+>
+  <Header currentPath="/ja/white-noise" />
+
+  <main class="min-h-screen bg-white dark:bg-[#000000] text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-200">
+    
+    <!-- Hero Header -->
+    <section class="pt-10 pb-6 px-4 sm:px-6 max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-[#2997ff] border border-blue-500/20 text-xs font-semibold uppercase tracking-wider mb-4">
+        <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+        <span>Web Audio API リアルタイム音響合成エンジン</span>
+      </div>
+
+      <h1 class="font-heading font-extrabold text-3xl sm:text-5xl text-zinc-950 dark:text-white tracking-tight mb-4 leading-tight">
+        ホワイトノイズ / ピンク / ブラウン再生機
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+        集中力の維持、作業用背景音、睡眠環境の音響マスキングに。ブラウザ上でWeb Audio APIを用いて高品質なカラーノイズを直接生成・再生します。
+      </p>
+    </section>
+
+    <!-- Acoustic Safety Notice -->
+    <section class="px-4 sm:px-6 max-w-3xl mx-auto mb-8">
+      <div class="p-4 rounded-xl bg-amber-50/80 dark:bg-zinc-900/90 border border-amber-200/80 dark:border-amber-900/40 text-xs text-amber-950 dark:text-amber-300 leading-relaxed flex items-start gap-3 shadow-sm">
+        <svg class="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <div>
+          <strong>【音響安全に関するご注意】</strong>長時間の過度な大音量再生を避け、適度な音量（会話の妨げにならない程度）でご使用ください。特に乳幼児の耳元やベッドのすぐ近くにスピーカー・ヘッドホンを配置しないでください。
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Sound Control Panel -->
+    <section class="px-4 sm:px-6 max-w-3xl mx-auto pb-16">
+      <div class="bg-zinc-950 text-white rounded-3xl p-6 sm:p-10 border border-zinc-800 shadow-2xl space-y-8">
+        
+        <!-- Noise Type Selector Tabs -->
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3 text-center">
+            ノイズ音調を選択
+          </div>
+          <div class="grid grid-cols-3 gap-2 sm:gap-3">
+            <button
+              type="button"
+              data-type="white"
+              class="noise-tab-btn px-3 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all border-blue-500 bg-blue-600/20 text-white shadow-sm"
+            >
+              ホワイトノイズ<br><span class="text-[10px] font-normal text-zinc-300">均一・高音</span>
+            </button>
+            <button
+              type="button"
+              data-type="pink"
+              class="noise-tab-btn px-3 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800"
+            >
+              ピンクノイズ<br><span class="text-[10px] font-normal text-zinc-400">雨音・自然音</span>
+            </button>
+            <button
+              type="button"
+              data-type="brown"
+              class="noise-tab-btn px-3 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800"
+            >
+              ブラウンノイズ<br><span class="text-[10px] font-normal text-zinc-400">重低音・滝の音</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Animated Audio Visualizer Canvas -->
+        <div class="relative h-28 sm:h-36 rounded-2xl bg-zinc-900/90 border border-zinc-800/80 overflow-hidden flex items-center justify-center">
+          <canvas id="visualizer-canvas" class="w-full h-full block"></canvas>
+          <div id="visualizer-status" class="absolute text-xs text-zinc-500 font-mono tracking-wider">
+            再生ボタンを押すと音響合成を開始します
+          </div>
+        </div>
+
+        <!-- Master Play / Pause Button -->
+        <div class="flex flex-col items-center justify-center gap-3">
+          <button
+            type="button"
+            id="play-toggle-btn"
+            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#0066cc] hover:bg-blue-600 text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/50"
+            aria-label="ノイズ再生・停止"
+          >
+            <!-- Play Icon -->
+            <svg id="play-icon" class="w-10 h-10 ml-1 fill-current" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <!-- Pause Icon (Hidden by default) -->
+            <svg id="pause-icon" class="w-10 h-10 fill-current hidden" viewBox="0 0 24 24">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+          </button>
+          <span id="play-status-text" class="text-xs sm:text-sm font-semibold text-zinc-300">
+            再生開始 (音量注意)
+          </span>
+        </div>
+
+        <!-- Volume Slider Control -->
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs font-semibold text-zinc-400">
+            <span>マスター音量</span>
+            <span id="volume-val-display" class="font-mono text-zinc-200">15% (安全出力)</span>
+          </div>
+          <input
+            type="range"
+            id="volume-slider"
+            min="0"
+            max="0.60"
+            step="0.01"
+            value="0.15"
+            class="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-[#2997ff]"
+          />
+          <div class="flex justify-between text-[10px] text-zinc-500">
+            <span>消音 (0%)</span>
+            <span>推奨音量 (10〜25%)</span>
+            <span>安全上限 (60%)</span>
+          </div>
+        </div>
+
+        <!-- Sleep Timer Control -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-semibold text-zinc-400 mb-3">
+            <span>スリープタイマー（3秒フェードアウト自動停止）</span>
+            <span id="timer-remaining" class="font-mono text-[#2997ff]">連続再生</span>
+          </div>
+          <div class="grid grid-cols-6 gap-1.5 sm:gap-2 text-center">
+            <button type="button" data-[#2997ff] data-timer="off" class="timer-btn px-2 py-2 rounded-xl text-xs font-semibold border border-blue-500 bg-blue-600/30 text-white">連続</button>
+            <button type="button" data-timer="15" class="timer-btn px-2 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800">15分</button>
+            <button type="button" data-timer="30" class="timer-btn px-2 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800">30分</button>
+            <button type="button" data-timer="45" class="timer-btn px-2 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800">45分</button>
+            <button type="button" data-timer="60" class="timer-btn px-2 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800">60分</button>
+            <button type="button" data-timer="120" class="timer-btn px-2 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800">120分</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Educational Content -->
+    <section class="py-12 px-4 sm:px-6 max-w-4xl mx-auto border-t border-zinc-200 dark:border-zinc-800 space-y-12">
+      
+      <!-- Comparison Table / Spectrum Explanation -->
+      <div>
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">
+          3種類のノイズの違いと音響スペクトル
+        </h2>
+        <p class="text-zinc-600 dark:text-zinc-300 text-sm sm:text-base leading-relaxed mb-6">
+          音響工学においてノイズは周波数ごとのエネルギー分布（パワースペクトル）によって分類されます。それぞれの音調の特徴を把握し、用途に合わせて使い分けることが推奨されます。
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+                <th class="p-3 font-semibold text-zinc-900 dark:text-white">ノイズ種類</th>
+                <th class="p-3 font-semibold text-zinc-900 dark:text-white">音響スペクトル特性</th>
+                <th class="p-3 font-semibold text-zinc-900 dark:text-white">聴覚的印象</th>
+                <th class="p-3 font-semibold text-zinc-900 dark:text-white">主な推奨用途</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-600 dark:text-zinc-400">
+              <tr>
+                <td class="p-3 font-bold text-zinc-900 dark:text-white">ホワイトノイズ</td>
+                <td class="p-3">全周波数帯域でエネルギーが均一 (0 dB/octave)</td>
+                <td class="p-3">「ザー」という高域を含むラジオ砂嵐音</td>
+                <td class="p-3">オフィスの会話音マスキング・突発音の軽減</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-zinc-900 dark:text-white">ピンクノイズ</td>
+                <td class="p-3">周波数が高くなるほど減衰 (-3 dB/octave)</td>
+                <td class="p-3">「シザー」という穏やかな雨音・風の音</td>
+                <td class="p-3">入眠環境の調整・勉強や読書時の集中力向上</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-zinc-900 dark:text-white">ブラウンノイズ</td>
+                <td class="p-3">高域が急激に減衰 (-6 dB/octave)</td>
+                <td class="p-3">「ゴー」という深い滝の音・遠くの波音</td>
+                <td class="p-3">深いリラックス・静寂環境の確保・安眠支援</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Scientific Restraint / Stochastic Resonance -->
+      <div>
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">
+          ノイズ聴取に関する科学的仮説と使用上の注意
+        </h2>
+        <div class="prose dark:prose-invert max-w-none text-zinc-600 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-3">
+          <p>
+            特定のバックグラウンドノイズを背景音として流すことで、微小な感覚信号の検知が高まる現像は<strong>確率共鳴（Stochastic Resonance）</strong>と呼ばれる物理・音響現象の科学的仮説に基づいています。背景ノイズが突発的な環境騒音のショック（車のクラクションや扉の開閉音）を打ち消す「音響マスキング効果」をもたらします。
+          </p>
+          <p>
+            ※ただし、ノイズ音源によって「耳鳴りが治る」「ADHDが改善する」といった臨床的治療効果が保証されているわけではありません。体調や体質に応じて心地よく感じる音量・音質をご使用ください。
+          </p>
+        </div>
+      </div>
+
+      <!-- Citations -->
+      <div class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-400 space-y-2">
+        <h3 class="font-bold text-zinc-900 dark:text-zinc-200 uppercase tracking-wider text-[11px]">
+          出典・音響工学参考文献
+        </h3>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Paul Kellet, <i>Filter algorithms for pink noise synthesis</i>, Music-DSP Archive.</li>
+          <li>World Health Organization (WHO), <i>Environmental Noise Guidelines for the European Region</i> (2018).</li>
+          <li>Moss F, Ward LM, Sannita WG. <i>Stochastic resonance and sensory information processing</i>. Clin Neurophysiol. 2004.</li>
+        </ul>
+      </div>
+
+      <!-- FAQ Accordion -->
+      <div>
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-6">
+          よくある質問（FAQ）
+        </h2>
+        <div class="space-y-3">
+          
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q1. 音が出ない場合、どのような原因が考えられますか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              iPhoneやAndroid端末の「マナーモード（消音スイッチ）」がONになっている場合、Web Audio APIのサウンドが消音されることがあります。また、ブラウザの音量設定やOSのメイン音量をご確認ください。
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q2. 一晩中流しっぱなしにしても大丈夫ですか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              長時間の連続再生を行う場合は、会話を妨げない低音量（30〜45dB程度）に設定してください。睡眠中の聴覚疲労を防ぐため、スリープタイマー（30分〜60分）の併用をおすすめします。
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q3. イヤホンとスピーカー、どちらで聴くのが良いですか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              睡眠環境や部屋全体の音響マスキングには部屋のスピーカーからの再生が適しています。作業集中目的でイヤホンを使用する場合は、耳への圧迫感を防ぐため低い音量レベルを保ってください。
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q4. ノイズ音源ファイル（MP3等）のダウンロードは必要ですか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              いいえ、ダウンロードは一切不要です。お使いのブラウザ内部でリアルタイムに波形をグラフィック・シームレス合成するため、通信量をほぼ消費せずに高音質で再生できます。
+            </p>
+          </details>
+
+          <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/60 p-4 font-medium transition-colors">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-zinc-900 dark:text-zinc-100 font-semibold text-sm sm:text-base">
+              <span>Q5. 赤ちゃん（乳幼児）の寝かしつけに使用できますか？</span>
+              <span class="ml-2 text-zinc-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              乳幼児に使用する場合は、スピーカーをベビーベッドから少なくとも2メートル以上離し、音量を小さく設定してください。耳元での近距離再生や大音量でのご使用はお控えください。
+            </p>
+          </details>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bottom Full Clinical Disclaimer -->
+    <footer class="py-8 px-4 sm:px-6 max-w-4xl mx-auto border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+      <p>
+        【免責事項】本オンラインセルフチェックは、教育的自己理解およびスクリーニングを目的としたツールであり、医師、精神科医、公認心理師による医学的診断や専門的評価に代わるものではありません。心身の不調や日常生活における困難が続く場合は、必ず心療内科・精神科等の専門医療機関へご相談ください。
+      </p>
+    </footer>
+
+  </main>
+
+  <FooterJa />
+</Layout>
+
+<script is:inline>
+  (function() {
+    let audioCtx = null;
+    let masterGainNode = null;
+    let analyserNode = null;
+    let currentSourceNode = null;
+    let isPlaying = false;
+    let currentNoiseType = 'white';
+    let masterVolume = 0.15;
+    
+    let timerDurationMinutes = 0; // 0 = off/continuous
+    let timerDeadline = 0;
+    let timerInterval = null;
+    let isFadingOut = false;
+
+    // DOM Elements
+    const playToggleBtn = document.getElementById('play-toggle-btn');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const playStatusText = document.getElementById('play-status-text');
+
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeDisplay = document.getElementById('volume-val-display');
+
+    const tabBtns = document.querySelectorAll('.noise-tab-btn');
+    const timerBtns = document.querySelectorAll('.timer-btn');
+    const timerRemainingDisplay = document.getElementById('timer-remaining');
+
+    const canvas = document.getElementById('visualizer-canvas');
+    const canvasCtx = canvas ? canvas.getContext('2d') : null;
+    const visualizerStatus = document.getElementById('visualizer-status');
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+        
+        masterGainNode = audioCtx.createGain();
+        masterGainNode.gain.setValueAtTime(masterVolume, audioCtx.currentTime);
+
+        analyserNode = audioCtx.createAnalyser();
+        analyserNode.fftSize = 64;
+
+        masterGainNode.connect(analyserNode);
+        analyserNode.connect(audioCtx.destination);
+      }
+
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Audio Buffer Generators (10-second loop buffers)
+    function generateNoiseBuffer(type) {
+      const bufferSize = audioCtx.sampleRate * 10;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      if (type === 'white') {
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+      } else if (type === 'pink') {
+        // Paul Kellet's filter algorithm for 1/f Pink Noise
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          b3 = 0.86650 * b3 + white * 0.3104856;
+          b4 = 0.55000 * b4 + white * 0.5329522;
+          b5 = -0.76161 * b5 - white * 0.0168980;
+          data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+          b6 = white * 0.115926;
+        }
+      } else if (type === 'brown') {
+        // Leaky integration for 1/f^2 Brown Noise
+        let lastOutput = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          const brown = (lastOutput + (0.02 * white)) / 1.02;
+          lastOutput = brown;
+          data[i] = brown * 3.5;
+        }
+      }
+      return buffer;
+    }
+
+    function createAndStartSource(type) {
+      const buffer = generateNoiseBuffer(type);
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+
+      // Crossfade GainNode for smooth transition
+      const fadeGain = audioCtx.createGain();
+      fadeGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+      fadeGain.gain.exponentialRampToValueAtTime(1.0, audioCtx.currentTime + 0.3);
+
+      source.connect(fadeGain);
+      fadeGain.connect(masterGainNode);
+      source.start();
+
+      return { source: source, fadeGain: fadeGain };
+    }
+
+    function startPlayback() {
+      initAudio();
+      if (isFadingOut) return;
+
+      const nodeObj = createAndStartSource(currentNoiseType);
+      currentSourceNode = nodeObj;
+      isPlaying = true;
+
+      playIcon.classList.add('hidden');
+      pauseIcon.classList.remove('hidden');
+      playStatusText.textContent = '再生中 (クリックで停止)';
+      if (visualizerStatus) visualizerStatus.classList.add('hidden');
+
+      drawVisualizer();
+      startTimerCountdown();
+    }
+
+    function stopPlayback(fadeSeconds) {
+      if (!isPlaying || !currentSourceNode) return;
+
+      const fadeTime = fadeSeconds || 0.1;
+      isFadingOut = true;
+
+      if (currentSourceNode.fadeGain && audioCtx) {
+        currentSourceNode.fadeGain.gain.setValueAtTime(
+          currentSourceNode.fadeGain.gain.value,
+          audioCtx.currentTime
+        );
+        currentSourceNode.fadeGain.gain.exponentialRampToValueAtTime(
+          0.0001,
+          audioCtx.currentTime + fadeTime
+        );
+      }
+
+      setTimeout(function() {
+        if (currentSourceNode && currentSourceNode.source) {
+          try { currentSourceNode.source.stop(); } catch(e) {}
+          try { currentSourceNode.source.disconnect(); } catch(e) {}
+        }
+        currentSourceNode = null;
+        isPlaying = false;
+        isFadingOut = false;
+
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+        playStatusText.textContent = '再生開始 (音量注意)';
+        if (visualizerStatus) visualizerStatus.classList.remove('hidden');
+      }, fadeTime * 1000);
+    }
+
+    function switchNoiseType(newType) {
+      currentNoiseType = newType;
+
+      tabBtns.forEach(function(btn) {
+        if (btn.getAttribute('data-type') === newType) {
+          btn.className = 'noise-tab-btn px-3 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all border-blue-500 bg-blue-600/20 text-white shadow-sm';
+        } else {
+          btn.className = 'noise-tab-btn px-3 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800';
+        }
+      });
+
+      if (isPlaying && audioCtx) {
+        // Crossfade: stop old node, start new node
+        const oldNode = currentSourceNode;
+        if (oldNode && oldNode.fadeGain) {
+          oldNode.fadeGain.gain.setValueAtTime(oldNode.fadeGain.gain.value, audioCtx.currentTime);
+          oldNode.fadeGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+          setTimeout(function() {
+            try { oldNode.source.stop(); } catch(e) {}
+          }, 350);
+        }
+        currentSourceNode = createAndStartSource(currentNoiseType);
+      }
+    }
+
+    // Event Listeners
+    if (playToggleBtn) {
+      playToggleBtn.addEventListener('click', function() {
+        if (isPlaying) {
+          stopPlayback(0.2);
+        } else {
+          startPlayback();
+        }
+      });
+    }
+
+    if (volumeSlider) {
+      volumeSlider.addEventListener('input', function() {
+        masterVolume = parseFloat(volumeSlider.value);
+        const percent = Math.round((masterVolume / 0.60) * 100);
+        volumeDisplay.textContent = percent + '% (出力レベル)';
+        if (masterGainNode && audioCtx) {
+          masterGainNode.gain.setTargetAtTime(masterVolume, audioCtx.currentTime, 0.05);
+        }
+      });
+    }
+
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const type = btn.getAttribute('data-type');
+        switchNoiseType(type);
+      });
+    });
+
+    // Timer controls
+    timerBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        timerBtns.forEach(b => {
+          b.className = 'timer-btn px-2 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800';
+        });
+        btn.className = 'timer-btn px-2 py-2 rounded-xl text-xs font-semibold border border-blue-500 bg-blue-600/30 text-white';
+
+        const timerVal = btn.getAttribute('data-timer');
+        if (timerVal === 'off') {
+          timerDurationMinutes = 0;
+          timerDeadline = 0;
+          timerRemainingDisplay.textContent = '連続再生';
+          if (timerInterval) clearInterval(timerInterval);
+        } else {
+          timerDurationMinutes = parseInt(timerVal, 10);
+          timerDeadline = Date.now() + (timerDurationMinutes * 60 * 1000);
+          startTimerCountdown();
+        }
+      });
+    });
+
+    function startTimerCountdown() {
+      if (timerInterval) clearInterval(timerInterval);
+      if (timerDurationMinutes <= 0 || !isPlaying) return;
+
+      function updateTimer() {
+        const remainingMs = timerDeadline - Date.now();
+        if (remainingMs <= 3000 && remainingMs > 0 && !isFadingOut) {
+          // 3-second gentle fade-out before stop
+          stopPlayback(3.0);
+        }
+        if (remainingMs <= 0) {
+          timerRemainingDisplay.textContent = 'タイマー終了';
+          clearInterval(timerInterval);
+          return;
+        }
+        const totalSec = Math.floor(remainingMs / 1000);
+        const mins = Math.floor(totalSec / 60);
+        const secs = totalSec % 60;
+        timerRemainingDisplay.textContent = '残り ' + mins + ':' + (secs < 10 ? '0' : '') + secs;
+      }
+
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    // Visualizer Canvas Drawing Function
+    function drawVisualizer() {
+      if (!canvasCtx || !isPlaying || !analyserNode) return;
+
+      const bufferLength = analyserNode.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyserNode.getByteFrequencyData(dataArray);
+
+      const width = canvas.width = canvas.parentElement.clientWidth;
+      const height = canvas.height = canvas.parentElement.clientHeight;
+
+      canvasCtx.clearRect(0, 0, width, height);
+
+      const barWidth = (width / bufferLength) * 2;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = (dataArray[i] / 255) * height;
+
+        let fillColor = '#0066cc';
+        if (currentNoiseType === 'pink') fillColor = '#e11d48';
+        if (currentNoiseType === 'brown') fillColor = '#d97706';
+
+        canvasCtx.fillStyle = fillColor;
+        canvasCtx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
+
+        x += barWidth;
+      }
+
+      if (isPlaying) {
+        requestAnimationFrame(drawVisualizer);
+      }
+    }
+  })();
+</script>

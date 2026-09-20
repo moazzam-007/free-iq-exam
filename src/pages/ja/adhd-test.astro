@@ -1,0 +1,640 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { ADHD_QUESTIONS_JA, ADHD_OPTIONS_JA } from '../../scripts/ja/adhd-test/scoring';
+import { JAPANESE_CRISIS_HOTLINES, CLINICAL_DISCLAIMER_JA } from '../../data/ja/mental-health/hotlines';
+
+const title = "ADHD 診断テスト｜大人のADHDセルフチェック（無料） | FreeIQExam";
+const description = "WHO成人ADHD自己記入式症状チェックリスト（ASRS-v1.1・パートA・6問）をもとにした大人向けセルフチェック。日常生活の困りごと傾向を確認。※診断ではありません。";
+const canonicalUrl = "https://freeiqexam.com/ja/adhd-test";
+
+const alternates = {
+  en: "https://freeiqexam.com/adhd-test",
+  ru: "https://freeiqexam.com/ru/adhd-test",
+  id: "https://freeiqexam.com/id/tes-adhd",
+  de: "https://freeiqexam.com/de/adhs-test",
+  nl: "https://freeiqexam.com/nl/adhd-test",
+  fi: "https://freeiqexam.com/fi/adhd-testi",
+  'pt-BR': "https://freeiqexam.com/pt-br/teste-tdah",
+  ja: "https://freeiqexam.com/ja/adhd-test"
+};
+
+const faqItems = [
+  {
+    q: "大人のADHDオンラインセルフチェックの信頼性はどの程度ですか？",
+    a: "本チェックはWHO（世界保健機関）および専門研究グループによって開発された「ASRS-v1.1 パートA」質問票に基づいています。これは大人のADHDスクリーニングにおいて国際的に高い妥当性が実証されたツールですが、確定診断を行うものではありません。確定診断には医師による問診、幼少期からの発達歴の聴取、他疾患の除外を含む総合的な臨床評価が不可欠です。"
+  },
+  {
+    q: "ADD（注意欠陥障害）とADHD（注意欠如・多動症）の違いは何ですか？",
+    a: "かつて多動性を伴わない状態を「ADD」と呼称していましたが、現在の診断基準（DSM-5・ICD-11）ではすべて「ADHD」に統一されています。現在は主に「不注意優勢型（従来のADDに相当）」「多動・衝動性優勢型」「混合型」の3つの臨床像に分類されます。"
+  },
+  {
+    q: "女性の大人のADHDはなぜ見過ごされやすいのですか？",
+    a: "女性のADHDでは目立つ多動行動よりも、不注意、頭の中の多忙感、過剰適応（マスキング）や完璧主義による代償行動として現れる傾向があります。周囲に迷惑をかけまいと無理を重ねるため発見が遅れ、進学・就職・育児などのライフステージの変化を契機に困難が顕在化することが多く見られます。"
+  },
+  {
+    q: "WHO ASRS-v1.1 パートAの6問とはどのような内容ですか？",
+    a: "パートAは18問からなるASRS質問票のうち、成人ADHDのスクリーニングにおいて最も識別力が高い6問（プロジェクトの仕上げ、段取り・整理整頓、約束の記憶、熟考課題の先延ばし、着席時の身体の落ち着きのなさ、内的駆動感）で構成されています。"
+  },
+  {
+    q: "セルフチェックで該当項目が多い傾向が出た場合はどうすればよいですか？",
+    a: "本チェックの結果を客観的な自己理解の記録として活用し、職場や家庭での具体的な困りごとの事例（遅刻、締め切り遅れ、忘れ物など）をメモして、心療内科・精神科や発達障害者支援センターにご相談ください。本スクリーニング結果を持参することで、医師や専門員への状況説明がスムーズになります。"
+  }
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${canonicalUrl}#application`,
+    name: '大人のADHDセルフチェック（WHO ASRS-v1.1）',
+    url: canonicalUrl,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'ja-JP',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' },
+    accessibilitySummary: 'キーボード操作対応（1〜5キー）、セマンティックHTML、プライバシー保護（回答データ保存なし）。'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://freeiqexam.com/ja/' },
+      { '@type': 'ListItem', position: 2, name: '大人のADHDセルフチェック', item: canonicalUrl }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="ja" ogLocale="ja_JP">
+  <Header jaPath="/ja/adhd-test" />
+
+  <main id="main-content" class="flex-1 bg-white text-zinc-950 dark:bg-black dark:text-zinc-50" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Yu Gothic', 'Noto Sans JP', Meiryo, sans-serif; line-height: 1.75; line-break: strict; word-break: normal; overflow-wrap: anywhere;">
+    <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      
+      <!-- Breadcrumb -->
+      <nav aria-label="パンくずリスト" class="mb-6 flex flex-wrap items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+        <a href="/ja/" class="hover:text-blue-600 dark:hover:text-blue-400">ホーム</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" class="text-zinc-900 font-medium dark:text-zinc-100">大人のADHDセルフチェック</span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="mx-auto max-w-3xl text-center">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300">
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          WHO ASRS-v1.1 パートA 標準質問票
+        </div>
+        <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl text-zinc-950 dark:text-white" style="text-wrap: balance;">
+          ADHD 診断テスト｜大人のADHDセルフチェック
+        </h1>
+        <p class="mt-4 text-base text-zinc-600 dark:text-zinc-300 sm:text-lg leading-relaxed">
+          WHO（世界保健機関）成人ADHD自己記入式症状チェックリストに基づく無料スクリーニングツールです。過去6ヶ月間の日常生活や仕事における困りごとの傾向を6問で確認できます。
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">所要時間 約2分</span>
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">完全無料・登録不要</span>
+          <span class="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-800 dark:bg-zinc-900">データ送信・保存なし</span>
+        </div>
+      </header>
+
+      <!-- Prominent Top Disclaimer (Verbatim) -->
+      <div class="mx-auto mt-8 max-w-3xl rounded-2xl border border-amber-200 bg-amber-50/90 p-4.5 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200" role="note">
+        <p class="font-bold flex items-center gap-2">
+          <svg class="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          医療に関する重要な注意事項
+        </p>
+        <p class="mt-2 text-xs sm:text-sm leading-relaxed">{CLINICAL_DISCLAIMER_JA}</p>
+      </div>
+
+      <!-- ADHD Interactive App -->
+      <section id="adhd-app" class="mx-auto mt-8 max-w-3xl" aria-label="ADHDセルフチェックアプリ">
+        <div class="rounded-3xl border border-zinc-200 bg-zinc-50/60 p-5 dark:border-zinc-800 dark:bg-zinc-950/60 sm:p-8">
+          
+          <!-- Intro View -->
+          <div id="adhd-intro-view" class="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900 text-center">
+            <h2 class="text-xl font-bold text-zinc-950 dark:text-white sm:text-2xl">セルフチェックを開始する前に</h2>
+            <p class="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed text-left">
+              過去6ヶ月間のご自身の行動や状態を振り返り、最も当てはまる選択肢をお選びください。全6問の回答を完了すると、WHO基準による傾向の目安が表示されます。
+            </p>
+            <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button id="btn-start" type="button" class="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.97] dark:bg-blue-500 dark:hover:bg-blue-600 min-h-[44px]">
+                チェックを開始する（全6問）
+              </button>
+            </div>
+            <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">キーボード操作：数字キー 1〜5 で回答、← / → で前後の質問へ移動</p>
+          </div>
+
+          <!-- Question View (Hidden initially) -->
+          <div id="adhd-question-view" class="hidden" aria-live="polite">
+            <div class="flex items-center justify-between text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">
+              <span id="question-indicator">第 1 問 / 全 6 問</span>
+              <span id="progress-percent">0% 完了</span>
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800 mb-6">
+              <div id="progress-bar" class="h-full bg-blue-600 dark:bg-blue-500 transition-all duration-300" style="width: 16.6%;"></div>
+            </div>
+
+            <div class="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+              <span id="question-context-tag" class="inline-block rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 mb-3">
+                タスク管理
+              </span>
+              <h2 id="question-text" class="text-lg sm:text-xl font-bold text-zinc-950 dark:text-white leading-snug">
+                質問文
+              </h2>
+              <p class="mt-2 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                ※過去6ヶ月間のご自身の状態に最も当てはまるものを1つ選んでください。
+              </p>
+
+              <!-- Option buttons -->
+              <div id="options-container" class="mt-6 grid gap-3" role="radiogroup" aria-label="回答選択肢">
+                <!-- Dynamically populated via JS -->
+              </div>
+
+              <!-- Navigation Controls -->
+              <div class="mt-6 flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <button id="btn-prev" type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 active:scale-[0.98] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-750 min-h-[44px]">
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
+                  前の質問へ
+                </button>
+                <button id="btn-next" type="button" class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-600 min-h-[44px]">
+                  <span>次の質問へ</span>
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results View (Hidden initially) -->
+          <div id="adhd-result-view" class="hidden" aria-live="polite">
+            <div class="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+              <div class="text-center pb-6 border-b border-zinc-200 dark:border-zinc-800">
+                <span class="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300">
+                  WHO ASRS-v1.1 パートA 判定結果
+                </span>
+                <h2 id="result-title" class="mt-3 text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white">
+                  ADHD傾向の確認結果
+                </h2>
+                <div class="mt-4 inline-flex items-baseline gap-2 rounded-2xl bg-zinc-100 px-6 py-4 dark:bg-zinc-800/80">
+                  <span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">基準値該当項目数：</span>
+                  <span id="result-score" class="text-3xl sm:text-4xl font-black text-blue-600 dark:text-blue-400">0</span>
+                  <span class="text-lg font-bold text-zinc-600 dark:text-zinc-400">/ 6 項目</span>
+                </div>
+                <p id="result-label" class="mt-3 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100"></p>
+              </div>
+
+              <!-- Result explanation narrative -->
+              <div class="mt-6 space-y-4 text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                <p id="result-summary" class="rounded-xl bg-zinc-50 p-4 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800"></p>
+                <div class="rounded-xl border border-blue-200 bg-blue-50/60 p-4 dark:border-blue-900/50 dark:bg-blue-950/30">
+                  <h3 class="font-bold text-blue-950 dark:text-blue-200 text-sm sm:text-base">専門機関受診・今後の目安</h3>
+                  <p id="result-recommendation" class="mt-1 text-xs sm:text-sm text-blue-900 dark:text-blue-300 leading-relaxed"></p>
+                </div>
+              </div>
+
+              <!-- Detailed Item Breakdown (Validated: Lists which items met clinical criteria) -->
+              <div class="mt-8">
+                <h3 class="text-base font-bold text-zinc-950 dark:text-white sm:text-lg">
+                  各項目の回答状況と基準値照合
+                </h3>
+                <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                  ※WHO ASRS-v1.1では、質問1〜3は「時々ある」以上、質問4〜6は「しばしばある」以上の回答が臨床的基準値（濃色領域）としてカウントされます。
+                </p>
+                <div id="item-breakdown-list" class="mt-4 space-y-3">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="mt-8 flex flex-col sm:flex-row gap-3 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+                <button id="btn-print" type="button" class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800 active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 min-h-[44px]">
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.5A1.75 1.75 0 0116.75 8H17a2 2 0 012 2v5a2 2 0 01-2 2h-1v-2.25A1.75 1.75 0 0014.25 13h-8.5A1.75 1.75 0 004 14.75V17H3a2 2 0 01-2-2v-5a2 2 0 012-2h.25A1.75 1.75 0 015 6.25v-3.5zm1.5 0v3.5h7v-3.5h-7zM4 14.75c0-.138.112-.25.25-.25h11.5c.138 0 .25.112.25.25V18H4v-3.25z" clip-rule="evenodd" /></svg>
+                  結果を印刷・PDF保存
+                </button>
+                <button id="btn-retake" type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 active:scale-[0.98] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-750 min-h-[44px]">
+                  もう一度チェックする
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Prominent Bottom Disclaimer (Verbatim) -->
+      <div class="mx-auto mt-8 max-w-3xl rounded-2xl border border-amber-200 bg-amber-50/90 p-4.5 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200" role="note">
+        <p class="font-bold flex items-center gap-2">
+          <svg class="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          医療に関する免責事項
+        </p>
+        <p class="mt-2 text-xs sm:text-sm leading-relaxed">{CLINICAL_DISCLAIMER_JA}</p>
+      </div>
+
+      <!-- Educational Content Guide -->
+      <article class="mx-auto mt-16 max-w-3xl space-y-12">
+        
+        <!-- Section 1: Daily Challenges of Adult ADHD -->
+        <section>
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.75 4.75a.75.75 0 00-1.5 0v4.5c0 .414.336.75.75.75h3.5a.75.75 0 000-1.5h-2.75V6.75z" /></svg>
+            特性の理解
+          </div>
+          <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            大人のADHDの日常的な困りごとと特徴
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+            大人のADHD（注意欠如・多動症）は、意志の弱さや努力不足によるものではなく、脳の実行機能（行動の計画、注意の配分、衝動の抑制などを司る働き）の特性に起因する神経発達症のひとつです。社会人になって責任やタスクが増加したことで、以下のような困りごととして顕在化することが多く見られます。
+          </p>
+          <div class="mt-6 grid gap-4 sm:grid-cols-3">
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base">職場のタスク管理</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                複数の業務が重なると優先順位づけが混乱し、重要書類の紛失や締切直前の慌ただしさ、ケアレスミスが生じやすくなります。
+              </p>
+            </div>
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base">先延ばしと着手困難</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                熟考や手順を要する作業に対し、取りかかるハードルが極端に高く感じられ、直前まで先延ばしにしてしまう傾向があります。
+              </p>
+            </div>
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base">集中力維持と過集中</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                興味が持てない作業では周囲の物音で気が散りやすい一方、興味のある事柄には時間を忘れて没頭し体力を消耗することがあります。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Clinical Pathway in Japan -->
+        <section>
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clip-rule="evenodd" /></svg>
+            相談と受診
+          </div>
+          <h2 class="mt-2 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            日本の専門機関受診の流れとサポート窓口
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+            日常生活や就労環境で困りごとが継続している場合、専門の医療機関や公的相談機関を活用することで、特性に合わせた環境調整や心理的負担の軽減が期待できます。
+          </p>
+          <div class="mt-6 space-y-4">
+            <div class="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg">1. 心療内科・精神科（大人の発達障害外来）</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                精神科医による問診、心理検査（WAIS知能検査等）、幼少期の通知表や保護者からの情報をもとに総合的な診断が行われます。必要に応じて環境調整のアドバイスや薬物療法（注意機能改善薬等）が検討されます。
+              </p>
+            </div>
+            <div class="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+              <h3 class="font-bold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg">2. 発達障害者支援センター</h3>
+              <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                各都道府県・政令指定都市に設置されている公的専門機関です。診断の有無にかかわらず、生活や就労に関する相談、専門医療機関の情報提供、職場定着支援などを無料で受けることができます。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: References & Citations -->
+        <section class="border-t border-zinc-200 pt-8 dark:border-zinc-800">
+          <h2 class="text-xl font-bold text-zinc-950 dark:text-white">出典 / 参考文献</h2>
+          <ul class="mt-4 space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <li>
+              ・Kessler, R. C., Adler, L., Ames, M., Demler, O., Faraone, S. V., Hiripi, E., Howes, M. J., Jin, R., Secnik, K., Spencer, T., Ustun, T. B., & Walters, E. E. (2005). The World Health Organization Adult ADHD Self-Report Scale (ASRS): a short screening scale for use in the general population. <em>Psychological Medicine</em>, 35(2), 245–256.
+            </li>
+            <li>
+              ・American Psychiatric Association. (2013). <em>Diagnostic and Statistical Manual of Mental Disorders (5th ed.)</em> (DSM-5). Arlington, VA.
+            </li>
+            <li>
+              ・厚生労働省. 発達障害者支援法および大人の発達障害に関する施策情報.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Section 4: Accessible FAQ Accordion (5 Q&As) -->
+        <section class="border-t border-zinc-200 pt-8 dark:border-zinc-800">
+          <h2 class="text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl" style="text-wrap: balance;">
+            よくある質問（FAQ）
+          </h2>
+          <div class="mt-6 space-y-3">
+            {faqItems.map((item, idx) => (
+              <details class="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 transition-colors">
+                <summary class="flex cursor-pointer list-none items-center justify-between font-bold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg">
+                  <span>{item.q}</span>
+                  <span class="ml-4 shrink-0 transition-transform duration-200 group-open:rotate-180">
+                    <svg class="h-5 w-5 text-zinc-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </summary>
+                <p class="mt-4 text-sm sm:text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  {item.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+
+  <Footer />
+
+  <!-- ADHD Screener Client Script -->
+  <script is:inline>
+    (() => {
+      'use strict';
+
+      const QUESTIONS = [
+        {
+          id: 1,
+          text: '物事の段取りをつけたり、細かい詰めの段階で、最後までやり遂げるのが難しいと感じることがありますか？',
+          context: 'プロジェクトの仕上げ・細部の完遂',
+          shadedThreshold: 2
+        },
+        {
+          id: 2,
+          text: '計画性を要する作業を行う際、物事を順番に進めることが難しいと感じることがありますか？',
+          context: 'タスクの順序立て・段取り',
+          shadedThreshold: 2
+        },
+        {
+          id: 3,
+          text: '約束やしなければならない用事を忘れてしまうことがありますか？',
+          context: '約束・スケジュールの記憶',
+          shadedThreshold: 2
+        },
+        {
+          id: 4,
+          text: 'じっくりと考える必要がある作業を始めるのを避けたり、先延ばしにしたりすることがありますか？',
+          context: '集中を要する作業の着手・先延ばし',
+          shadedThreshold: 3
+        },
+        {
+          id: 5,
+          text: '長時間座っていなければならないとき、手足をそわそわ動かしたり、体をゆすったりすることがありますか？',
+          context: '着席時の身体的そわそわ・微細運動',
+          shadedThreshold: 3
+        },
+        {
+          id: 6,
+          text: 'まるで「何かに駆り立てられている」かのように、過剰に活動的になったり、じっとしていられなくなったりすることがありますか？',
+          context: '内的駆動感・過剰な活動性',
+          shadedThreshold: 3
+        }
+      ];
+
+      const OPTIONS = [
+        { value: 0, label: '全くない' },
+        { value: 1, label: 'めったにない' },
+        { value: 2, label: '時々ある' },
+        { value: 3, label: 'しばしばある' },
+        { value: 4, label: '非常に頻繁にある' }
+      ];
+
+      // Pure in-memory state - ZERO persistence to localStorage / cookies
+      const state = {
+        currentIndex: 0,
+        answers: {}
+      };
+
+      const introView = document.getElementById('adhd-intro-view');
+      const questionView = document.getElementById('adhd-question-view');
+      const resultView = document.getElementById('adhd-result-view');
+      const btnStart = document.getElementById('btn-start');
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      const btnRetake = document.getElementById('btn-retake');
+      const btnPrint = document.getElementById('btn-print');
+      const optionsContainer = document.getElementById('options-container');
+
+      function showQuestion(index) {
+        state.currentIndex = index;
+        const q = QUESTIONS[index];
+        const currentAnswer = state.answers[q.id];
+
+        document.getElementById('question-indicator').textContent = `第 ${index + 1} 問 / 全 ${QUESTIONS.length} 問`;
+        const progressPct = Math.round(((index + 1) / QUESTIONS.length) * 100);
+        document.getElementById('progress-percent').textContent = `${progressPct}% 完了`;
+        document.getElementById('progress-bar').style.width = `${progressPct}%`;
+        document.getElementById('question-context-tag').textContent = q.context;
+        document.getElementById('question-text').textContent = q.text;
+
+        btnPrev.disabled = index === 0;
+        btnPrev.style.visibility = index === 0 ? 'hidden' : 'visible';
+
+        // Render options
+        optionsContainer.innerHTML = '';
+        OPTIONS.forEach((opt, optIdx) => {
+          const isSelected = currentAnswer === opt.value;
+          const isShadedOption = opt.value >= q.shadedThreshold;
+          
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `flex w-full items-center justify-between rounded-xl border p-4 text-left text-sm sm:text-base font-medium transition min-h-[48px] active:scale-[0.98] ${
+            isSelected
+              ? 'border-blue-600 bg-blue-50/80 text-blue-950 font-bold dark:border-blue-500 dark:bg-blue-950/40 dark:text-blue-100 ring-2 ring-blue-500/20'
+              : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-850 dark:text-zinc-200 dark:hover:border-zinc-700'
+          }`;
+          
+          btn.innerHTML = `
+            <span class="flex items-center gap-3">
+              <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                isSelected
+                  ? 'bg-blue-600 text-white dark:bg-blue-500'
+                  : 'border border-zinc-300 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400'
+              }">${optIdx + 1}</span>
+              <span>${opt.label}</span>
+            </span>
+            ${
+              isShadedOption
+                ? `<span class="text-xs px-2 py-0.5 rounded font-normal ${isSelected ? 'bg-blue-200/60 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'}">基準値</span>`
+                : ''
+            }
+          `;
+
+          btn.addEventListener('click', () => {
+            selectOption(q.id, opt.value);
+          });
+
+          optionsContainer.appendChild(btn);
+        });
+
+        const hasAnswered = currentAnswer !== undefined;
+        btnNext.disabled = !hasAnswered;
+        btnNext.querySelector('span').textContent = index === QUESTIONS.length - 1 ? '結果を表示する' : '次の質問へ';
+      }
+
+      function selectOption(qId, val) {
+        state.answers[qId] = val;
+        showQuestion(state.currentIndex);
+
+        // Auto advance after brief delay for smooth tactile flow
+        setTimeout(() => {
+          if (state.currentIndex < QUESTIONS.length - 1) {
+            showQuestion(state.currentIndex + 1);
+          } else {
+            showResults();
+          }
+        }, 220);
+      }
+
+      function calculateScore() {
+        let shadedCount = 0;
+        const itemResults = [];
+
+        for (const q of QUESTIONS) {
+          const val = state.answers[q.id] ?? 0;
+          const isShaded = val >= q.shadedThreshold;
+          if (isShaded) shadedCount++;
+
+          const opt = OPTIONS.find(o => o.value === val) || OPTIONS[0];
+          itemResults.push({
+            questionId: q.id,
+            questionText: q.text,
+            context: q.context,
+            responseLabel: opt.label,
+            isShaded,
+            thresholdLabel: q.shadedThreshold === 2 ? '「時々ある」以上' : '「しばしばある」以上'
+          });
+        }
+
+        const isPositive = shadedCount >= 4;
+        return {
+          shadedCount,
+          isPositive,
+          itemResults
+        };
+      }
+
+      function showResults() {
+        questionView.classList.add('hidden');
+        resultView.classList.remove('hidden');
+
+        const { shadedCount, isPositive, itemResults } = calculateScore();
+
+        document.getElementById('result-score').textContent = shadedCount;
+        const resultLabelEl = document.getElementById('result-label');
+        const resultSummaryEl = document.getElementById('result-summary');
+        const resultRecommendationEl = document.getElementById('result-recommendation');
+
+        if (isPositive) {
+          resultLabelEl.textContent = 'ADHDの症状と一致する項目が多い傾向（基準値該当 4項目以上）';
+          resultLabelEl.className = 'mt-3 text-base sm:text-lg font-bold text-amber-700 dark:text-amber-400';
+          resultSummaryEl.textContent = `WHO ASRS-v1.1の基準において、6項目中 ${shadedCount} 項目が基準値（濃色領域）を満たしています。大人のADHDに見られる特徴的な困りごとと一致する傾向が強く示唆されます。`;
+          resultRecommendationEl.textContent = '日常生活や仕事、人間関係で困りごとが続いている場合は、自己判断せず、心療内科や精神科、または大人の発達障害専門外来へのご相談をご検討ください。本チェック結果をメモして持参いただくことで、医師への問診がスムーズになります。';
+        } else {
+          resultLabelEl.textContent = 'ADHDの症状と一致する項目は少ない傾向（基準値該当 3項目以下）';
+          resultLabelEl.className = 'mt-3 text-base sm:text-lg font-bold text-blue-700 dark:text-blue-400';
+          resultSummaryEl.textContent = `WHO ASRS-v1.1の基準において、6項目中 ${shadedCount} 項目が基準値を満たしています。現時点の回答では、大人のADHDに特徴的な症状の該当数は低〜中程度の範囲にとどまっています。`;
+          resultRecommendationEl.textContent = 'スコアが基準値未満であっても、集中力の低下や先延ばし、疲労感などで日常生活に支障をきたしている場合は、睡眠障害、ストレス、うつ状態など他の要因も考えられます。心身の不調が続く場合は医療機関にご相談ください。';
+        }
+
+        // Render item breakdown list
+        const breakdownContainer = document.getElementById('item-breakdown-list');
+        breakdownContainer.innerHTML = '';
+        itemResults.forEach((item) => {
+          const div = document.createElement('div');
+          div.className = `flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl border p-3.5 text-xs sm:text-sm ${
+            item.isShaded
+              ? 'border-amber-200 bg-amber-50/50 dark:border-amber-900/40 dark:bg-amber-950/20'
+              : 'border-zinc-200 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/30'
+          }`;
+          div.innerHTML = `
+            <div class="flex-1">
+              <span class="font-bold text-zinc-900 dark:text-zinc-100">問${item.questionId}. ${item.context}</span>
+              <p class="text-zinc-600 dark:text-zinc-400 text-xs mt-0.5">${item.questionText}</p>
+            </div>
+            <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+              <span class="rounded bg-white px-2.5 py-1 font-semibold text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">${item.responseLabel}</span>
+              ${
+                item.isShaded
+                  ? '<span class="rounded bg-amber-100 px-2 py-1 text-xs font-bold text-amber-800 dark:bg-amber-900/60 dark:text-amber-200">基準値該当</span>'
+                  : '<span class="rounded bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">非該当</span>'
+              }
+            </div>
+          `;
+          breakdownContainer.appendChild(div);
+        });
+
+        // Scroll smoothly to results
+        resultView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Event Listeners
+      if (btnStart) {
+        btnStart.addEventListener('click', () => {
+          introView.classList.add('hidden');
+          questionView.classList.remove('hidden');
+          showQuestion(0);
+        });
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          if (state.currentIndex > 0) {
+            showQuestion(state.currentIndex - 1);
+          }
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          if (state.currentIndex < QUESTIONS.length - 1) {
+            showQuestion(state.currentIndex + 1);
+          } else {
+            showResults();
+          }
+        });
+      }
+
+      if (btnRetake) {
+        btnRetake.addEventListener('click', () => {
+          state.currentIndex = 0;
+          state.answers = {};
+          resultView.classList.add('hidden');
+          introView.classList.remove('hidden');
+          introView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+
+      if (btnPrint) {
+        btnPrint.addEventListener('click', () => {
+          window.print();
+        });
+      }
+
+      // Keyboard navigation
+      window.addEventListener('keydown', (e) => {
+        if (questionView && !questionView.classList.contains('hidden')) {
+          if (['1', '2', '3', '4', '5'].includes(e.key)) {
+            const optVal = parseInt(e.key, 10) - 1;
+            const q = QUESTIONS[state.currentIndex];
+            selectOption(q.id, optVal);
+          } else if (e.key === 'ArrowLeft' && state.currentIndex > 0) {
+            showQuestion(state.currentIndex - 1);
+          } else if (e.key === 'ArrowRight' && state.answers[QUESTIONS[state.currentIndex].id] !== undefined) {
+            if (state.currentIndex < QUESTIONS.length - 1) {
+              showQuestion(state.currentIndex + 1);
+            } else {
+              showResults();
+            }
+          }
+        }
+      });
+
+    })();
+  </script>
+</Layout>

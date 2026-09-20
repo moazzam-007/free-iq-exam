@@ -1,0 +1,558 @@
+---
+// Japanese Reflex Test
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import FooterJa from '../../components/ja/FooterJa.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/reaction-time-test',
+  'ru': 'https://freeiqexam.com/ru/reaction-time-test',
+  'ja': 'https://freeiqexam.com/ja/reflex-test',
+};
+
+const title = "反射神経テスト｜反応速度をミリ秒で測定 | FreeIQExam";
+const description = "画面が緑に変わったらすぐクリック！5回の平均でミリ秒単位の視覚反応速度を測定。ディスプレイ遅延を考慮したリアルな目安判定。";
+const canonicalUrl = "https://freeiqexam.com/ja/reflex-test";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam 反射神経テスト（反応速度測定）",
+    "url": canonicalUrl,
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "All",
+    "inLanguage": "ja",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+    "featureList": [
+      "5回の試行でミリ秒単位の視覚反応速度を平均",
+      "performance.now() による単調時計タイミング",
+      "お手付き（赤画面クリック）の検出と再試行",
+      "標準偏差による安定性評価",
+      "ディスプレイ遅延を考慮した目安判定"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://freeiqexam.com/ja" },
+      { "@type": "ListItem", "position": 2, "name": "反射神経テスト", "item": canonicalUrl }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="ja">
+  <Header currentPath="/ja/reflex-test" />
+
+  <style>
+    .reaction-arena {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      transition: transform 90ms ease-out, background 120ms ease-out;
+    }
+    .reaction-arena:active { transform: scale(0.997); }
+
+    .state-start { background: radial-gradient(circle at 50% 25%, #2563eb 0%, #1d4ed8 62%, #1e40af 100%); }
+    .dark .state-start { background: radial-gradient(circle at 50% 25%, #1d4ed8 0%, #0f172a 70%, #09090b 100%); }
+    .state-waiting { background: radial-gradient(circle at 50% 25%, #e11d48 0%, #be123c 62%, #9f1239 100%); }
+    .dark .state-waiting { background: radial-gradient(circle at 50% 25%, #be123c 0%, #881337 68%, #4c0519 100%); }
+    .state-active { background: radial-gradient(circle at 50% 25%, #10b981 0%, #059669 62%, #047857 100%); }
+    .dark .state-active { background: radial-gradient(circle at 50% 25%, #10b981 0%, #047857 68%, #064e3b 100%); }
+    .state-toosoon { background: radial-gradient(circle at 50% 25%, #f97316 0%, #ea580c 65%, #c2410c 100%); }
+    .dark .state-toosoon { background: radial-gradient(circle at 50% 25%, #ea580c 0%, #9a3412 68%, #431407 100%); }
+    .state-result { background: radial-gradient(circle at 50% 25%, #38bdf8 0%, #0284c7 65%, #0369a1 100%); }
+    .dark .state-result { background: radial-gradient(circle at 50% 25%, #0ea5e9 0%, #0369a1 68%, #082f49 100%); }
+    .state-summary { background: #fafafa; }
+    .dark .state-summary { background: #09090b; }
+
+    .summary-card { background: rgba(255,255,255,0.97); border: 1px solid #e4e4e7; backdrop-filter: blur(16px); }
+    .dark .summary-card { background: rgba(18,18,21,0.97); border-color: #27272a; }
+
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .faq-chevron { transform: rotate(180deg); }
+
+    @keyframes reaction-shake {
+      10%, 90% { transform: translateX(-2px); }
+      20%, 80% { transform: translateX(4px); }
+      30%, 50%, 70% { transform: translateX(-6px); }
+      40%, 60% { transform: translateX(6px); }
+    }
+    .animate-reaction-shake { animation: reaction-shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+    @media (prefers-reduced-motion: reduce) { .animate-reaction-shake { animation: none; } }
+  </style>
+
+  <main class="min-h-screen flex-1 w-full bg-white dark:bg-black">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+
+      <nav class="flex items-center gap-2 mb-8 text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400" aria-label="パンくずリスト">
+        <a href="/ja" class="hover:text-zinc-950 dark:hover:text-white transition-colors">ホーム</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-zinc-900 dark:text-zinc-100">反射神経テスト</span>
+      </nav>
+
+      <header class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40 px-4 py-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+          <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse" aria-hidden="true"></span>
+          <span>知覚速度 · 反応時間</span>
+        </div>
+        <h1 class="font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+          反射神経テスト
+        </h1>
+        <p class="mt-5 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          画面が赤から緑に変わった瞬間を待ち、できるだけ速くクリック・タップ・スペースキーを押してください。
+          5回の有効試行から平均反応時間・標準偏差・目安ランクを算出します。
+        </p>
+      </header>
+
+      <section aria-labelledby="arena-heading" class="max-w-3xl mx-auto">
+        <h2 id="arena-heading" class="sr-only">インタラクティブ反射神経テスト</h2>
+
+        <div class="flex items-center justify-between gap-4 px-1 mb-4 text-sm sm:text-base">
+          <div class="flex items-center gap-2">
+            <span class="text-zinc-500 dark:text-zinc-400 font-medium">試行</span>
+            <strong id="hud-round-counter" class="text-zinc-950 dark:text-white">0 / 5</strong>
+          </div>
+          <div class="flex items-center gap-3 sm:gap-5">
+            <div class="flex items-center gap-2">
+              <span class="text-zinc-500 dark:text-zinc-400 font-medium">自己ベスト</span>
+              <strong id="hud-personal-best" class="text-emerald-600 dark:text-emerald-400">—</strong>
+            </div>
+            <button id="btn-sound-toggle" type="button" aria-pressed="false" aria-label="効果音の切り替え"
+              class="inline-flex items-center gap-2 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-2.5 font-semibold text-zinc-800 dark:text-zinc-200 transition-smooth hover:scale-[1.02] active:scale-[0.98]">
+              <span id="sound-icon" aria-hidden="true" class="inline-flex">
+                <svg id="sound-icon-on" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>
+                <svg id="sound-icon-off" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z" /><line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" /></svg>
+              </span>
+              <span id="sound-label">音</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-4 flex items-center gap-2" aria-label="試行の進捗">
+          <span id="pill-trial-1" class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"></span>
+          <span id="pill-trial-2" class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"></span>
+          <span id="pill-trial-3" class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"></span>
+          <span id="pill-trial-4" class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"></span>
+          <span id="pill-trial-5" class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-800"></span>
+        </div>
+
+        <div id="reaction-box" role="button" tabindex="0" aria-label="反射神経テスト。緑に変わったらクリックしてください。" aria-busy="false"
+          class="reaction-arena state-start relative min-h-[430px] sm:min-h-[500px] rounded-[2rem] overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/40 shadow-2xl">
+
+          <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,.18),transparent_34%),radial-gradient(circle_at_50%_100%,rgba(0,0,0,.16),transparent_60%)]"></div>
+
+          <div id="content-start" class="relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg">
+              <svg class="w-10 h-10 sm:w-12 sm:h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            </div>
+            <div class="space-y-3 max-w-xl">
+              <h3 class="text-3xl sm:text-5xl font-extrabold tracking-tight">クリックして開始</h3>
+              <p class="text-base sm:text-lg leading-relaxed text-white/90">緑になるのを待って、すぐに反応してください。お手付き（フライング）は5回の有効試行に数えません。</p>
+            </div>
+            <div class="inline-flex flex-wrap items-center justify-center gap-2 rounded-full bg-white/15 border border-white/20 px-5 py-3 text-sm font-semibold">
+              <span>キーボード:</span>
+              <kbd class="rounded-lg bg-white/20 px-3 py-1 font-mono">SPACE</kbd>
+              <span>または</span>
+              <kbd class="rounded-lg bg-white/20 px-3 py-1 font-mono">ENTER</kbd>
+            </div>
+          </div>
+
+          <div id="content-waiting" class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white">
+            <div class="flex items-center gap-3" aria-hidden="true">
+              <span class="w-4 h-4 rounded-full bg-white animate-ping"></span>
+              <span class="w-4 h-4 rounded-full bg-white animate-ping [animation-delay:150ms]"></span>
+              <span class="w-4 h-4 rounded-full bg-white animate-ping [animation-delay:300ms]"></span>
+            </div>
+            <div>
+              <h3 class="text-4xl sm:text-6xl font-extrabold tracking-tight uppercase">緑になるのを待って…</h3>
+              <p class="mt-3 text-base sm:text-lg text-white/85">先回りせず、指は準備したまま押さないでください。</p>
+            </div>
+          </div>
+
+          <div id="content-active" class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center text-white">
+            <div class="w-20 h-20 rounded-full bg-white/25 border border-white/30 flex items-center justify-center shadow-2xl">
+              <svg class="w-12 h-12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            </div>
+            <div>
+              <h3 class="text-5xl sm:text-7xl font-extrabold tracking-tight uppercase">今すぐクリック！</h3>
+              <p class="mt-3 text-sm sm:text-base font-semibold uppercase tracking-widest text-white/90">タップ・クリック・SPACE・ENTER</p>
+            </div>
+          </div>
+
+          <div id="content-toosoon" class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-5 px-6 sm:px-10 text-center text-white animate-reaction-shake">
+            <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+              <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3.732 1.732 3z" /></svg>
+            </div>
+            <h3 class="text-4xl sm:text-5xl font-extrabold tracking-tight">お手付き！</h3>
+            <p class="text-base sm:text-lg text-white/90 max-w-xl">赤い画面の間にクリックしました。この試行は破棄され、同じラウンドをやり直します。</p>
+            <span class="rounded-full bg-white px-6 py-3 font-bold text-orange-700 shadow-xl">タップで再試行</span>
+          </div>
+
+          <div id="content-result" class="hidden relative z-10 h-full min-h-[430px] sm:min-h-[500px] flex flex-col items-center justify-center gap-5 px-6 sm:px-10 text-center text-white">
+            <span id="result-round-indicator" class="rounded-full bg-white/20 px-4 py-2 text-sm font-semibold uppercase tracking-wider">ラウンド 1 / 5</span>
+            <div class="flex items-baseline gap-2">
+              <span id="round-ms-display" class="text-6xl sm:text-8xl font-extrabold tracking-tight">250</span>
+              <span class="text-2xl sm:text-3xl font-mono font-bold text-white/80">ms</span>
+            </div>
+            <p id="round-quick-feedback" class="text-base sm:text-lg font-semibold text-white/90">強い視覚反応です。</p>
+            <span class="rounded-full bg-white px-7 py-3.5 text-base font-bold text-sky-700 shadow-xl">クリックして続行</span>
+          </div>
+
+          <div id="content-summary" class="hidden relative z-10 w-full min-h-[430px] sm:min-h-[500px] flex items-center justify-center p-4 sm:p-8">
+            <div class="summary-card w-full max-w-xl rounded-[2rem] p-6 sm:p-8 text-zinc-900 dark:text-white shadow-2xl">
+              <div class="mx-auto w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <h3 class="mt-4 text-2xl sm:text-3xl font-bold text-center tracking-tight">測定完了</h3>
+              <p class="mt-1 text-base text-zinc-500 dark:text-zinc-400 text-center">5回の有効試行 · 平均視覚反応時間</p>
+
+              <div class="mt-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-5 text-center">
+                <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">平均反応時間</p>
+                <div class="mt-2 flex items-baseline justify-center gap-2">
+                  <span id="final-avg-ms" class="text-6xl sm:text-7xl font-extrabold tracking-tight text-sky-600 dark:text-sky-400">250</span>
+                  <span class="text-2xl font-mono font-bold text-zinc-500">ms</span>
+                </div>
+                <div class="mt-2 flex items-center justify-center gap-2">
+                  <span class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">標準偏差</span>
+                  <span id="final-sd-ms" class="text-sm font-mono font-bold text-zinc-800 dark:text-zinc-200">±0ms</span>
+                </div>
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+                  <span id="final-tier-badge" class="rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">平均的</span>
+                </div>
+              </div>
+
+              <div class="mt-5">
+                <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-center text-zinc-500 dark:text-zinc-400">各試行の速度</p>
+                <div id="summary-trials-grid" class="grid grid-cols-5 gap-2 text-center font-mono text-sm"></div>
+              </div>
+
+              <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button id="btn-share-score" type="button" class="rounded-full border border-blue-600 bg-blue-600 px-6 py-3.5 text-base font-semibold text-white transition-smooth hover:scale-[1.02] active:scale-[0.98] hover:bg-blue-500">
+                  <span id="share-btn-text">結果をコピー</span>
+                </button>
+                <button id="btn-restart-game" type="button" class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3.5 text-base font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth hover:scale-[1.02] active:scale-[0.98] hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                  もう一度測定
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-4 text-center text-sm sm:text-base text-zinc-500 dark:text-zinc-400">
+          計測値＝ブラウザが表示する刺激から入力までの遅延です。ディスプレイの描画・ブラウザのスケジューリング・入力機器の遅延が結果に影響します。
+        </p>
+      </section>
+
+      <section class="mt-20 sm:mt-28 border-t border-zinc-200 dark:border-zinc-800 pt-16 sm:pt-20 max-w-3xl mx-auto">
+        <p class="text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">神経メカニズム · 目安判定</p>
+        <h2 class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">視覚刺激から筋収縮まで：反射の神経経路</h2>
+
+        <p class="mt-6 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          視覚反応は、網膜に光が当たることで始まります。桿体と錐体が光を膜電位の変化に変換する「光変換」は生化学的な過程のため、視覚は信号が視神経を伝わる前に初期処理コストを必要とします。その後、視床の外側膝状体（LGN）や後頭葉の一次視覚野（V1）を経由し、注意と行動選択のネットワークが「反応すべき刺激である」と判断します。
+        </p>
+        <p class="mt-5 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          簡略化した経路は
+          <strong class="text-zinc-900 dark:text-white">網膜 → 視神経 → LGN → V1 → 注意・行動ネットワーク → 運動野 → 皮質脊髄路 → 脊髄運動ニューロン → 指の筋肉 → 入力機器</strong>
+          です。太い有髄軸索は好条件下で約100m/sで興奮を伝えますが、シナプス・感覚変換・判断・筋収縮・デバイスの処理がすべて加算されます。
+        </p>
+
+        <div class="mt-7 rounded-3xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/25 p-6 sm:p-7">
+          <p class="text-sm font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">目安ランク（オンライン実測ベース）</p>
+          <p class="mt-3 text-sm sm:text-base leading-relaxed">オンラインの中央値は60Hzディスプレイとブラウザ遅延の影響で約270msです。以下の帯はあくまで目安です。</p>
+          <ul class="mt-4 space-y-2 text-sm sm:text-base">
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span><strong>200ms未満：</strong>非常に速い</li>
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span><strong>200〜250ms：</strong>速い</li>
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400 inline-block"></span><strong>250〜300ms：</strong>平均的（人間のベースライン）</li>
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span><strong>300ms超：</strong>ゆっくり</li>
+          </ul>
+        </div>
+
+        <div class="mt-7 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6 sm:p-7">
+          <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">測定上の注意</p>
+          <p class="mt-3">60Hzディスプレイの描画遅延（約16.67ms）や入力機器の遅延は全員に加わります。これは臨床的な神経検査ではなく、あくまでパフォーマンス測定です。</p>
+        </div>
+      </section>
+
+      <section class="max-w-3xl mx-auto pt-16 border-t border-zinc-200 dark:border-zinc-800 mt-16">
+        <div class="mb-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">よくある質問</div>
+          <h2 class="font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">反射神経テストに関するQ&amp;A</h2>
+        </div>
+        <div class="space-y-3">
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>オンラインの反射神経テストで良いスコアとは？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">単純視覚反応課題では多くの健康な成人が200ms後半前後に収まります。ただし60Hzディスプレイやブラウザ遅延の影響でオンラインの中央値は約270msです。220ms未満は速い部類、300ms超はゆっくりな部類の目安です。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>スマホとPCで結果が大きく違うのはなぜ？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">スマホはディスプレイの描画周期・タッチパネルのデジタイザ・OS処理・ブラウザのスケジューリングなどで遅延が増えることがあります。高リフレッシュのPCと低遅延の有線マウスの方が入力経路が短く安定しやすいです。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>人間の反応速度の生物学的限界はある？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">神経伝達は有髄軸索で約100m/sに達しますが、光変換・シナプス伝達・運動準備・筋収縮などに各々数〜数十msかかるため、健康な単純反応の下限はおおよそ150〜200msあたりとされます。それ未満の数字はお手付き・計測誤差・タイミングずれの可能性が高いです。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>お手付き（フライング）をするとどうなる？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">赤い画面のうちに入力すると、その試行は記録せずに破棄して同じラウンドをやり直します。これは「待てない人」が人工的に高速な数字を出すのを防ぎ、スコアの信頼性を保つためです。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>反応時間を鍛えることはできる？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">練習により「いつ緑になるか」の予測が効くため短縮することはありますが、これは知覚反応というよりタイミング予測の改善です。ランダム間隔を保つ本テストは、そうした予測をできる限り排除して素の知覚速度を見ようとしています。</p>
+          </details>
+        </div>
+      </section>
+
+      <FooterJa />
+
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const TOTAL = 5;
+      const MIN_DELAY = 1500, MAX_DELAY = 4500;
+
+      const box = document.getElementById('reaction-box');
+      const el = {
+        start: document.getElementById('content-start'),
+        waiting: document.getElementById('content-waiting'),
+        active: document.getElementById('content-active'),
+        toosoon: document.getElementById('content-toosoon'),
+        result: document.getElementById('content-result'),
+        summary: document.getElementById('content-summary'),
+        roundCounter: document.getElementById('hud-round-counter'),
+        personalBest: document.getElementById('hud-personal-best'),
+        roundIndicator: document.getElementById('result-round-indicator'),
+        roundMs: document.getElementById('round-ms-display'),
+        roundFeedback: document.getElementById('round-quick-feedback'),
+        finalAvg: document.getElementById('final-avg-ms'),
+        finalSd: document.getElementById('final-sd-ms'),
+        finalTier: document.getElementById('final-tier-badge'),
+        trialsGrid: document.getElementById('summary-trials-grid'),
+        shareBtn: document.getElementById('btn-share-score'),
+        shareText: document.getElementById('share-btn-text'),
+        restartBtn: document.getElementById('btn-restart-game'),
+        soundToggle: document.getElementById('btn-sound-toggle'),
+        soundLabel: document.getElementById('sound-label'),
+        soundIconOn: document.getElementById('sound-icon-on'),
+        soundIconOff: document.getElementById('sound-icon-off'),
+        pills: ['pill-trial-1','pill-trial-2','pill-trial-3','pill-trial-4','pill-trial-5'].map(id => document.getElementById(id)),
+      };
+
+      let soundOn = true;
+      let state = 'start';
+      let results = [];
+      let startTime = 0;
+      let waitTimer = null;
+      let rafId = null;
+      let pendingInput = false;
+
+      function setState(next) {
+        state = next;
+        box.className = box.className.replace(/state-\w+/g, '').trim();
+        box.classList.add('state-' + next);
+        ['start','waiting','active','toosoon','result','summary'].forEach(s => {
+          el[s].classList.toggle('hidden', s !== next);
+        });
+        box.setAttribute('aria-busy', next === 'waiting' ? 'true' : 'false');
+      }
+
+      function playBeep(type) {
+        if (!soundOn) return;
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          if (type === 'go') { osc.frequency.value = 880; }
+          else if (type === 'tooSoon') { osc.frequency.value = 160; }
+          else if (type === 'result') { osc.frequency.value = 1320; }
+          else if (type === 'done') { osc.frequency.value = 1046; }
+          gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.15);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.18);
+        } catch (e) {}
+      }
+
+      function tierFor(avg) {
+        if (avg < 200) return { label: '非常に速い', cls: 'text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40' };
+        if (avg < 250) return { label: '速い', cls: 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40' };
+        if (avg < 300) return { label: '平均的', cls: 'text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800' };
+        return { label: 'ゆっくり', cls: 'text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40' };
+      }
+
+      function quickFeedback(ms) {
+        if (ms < 200) return '非常に速い視覚反応です。';
+        if (ms < 250) return '速い視覚反応です。';
+        if (ms < 300) return '平均的な視覚反応です。';
+        return 'ややゆっくり目の反応です。';
+      }
+
+      function beginRound() {
+        setState('waiting');
+        el.roundCounter.textContent = `${Math.min(results.length + 1, TOTAL)} / ${TOTAL}`;
+        const delay = MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY);
+        waitTimer = setTimeout(() => {
+          setState('active');
+          playBeep('go');
+          startTime = performance.now();
+          pendingInput = true;
+          rafId = requestAnimationFrame(function tick() {
+            rafId = requestAnimationFrame(tick);
+          });
+        }, delay);
+      }
+
+      function recordHit(ms) {
+        if (rafId) cancelAnimationFrame(rafId);
+        results.push(ms);
+        const idx = results.length - 1;
+        if (el.pills[idx]) el.pills[idx].classList.remove('bg-zinc-200','dark:bg-zinc-800');
+        if (el.pills[idx]) el.pills[idx].classList.add('bg-emerald-500','dark:bg-emerald-500');
+
+        if (results.length >= TOTAL) {
+          finish();
+        } else {
+          setState('result');
+          el.roundIndicator.textContent = `ラウンド ${results.length} / ${TOTAL}`;
+          el.roundMs.textContent = Math.round(ms);
+          el.roundFeedback.textContent = quickFeedback(ms);
+          playBeep('result');
+        }
+      }
+
+      function handleInput() {
+        if (state === 'start') {
+          beginRound();
+          return;
+        }
+        if (state === 'waiting') {
+          clearTimeout(waitTimer);
+          if (rafId) cancelAnimationFrame(rafId);
+          setState('toosoon');
+          playBeep('tooSoon');
+          return;
+        }
+        if (state === 'active' && pendingInput) {
+          pendingInput = false;
+          const ms = performance.now() - startTime;
+          recordHit(ms);
+          return;
+        }
+        if (state === 'result' || state === 'toosoon') {
+          beginRound();
+          return;
+        }
+        if (state === 'summary') return;
+      }
+
+      function finish() {
+        if (rafId) cancelAnimationFrame(rafId);
+        setState('summary');
+        playBeep('done');
+
+        const avg = results.reduce((a, b) => a + b, 0) / results.length;
+        const variance = results.reduce((a, b) => a + (b - avg) ** 2, 0) / results.length;
+        const sd = Math.sqrt(variance);
+
+        el.finalAvg.textContent = Math.round(avg);
+        el.finalSd.textContent = `±${Math.round(sd)}ms`;
+        const tier = tierFor(avg);
+        el.finalTier.textContent = tier.label;
+        el.finalTier.className = 'rounded-full border px-4 py-2 text-sm font-semibold ' + tier.cls;
+
+        el.trialsGrid.innerHTML = '';
+        results.forEach((r, i) => {
+          const d = document.createElement('div');
+          d.className = 'rounded-xl bg-zinc-100 dark:bg-zinc-800 py-2 px-1';
+          d.innerHTML = `<span class="block text-[10px] uppercase text-zinc-400">#${i+1}</span><span class="font-bold text-zinc-900 dark:text-white">${Math.round(r)}</span>`;
+          el.trialsGrid.appendChild(d);
+        });
+
+        const best = localStorage.getItem('fie_reflex_best');
+        const newBest = Math.round(avg);
+        if (!best || newBest < parseInt(best, 10)) {
+          localStorage.setItem('fie_reflex_best', String(newBest));
+        }
+        const stored = localStorage.getItem('fie_reflex_best');
+        if (stored) el.personalBest.textContent = `${stored}ms`;
+      }
+
+      el.shareBtn.addEventListener('click', () => {
+        const avg = Math.round(results.reduce((a, b) => a + b, 0) / results.length);
+        const tier = tierFor(avg).label;
+        const text = `反射神経テストの結果: 平均 ${avg}ms（${tier}） | FreeIQExam`;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            el.shareText.textContent = 'コピーしました ✓';
+            setTimeout(() => { el.shareText.textContent = '結果をコピー'; }, 2000);
+          });
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta);
+          el.shareText.textContent = 'コピーしました ✓';
+          setTimeout(() => { el.shareText.textContent = '結果をコピー'; }, 2000);
+        }
+      });
+
+      el.restartBtn.addEventListener('click', () => {
+        results = [];
+        el.pills.forEach(p => { p.classList.remove('bg-emerald-500','dark:bg-emerald-500'); p.classList.add('bg-zinc-200','dark:bg-zinc-800'); });
+        el.roundCounter.textContent = '0 / 5';
+        setState('start');
+      });
+
+      el.soundToggle.addEventListener('click', () => {
+        soundOn = !soundOn;
+        el.soundToggle.setAttribute('aria-pressed', String(soundOn));
+        el.soundIconOn.classList.toggle('hidden', !soundOn);
+        el.soundIconOff.classList.toggle('hidden', soundOn);
+        el.soundLabel.textContent = soundOn ? '音' : '消音';
+      });
+
+      box.addEventListener('click', handleInput);
+      box.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          handleInput();
+        }
+      });
+
+      const stored = localStorage.getItem('fie_reflex_best');
+      if (stored) el.personalBest.textContent = `${stored}ms`;
+    })();
+  </script>
+</Layout>

@@ -1,0 +1,661 @@
+---
+// Japanese Flag Quiz
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import FooterJa from '../../components/ja/FooterJa.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/flag-quiz',
+  'ru': 'https://freeiqexam.com/ru/flag-quiz',
+  'id': 'https://freeiqexam.com/id/kuis-bendera',
+  'de': 'https://freeiqexam.com/de/flaggen-quiz',
+  'ja': 'https://freeiqexam.com/ja/flag-quiz',
+};
+
+const title = "国旗クイズ｜世界195カ国の国旗を当てる無料ゲーム | FreeIQExam";
+const description = "世界の国旗を4択で当てる無料クイズ。初級・中級（地域別）・上級の3レベル、連続正解記録つき。正解後は首都や豆知識も表示します。";
+const canonicalUrl = "https://freeiqexam.com/ja/flag-quiz";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam 世界の国旗クイズ＆地理記憶力アリーナ",
+    "url": canonicalUrl,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "inLanguage": "ja",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+    "featureList": [
+      "世界各国の国旗データベース",
+      "4つのゲームモード：20問スプリント・サバイバル・逆引き・ベクシロジー難問",
+      "地域フィルター（全て・ヨーロッパ・アジア・アメリカ・アフリカ・オセアニア）",
+      "ミリ秒単位の反応時間測定",
+      "ストリーク倍率とWeb Audioによる効果音合成"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://freeiqexam.com/ja" },
+      { "@type": "ListItem", "position": 2, "name": "世界の国旗クイズ", "item": canonicalUrl }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="ja">
+  <Header currentPath="/ja/flag-quiz" />
+
+  <style>
+    .flag-img { image-rendering: auto; }
+    .flag-mode-btn.active { border-color: #0066cc !important; color: #0066cc !important; }
+    .dark .flag-mode-btn.active { border-color: #2997ff !important; color: #2997ff !important; }
+    .option-btn.correct { border-color: #10b981 !important; background: rgba(16,185,129,0.12) !important; }
+    .option-btn.wrong { border-color: #ef4444 !important; background: rgba(239,68,68,0.12) !important; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .faq-chevron { transform: rotate(180deg); }
+  </style>
+
+  <main class="min-h-screen flex-1 w-full bg-white dark:bg-black text-zinc-900 dark:text-zinc-100">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+
+      <nav class="flex items-center gap-2 mb-8 text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400" aria-label="パンくずリスト">
+        <a href="/ja" class="hover:text-zinc-950 dark:hover:text-white transition-colors">ホーム</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-zinc-900 dark:text-zinc-100">世界の国旗クイズ</span>
+      </nav>
+
+      <header class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40 px-4 py-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+          <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400" aria-hidden="true"></span>
+          <span>空間地理 · 視覚記憶トレーニング</span>
+        </div>
+        <h1 class="font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+          世界の国旗クイズ
+        </h1>
+        <p class="mt-5 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          世界各国の国旗を見分ける視覚パターン認識と地理知識をテスト。反応時間を測りながら、
+          似ている双子旗すら見分けられるかを挑戦します。
+        </p>
+      </header>
+
+      <section aria-label="国旗クイズ" class="max-w-3xl mx-auto">
+        <div class="relative rounded-3xl bg-zinc-50 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 sm:p-8">
+
+          <div id="flag-start-card" class="space-y-6">
+            <div class="text-center space-y-2">
+              <h2 class="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white tracking-tight">クイズ設定を選ぶ</h2>
+              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">ゲームモードと地域フィルターを選択してください。</p>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">ゲームモード</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <button type="button" data-mode="sprint" class="flag-mode-btn active p-3.5 rounded-2xl bg-white dark:bg-zinc-900/80 border-2 border-[#0066cc] dark:border-[#2997ff] text-[#0066cc] dark:text-[#2997ff] text-left transition-all cursor-pointer">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-sm">20問スプリント</span>
+                    <span class="text-xs font-mono opacity-80">標準</span>
+                  </div>
+                  <p class="text-[11px] text-zinc-600 dark:text-zinc-400 leading-tight">正答率と素早い反応時間を測る標準の20ラウンド検定。</p>
+                </button>
+                <button type="button" data-mode="survival" class="flag-mode-btn p-3.5 rounded-2xl bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700 text-left transition-all cursor-pointer">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-sm">エンドレス・サバイバル</span>
+                    <span class="text-xs font-mono text-rose-500">サドンデス</span>
+                  </div>
+                  <p class="text-[11px] text-zinc-600 dark:text-zinc-400 leading-tight">最初に間違えるまで続行。点数倍率がどんどん上がります。</p>
+                </button>
+                <button type="button" data-mode="reverse" class="flag-mode-btn p-3.5 rounded-2xl bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700 text-left transition-all cursor-pointer">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-sm">逆引きモード</span>
+                    <span class="text-xs font-mono text-[#0066cc] dark:text-[#2997ff]">名前 → 旗</span>
+                  </div>
+                  <p class="text-[11px] text-zinc-600 dark:text-zinc-400 leading-tight">国名と首都から4つの選択肢の中から正しい旗を探します。</p>
+                </button>
+                <button type="button" data-mode="hard" class="flag-mode-btn p-3.5 rounded-2xl bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700 text-left transition-all cursor-pointer">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-sm">ベクシロジー難問</span>
+                    <span class="text-xs font-mono text-amber-500">双子旗</span>
+                  </div>
+                  <p class="text-[11px] text-zinc-600 dark:text-zinc-400 leading-tight">混同しやすい旗の組み合わせ（例：チャド vs ルーマニア）に挑戦。</p>
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label for="flag-continent-select" class="block text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">地域フィルター</label>
+              <div class="relative">
+                <select id="flag-continent-select" class="w-full p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-semibold text-zinc-900 dark:text-white focus:outline-none focus:border-[#0066cc] dark:focus:border-[#2997ff] transition-colors appearance-none cursor-pointer">
+                  <option value="all">全世界（全国家）</option>
+                  <option value="Europe">ヨーロッパ</option>
+                  <option value="Asia">アジア</option>
+                  <option value="Americas">アメリカ</option>
+                  <option value="Africa">アフリカ</option>
+                  <option value="Oceania">オセアニア</option>
+                </select>
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 text-xs">▼</div>
+              </div>
+            </div>
+
+            <button id="start-flag-btn" type="button" class="w-full py-4 min-h-[44px] rounded-2xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-extrabold text-base tracking-wide uppercase transition-all duration-200 shadow-sm active:scale-[0.97] cursor-pointer">
+              クイズを開始
+            </button>
+          </div>
+
+          <div id="flag-arena-card" class="hidden space-y-6">
+            <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+              <div class="space-y-0.5">
+                <span id="flag-progress" class="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">問題 1 / 20</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">得点:</span>
+                  <span id="flag-live-score" class="text-base font-extrabold font-mono text-[#0066cc] dark:text-[#2997ff]">0</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <span class="text-xs text-zinc-500 dark:text-zinc-400">連続:</span>
+                <span id="flag-live-streak" class="text-sm font-extrabold font-mono text-amber-500">0x</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-center justify-center py-4 space-y-4">
+              <div class="relative p-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden max-w-sm w-full flex items-center justify-center min-h-[160px]">
+                <img id="flag-target-image" src="" alt="国旗" class="flag-img max-h-40 w-auto rounded-lg shadow object-contain" />
+              </div>
+              <h3 id="flag-country-title" class="hidden text-xl sm:text-2xl font-extrabold text-zinc-950 dark:text-white text-center tracking-tight"></h3>
+            </div>
+
+            <div id="flag-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+
+          <div id="flag-results-card" class="hidden space-y-8">
+            <div class="text-center space-y-2 p-6 rounded-2xl bg-zinc-100/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+              <span class="text-xs font-mono uppercase tracking-widest text-[#0066cc] dark:text-[#2997ff]">クイズ完了</span>
+              <div id="res-flag-score" class="text-4xl sm:text-6xl font-mono font-bold text-zinc-900 dark:text-white">0</div>
+              <div class="flex items-center justify-center gap-2 pt-1">
+                <span id="res-flag-tier" class="px-3 py-1 rounded-full bg-blue-500/20 text-[#0066cc] dark:text-[#2997ff] font-extrabold text-xs tracking-wide">ベクシロジーの達人</span>
+              </div>
+              <p id="res-flag-desc" class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-md mx-auto pt-2 leading-relaxed"></p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div class="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-0.5">
+                <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">正答率</span>
+                <div id="res-flag-accuracy" class="text-lg sm:text-xl font-bold font-mono text-zinc-950 dark:text-white">0%</div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-0.5">
+                <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">反応時間</span>
+                <div id="res-flag-reaction" class="text-lg sm:text-xl font-bold font-mono text-[#0066cc] dark:text-[#2997ff]">0ms</div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-0.5">
+                <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">正解</span>
+                <div id="res-flag-correct" class="text-lg sm:text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400">0 / 0</div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-0.5">
+                <span class="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">最大連続</span>
+                <div id="res-flag-maxstreak" class="text-lg sm:text-xl font-bold font-mono text-amber-500">0x</div>
+              </div>
+            </div>
+
+            <div id="res-flag-missed-wrap" class="hidden space-y-3">
+              <h4 class="text-xs font-mono uppercase tracking-wider text-rose-500">復習したい間違い</h4>
+              <div id="res-flag-missed-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+              <button id="retake-flag-btn" type="button" class="flex-1 py-3.5 min-h-[44px] rounded-2xl bg-[#0066cc] hover:bg-[#0071e3] dark:bg-[#2997ff] dark:hover:bg-[#3b82f6] text-white font-extrabold text-sm uppercase tracking-wider transition-all duration-200 shadow-sm active:scale-[0.97] cursor-pointer">
+                もう一度プレイ
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="mt-20 sm:mt-28 border-t border-zinc-200 dark:border-zinc-800 pt-16 sm:pt-20 max-w-3xl mx-auto">
+        <p class="text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">視覚記憶 · ベクシロジー</p>
+        <h2 class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">国旗の認識と視覚記憶のメカニズム</h2>
+        <p class="mt-6 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          人間の視覚記憶は、幾何学的な形・色のコントラスト・空間配置を一次視覚野（V1〜V4）で並列処理します。国旗の認識は
+          <strong class="text-zinc-900 dark:text-white">Paivioの二重符号化理論</strong>に基づき、画像情報（旗の見た目）と意味的知識（国名・大陸・首都）が記憶の中で同時に結びつくことで成立します。
+        </p>
+
+        <div class="mt-7 rounded-3xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/25 p-6 sm:p-7">
+          <p class="text-sm font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">国旗デザインの5つの基本原則（ベクシロジー）</p>
+          <ul class="mt-4 space-y-2 text-sm sm:text-base">
+            <li><strong>1. 単純性：</strong>子供が記憶から描けるほどシンプル（例：日本、スイス）。</li>
+            <li><strong>2. 意味のある象徴：</strong>色や図形が国の歴史・文化・自然を表す。</li>
+            <li><strong>3. 2〜3色の基本色：</strong>赤・青・黄・緑・白・黒などコントラストの高い色を使う。</li>
+            <li><strong>4. 文字や国章を避ける：</strong>遠くや風に揺れている状態では読めない。</li>
+            <li><strong>5. 独自性：</strong>誤認を避け、意図的な地域共有（例：北欧十字）以外は似せない。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="max-w-3xl mx-auto pt-16 border-t border-zinc-200 dark:border-zinc-800 mt-16">
+        <div class="mb-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">よくある質問</div>
+          <h2 class="font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">国旗クイズに関するQ&amp;A</h2>
+        </div>
+        <div class="space-y-3">
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>国旗クイズの点数はどう計算される？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">総合点は正答率・ミリ秒単位の反応時間・連続正解（ストリーク）の倍率を組み合わせて算出します。速く正確に答え続けるほど高得点になります。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>なぜチャドとルーマニアの旗はほぼ同じに見えるの？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">チャドとルーマニアは、歴史的に独立した経緯から同じ「青・黄・赤」の縦三色旗を採用しています。モナコとインドネシアも同じ赤白の二色旗ですが、縦横比（モナコ4:5 vs インドネシア2:3）で区別できます。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>国旗クイズは視覚記憶のトレーニングになる？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">はい。視覚的な色とパターン＋意味的な国データの組み合わせは、長期記憶のシナプス結合を強化します。繰り返し学習することで国旗と国名の関連づけが固まります。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>ゲームデータや結果は外部サーバーに保存される？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">いいえ。クイズも判定も100%ブラウザ内で完結します。スコアはあなたの端末のlocalStorageにのみ保存され、外部サーバーには送信されません。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>特定の大陸だけに絞ってプレイできる？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">はい。開始前にドロップダウンメニューでヨーロッパ・アジア・アメリカ・アフリカ・オセアニアのいずれかを選べます。特定地域の学習に便利です。</p>
+          </details>
+        </div>
+      </section>
+
+      <FooterJa />
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const COUNTRIES_DB = [
+        { code: 'fr', name: 'フランス', capital: 'パリ', continent: 'Europe', hard: null },
+        { code: 'de', name: 'ドイツ', capital: 'ベルリン', continent: 'Europe', hard: null },
+        { code: 'it', name: 'イタリア', capital: 'ローマ', continent: 'Europe', hard: 'アイルランド' },
+        { code: 'es', name: 'スペイン', capital: 'マドリード', continent: 'Europe', hard: null },
+        { code: 'gb', name: 'イギリス', capital: 'ロンドン', continent: 'Europe', hard: null },
+        { code: 'pt', name: 'ポルトガル', capital: 'リスボン', continent: 'Europe', hard: null },
+        { code: 'nl', name: 'オランダ', capital: 'アムステルダム', continent: 'Europe', hard: 'ルクセンブルク' },
+        { code: 'be', name: 'ベルギー', capital: 'ブリュッセル', continent: 'Europe', hard: 'ドイツ' },
+        { code: 'ch', name: 'スイス', capital: 'ベルン', continent: 'Europe', hard: null },
+        { code: 'at', name: 'オーストリア', capital: 'ウィーン', continent: 'Europe', hard: 'ラトビア' },
+        { code: 'se', name: 'スウェーデン', capital: 'ストックホルム', continent: 'Europe', hard: null },
+        { code: 'no', name: 'ノルウェー', capital: 'オスロ', continent: 'Europe', hard: 'アイスランド' },
+        { code: 'fi', name: 'フィンランド', capital: 'ヘルシンキ', continent: 'Europe', hard: null },
+        { code: 'dk', name: 'デンマーク', capital: 'コペンハーゲン', continent: 'Europe', hard: null },
+        { code: 'is', name: 'アイスランド', capital: 'レイキャビク', continent: 'Europe', hard: 'ノルウェー' },
+        { code: 'ie', name: 'アイルランド', capital: 'ダブリン', continent: 'Europe', hard: 'コートジボワール' },
+        { code: 'pl', name: 'ポーランド', capital: 'ワルシャワ', continent: 'Europe', hard: 'インドネシア' },
+        { code: 'cz', name: 'チェコ', capital: 'プラハ', continent: 'Europe', hard: null },
+        { code: 'gr', name: 'ギリシャ', capital: 'アテネ', continent: 'Europe', hard: null },
+        { code: 'hu', name: 'ハンガリー', capital: 'ブダペスト', continent: 'Europe', hard: 'イタリア' },
+        { code: 'ro', name: 'ルーマニア', capital: 'ブカレスト', continent: 'Europe', hard: 'チャド' },
+        { code: 'bg', name: 'ブルガリア', capital: 'ソフィア', continent: 'Europe', hard: null },
+        { code: 'ua', name: 'ウクライナ', capital: 'キーウ', continent: 'Europe', hard: null },
+        { code: 'hr', name: 'クロアチア', capital: 'ザグレブ', continent: 'Europe', hard: null },
+        { code: 'rs', name: 'セルビア', capital: 'ベオグラード', continent: 'Europe', hard: 'ロシア' },
+        { code: 'sk', name: 'スロバキア', capital: 'ブラチスラバ', continent: 'Europe', hard: 'スロベニア' },
+        { code: 'si', name: 'スロベニア', capital: 'リュブリャナ', continent: 'Europe', hard: 'スロバキア' },
+        { code: 'lu', name: 'ルクセンブルク', capital: 'ルクセンブルク市', continent: 'Europe', hard: 'オランダ' },
+        { code: 'mc', name: 'モナコ', capital: 'モナコ', continent: 'Europe', hard: 'インドネシア' },
+        { code: 'ee', name: 'エストニア', capital: 'タリン', continent: 'Europe', hard: null },
+        { code: 'lv', name: 'ラトビア', capital: 'リガ', continent: 'Europe', hard: 'オーストリア' },
+        { code: 'lt', name: 'リトアニア', capital: 'ビリニュス', continent: 'Europe', hard: null },
+        { code: 'cy', name: 'キプロス', capital: 'ニコシア', continent: 'Europe', hard: null },
+        { code: 'mt', name: 'マルタ', capital: 'バレッタ', continent: 'Europe', hard: null },
+        { code: 'al', name: 'アルバニア', capital: 'ティラナ', continent: 'Europe', hard: null },
+        { code: 'ba', name: 'ボスニア・ヘルツェゴビナ', capital: 'サラエボ', continent: 'Europe', hard: null },
+        { code: 'mk', name: '北マケドニア', capital: 'スコピエ', continent: 'Europe', hard: null },
+        { code: 'me', name: 'モンテネグロ', capital: 'ポドゴリツァ', continent: 'Europe', hard: null },
+        { code: 'md', name: 'モルドバ', capital: 'キシナウ', continent: 'Europe', hard: 'アンドラ' },
+        { code: 'by', name: 'ベラルーシ', capital: 'ミンスク', continent: 'Europe', hard: null },
+        { code: 'sm', name: 'サンマリノ', capital: 'サンマリノ', continent: 'Europe', hard: null },
+        { code: 'li', name: 'リヒテンシュタイン', capital: 'ファドゥーツ', continent: 'Europe', hard: 'ハイチ' },
+        { code: 'ad', name: 'アンドラ', capital: 'アンドラ・ラ・ベリャ', continent: 'Europe', hard: 'モルドバ' },
+        { code: 'jp', name: '日本', capital: '東京', continent: 'Asia', hard: 'バングラデシュ' },
+        { code: 'cn', name: '中国', capital: '北京', continent: 'Asia', hard: 'ベトナム' },
+        { code: 'in', name: 'インド', capital: 'ニューデリー', continent: 'Asia', hard: 'ニジェール' },
+        { code: 'kr', name: '韓国', capital: 'ソウル', continent: 'Asia', hard: null },
+        { code: 'id', name: 'インドネシア', capital: 'ジャカルタ', continent: 'Asia', hard: 'モナコ' },
+        { code: 'sa', name: 'サウジアラビア', capital: 'リヤド', continent: 'Asia', hard: null },
+        { code: 'ae', name: 'アラブ首長国連邦', capital: 'アブダビ', continent: 'Asia', hard: 'パンアラブ' },
+        { code: 'th', name: 'タイ', capital: 'バンコク', continent: 'Asia', hard: 'コスタリカ' },
+        { code: 'vn', name: 'ベトナム', capital: 'ハノイ', continent: 'Asia', hard: '中国' },
+        { code: 'ph', name: 'フィリピン', capital: 'マニラ', continent: 'Asia', hard: null },
+        { code: 'my', name: 'マレーシア', capital: 'クアラルンプール', continent: 'Asia', hard: 'アメリカ' },
+        { code: 'sg', name: 'シンガポール', capital: 'シンガポール', continent: 'Asia', hard: null },
+        { code: 'tr', name: 'トルコ', capital: 'アンカラ', continent: 'Asia', hard: 'チュニジア' },
+        { code: 'il', name: 'イスラエル', capital: 'エルサレム', continent: 'Asia', hard: null },
+        { code: 'pk', name: 'パキスタン', capital: 'イスラマバード', continent: 'Asia', hard: null },
+        { code: 'bd', name: 'バングラデシュ', capital: 'ダッカ', continent: 'Asia', hard: '日本' },
+        { code: 'ir', name: 'イラン', capital: 'テヘラン', continent: 'Asia', hard: null },
+        { code: 'iq', name: 'イラク', capital: 'バグダッド', continent: 'Asia', hard: 'シリア' },
+        { code: 'qa', name: 'カタール', capital: 'ドーハ', continent: 'Asia', hard: 'バーレーン' },
+        { code: 'bh', name: 'バーレーン', capital: 'マナーマ', continent: 'Asia', hard: 'カタール' },
+        { code: 'kw', name: 'クウェート', capital: 'クウェート市', continent: 'Asia', hard: 'パンアラブ' },
+        { code: 'om', name: 'オマーン', capital: 'マスカット', continent: 'Asia', hard: null },
+        { code: 'jo', name: 'ヨルダン', capital: 'アンマン', continent: 'Asia', hard: 'パレスチナ' },
+        { code: 'lb', name: 'レバノン', capital: 'ベイルート', continent: 'Asia', hard: null },
+        { code: 'lk', name: 'スリランカ', capital: 'コロンボ', continent: 'Asia', hard: null },
+        { code: 'np', name: 'ネパール', capital: 'カトマンズ', continent: 'Asia', hard: null },
+        { code: 'kz', name: 'カザフスタン', capital: 'アスタナ', continent: 'Asia', hard: null },
+        { code: 'uz', name: 'ウズベキスタン', capital: 'タシュケント', continent: 'Asia', hard: null },
+        { code: 'kh', name: 'カンボジア', capital: 'プノンペン', continent: 'Asia', hard: null },
+        { code: 'mm', name: 'ミャンマー', capital: 'ネピドー', continent: 'Asia', hard: 'リトアニア' },
+        { code: 'la', name: 'ラオス', capital: 'ビエンチャン', continent: 'Asia', hard: null },
+        { code: 'mn', name: 'モンゴル', capital: 'ウランバートル', continent: 'Asia', hard: null },
+        { code: 'ge', name: 'ジョージア', capital: 'トビリシ', continent: 'Asia', hard: null },
+        { code: 'am', name: 'アルメニア', capital: 'エレバン', continent: 'Asia', hard: 'コロンビア' },
+        { code: 'az', name: 'アゼルバイジャン', capital: 'バクー', continent: 'Asia', hard: null },
+        { code: 'tw', name: '台湾', capital: '台北', continent: 'Asia', hard: null },
+        { code: 'kp', name: '北朝鮮', capital: '平壌', continent: 'Asia', hard: null },
+        { code: 'ye', name: 'イエメン', capital: 'サヌア', continent: 'Asia', hard: 'エジプト' },
+        { code: 'sy', name: 'シリア', capital: 'ダマスカス', continent: 'Asia', hard: 'イラク' },
+        { code: 'af', name: 'アフガニスタン', capital: 'カブール', continent: 'Asia', hard: null },
+        { code: 'us', name: 'アメリカ合衆国', capital: 'ワシントンD.C.', continent: 'Americas', hard: 'マレーシア' },
+        { code: 'ca', name: 'カナダ', capital: 'オタワ', continent: 'Americas', hard: 'ペルー' },
+        { code: 'mx', name: 'メキシコ', capital: 'メキシコシティ', continent: 'Americas', hard: 'イタリア' },
+        { code: 'br', name: 'ブラジル', capital: 'ブラジリア', continent: 'Americas', hard: null },
+        { code: 'ar', name: 'アルゼンチン', capital: 'ブエノスアイレス', continent: 'Americas', hard: 'ウルグアイ' },
+        { code: 'co', name: 'コロンビア', capital: 'ボゴタ', continent: 'Americas', hard: 'エクアドル' },
+        { code: 'pe', name: 'ペルー', capital: 'リマ', continent: 'Americas', hard: 'カナダ' },
+        { code: 've', name: 'ベネズエラ', capital: 'カラカス', continent: 'Americas', hard: null },
+        { code: 'cl', name: 'チリ', capital: 'サンティアゴ', continent: 'Americas', hard: null },
+        { code: 'uy', name: 'ウルグアイ', capital: 'モンテビデオ', continent: 'Americas', hard: 'アルゼンチン' },
+        { code: 'ec', name: 'エクアドル', capital: 'キト', continent: 'Americas', hard: 'コロンビア' },
+        { code: 'bo', name: 'ボリビア', capital: 'スクレ', continent: 'Americas', hard: null },
+        { code: 'py', name: 'パラグアイ', capital: 'アスンシオン', continent: 'Americas', hard: null },
+        { code: 'cu', name: 'キューバ', capital: 'ハバナ', continent: 'Americas', hard: 'プエルトリコ' },
+        { code: 'cr', name: 'コスタリカ', capital: 'サンホセ', continent: 'Americas', hard: 'タイ' },
+        { code: 'pa', name: 'パナマ', capital: 'パナマ市', continent: 'Americas', hard: null },
+        { code: 'ht', name: 'ハイチ', capital: 'ポルトープランス', continent: 'Americas', hard: 'リヒテンシュタイン' },
+        { code: 'do', name: 'ドミニカ共和国', capital: 'サントドミンゴ', continent: 'Americas', hard: null },
+        { code: 'jm', name: 'ジャマイカ', capital: 'キングストン', continent: 'Americas', hard: null },
+        { code: 'gt', name: 'グアテマラ', capital: 'グアテマラシティ', continent: 'Americas', hard: null },
+        { code: 'hn', name: 'ホンジュラス', capital: 'テグシガルパ', continent: 'Americas', hard: null },
+        { code: 'sv', name: 'エルサルバドル', capital: 'サンサルバドル', continent: 'Americas', hard: null },
+        { code: 'ni', name: 'ニカラグア', capital: 'マナグア', continent: 'Americas', hard: null },
+        { code: 'za', name: '南アフリカ', capital: 'プレトリア', continent: 'Africa', hard: null },
+        { code: 'eg', name: 'エジプト', capital: 'カイロ', continent: 'Africa', hard: 'イエメン' },
+        { code: 'ng', name: 'ナイジェリア', capital: 'アブジャ', continent: 'Africa', hard: null },
+        { code: 'ma', name: 'モロッコ', capital: 'ラバト', continent: 'Africa', hard: null },
+        { code: 'ke', name: 'ケニア', capital: 'ナイロビ', continent: 'Africa', hard: null },
+        { code: 'et', name: 'エチオピア', capital: 'アディスアベバ', continent: 'Africa', hard: null },
+        { code: 'gh', name: 'ガーナ', capital: 'アクラ', continent: 'Africa', hard: null },
+        { code: 'tn', name: 'チュニジア', capital: 'チュニス', continent: 'Africa', hard: 'トルコ' },
+        { code: 'dz', name: 'アルジェリア', capital: 'アルジェ', continent: 'Africa', hard: null },
+        { code: 'sd', name: 'スーダン', capital: 'ハルツーム', continent: 'Africa', hard: null },
+        { code: 'ug', name: 'ウガンダ', capital: 'カンパラ', continent: 'Africa', hard: null },
+        { code: 'tz', name: 'タンザニア', capital: 'ドドマ', continent: 'Africa', hard: null },
+        { code: 'zm', name: 'ザンビア', capital: 'ルサカ', continent: 'Africa', hard: null },
+        { code: 'zw', name: 'ジンバブエ', capital: 'ハラレ', continent: 'Africa', hard: null },
+        { code: 'cm', name: 'カメルーン', capital: 'ヤウンデ', continent: 'Africa', hard: null },
+        { code: 'ci', name: 'コートジボワール', capital: 'ヤムスクロ', continent: 'Africa', hard: 'アイルランド' },
+        { code: 'sn', name: 'セネガル', capital: 'ダカール', continent: 'Africa', hard: null },
+        { code: 'ml', name: 'マリ', capital: 'バマコ', continent: 'Africa', hard: null },
+        { code: 'mg', name: 'マダガスカル', capital: 'アンタナナリボ', continent: 'Africa', hard: null },
+        { code: 'mw', name: 'マラウイ', capital: 'リロングウェ', continent: 'Africa', hard: null },
+        { code: 'so', name: 'ソマリア', capital: 'モガディシュ', continent: 'Africa', hard: null },
+        { code: 'ne', name: 'ニジェール', capital: 'ニアメ', continent: 'Africa', hard: 'インド' },
+        { code: 'td', name: 'チャド', capital: 'ンジャメナ', continent: 'Africa', hard: 'ルーマニア' },
+        { code: 'ao', name: 'アンゴラ', capital: 'ルアンダ', continent: 'Africa', hard: null },
+        { code: 'au', name: 'オーストラリア', capital: 'キャンベラ', continent: 'Oceania', hard: null },
+        { code: 'nz', name: 'ニュージーランド', capital: 'ウェリントン', continent: 'Oceania', hard: null },
+        { code: 'fj', name: 'フィジー', capital: 'スバ', continent: 'Oceania', hard: null },
+        { code: 'pg', name: 'パプアニューギニア', capital: 'ポートモレスビー', continent: 'Oceania', hard: null },
+        { code: 'sb', name: 'ソロモン諸島', capital: 'ホニアラ', continent: 'Oceania', hard: null },
+        { code: 'vu', name: 'バヌアツ', capital: 'ポートビラ', continent: 'Oceania', hard: null },
+        { code: 'ws', name: 'サモア', capital: 'アピア', continent: 'Oceania', hard: null },
+        { code: 'to', name: 'トンガ', capital: 'ヌクアロファ', continent: 'Oceania', hard: null },
+        { code: 'ki', name: 'キリバス', capital: 'タラワ', continent: 'Oceania', hard: null },
+        { code: 'fm', name: 'ミクロネシア連邦', capital: 'パリキール', continent: 'Oceania', hard: null },
+        { code: 'mh', name: 'マーシャル諸島', capital: 'マジュロ', continent: 'Oceania', hard: null },
+      ];
+
+      const el = {
+        startCard: document.getElementById('flag-start-card'),
+        arenaCard: document.getElementById('flag-arena-card'),
+        resultsCard: document.getElementById('flag-results-card'),
+        modeBtns: Array.from(document.querySelectorAll('.flag-mode-btn')),
+        continent: document.getElementById('flag-continent-select'),
+        startBtn: document.getElementById('start-flag-btn'),
+        progress: document.getElementById('flag-progress'),
+        liveScore: document.getElementById('flag-live-score'),
+        liveStreak: document.getElementById('flag-live-streak'),
+        targetImage: document.getElementById('flag-target-image'),
+        countryTitle: document.getElementById('flag-country-title'),
+        optionsGrid: document.getElementById('flag-options-grid'),
+        resScore: document.getElementById('res-flag-score'),
+        resTier: document.getElementById('res-flag-tier'),
+        resDesc: document.getElementById('res-flag-desc'),
+        resAccuracy: document.getElementById('res-flag-accuracy'),
+        resReaction: document.getElementById('res-flag-reaction'),
+        resCorrect: document.getElementById('res-flag-correct'),
+        resMaxStreak: document.getElementById('res-flag-maxstreak'),
+        missedWrap: document.getElementById('res-flag-missed-wrap'),
+        missedList: document.getElementById('res-flag-missed-list'),
+        retakeBtn: document.getElementById('retake-flag-btn'),
+      };
+
+      let mode = 'sprint';
+      let pool = [];
+      let score = 0, streak = 0, maxStreak = 0, correct = 0, answered = 0;
+      let reactionSum = 0, questionStart = 0, totalQuestions = 20;
+      let missed = [];
+
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function selectPool() {
+        const cont = el.continent.value;
+        return cont === 'all' ? COUNTRIES_DB.slice() : COUNTRIES_DB.filter(c => c.continent === cont);
+      }
+
+      function buildOptions(correctCountry) {
+        const candidates = COUNTRIES_DB.filter(c => c.code !== correctCountry.code);
+        const others = shuffle(candidates).slice(0, 3);
+        const opts = shuffle([correctCountry, ...others]);
+        return opts;
+      }
+
+      function startQuiz() {
+        mode = el.modeBtns.find(b => b.classList.contains('active')).dataset.mode;
+        pool = selectPool();
+        score = 0; streak = 0; maxStreak = 0; correct = 0; answered = 0;
+        reactionSum = 0; missed = [];
+        if (mode === 'survival') totalQuestions = Infinity;
+        else if (mode === 'hard') totalQuestions = 15;
+        else totalQuestions = 20;
+
+        el.startCard.classList.add('hidden');
+        el.resultsCard.classList.add('hidden');
+        el.arenaCard.classList.remove('hidden');
+        el.liveScore.textContent = '0';
+        el.liveStreak.textContent = '0x';
+        nextQuestion();
+      }
+
+      function nextQuestion() {
+        if (answered >= totalQuestions) { finish(); return; }
+        const question = pool[Math.floor(Math.random() * pool.length)];
+        const options = buildOptions(question);
+        const isReverse = mode === 'reverse';
+
+        el.progress.textContent = `問題 ${answered + 1} / ${totalQuestions === Infinity ? '∞' : totalQuestions}`;
+        if (isReverse) {
+          el.targetImage.classList.add('hidden');
+          el.countryTitle.classList.remove('hidden');
+          el.countryTitle.textContent = `${question.name}（首都：${question.capital}）`;
+        } else {
+          el.countryTitle.classList.add('hidden');
+          el.targetImage.classList.remove('hidden');
+          el.targetImage.src = `https://flagcdn.com/w320/${question.code}.png`;
+          el.targetImage.alt = `${question.name}の国旗`;
+        }
+
+        el.optionsGrid.innerHTML = '';
+        options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'option-btn flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 text-left cursor-pointer transition-all hover:border-[#0066cc] dark:hover:border-[#2997ff] active:scale-[0.98] min-h-[44px]';
+          if (isReverse) {
+            const img = document.createElement('img');
+            img.src = `https://flagcdn.com/w320/${opt.code}.png`;
+            img.alt = `${opt.name}の国旗`;
+            img.className = 'w-12 h-8 object-cover rounded shadow';
+            const span = document.createElement('span');
+            span.className = 'text-sm font-bold text-zinc-800 dark:text-zinc-200';
+            span.textContent = opt.name;
+            btn.appendChild(img);
+            btn.appendChild(span);
+          } else {
+            const span = document.createElement('span');
+            span.className = 'text-sm font-bold text-zinc-800 dark:text-zinc-200';
+            span.textContent = opt.name;
+            btn.appendChild(span);
+          }
+          btn.addEventListener('click', () => handleAnswer(question, opt, btn));
+          el.optionsGrid.appendChild(btn);
+        });
+
+        questionStart = performance.now();
+      }
+
+      function handleAnswer(question, chosen, btn) {
+        const reaction = performance.now() - questionStart;
+        reactionSum += reaction;
+        answered += 1;
+        const isCorrect = chosen.code === question.code;
+
+        Array.from(el.optionsGrid.children).forEach(b => {
+          const isRight = b.textContent.includes(question.name) || (mode === 'reverse' && b.querySelector('img') && b.querySelector('img').src.includes(question.code));
+          if (b.textContent.includes(question.name) || b.querySelector('img') && b.querySelector('img').src.includes(question.code)) {
+            b.classList.add('correct');
+          }
+        });
+
+        if (isCorrect) {
+          correct += 1;
+          streak += 1;
+          maxStreak = Math.max(maxStreak, streak);
+          const timeBonus = Math.max(0, 200 - reaction) / 100;
+          score += Math.round(10 + streak * 2 + timeBonus * 5);
+          playTone(880);
+        } else {
+          streak = 0;
+          score = Math.max(0, score - 5);
+          playTone(160);
+          missed.push({ code: question.code, name: question.name, capital: question.capital });
+        }
+        if (isCorrect) btn.classList.add('correct'); else btn.classList.add('wrong');
+
+        el.liveScore.textContent = String(score);
+        el.liveStreak.textContent = streak + 'x';
+        Array.from(el.optionsGrid.children).forEach(b => b.style.pointerEvents = 'none');
+
+        if (!isCorrect && mode === 'survival') {
+          setTimeout(() => finish(), 650);
+          return;
+        }
+
+        setTimeout(() => { if (answered >= totalQuestions) finish(); else nextQuestion(); }, 650);
+      }
+
+      function playTone(freq) {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.12);
+        } catch (e) {}
+      }
+
+      function finish() {
+        el.arenaCard.classList.add('hidden');
+        el.resultsCard.classList.remove('hidden');
+        const accuracy = answered ? Math.round((correct / answered) * 100) : 0;
+        const avgReaction = answered ? Math.round(reactionSum / answered) : 0;
+
+        el.resScore.textContent = String(score);
+        el.resAccuracy.textContent = accuracy + '%';
+        el.resReaction.textContent = avgReaction + 'ms';
+        el.resCorrect.textContent = `${correct} / ${answered}`;
+        el.resMaxStreak.textContent = maxStreak + 'x';
+
+        const pct = answered ? correct / answered : 0;
+        let tier, desc;
+        if (pct >= 0.95) { tier = 'ベクシロジーの達人'; desc = '驚異的な視覚記憶力です。ほぼ全ての国旗を見分けました。'; }
+        else if (pct >= 0.85) { tier = '国旗マイスター'; desc = '高い正答率で、双子旗も見分けています。'; }
+        else if (pct >= 0.7) { tier = '地理愛好家'; desc = 'しっかりとした地理知識をお持ちです。'; }
+        else if (pct >= 0.5) { tier = '学びの途中'; desc = '良いスタートです。復習リストでさらに磨きましょう。'; }
+        else { tier = '入門者'; desc = 'これから国旗を覚える絶好の機会です。'; }
+        el.resTier.textContent = tier;
+        el.resDesc.textContent = desc;
+
+        if (missed.length) {
+          el.missedWrap.classList.remove('hidden');
+          el.missedList.innerHTML = '';
+          missed.forEach(m => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-3 p-2 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800';
+            row.innerHTML = `<img src="https://flagcdn.com/w320/${m.code}.png" alt="${m.name}の国旗" class="w-12 h-8 object-cover rounded shadow"><div><p class="text-sm font-bold text-zinc-800 dark:text-zinc-200">${m.name}</p><p class="text-xs text-zinc-500">首都：${m.capital}</p></div>`;
+            el.missedList.appendChild(row);
+          });
+        } else {
+          el.missedWrap.classList.add('hidden');
+        }
+      }
+
+      el.modeBtns.forEach(b => {
+        b.addEventListener('click', () => {
+          el.modeBtns.forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+        });
+      });
+
+      el.startBtn.addEventListener('click', startQuiz);
+      el.retakeBtn.addEventListener('click', () => {
+        el.resultsCard.classList.add('hidden');
+        el.startCard.classList.remove('hidden');
+      });
+    })();
+  </script>
+</Layout>

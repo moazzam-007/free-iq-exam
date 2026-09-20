@@ -1,0 +1,419 @@
+---
+// Japanese CPS Test
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import FooterJa from '../../components/ja/FooterJa.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/cps-test',
+  'ru': 'https://freeiqexam.com/ru/cps-test',
+  'ja': 'https://freeiqexam.com/ja/cps-test',
+};
+
+const title = "CPSテスト｜クリック連打速度を1秒〜60秒で測定 | FreeIQExam";
+const description = "1秒・5秒・10秒・30秒・60秒のクリック連打速度（CPS）を無料で測定。ランクの目安と、ジッターやバタフライなど連打テクニックの解説つき。";
+const canonicalUrl = "https://freeiqexam.com/ja/cps-test";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam クリック速度テスト (CPS)",
+    "url": canonicalUrl,
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "All",
+    "inLanguage": "ja",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+    "featureList": [
+      "1/5/10/30/60秒の5つの時間モード",
+      "Pointer Events によるマルチタッチの単一カウント",
+      "performance.now() による単調時計タイミング",
+      "CPS・総クリック数・ランク判定",
+      "プロ級・神速などのリアルな目安ランク"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://freeiqexam.com/ja" },
+      { "@type": "ListItem", "position": 2, "name": "クリック速度テスト", "item": canonicalUrl }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="ja">
+  <Header currentPath="/ja/cps-test" />
+
+  <style>
+    .cps-arena {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 80ms ease-out;
+    }
+    .cps-arena:active { transform: scale(0.996); }
+
+    .mode-active { border-color: #2563eb !important; color: #2563eb !important; background: rgba(37,99,235,0.08) !important; }
+    .dark .mode-active { border-color: #2997ff !important; color: #2997ff !important; background: rgba(41,151,255,0.10) !important; }
+
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .faq-chevron { transform: rotate(180deg); }
+  </style>
+
+  <main class="min-h-screen flex-1 w-full bg-white dark:bg-black">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+
+      <nav class="flex items-center gap-2 mb-8 text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400" aria-label="パンくずリスト">
+        <a href="/ja" class="hover:text-zinc-950 dark:hover:text-white transition-colors">ホーム</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-zinc-900 dark:text-zinc-100">クリック速度テスト</span>
+      </nav>
+
+      <header class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/40 px-4 py-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+          <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400" aria-hidden="true"></span>
+          <span>手先の速度 · CPS</span>
+        </div>
+        <h1 class="font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-900 dark:text-white tracking-[-0.025em] mb-4">
+          クリック速度テスト (CPS)
+        </h1>
+        <p class="mt-5 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          制限時間内にできるだけ多くクリック・タップしてください。1秒・5秒・10秒・30秒・60秒からモードを選び、
+          1秒あたりのクリック数 (CPS) とリアルな目安ランクを算出します。
+        </p>
+      </header>
+
+      <section aria-labelledby="cps-heading" class="max-w-3xl mx-auto">
+        <h2 id="cps-heading" class="sr-only">インタラクティブクリック速度テスト</h2>
+
+        <div class="mb-5 flex flex-wrap items-center justify-center gap-2" role="group" aria-label="時間モードの選択">
+          {["1秒","5秒","10秒","30秒","60秒"].map((label, i) => (
+            <button key={label} type="button" data-mode={[1,5,10,30,60][i]}
+              class="mode-btn min-h-[44px] rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-5 py-2.5 text-sm font-bold text-zinc-600 dark:text-zinc-300 transition-smooth hover:scale-[1.03] active:scale-[0.98]">
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div class="flex items-center justify-between gap-4 px-1 mb-4 text-sm sm:text-base">
+          <div class="flex items-center gap-2">
+            <span class="text-zinc-500 dark:text-zinc-400 font-medium">残り時間</span>
+            <strong id="cps-timer" class="font-mono text-zinc-950 dark:text-white">10.0s</strong>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-zinc-500 dark:text-zinc-400 font-medium">クリック数</span>
+            <strong id="cps-count" class="font-mono text-zinc-950 dark:text-white">0</strong>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-zinc-500 dark:text-zinc-400 font-medium">自己ベスト</span>
+            <strong id="cps-best" class="text-emerald-600 dark:text-emerald-400">—</strong>
+          </div>
+        </div>
+
+        <div id="cps-box" role="button" tabindex="0" aria-label="クリック速度テスト。制限時間内にできるだけ速くクリックしてください。"
+          class="cps-arena relative min-h-[380px] sm:min-h-[440px] rounded-[2rem] border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50 flex flex-col items-center justify-center gap-6 px-6 sm:px-10 text-center cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/40">
+
+          <div id="cps-idle" class="flex flex-col items-center gap-5">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <svg class="w-10 h-10 sm:w-12 sm:h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" /></svg>
+            </div>
+            <div>
+              <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white">クリックして開始</h3>
+              <p class="mt-2 text-sm sm:text-base text-zinc-500 dark:text-zinc-400">制限時間内にできるだけ速く、何度でもクリック・タップしてください。</p>
+            </div>
+          </div>
+
+          <div id="cps-running" class="hidden flex-col items-center gap-4">
+            <span class="text-4xl sm:text-5xl font-extrabold font-mono tracking-tight text-zinc-900 dark:text-white" id="cps-live-count">0</span>
+            <span class="text-xs sm:text-sm font-semibold uppercase tracking-widest text-zinc-400">クリック</span>
+          </div>
+
+          <div id="cps-finished" class="hidden flex-col items-center gap-3">
+            <span class="rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-5 py-2 text-sm font-semibold text-zinc-600 dark:text-zinc-300">クリックして最初から</span>
+          </div>
+        </div>
+
+        <p class="mt-4 text-center text-sm sm:text-base text-zinc-500 dark:text-zinc-400">
+          マルチタッチを押しても1回と数えます。CPS＝総クリック数 ÷ 秒数です。
+        </p>
+      </section>
+
+      <section id="cps-result-panel" class="mt-12 hidden max-w-3xl mx-auto">
+        <div class="rounded-[2rem] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-6 sm:p-8">
+          <div class="text-center">
+            <p class="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">結果</p>
+            <div class="mt-3 flex items-end justify-center gap-3">
+              <span id="cps-result-value" class="text-7xl sm:text-8xl font-extrabold tracking-tight text-blue-600 dark:text-blue-400">0.0</span>
+              <span class="text-2xl font-mono font-bold text-zinc-500 mb-2">CPS</span>
+            </div>
+            <p class="mt-2 text-sm sm:text-base text-zinc-500 dark:text-zinc-400">
+              <span id="cps-result-total">0</span> クリック / <span id="cps-result-seconds">10</span> 秒
+            </p>
+            <div class="mt-4 inline-flex items-center gap-2">
+              <span id="cps-result-rank" class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-5 py-2.5 text-base font-bold text-zinc-800 dark:text-zinc-200">一般人</span>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <p class="mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">目安ランク</p>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center">
+              <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3"><p class="text-[10px] uppercase tracking-wider text-zinc-400">カメ</p><p class="text-lg font-extrabold text-zinc-800 dark:text-zinc-200">&lt;5</p></div>
+              <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3"><p class="text-[10px] uppercase tracking-wider text-zinc-400">一般人</p><p class="text-lg font-extrabold text-zinc-800 dark:text-zinc-200">5–7</p></div>
+              <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3"><p class="text-[10px] uppercase tracking-wider text-zinc-400">ゲーマー</p><p class="text-lg font-extrabold text-zinc-800 dark:text-zinc-200">8–10</p></div>
+              <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3"><p class="text-[10px] uppercase tracking-wider text-zinc-400">プロ級</p><p class="text-lg font-extrabold text-zinc-800 dark:text-zinc-200">11–14</p></div>
+              <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3"><p class="text-[10px] uppercase tracking-wider text-zinc-400">神速</p><p class="text-lg font-extrabold text-zinc-800 dark:text-zinc-200">15+</p></div>
+            </div>
+          </div>
+
+          <div class="mt-7 flex flex-wrap gap-3 justify-center">
+            <button id="cps-share" type="button" class="min-h-[44px] rounded-full border border-blue-600 bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-smooth hover:scale-[1.02] active:scale-[0.98] hover:bg-blue-500">結果をコピー</button>
+            <button id="cps-again" type="button" class="min-h-[44px] rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100 transition-smooth hover:scale-[1.02] active:scale-[0.98]">もう一度</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-20 sm:mt-28 border-t border-zinc-200 dark:border-zinc-800 pt-16 sm:pt-20 max-w-3xl mx-auto">
+        <p class="text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">運動速度 · 目安判定</p>
+        <h2 class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">クリック速度とは：運動制御の速さの指標</h2>
+        <p class="mt-6 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          クリック速度（CPS）は、単純な知覚反応（反射神経テスト）とは異なり、視覚刺激を待つ必要がなく「自分のペースでどれだけ速く同じ動作を繰り返せるか」という運動制御の指標です。指の屈筋と伸筋を交互に素早く動かし、指骨の振動周波数が高くなるほどクリック数は増えます。プロのeスポーツ選手はジャパリング（指の高速振動）や複数指同時連打など独自のテクニックを使い、10 CPSを超える速度を出します。
+        </p>
+        <p class="mt-5 text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          一般的な指の振動限界は約5〜8Hz程度で、多くの人はこの帯域を超えてクリックできません。ジャパリングと呼ばれる指の伸筋と屈筋を交互に使う高速振動テクニックを使うと、一部の人は10〜15Hzを超えます。
+        </p>
+
+        <div class="mt-7 rounded-3xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/25 p-6 sm:p-7">
+          <p class="text-sm font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">目安ランク</p>
+          <ul class="mt-4 space-y-2 text-sm sm:text-base">
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400 inline-block"></span><strong>5 CPS未満：</strong>カメ</li>
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span><strong>5〜7 CPS：</strong>一般人（平均的なクリック速度）</li>
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span><strong>8〜10 CPS：</strong>ゲーマー</li>
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span><strong>11〜14 CPS：</strong>プロ級</li>
+            <li class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span><strong>15 CPS以上：</strong>神速</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="max-w-3xl mx-auto pt-16 border-t border-zinc-200 dark:border-zinc-800 mt-16">
+        <div class="mb-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">よくある質問</div>
+          <h2 class="font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">クリック速度テストに関するQ&amp;A</h2>
+        </div>
+        <div class="space-y-3">
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>良いCPSスコアとは？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">平均的な人のクリック速度はおおよそ5〜7 CPSです。8〜10 CPSはゲーマー、11 CPSを超えるとプロ級とされます。時間が短いほど集中力で高くなりやすく、30秒や60秒では持久力が試されます。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>1秒モードと60秒モードで差が出るのはなぜ？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">1秒モードは瞬発力を、60秒モードは筋持久力と安定性を測ります。時間が長くなるほど疲労で速度は落ち、また1クリックごとの遅延の影響が平均に均されにくくなるためです。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>CPSを上げるテクニックはある？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">ジャパリング（指を振動させる）や、複数本の指を交互に使う方法で速度を伸ばせます。またマウスの移動距離を最小化し、クリックのたびに指を完全に離さない「浮かせ押し」が安定性を高めます。あくまで自前の入力で挑戦してください。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>マルチタッチで何本も指を置いたらどうなる？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">1本目の指（isPrimary）のみをカウントするため、複数の指を同時に置いても1クリックと数えます。連打の速さを正確に測るための仕様です。</p>
+          </details>
+          <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+            <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+              <span>CPSテストはeスポーツで重要？</span>
+              <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">FPSやMOBAでは「1秒間にどれだけ素早く連打できるか」が重要な局面があります。ただし実戦では位置取り・判断・エイムなどの総合力が勝敗を決めるため、CPS単体は一つの参考指標に過ぎません。</p>
+          </details>
+        </div>
+      </section>
+
+      <FooterJa />
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const MODES = [1, 5, 10, 30, 60];
+      const box = document.getElementById('cps-box');
+      const el = {
+        timer: document.getElementById('cps-timer'),
+        count: document.getElementById('cps-count'),
+        best: document.getElementById('cps-best'),
+        idle: document.getElementById('cps-idle'),
+        running: document.getElementById('cps-running'),
+        finished: document.getElementById('cps-finished'),
+        liveCount: document.getElementById('cps-live-count'),
+        modeBtns: Array.from(document.querySelectorAll('.mode-btn')),
+        resultPanel: document.getElementById('cps-result-panel'),
+        resultValue: document.getElementById('cps-result-value'),
+        resultTotal: document.getElementById('cps-result-total'),
+        resultSeconds: document.getElementById('cps-result-seconds'),
+        resultRank: document.getElementById('cps-result-rank'),
+        share: document.getElementById('cps-share'),
+        again: document.getElementById('cps-again'),
+      };
+
+      let mode = 10;
+      let running = false;
+      let clicks = 0;
+      let startTime = 0;
+      let rafId = null;
+
+      function setActiveMode() {
+        el.modeBtns.forEach(b => {
+          const active = parseInt(b.dataset.mode, 10) === mode;
+          b.classList.toggle('mode-active', active);
+        });
+      }
+
+      function rankFor(cps) {
+        if (cps < 5) return { label: 'カメ', cls: 'text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800' };
+        if (cps < 8) return { label: '一般人', cls: 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40' };
+        if (cps < 11) return { label: 'ゲーマー', cls: 'text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40' };
+        if (cps < 15) return { label: 'プロ級', cls: 'text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40' };
+        return { label: '神速', cls: 'text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40' };
+      }
+
+      function start() {
+        if (running) return;
+        running = true;
+        clicks = 0;
+        startTime = performance.now();
+        el.idle.classList.add('hidden');
+        el.finished.classList.add('hidden');
+        el.running.classList.remove('hidden');
+        el.running.classList.add('flex');
+        el.liveCount.textContent = '0';
+        el.resultPanel.classList.add('hidden');
+        el.modeBtns.forEach(b => b.setAttribute('disabled', ''));
+        el.modeBtns.forEach(b => b.classList.add('opacity-50','pointer-events-none'));
+
+        function tick() {
+          const elapsed = (performance.now() - startTime) / 1000;
+          const remain = Math.max(0, mode - elapsed);
+          el.timer.textContent = remain.toFixed(1) + 's';
+          if (remain > 0) {
+            rafId = requestAnimationFrame(tick);
+          } else {
+            finish();
+          }
+        }
+        rafId = requestAnimationFrame(tick);
+      }
+
+      function finish() {
+        running = false;
+        if (rafId) cancelAnimationFrame(rafId);
+        el.timer.textContent = '0.0s';
+        const cps = clicks / mode;
+        el.resultValue.textContent = cps.toFixed(1);
+        el.resultTotal.textContent = String(clicks);
+        el.resultSeconds.textContent = String(mode);
+        const rank = rankFor(cps);
+        el.resultRank.textContent = rank.label;
+        el.resultRank.className = 'rounded-full border px-5 py-2.5 text-base font-bold ' + rank.cls;
+
+        el.running.classList.add('hidden');
+        el.running.classList.remove('flex');
+        el.finished.classList.remove('hidden');
+        el.finished.classList.add('flex');
+        el.resultPanel.classList.remove('hidden');
+
+        const best = localStorage.getItem('fie_cps_best');
+        const rounded = cps.toFixed(1);
+        if (!best || parseFloat(rounded) > parseFloat(best)) {
+          localStorage.setItem('fie_cps_best', rounded);
+        }
+        const stored = localStorage.getItem('fie_cps_best');
+        if (stored) el.best.textContent = stored + ' CPS';
+
+        el.modeBtns.forEach(b => { b.removeAttribute('disabled'); b.classList.remove('opacity-50','pointer-events-none'); });
+      }
+
+      function resetToIdle() {
+        running = false;
+        if (rafId) cancelAnimationFrame(rafId);
+        el.running.classList.add('hidden');
+        el.running.classList.remove('flex');
+        el.finished.classList.add('hidden');
+        el.finished.classList.remove('flex');
+        el.idle.classList.remove('hidden');
+        el.idle.classList.add('flex');
+        el.timer.textContent = mode + '.0s';
+        el.count.textContent = '0';
+        el.resultPanel.classList.add('hidden');
+      }
+
+      box.addEventListener('pointerdown', (e) => {
+        if (e.isPrimary === false) return;
+        e.preventDefault();
+        if (!running) { start(); return; }
+        clicks += 1;
+        el.count.textContent = String(clicks);
+        el.liveCount.textContent = String(clicks);
+      });
+
+      box.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          if (!running) { start(); return; }
+          clicks += 1;
+          el.count.textContent = String(clicks);
+          el.liveCount.textContent = String(clicks);
+        }
+      });
+
+      el.modeBtns.forEach(b => {
+        b.addEventListener('click', () => {
+          mode = parseInt(b.dataset.mode, 10);
+          setActiveMode();
+          if (!running) el.timer.textContent = mode + '.0s';
+        });
+      });
+
+      el.again.addEventListener('click', resetToIdle);
+      el.share.addEventListener('click', () => {
+        const text = `クリック速度テストの結果: ${el.resultValue.textContent} CPS（${el.resultRank.textContent}）| FreeIQExam`;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta);
+        }
+        el.share.textContent = 'コピーしました ✓';
+        setTimeout(() => { el.share.textContent = '結果をコピー'; }, 2000);
+      });
+
+      setActiveMode();
+      el.timer.textContent = mode + '.0s';
+      const stored = localStorage.getItem('fie_cps_best');
+      if (stored) el.best.textContent = stored + ' CPS';
+    })();
+  </script>
+</Layout>

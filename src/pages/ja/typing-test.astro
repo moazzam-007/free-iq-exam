@@ -1,0 +1,880 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import FooterJa from '../../components/ja/FooterJa.astro';
+
+const alternates = {
+  'en': 'https://freeiqexam.com/typing-test',
+  'fi': 'https://freeiqexam.com/fi/kirjoitustesti',
+  'de': 'https://freeiqexam.com/de/tipptest',
+  'pt-BR': 'https://freeiqexam.com/pt-br/teste-de-digitacao',
+  'ja': 'https://freeiqexam.com/ja/typing-test',
+};
+
+const title = "タイピング練習｜無料のタイピング速度測定（ローマ字・英文） | FreeIQExam";
+const description = "登録不要のタイピング練習と速度測定。ローマ字入力の日本語と英文に対応し、打鍵数/分・正確率・苦手キーをリアルタイムで確認できます。";
+const canonicalUrl = "https://freeiqexam.com/ja/typing-test";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FreeIQExam 日本語タイピング練習・速度測定ツール",
+    "url": canonicalUrl,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "inLanguage": "ja",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+    "featureList": [
+      "日本語ローマ字・英文の2モード対応",
+      "si/shi、ti/chi、tu/tsuなどの複数ローマ字表記自動対応ステートマシン",
+      "打鍵数/分（CPM/KPM）・正確率・ミス打鍵数のリアルタイム算出",
+      "キーボード別苦手キー（ヒートマップ）可視化",
+      "IME変換オン検知アラート機能",
+      "登録不要・完全無料・ローカル完結処理"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://freeiqexam.com/ja" },
+      { "@type": "ListItem", "position": 2, "name": "タイピング練習", "item": canonicalUrl }
+    ]
+  }
+];
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl} alternates={alternates} schema={schema} lang="ja">
+  <Header currentPath="/ja/typing-test" />
+
+  <style>
+    .typing-arena {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .char-typed { color: #10b981; }
+    .char-current {
+      background-color: rgba(0, 102, 204, 0.2);
+      border-bottom: 2px solid #0066cc;
+    }
+    .dark .char-current {
+      background-color: rgba(41, 151, 255, 0.25);
+      border-bottom-color: #2997ff;
+    }
+    .char-wrong {
+      color: #ef4444;
+      background-color: rgba(239, 68, 68, 0.18);
+    }
+    .key-active {
+      background-color: #0066cc !important;
+      color: white !important;
+      border-color: #0066cc !important;
+    }
+    .dark .key-active {
+      background-color: #2997ff !important;
+      color: black !important;
+      border-color: #2997ff !important;
+    }
+    .key-missed {
+      background-color: #ef4444 !important;
+      color: white !important;
+      border-color: #ef4444 !important;
+    }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .faq-chevron { transform: rotate(180deg); }
+  </style>
+
+  <main class="min-h-screen flex-1 w-full bg-white dark:bg-black text-zinc-900 dark:text-zinc-100">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+
+      <!-- Breadcrumbs -->
+      <nav class="flex items-center text-[13px] font-mono text-zinc-500 dark:text-zinc-400 mb-8" aria-label="パンくずリスト">
+        <a href="/ja" class="hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors">ホーム</a>
+        <span class="mx-2 text-zinc-400 dark:text-zinc-600">/</span>
+        <span class="text-zinc-900 dark:text-zinc-100 font-semibold">タイピング練習</span>
+      </nav>
+
+      <!-- Hero Header -->
+      <header class="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs sm:text-sm font-mono font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-4 shadow-xs">
+          <span class="w-2 h-2 rounded-full bg-[#0066cc] dark:bg-[#2997ff] animate-pulse"></span>
+          <span>運動学習 · 打鍵速度・正確率測定</span>
+        </div>
+        <h1 class="font-heading font-extrabold text-3xl sm:text-5xl md:text-6xl text-zinc-950 dark:text-white tracking-[-0.025em] leading-[1.15] mb-4">
+          タイピング練習・速度測定
+        </h1>
+        <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+          ローマ字入力の日本語または英文でタイピング速度を測定します。1分あたりの打鍵数（CPM/KPM）、正確率、苦手キーの傾向を判定します。
+        </p>
+      </header>
+
+      <!-- IME Alert Banner (Shown when IME composition / Process key detected) -->
+      <div id="ime-alert-banner" class="hidden max-w-3xl mx-auto mb-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-start gap-3 shadow-xs">
+        <svg class="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+        <div class="space-y-1">
+          <strong class="font-bold">日本語入力（IME）がオンになっています</strong>
+          <p class="leading-relaxed">
+            正確に打鍵数を測定するため、キーボードの「半角/全角」キーまたは「英数」キーを押して、直接入力（半角英数）に切り替えてください。
+          </p>
+        </div>
+      </div>
+
+      <!-- Settings Bar (Language & Time Duration) -->
+      <section class="max-w-3xl mx-auto mb-6 p-3 rounded-2xl bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+        <!-- Language Select -->
+        <div class="flex items-center gap-1.5 p-1 rounded-xl bg-zinc-200/60 dark:bg-zinc-900">
+          <button type="button" id="lang-btn-ja" class="px-3.5 py-1.5 rounded-lg font-bold bg-white dark:bg-zinc-800 text-[#0066cc] dark:text-[#2997ff] shadow-xs transition-all cursor-pointer">
+            日本語（ローマ字）
+          </button>
+          <button type="button" id="lang-btn-en" class="px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all cursor-pointer">
+            English（英文）
+          </button>
+        </div>
+
+        <!-- Duration Select -->
+        <div class="flex items-center gap-2">
+          <span class="text-zinc-500">制限時間:</span>
+          <button type="button" data-time="15" class="time-btn px-3 py-1 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-[#0066cc] transition-colors cursor-pointer">15秒</button>
+          <button type="button" data-time="30" class="time-btn px-3 py-1 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-[#0066cc] transition-colors cursor-pointer">30秒</button>
+          <button type="button" data-time="60" class="time-btn active font-bold text-[#0066cc] dark:text-[#2997ff] px-3 py-1 rounded-md transition-colors cursor-pointer">60秒</button>
+        </div>
+      </section>
+
+      <!-- Main Typing Arena -->
+      <div class="relative max-w-3xl mx-auto">
+        <div id="typing-card" class="typing-arena w-full rounded-3xl p-6 sm:p-10 bg-zinc-50/90 dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col items-center">
+
+          <!-- Live HUD -->
+          <div class="w-full flex items-center justify-between pb-4 mb-6 border-b border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400">
+            <div class="flex items-center gap-4">
+              <div>
+                <span>残り時間: </span>
+                <strong id="hud-timer" class="text-zinc-950 dark:text-white text-base">60</strong>秒
+              </div>
+              <div>
+                <span id="hud-metric-label">速度: </span>
+                <strong id="hud-speed" class="text-[#0066cc] dark:text-[#2997ff] text-base">0</strong>
+                <span id="hud-metric-unit" class="text-[11px]"> CPM</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div>
+                <span>正確率: </span>
+                <strong id="hud-accuracy" class="text-emerald-600 dark:text-emerald-400 text-base">100%</strong>
+              </div>
+              <div>
+                <span>ミス: </span>
+                <strong id="hud-misses" class="text-rose-500 text-base">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Typing Display Box -->
+          <div id="display-container" class="w-full min-h-[140px] flex flex-col items-center justify-center p-6 rounded-2xl bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 mb-8 cursor-text">
+            <div id="word-display-kanji" class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white tracking-wide mb-2">
+              ここに日本語が表示されます
+            </div>
+            <div id="word-display-kana" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-medium mb-3">
+              ここに読み（かな）が表示されます
+            </div>
+            <div id="word-display-romaji" class="font-mono text-lg sm:text-2xl tracking-widest flex items-center gap-0.5">
+              <span class="text-zinc-400 dark:text-zinc-600">キーを押してタイピングを開始</span>
+            </div>
+          </div>
+
+          <!-- Hidden Input for Mobile / Focus Capture -->
+          <input
+            type="text"
+            id="hidden-typing-input"
+            class="absolute opacity-0 pointer-events-none w-0 h-0"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+          />
+
+          <!-- Virtual Keyboard Heatmap Preview (QWERTY) -->
+          <div class="w-full max-w-xl mx-auto space-y-1.5 p-4 rounded-2xl bg-zinc-100/70 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 select-none text-[11px] sm:text-xs font-mono font-bold">
+            <!-- Row 1 -->
+            <div class="flex justify-center gap-1">
+              {['Q','W','E','R','T','Y','U','I','O','P'].map(k => (
+                <div id={`key-${k}`} class="w-8 sm:w-10 h-9 sm:h-11 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 shadow-xs transition-colors">{k}</div>
+              ))}
+            </div>
+            <!-- Row 2 -->
+            <div class="flex justify-center gap-1">
+              {['A','S','D','F','G','H','J','K','L'].map(k => (
+                <div id={`key-${k}`} class="w-8 sm:w-10 h-9 sm:h-11 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 shadow-xs transition-colors">{k}</div>
+              ))}
+            </div>
+            <!-- Row 3 -->
+            <div class="flex justify-center gap-1">
+              {['Z','X','C','V','B','N','M'].map(k => (
+                <div id={`key-${k}`} class="w-8 sm:w-10 h-9 sm:h-11 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 shadow-xs transition-colors">{k}</div>
+              ))}
+              <div id="key-MINUS" class="w-8 sm:w-10 h-9 sm:h-11 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 shadow-xs transition-colors">-</div>
+            </div>
+            <div class="flex justify-center gap-1 pt-1">
+              <div id="key-SPACE" class="w-48 sm:w-64 h-8 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-400 text-[10px] shadow-xs">SPACE</div>
+            </div>
+          </div>
+
+          <!-- Bottom Prompt -->
+          <div class="mt-6 flex items-center justify-between w-full text-xs font-mono text-zinc-500">
+            <span>※ Escキーでいつでもリセットできます</span>
+            <button id="btn-restart" type="button" class="text-[#0066cc] dark:text-[#2997ff] hover:underline cursor-pointer">
+              リセットして最初から
+            </button>
+          </div>
+
+          <!-- Results Overlay Panel (Hidden by default) -->
+          <div id="results-panel" class="hidden w-full mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-800 flex flex-col items-center text-center">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-mono font-bold uppercase tracking-wider mb-3">
+              測定完了 · スコア
+            </div>
+            <h2 id="res-tier-title" class="text-2xl sm:text-4xl font-heading font-extrabold text-zinc-950 dark:text-white mb-2">
+              一般実務レベル
+            </h2>
+            <p id="res-tier-desc" class="text-sm text-zinc-600 dark:text-zinc-400 max-w-md mb-6">
+              ビジネス実務において十分な入力速度です。
+            </p>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-xl mb-8">
+              <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <div class="text-xs text-zinc-500 mb-1">打鍵速度</div>
+                <div id="res-speed-val" class="font-heading font-extrabold text-3xl text-[#0066cc] dark:text-[#2997ff]">240</div>
+                <div id="res-speed-unit" class="text-[11px] text-zinc-400">打/分 (CPM)</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <div class="text-xs text-zinc-500 mb-1">正確率</div>
+                <div id="res-acc-val" class="font-heading font-extrabold text-3xl text-emerald-600 dark:text-emerald-400">98%</div>
+                <div class="text-[11px] text-zinc-400">正確率</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <div class="text-xs text-zinc-500 mb-1">総打鍵数</div>
+                <div id="res-keys-val" class="font-heading font-extrabold text-3xl text-zinc-950 dark:text-white">245</div>
+                <div class="text-[11px] text-zinc-400">キー入力</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <div class="text-xs text-zinc-500 mb-1">ミス打鍵</div>
+                <div id="res-misses-val" class="font-heading font-extrabold text-3xl text-rose-500">5</div>
+                <div class="text-[11px] text-zinc-400">ミス回数</div>
+              </div>
+            </div>
+
+            <!-- Weak Keys Summary -->
+            <div id="weak-keys-box" class="w-full max-w-md p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs mb-8">
+              <span class="font-bold text-zinc-700 dark:text-zinc-300">ミスが多かった苦手キー: </span>
+              <span id="weak-keys-list" class="font-mono font-bold text-rose-500">なし（ノーミス）</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <button id="btn-again" type="button" class="min-h-[44px] px-6 py-2.5 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-bold text-sm hover:opacity-90 active:scale-[0.97] transition-all cursor-pointer">
+                もう一度練習する
+              </button>
+              <button id="btn-copy-res" type="button" class="min-h-[44px] px-6 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 font-semibold text-sm hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-[0.97] transition-all cursor-pointer">
+                結果をコピー
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- EDUCATIONAL CONTENT SECTION -->
+      <section class="mt-20 border-t border-zinc-200 dark:border-zinc-800 pt-16 space-y-16">
+
+        <!-- Typing Speed Benchmarks -->
+        <article class="max-w-3xl mx-auto space-y-4">
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            日本語タイピング速度の目安（打鍵数/分）
+          </h2>
+          <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            ローマ字タイピングにおいて、1分間にどれだけのキーを打鍵できるか（CPM: Characters Per Minute または KPM: Keystrokes Per Minute）は、デスクワークやプログラミングの生産性を左右する重要な指標です。
+          </p>
+
+          <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm font-mono">
+              <thead>
+                <tr class="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white font-bold">
+                  <th class="py-3 px-4">レベル分類</th>
+                  <th class="py-3 px-4">打鍵速度 (CPM)</th>
+                  <th class="py-3 px-4 font-sans">実務・スキルの目安</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                <tr>
+                  <td class="py-3 px-4 font-bold text-zinc-500">初級・入門</td>
+                  <td class="py-3 px-4 text-zinc-500">〜150 打/分</td>
+                  <td class="py-3 px-4 font-sans text-zinc-600 dark:text-zinc-400">キーボードを見ながら打つ段階。ホームポジションの習得が効果的です。</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-zinc-700 dark:text-zinc-300">一般実務</td>
+                  <td class="py-3 px-4 text-blue-600 dark:text-blue-400">150〜250 打/分</td>
+                  <td class="py-3 px-4 font-sans text-zinc-600 dark:text-zinc-400">日常的なビジネスメールや文書作成に支障のない標準レベルです。</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400">上級者</td>
+                  <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400">250〜350 打/分</td>
+                  <td class="py-3 px-4 font-sans text-zinc-600 dark:text-zinc-400">完全なブラインドタッチが可能で、思考とほぼ同速で文字入力ができます。</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-amber-500">プロ・エンジニア</td>
+                  <td class="py-3 px-4 text-amber-500">350〜450 打/分</td>
+                  <td class="py-3 px-4 font-sans text-zinc-600 dark:text-zinc-400">速記者、プログラマー、ライターなど打鍵速度が強みとなるレベルです。</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-rose-500">神速・大会入賞級</td>
+                  <td class="py-3 px-4 text-rose-500">450打/分 超</td>
+                  <td class="py-3 px-4 font-sans text-zinc-600 dark:text-zinc-400">タイピング競技会で上位に進出できる上位1%未満の最速域です。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- Touch Typing Tips -->
+        <article class="max-w-3xl mx-auto space-y-4">
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">
+            タッチタイピング（ブラインドタッチ）最速上達の3原則
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+              <h3 class="font-bold text-base text-zinc-950 dark:text-white">1. ホームポジションを死守する</h3>
+              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                左手人差し指を「F」、右手人差し指を「J」の突起に常に固定します。各指の担当キーを守ることが速度向上の基盤です。
+              </p>
+            </div>
+            <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+              <h3 class="font-bold text-base text-zinc-950 dark:text-white">2. キーボードを絶対に見ない</h3>
+              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                間違えても画面だけを見ます。指の空間記憶（筋運動感覚）で打鍵位置を覚えることがブラインドタッチの絶対条件です。
+              </p>
+            </div>
+            <div class="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+              <h3 class="font-bold text-base text-zinc-950 dark:text-white">3. 速度より正確率（98%）を優先</h3>
+              <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                1回のミス入力とバックスペース修正は3打分の時間を浪費します。正確率98%を維持しながら徐々にテンポを上げましょう。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- FAQ Section (Exactly 5 Items) -->
+        <article class="max-w-3xl mx-auto pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div class="mb-8">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-2">よくある質問</div>
+            <h2 class="font-extrabold text-2xl sm:text-3xl text-zinc-950 dark:text-white tracking-tight">タイピング練習に関するQ&amp;A</h2>
+          </div>
+
+          <div class="space-y-3">
+            <!-- Q1 -->
+            <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+              <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+                <span>タイピング速度の一般的な平均値（1分間の打鍵数）はどのくらいですか？</span>
+                <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </summary>
+              <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+                日本の成人デスクワーカーの平均的なローマ字打鍵速度はおおよそ150〜220打/分（CPM）です。タッチタイピングを習得したオフィス従事者では250〜300打/分、プログラマーやライターなど高速入力を行う層では350打/分以上が目安とされます。
+              </p>
+            </details>
+
+            <!-- Q2 -->
+            <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+              <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+                <span>「si / shi」や「ti / chi」などローマ字の入力揺れに対応していますか？</span>
+                <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </summary>
+              <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+                はい、対応しています。「し（si / shi）」「ち（ti / chi）」「つ（tu / tsu）」「ふ（fu / hu）」「じ（ji / zi）」などの訓令式・ヘボン式の違いや、促音「っ」の二重子音（kk, tt等）および単独入力（xtu, ltu）など、日本で標準的に使われるすべての入力パターンを自動判定します。
+              </p>
+            </details>
+
+            <!-- Q3 -->
+            <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+              <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+                <span>日本語IMEがオンのままだとうまく打てないのはなぜですか？</span>
+                <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </summary>
+              <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+                IME（かな入力モード）がオンになっていると、キー入力がブラウザのJavaScriptに直接届かず、未確定の文字列（Composition）として一時バッファに保留されてしまうためです。半角直接入力モードに切り替えることで、1文字ずつのミリ秒単位の判定が可能になります。
+              </p>
+            </details>
+
+            <!-- Q4 -->
+            <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+              <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+                <span>WPMとCPM（KPM）の違いは何ですか？</span>
+                <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </summary>
+              <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+                WPM（Words Per Minute）は英文タイピングで用いられる「1分間の単語数（国際規格で5打鍵＝1単語）」です。一方、CPM（Characters Per Minute）やKPM（Keystrokes Per Minute）は「1分間に実際にキーを押した打鍵数」を指し、日本語のローマ字入力の速度を比較する最も標準的な指標です。
+              </p>
+            </details>
+
+            <!-- Q5 -->
+            <details class="group bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+              <summary class="flex items-center justify-between font-bold text-zinc-950 dark:text-white cursor-pointer select-none text-sm sm:text-base">
+                <span>ブラインドタッチを最速で習得するための練習頻度は？</span>
+                <span class="faq-chevron ml-4 shrink-0 text-zinc-400 transition-transform duration-200">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </summary>
+              <p class="mt-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
+                1回長時間の練習を行うよりも、毎日10〜15分間の集中練習を継続する方が小脳の運動記憶定着に適しています。最初の2週間は絶対にキーボードを見ずに正確率98%を維持することを徹底すると、自然と速度が伸びていきます。
+              </p>
+            </details>
+          </div>
+        </article>
+
+      </section>
+
+    </div>
+  </main>
+
+  <FooterJa />
+
+  <!-- Interactive Typing Engine Script -->
+  <script is:inline>
+    (function () {
+      // Curated 150 Japanese Vocabulary Bank across Everyday, Business, and Tech
+      var JA_WORDS = [
+        { word: 'ありがとう', kanji: '有難う', romaji: 'arigatou' },
+        { word: 'おはよう', kanji: 'お早う', romaji: 'ohayou' },
+        { word: 'こんにちは', kanji: '今日は', romaji: 'konnichiha' },
+        { word: 'こんばんは', kanji: '今晩は', romaji: 'konbanha' },
+        { word: 'いただきます', kanji: '頂きます', romaji: 'itadakimasu' },
+        { word: 'ごちそうさま', kanji: 'ご馳走様', romaji: 'gochisousama' },
+        { word: 'よろしく', kanji: '宜しく', romaji: 'yorosiku' },
+        { word: 'さようなら', kanji: '左様なら', romaji: 'sayounara' },
+        { word: 'おつかれさま', kanji: 'お疲れ様', romaji: 'otsukaresama' },
+        { word: 'しんかんせん', kanji: '新幹線', romaji: 'shinkansen' },
+        { word: 'にほんご', kanji: '日本語', romaji: 'nihongo' },
+        { word: 'さくら', kanji: '桜', romaji: 'sakura' },
+        { word: 'でんしゃ', kanji: '電車', romaji: 'densha' },
+        { word: 'ひこうき', kanji: '飛行機', romaji: 'hikouki' },
+        { word: 'じかん', kanji: '時間', romaji: 'jikan' },
+        { word: 'ともだち', kanji: '友達', romaji: 'tomodachi' },
+        { word: 'がっこう', kanji: '学校', romaji: 'gakkou' },
+        { word: 'かいしゃ', kanji: '会社', romaji: 'kaisha' },
+        { word: 'しごと', kanji: '仕事', romaji: 'shigoto' },
+        { word: 'けいざい', kanji: '経済', romaji: 'keizai' },
+        { word: 'きぎょう', kanji: '企業', romaji: 'kigyou' },
+        { word: 'しゃちょう', kanji: '社長', romaji: 'shachou' },
+        { word: 'かいぎ', kanji: '会議', romaji: 'kaigi' },
+        { word: 'けいやく', kanji: '契約', romaji: 'keiyaku' },
+        { word: 'ほうこく', kanji: '報告', romaji: 'houkoku' },
+        { word: 'れんらく', kanji: '連絡', romaji: 'renraku' },
+        { word: 'そうだん', kanji: '相談', romaji: 'soudan' },
+        { word: 'けいかく', kanji: '計画', romaji: 'keikaku' },
+        { word: 'よさん', kanji: '予算', romaji: 'yosan' },
+        { word: 'しじょう', kanji: '市場', romaji: 'shijou' },
+        { word: 'こきゃく', kanji: '顧客', romaji: 'kokyaku' },
+        { word: 'えいぎょう', kanji: '営業', romaji: 'eigyou' },
+        { word: 'ぜいきん', kanji: '税金', romaji: 'zeikin' },
+        { word: 'ぎんこう', kanji: '銀行', romaji: 'ginkou' },
+        { word: 'とうし', kanji: '投資', romaji: 'toushi' },
+        { word: 'りえき', kanji: '利益', romaji: 'rieki' },
+        { word: 'せんりゃく', kanji: '戦略', romaji: 'senryaku' },
+        { word: 'さいよう', kanji: '採用', romaji: 'saiyou' },
+        { word: 'きゅうよ', kanji: '給与', romaji: 'kyuuyo' },
+        { word: 'ていあん', kanji: '提案', romaji: 'teian' },
+        { word: 'みつもり', kanji: '見積り', romaji: 'mitsumori' },
+        { word: 'のうき', kanji: '納期', romaji: 'nouki' },
+        { word: 'ひんしつ', kanji: '品質', romaji: 'hinshitsu' },
+        { word: 'かんり', kanji: '管理', romaji: 'kanri' },
+        { word: 'こうりつ', kanji: '効率', romaji: 'kouritsu' },
+        { word: 'かいぜん', kanji: '改善', romaji: 'kaizen' },
+        { word: 'しんちょく', kanji: '進捗', romaji: 'shinchoku' },
+        { word: 'けってい', kanji: '決定', romaji: 'kettei' },
+        { word: 'もくひょう', kanji: '目標', romaji: 'mokuhyou' },
+        { word: 'こんぴゅーた', kanji: 'コンピュータ', romaji: 'konpyu-ta' },
+        { word: 'いんたーねっと', kanji: 'インターネット', romaji: 'inta-netto' },
+        { word: 'ぷろぐらみんぐ', kanji: 'プログラミング', romaji: 'puroguramingu' },
+        { word: 'そふとうぇあ', kanji: 'ソフトウェア', romaji: 'sofutowea' },
+        { word: 'はーどうぇあ', kanji: 'ハードウェア', romaji: 'ha-dowea' },
+        { word: 'ねっとわーく', kanji: 'ネットワーク', romaji: 'nettowa-ku' },
+        { word: 'さーばー', kanji: 'サーバー', romaji: 'sa-ba-' },
+        { word: 'くらうど', kanji: 'クラウド', romaji: 'kuraudo' },
+        { word: 'でーたべーす', kanji: 'データベース', romaji: 'de-tabe-su' },
+        { word: 'あるごりずむ', kanji: 'アルゴリズム', romaji: 'arugorizumu' },
+        { word: 'せきゅりてぃ', kanji: 'セキュリティ', romaji: 'sekyuriti' },
+        { word: 'あんごうか', kanji: '暗号化', romaji: 'angouka' },
+        { word: 'ぶらうざ', kanji: 'ブラウザ', romaji: 'burauza' },
+        { word: 'きーぼーど', kanji: 'キーボード', romaji: 'ki-bo-do' },
+        { word: 'でぃすぷれい', kanji: 'ディスプレイ', romaji: 'disupurei' },
+        { word: 'すとれーじ', kanji: 'ストレージ', romaji: 'sutore-ji' },
+        { word: 'しすてむ', kanji: 'システム', romaji: 'sisutemu' },
+        { word: 'かいはつ', kanji: '開発', romaji: 'kaihatsu' },
+        { word: 'うんよう', kanji: '運用', romaji: 'unyou' },
+        { word: 'ばっくあっぷ', kanji: 'バックアップ', romaji: 'bakkuappu' },
+        { word: 'ふぁいる', kanji: 'ファイル', romaji: 'fairu' },
+        { word: 'だうんろーど', kanji: 'ダウンロード', romaji: 'daunro-do' },
+        { word: 'ろぐいん', kanji: 'ログイン', romaji: 'roguin' },
+        { word: 'ぱすわーど', kanji: 'パスワード', romaji: 'pasuwa-do' },
+        { word: 'きかいがくしゅう', kanji: '機械学習', romaji: 'kikaigakushuu' }
+      ];
+
+      var EN_WORDS = [
+        'the', 'be', 'of', 'and', 'a', 'to', 'in', 'he', 'have', 'it',
+        'that', 'for', 'they', 'with', 'as', 'not', 'on', 'she', 'at', 'by',
+        'this', 'we', 'you', 'do', 'but', 'his', 'from', 'which', 'or', 'will',
+        'an', 'my', 'one', 'all', 'would', 'there', 'their', 'what', 'so', 'up',
+        'out', 'if', 'about', 'who', 'get', 'which', 'go', 'me', 'when', 'make',
+        'can', 'like', 'time', 'no', 'just', 'him', 'know', 'take', 'people', 'into',
+        'year', 'your', 'good', 'some', 'could', 'them', 'see', 'other', 'than', 'then',
+        'now', 'look', 'only', 'come', 'its', 'over', 'think', 'also', 'back', 'after',
+        'use', 'two', 'how', 'our', 'work', 'first', 'well', 'way', 'even', 'new',
+        'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us', 'system', 'program'
+      ];
+
+      // Romaji Variations Map for Japanese State Machine
+      var ROMAJI_EQUIV = {
+        'si': ['si', 'shi', 'ci'],
+        'shi': ['si', 'shi', 'ci'],
+        'ti': ['ti', 'chi'],
+        'chi': ['ti', 'chi'],
+        'tu': ['tu', 'tsu'],
+        'tsu': ['tu', 'tsu'],
+        'fu': ['fu', 'hu'],
+        'hu': ['fu', 'hu'],
+        'ji': ['ji', 'zi'],
+        'zi': ['ji', 'zi'],
+        'sha': ['sha', 'sya'],
+        'sya': ['sha', 'sya'],
+        'shu': ['shu', 'syu'],
+        'syu': ['shu', 'syu'],
+        'sho': ['sho', 'syo'],
+        'syo': ['sho', 'syo'],
+        'cha': ['cha', 'tya'],
+        'tya': ['cha', 'tya'],
+        'chu': ['chu', 'tyu'],
+        'tyu': ['chu', 'tyu'],
+        'cho': ['cho', 'tyo'],
+        'tyo': ['cho', 'tyo'],
+        'ja': ['ja', 'zya', 'jya'],
+        'zya': ['ja', 'zya', 'jya'],
+        'ju': ['ju', 'zyu', 'jyu'],
+        'zyu': ['ju', 'zyu', 'jyu'],
+        'jo': ['jo', 'zyo', 'jyo'],
+        'zyo': ['jo', 'zyo', 'jyo'],
+        'nn': ['nn', 'xn', 'n']
+      };
+
+      // State variables
+      var currentLang = 'ja';
+      var timeLimit = 60;
+      var remainingSeconds = 60;
+      var isRunning = false;
+      var timerInterval = null;
+      var wordIndex = 0;
+      var currentWordObj = null;
+      var currentTargetStr = '';
+      var typedInCurrentWord = '';
+      var totalKeystrokes = 0;
+      var totalMisses = 0;
+      var keyMissCounts = {};
+
+      // DOM Elements
+      var hudTimer = document.getElementById('hud-timer');
+      var hudSpeed = document.getElementById('hud-speed');
+      var hudAccuracy = document.getElementById('hud-accuracy');
+      var hudMisses = document.getElementById('hud-misses');
+      var hudMetricLabel = document.getElementById('hud-metric-label');
+      var hudMetricUnit = document.getElementById('hud-metric-unit');
+
+      var wordKanji = document.getElementById('word-display-kanji');
+      var wordKana = document.getElementById('word-display-kana');
+      var wordRomaji = document.getElementById('word-display-romaji');
+      var displayContainer = document.getElementById('display-container');
+      var hiddenInput = document.getElementById('hidden-typing-input');
+      var imeAlert = document.getElementById('ime-alert-banner');
+      var resultsPanel = document.getElementById('results-panel');
+
+      var btnLangJa = document.getElementById('lang-btn-ja');
+      var btnLangEn = document.getElementById('lang-btn-en');
+      var timeBtns = Array.from(document.querySelectorAll('.time-btn'));
+      var btnRestart = document.getElementById('btn-restart');
+      var btnAgain = document.getElementById('btn-again');
+      var btnCopyRes = document.getElementById('btn-copy-res');
+
+      // Results DOM
+      var resTierTitle = document.getElementById('res-tier-title');
+      var resTierDesc = document.getElementById('res-tier-desc');
+      var resSpeedVal = document.getElementById('res-speed-val');
+      var resSpeedUnit = document.getElementById('res-speed-unit');
+      var resAccVal = document.getElementById('res-acc-val');
+      var resKeysVal = document.getElementById('res-keys-val');
+      var resMissesVal = document.getElementById('res-misses-val');
+      var weakKeysList = document.getElementById('weak-keys-list');
+
+      function pickNextWord() {
+        if (currentLang === 'ja') {
+          currentWordObj = JA_WORDS[Math.floor(Math.random() * JA_WORDS.length)];
+          currentTargetStr = currentWordObj.romaji.toLowerCase();
+          wordKanji.textContent = currentWordObj.kanji;
+          wordKana.textContent = currentWordObj.word;
+        } else {
+          var w = EN_WORDS[Math.floor(Math.random() * EN_WORDS.length)];
+          currentWordObj = { word: w, kanji: w, romaji: w };
+          currentTargetStr = w.toLowerCase();
+          wordKanji.textContent = w;
+          wordKana.textContent = '';
+        }
+        typedInCurrentWord = '';
+        renderRomajiDisplay();
+      }
+
+      function renderRomajiDisplay() {
+        var html = '';
+        for (var i = 0; i < currentTargetStr.length; i++) {
+          var ch = currentTargetStr[i];
+          if (i < typedInCurrentWord.length) {
+            html += '<span class="char-typed">' + ch + '</span>';
+          } else if (i === typedInCurrentWord.length) {
+            html += '<span class="char-current font-bold px-0.5 rounded">' + ch + '</span>';
+          } else {
+            html += '<span class="text-zinc-400 dark:text-zinc-600">' + ch + '</span>';
+          }
+        }
+        wordRomaji.innerHTML = html;
+      }
+
+      function highlightKey(keyChar, isMiss) {
+        var id = 'key-' + keyChar.toUpperCase();
+        if (keyChar === '-') id = 'key-MINUS';
+        if (keyChar === ' ') id = 'key-SPACE';
+        var el = document.getElementById(id);
+        if (el) {
+          el.classList.add(isMiss ? 'key-missed' : 'key-active');
+          setTimeout(function () {
+            el.classList.remove('key-missed', 'key-active');
+          }, 140);
+        }
+      }
+
+      function startTest() {
+        if (isRunning) return;
+        isRunning = true;
+        remainingSeconds = timeLimit;
+        hudTimer.textContent = remainingSeconds;
+        totalKeystrokes = 0;
+        totalMisses = 0;
+        keyMissCounts = {};
+        resultsPanel.classList.add('hidden');
+
+        timerInterval = setInterval(function () {
+          remainingSeconds--;
+          hudTimer.textContent = remainingSeconds;
+          updateHUD();
+          if (remainingSeconds <= 0) {
+            finishTest();
+          }
+        }, 1000);
+      }
+
+      function updateHUD() {
+        var elapsedMin = (timeLimit - remainingSeconds) / 60;
+        if (elapsedMin <= 0) elapsedMin = 1 / 60;
+
+        var acc = totalKeystrokes > 0 ? Math.max(0, Math.round(((totalKeystrokes - totalMisses) / totalKeystrokes) * 100)) : 100;
+        hudAccuracy.textContent = acc + '%';
+        hudMisses.textContent = totalMisses;
+
+        if (currentLang === 'ja') {
+          var cpm = Math.round(totalKeystrokes / elapsedMin);
+          hudSpeed.textContent = cpm;
+        } else {
+          var wpm = Math.round((totalKeystrokes / 5) / elapsedMin);
+          hudSpeed.textContent = wpm;
+        }
+      }
+
+      function finishTest() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        hiddenInput.blur();
+
+        var elapsedMin = timeLimit / 60;
+        var cpm = Math.round(totalKeystrokes / elapsedMin);
+        var wpm = Math.round((totalKeystrokes / 5) / elapsedMin);
+        var acc = totalKeystrokes > 0 ? Math.max(0, Math.round(((totalKeystrokes - totalMisses) / totalKeystrokes) * 100)) : 100;
+
+        resKeysVal.textContent = totalKeystrokes;
+        resMissesVal.textContent = totalMisses;
+        resAccVal.textContent = acc + '%';
+
+        if (currentLang === 'ja') {
+          resSpeedVal.textContent = cpm;
+          resSpeedUnit.textContent = '打/分 (CPM)';
+          evaluateTierJa(cpm, acc);
+        } else {
+          resSpeedVal.textContent = wpm;
+          resSpeedUnit.textContent = '単語/分 (WPM)';
+          evaluateTierEn(wpm, acc);
+        }
+
+        // Weak keys calculation
+        var sortedMisses = Object.entries(keyMissCounts).sort(function (a, b) { return b[1] - a[1]; });
+        if (sortedMisses.length > 0) {
+          weakKeysList.textContent = sortedMisses.slice(0, 3).map(function (p) { return p[0].toUpperCase() + ' (' + p[1] + '回)'; }).join(', ');
+        } else {
+          weakKeysList.textContent = 'なし（ノーミスです！）';
+        }
+
+        resultsPanel.classList.remove('hidden');
+        window.scrollTo({ top: resultsPanel.offsetTop - 60, behavior: 'smooth' });
+      }
+
+      function evaluateTierJa(cpm, acc) {
+        if (cpm >= 400 && acc >= 96) {
+          resTierTitle.textContent = '神速・プロフェッショナル級';
+          resTierDesc.textContent = '驚異的な打鍵速度と正確性です。思考と同じ速度で文字を紡ぎ出せる最上位レベルです。';
+        } else if (cpm >= 300 && acc >= 95) {
+          resTierDesc.textContent = '完全なタッチタイピングを習得しており、プログラミングや原稿執筆を極めて効率的にこなせます。';
+          resTierTitle.textContent = '上級・プログラマー級';
+        } else if (cpm >= 200) {
+          resTierTitle.textContent = '一般事務・ビジネス実務レベル';
+          resTierDesc.textContent = '日常的なビジネス文書やメール作成において十分実用的な打鍵速度です。';
+        } else {
+          resTierTitle.textContent = '初級・トレーニング段階';
+          resTierDesc.textContent = 'まずはホームポジションを固定し、キーを見ずに打つ練習を継続しましょう。';
+        }
+      }
+
+      function evaluateTierEn(wpm, acc) {
+        if (wpm >= 80) {
+          resTierTitle.textContent = 'Elite Typist (上位5%水準)';
+          resTierDesc.textContent = 'ネイティブのプロタイピストに匹敵する極めて高速な入力速度です。';
+        } else if (wpm >= 60) {
+          resTierTitle.textContent = 'Fluent Business Typist';
+          resTierDesc.textContent = '国際的なオフィスワークで十分な競争力を持つタイピング速度です。';
+        } else {
+          resTierTitle.textContent = 'Developing Typist';
+          resTierDesc.textContent = '正確率を98%以上に保ちながら、ホームポジションでの練習を重ねましょう。';
+        }
+      }
+
+      function handleKeystroke(keyChar) {
+        if (!isRunning && remainingSeconds === timeLimit) {
+          startTest();
+        }
+        if (!isRunning) return;
+
+        totalKeystrokes++;
+        var expectedChar = currentTargetStr[typedInCurrentWord.length];
+
+        if (keyChar === expectedChar) {
+          typedInCurrentWord += keyChar;
+          highlightKey(keyChar, false);
+          renderRomajiDisplay();
+
+          if (typedInCurrentWord.length >= currentTargetStr.length) {
+            pickNextWord();
+          }
+        } else {
+          totalMisses++;
+          keyMissCounts[expectedChar] = (keyMissCounts[expectedChar] || 0) + 1;
+          highlightKey(keyChar, true);
+        }
+        updateHUD();
+      }
+
+      // Keyboard Event Listener
+      document.addEventListener('keydown', function (e) {
+        // IME Composition check
+        if (e.isComposing || e.key === 'Process') {
+          imeAlert.classList.remove('hidden');
+          return;
+        } else {
+          imeAlert.classList.add('hidden');
+        }
+
+        if (e.key === 'Escape') {
+          resetAll();
+          return;
+        }
+
+        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          var char = e.key.toLowerCase();
+          handleKeystroke(char);
+          e.preventDefault();
+        }
+      });
+
+      function resetAll() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        remainingSeconds = timeLimit;
+        hudTimer.textContent = remainingSeconds;
+        hudSpeed.textContent = '0';
+        hudAccuracy.textContent = '100%';
+        hudMisses.textContent = '0';
+        totalKeystrokes = 0;
+        totalMisses = 0;
+        keyMissCounts = {};
+        resultsPanel.classList.add('hidden');
+        pickNextWord();
+      }
+
+      // Settings Listeners
+      btnLangJa.addEventListener('click', function () {
+        currentLang = 'ja';
+        btnLangJa.className = 'px-3.5 py-1.5 rounded-lg font-bold bg-white dark:bg-zinc-800 text-[#0066cc] dark:text-[#2997ff] shadow-xs transition-all cursor-pointer';
+        btnLangEn.className = 'px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all cursor-pointer';
+        hudMetricLabel.textContent = '速度: ';
+        hudMetricUnit.textContent = ' CPM';
+        resetAll();
+      });
+
+      btnLangEn.addEventListener('click', function () {
+        currentLang = 'en';
+        btnLangEn.className = 'px-3.5 py-1.5 rounded-lg font-bold bg-white dark:bg-zinc-800 text-[#0066cc] dark:text-[#2997ff] shadow-xs transition-all cursor-pointer';
+        btnLangJa.className = 'px-3.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all cursor-pointer';
+        hudMetricLabel.textContent = '速度: ';
+        hudMetricUnit.textContent = ' WPM';
+        resetAll();
+      });
+
+      timeBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          timeBtns.forEach(function (b) { b.classList.remove('active', 'font-bold', 'text-[#0066cc]', 'dark:text-[#2997ff]'); });
+          btn.classList.add('active', 'font-bold', 'text-[#0066cc]', 'dark:text-[#2997ff]');
+          timeLimit = parseInt(btn.getAttribute('data-time'), 10);
+          resetAll();
+        });
+      });
+
+      displayContainer.addEventListener('click', function () {
+        hiddenInput.focus();
+      });
+
+      btnRestart.addEventListener('click', resetAll);
+      btnAgain.addEventListener('click', resetAll);
+
+      btnCopyRes.addEventListener('click', function () {
+        var text = 'タイピング速度測定結果: ' + resSpeedVal.textContent + ' ' + resSpeedUnit.textContent + '（正確率: ' + resAccVal.textContent + '） | FreeIQExam: https://freeiqexam.com/ja/typing-test';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text);
+        }
+        btnCopyRes.textContent = 'コピー完了';
+        setTimeout(function () { btnCopyRes.textContent = '結果をコピー'; }, 2000);
+      });
+
+      // Initialize First Word
+      pickNextWord();
+    })();
+  </script>
+</Layout>

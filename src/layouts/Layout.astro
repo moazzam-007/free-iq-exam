@@ -6,14 +6,17 @@ interface Props {
   description?: string;
   canonicalUrl?: string;
   // Map of locale -> relative or absolute path
-  // e.g. { 'id': '/id/tes-buta-warna', 'fi': '/fi/varinakotesti', 'de': '/de/farbsehtest' }
+  // e.g. { 'id': '/id/tes-buta-warna', 'fi': '/fi/varinakotesti', 'de': '/de/farbsehtest', 'ja': '/ja/color-blind-test' }
   alternates?: Record<string, string>;
   idPath?: string;
   ruPath?: string;
+  jaPath?: string;
+  enPath?: string;
   ogImage?: string;
   noindex?: boolean;
   schema?: Record<string, any> | Record<string, any>[];
   lang?: string;
+  ogLocale?: string;
 }
 
 const {
@@ -23,10 +26,13 @@ const {
   alternates,
   idPath,
   ruPath,
+  jaPath,
+  enPath,
   ogImage = "/og-image.png",
   noindex = false,
   schema,
   lang = "en",
+  ogLocale,
 } = Astro.props;
 
 const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
@@ -85,9 +91,11 @@ if (alternates) {
     if (path) computedAlternates[locale] = path;
   }
 } else {
-  // Backwards-compatibility for explicit idPath or ruPath props
+  // Backwards-compatibility for explicit props
   if (idPath) computedAlternates['id'] = idPath;
   if (ruPath) computedAlternates['ru'] = ruPath;
+  if (jaPath) computedAlternates['ja'] = jaPath;
+  if (enPath) computedAlternates['en'] = enPath;
 
   // Gracefully maintain legacy mappings ONLY for verified routes
   if (LEGACY_LOCALIZED_PATHS.has(normalizedPath)) {
@@ -108,6 +116,30 @@ const formatHref = (pathOrUrl: string) => {
   const cleanPath = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
   return `${siteOrigin}${cleanPath}`;
 };
+
+const xDefaultHref = computedAlternates['x-default']
+  ? formatHref(computedAlternates['x-default'])
+  : (lang !== 'en' && computedAlternates['en'])
+    ? formatHref(computedAlternates['en'])
+    : resolvedCanonical;
+
+const OG_LOCALE_MAP: Record<string, string> = {
+  en: 'en_US',
+  id: 'id_ID',
+  ru: 'ru_RU',
+  ja: 'ja_JP',
+  de: 'de_DE',
+  fi: 'fi_FI',
+  nl: 'nl_NL',
+  es: 'es_ES',
+  fr: 'fr_FR',
+  it: 'it_IT',
+  pt: 'pt_BR',
+  'pt-br': 'pt_BR',
+  'pt-BR': 'pt_BR',
+};
+
+const resolvedOgLocale = ogLocale || OG_LOCALE_MAP[lang.toLowerCase()] || OG_LOCALE_MAP[lang] || (lang.includes('-') ? lang.replace('-', '_') : `${lang}_${lang.toUpperCase()}`);
 
 const alternateEntries = Object.entries(computedAlternates)
   .filter(([locale]) => locale !== lang && locale !== 'x-default')
@@ -162,7 +194,7 @@ const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
 
     <!-- Reciprocal Hreflang Tags -->
     <link rel="alternate" hreflang={lang} href={resolvedCanonical} />
-    <link rel="alternate" hreflang="x-default" href={resolvedCanonical} />
+    <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
     {alternateEntries.map(({ locale, href }) => (
       <link rel="alternate" hreflang={locale} href={href} />
     ))}
@@ -172,7 +204,7 @@ const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="FreeIQExam" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={resolvedOgLocale} />
     <meta property="og:url" content={resolvedCanonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

@@ -4,6 +4,7 @@ interface Props {
   enPath?: string;
   idPath?: string;
   ruPath?: string;
+  jaPath?: string;
 }
 
 const {
@@ -11,6 +12,7 @@ const {
   enPath,
   idPath,
   ruPath,
+  jaPath,
 } = Astro.props;
 
 const normalizePath = (p: string) => p.replace(/\/$/, "") || "/";
@@ -18,7 +20,7 @@ const currentNorm = normalizePath(currentPath);
 
 // Build-time manifest of every route that actually exists under a locale.
 const buildLocaleRouteSet = (modules: Record<string, unknown>, locale: string) => {
-  const routes = new Set<string>([`/${locale}`]);
+  const routes = new Set<string>([`/${locale}`, `/${locale}/`]);
   for (const filePath of Object.keys(modules)) {
     const slug = filePath
       .replace(/^.*\/pages\/[^/]+\//, "")
@@ -31,28 +33,43 @@ const buildLocaleRouteSet = (modules: Record<string, unknown>, locale: string) =
 
 const idRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/id/**/*.astro"), "id");
 const ruRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/ru/**/*.astro"), "ru");
+const jaRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/ja/**/*.astro"), "ja");
 
 // An explicit prop always wins; otherwise reuse the current slug only when the target locale actually publishes it
 const resolveLocaleTarget = (routes: Set<string>, locale: string, explicit?: string) => {
   if (explicit) {
-    if (explicit === "/") return `/${locale}`;
+    if (explicit === "/" || explicit === `/${locale}` || explicit === `/${locale}/`) return `/${locale}/`;
     return explicit.startsWith(`/${locale}`) ? explicit : `/${locale}${explicit}`;
   }
-  if (currentNorm === "/") return `/${locale}`;
-  const candidate = normalizePath(`/${locale}${currentNorm}`);
-  return routes.has(candidate) ? candidate : `/${locale}`;
+  const baseSlug = currentNorm.replace(/^\/(id|ru|ja|de|nl|fi|pt-br)/, "") || "/";
+  if (baseSlug === "/") return `/${locale}/`;
+  const candidate = normalizePath(`/${locale}${baseSlug}`);
+  return routes.has(candidate) ? candidate : `/${locale}/`;
 };
 
-const enHref = enPath || currentNorm || "/";
+const getEnFallback = (path: string) => {
+  if (path.startsWith("/id/")) return path.replace(/^\/id/, "") || "/";
+  if (path === "/id") return "/";
+  if (path.startsWith("/ru/")) return path.replace(/^\/ru/, "") || "/";
+  if (path === "/ru") return "/";
+  if (path.startsWith("/ja/")) return path.replace(/^\/ja/, "") || "/";
+  if (path === "/ja") return "/";
+  return path || "/";
+};
+
+const enHref = enPath || getEnFallback(currentNorm);
 const idHref = resolveLocaleTarget(idRouteSet, "id", idPath);
 const ruHref = resolveLocaleTarget(ruRouteSet, "ru", ruPath);
+const jaHref = resolveLocaleTarget(jaRouteSet, "ja", jaPath);
 
 const activeLangCode =
   currentNorm === "/id" || currentNorm.startsWith("/id/")
     ? "ID"
     : currentNorm === "/ru" || currentNorm.startsWith("/ru/")
       ? "RU"
-      : "EN";
+      : currentNorm === "/ja" || currentNorm.startsWith("/ja/")
+        ? "JA"
+        : "EN";
 
 const isHomeActive = currentNorm === "/";
 const isTestsActive = [
@@ -1112,6 +1129,16 @@ const mobileAccordionSections = [
             <span class="min-w-0 flex-1">Русский</span>
             <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "RU" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>RU</span>
           </a>
+          <a
+            role="menuitem"
+            href={jaHref}
+            aria-current={activeLangCode === "JA" ? "true" : undefined}
+            class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "JA" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+          >
+            <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">日</span>
+            <span class="min-w-0 flex-1">日本語</span>
+            <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "JA" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>JA</span>
+          </a>
         </div>
       </div>
 
@@ -1350,6 +1377,16 @@ const mobileAccordionSections = [
           <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">Я</span>
           <span class="min-w-0 flex-1">Русский</span>
           <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "RU" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>RU</span>
+        </a>
+        <a
+          role="menuitem"
+          href={jaHref}
+          aria-current={activeLangCode === "JA" ? "true" : undefined}
+          class={`flex min-h-[40px] w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${activeLangCode === "JA" ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-white/[0.08] dark:text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/[0.05]"}`}
+        >
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-bold text-zinc-700 dark:bg-white/[0.06] dark:text-zinc-300" aria-hidden="true">日</span>
+          <span class="min-w-0 flex-1">日本語</span>
+          <span class={`font-mono text-xs uppercase tracking-widest ${activeLangCode === "JA" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}`}>JA</span>
         </a>
       </div>
     </div>

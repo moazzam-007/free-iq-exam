@@ -2,6 +2,14 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // If request arrives on www subdomain, issue a permanent 301 redirect to canonical non-www domain
+    if (url.hostname === 'www.freeiqexam.com') {
+      url.hostname = 'freeiqexam.com';
+      url.protocol = 'https:';
+      url.port = '';
+      return Response.redirect(url.toString(), 301);
+    }
+
     // If request arrives on any *.pages.dev domain, issue a permanent 301 redirect to primary custom domain
     if (url.hostname.endsWith('.pages.dev')) {
       url.hostname = 'freeiqexam.com';

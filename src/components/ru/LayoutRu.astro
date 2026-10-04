@@ -11,6 +11,7 @@ interface Props {
   noindex?: boolean;
   robots?: string;
   schema?: Record<string, any> | Record<string, any>[];
+  standalone?: boolean;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   noindex = false,
   robots,
   schema,
+  standalone = false,
 } = Astro.props;
 
 const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
@@ -94,10 +96,16 @@ const idHref = effectiveIdPath.startsWith('http')
     <link rel="canonical" href={resolvedCanonical} />
     
     <!-- Hreflang Tags -->
-    <link rel="alternate" hreflang="en" href={enHref} />
-    <link rel="alternate" hreflang="id" href={idHref} />
-    <link rel="alternate" hreflang="ru" href={resolvedCanonical} />
-    <link rel="alternate" hreflang="x-default" href={enHref} />
+    {standalone ? (
+      <link rel="alternate" hreflang="ru" href={resolvedCanonical} />
+    ) : (
+      <>
+        <link rel="alternate" hreflang="en" href={enHref} />
+        <link rel="alternate" hreflang="id" href={idHref} />
+        <link rel="alternate" hreflang="ru" href={resolvedCanonical} />
+        <link rel="alternate" hreflang="x-default" href={enHref} />
+      </>
+    )}
 
     {robots ? (
       <meta name="robots" content={robots} />

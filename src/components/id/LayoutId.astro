@@ -11,6 +11,7 @@ interface Props {
   schema?: Record<string, any> | Record<string, any>[];
   enPath?: string;
   ruPath?: string;
+  standalone?: boolean;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   schema,
   enPath,
   ruPath,
+  standalone = false,
 } = Astro.props;
 
 const siteOrigin = Astro.site ? Astro.site.origin : (Astro.url ? Astro.url.origin : 'https://freeiqexam.com');
@@ -90,10 +92,16 @@ const publicAdsensePubId = import.meta.env.PUBLIC_ADSENSE_PUB_ID;
     <link rel="canonical" href={resolvedCanonical} />
 
     <!-- Reciprocal Hreflang Tags -->
-    <link rel="alternate" hreflang="en" href={enHref} />
-    <link rel="alternate" hreflang="id" href={idHref} />
-    <link rel="alternate" hreflang="ru" href={ruHref} />
-    <link rel="alternate" hreflang="x-default" href={enHref} />
+    {standalone ? (
+      <link rel="alternate" hreflang="id" href={idHref} />
+    ) : (
+      <>
+        <link rel="alternate" hreflang="en" href={enHref} />
+        <link rel="alternate" hreflang="id" href={idHref} />
+        <link rel="alternate" hreflang="ru" href={ruHref} />
+        <link rel="alternate" hreflang="x-default" href={enHref} />
+      </>
+    )}
 
     {robots ? (
       <meta name="robots" content={robots} />

@@ -55,11 +55,15 @@ const isBlogActive =
 // Language switcher targets (explicit props win, else 1:1 slug mapping)
 const pathWithoutLang = currentNorm.replace(/^\/ru(?=\/|$)/, '') || '/';
 
+const isBlogPost = currentNorm.startsWith('/ru/blog/');
+
 const enHref = enPath
   ? enPath
-  : pathWithoutLang === '/'
-    ? '/'
-    : pathWithoutLang;
+  : isBlogPost
+    ? '/blog'
+    : pathWithoutLang === '/'
+      ? '/'
+      : pathWithoutLang;
 
 const idHref = idPath
   ? idPath === '/'
@@ -67,9 +71,11 @@ const idHref = idPath
     : idPath.startsWith('/id')
       ? idPath
       : `/id${idPath}`
-  : pathWithoutLang === '/'
-    ? '/id'
-    : `/id${pathWithoutLang}`;
+  : isBlogPost
+    ? '/id/blog'
+    : pathWithoutLang === '/'
+      ? '/id'
+      : `/id${pathWithoutLang}`;
 
 const ruHref = ruPath
   ? ruPath === '/'

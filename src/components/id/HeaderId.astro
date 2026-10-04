@@ -32,6 +32,8 @@ const buildLocaleRouteSet = (modules: Record<string, unknown>, locale: string) =
 const idRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/id/**/*.astro"), "id");
 const ruRouteSet = buildLocaleRouteSet(import.meta.glob("/src/pages/ru/**/*.astro"), "ru");
 
+const isBlogPost = currentNorm.startsWith("/id/blog/");
+
 // An explicit prop always wins; otherwise reuse the current slug only when the target locale actually publishes it
 const resolveLocaleTarget = (routes: Set<string>, locale: string, explicit?: string) => {
   if (explicit) {
@@ -43,9 +45,13 @@ const resolveLocaleTarget = (routes: Set<string>, locale: string, explicit?: str
   return routes.has(candidate) ? candidate : `/${locale}`;
 };
 
-const enHref = enPath || currentNorm || "/";
-const idHref = resolveLocaleTarget(idRouteSet, "id", idPath);
-const ruHref = resolveLocaleTarget(ruRouteSet, "ru", ruPath);
+const enHref = enPath || (isBlogPost ? "/blog" : currentNorm) || "/";
+const idHref = isBlogPost ? currentNorm : resolveLocaleTarget(idRouteSet, "id", idPath);
+const ruHref = ruPath
+  ? (ruPath === "/" ? "/ru" : ruPath.startsWith("/ru") ? ruPath : `/ru${ruPath}`)
+  : isBlogPost
+    ? "/ru/blog"
+    : resolveLocaleTarget(ruRouteSet, "ru", ruPath);
 
 const activeLangCode =
   currentNorm === "/id" || currentNorm.startsWith("/id/")
